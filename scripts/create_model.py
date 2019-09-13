@@ -3,30 +3,32 @@ import shutil
 import sys
 
 
+# for curve radius in meter * 2 for x y size
+
 gazebo_path = "/home/tb/.gazebo/models/"
 
 
 ###########################
-model_name  = "gay_padding"
+model_name  = "left_curve_r_200cm"
 image_path  = "/home/tb/gazebo_road_generation/scripts/"
-size_x      = 1
-size_y      = 1
+size_x      = 4
+size_y      = 4
 ###########################
 
 
 model_path               = gazebo_path + model_name + "/"
-model_name_splits        = model_name.split("_")
-model_config_name        = " ".join(model_name_splits).capitalize()
-model_config_description = "My textured " + model_config_name
-model_sdf_name           = model_name
+
+model_config_name        = model_name
+model_config_description = model_name
+
+
+model_sdf_name            = model_name
 model_material_fname      = model_name + ".material"
-image_name               =  ""
 
-for split in model_name_splits: image_name += split.capitalize()
-
-model_sdf_image      = image_name
-model_material_name  = image_name
-model_material_image = image_name + ".png"
+model_sdf_image      = model_name
+model_material_name  = model_name
+model_material_image = model_name + ".png"
+image_name           = model_name
 
 model_config_txt =  """<?xml version="1.0" encoding="UTF-8"?>
 <model>
@@ -79,12 +81,16 @@ model_sdf_txt = """<?xml version="1.0" encoding="UTF-8"?>
 </sdf>
 """
 
+# OGRE
 model_material_txt = """material """ + model_material_name + """/Image
 {
   technique
   {
     pass
     {
+    
+      scene_blend alpha_blend
+    
       texture_unit
       {
         texture """ + model_material_image + """ PF_L8

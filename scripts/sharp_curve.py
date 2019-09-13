@@ -1,3 +1,11 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Sep 13 10:56:28 2019
+
+@author: tb
+"""
+
 import cairocffi as cairo
 import math
 
@@ -69,7 +77,7 @@ def draw_curve(ctx, mid_point_x, mid_point_y, radius, start_angle, end_angle, ro
 
 
 
-draw_curve(context, 2500, 0, 1250, -180, -90, 'neg', 225, 1000,0)
+draw_curve(context, 2500, 0, 1250, -180, -90, 'neg', 225, 100,0)
 
 
 #draw_curve(context, x_mid+320, y_mid, 160, 180, 70, 'neg', 40, 20, 0)
@@ -95,4 +103,4 @@ context.stroke()
 
 '''
 #context.set_line_width(2)
-surface.write_to_png('curve.png')
+surface.write_to_png('sharp_curve.png')
