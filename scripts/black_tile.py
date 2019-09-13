@@ -1,8 +1,8 @@
 import cairocffi as cairo
 import math
 
-WIDTH = 100
-HEIGHT = 100
+WIDTH = 500
+HEIGHT = 500
 PIXEL_SCALE = 1
 
 surface = cairo.ImageSurface(cairo.FORMAT_RGB24,
