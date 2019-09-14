@@ -9,10 +9,10 @@ gazebo_path = "/home/tb/.gazebo/models/"
 
 
 ###########################
-model_name  = "left_curve_r_200cm"
+model_name  = "right_curve_r_400cm"
 image_path  = "/home/tb/gazebo_road_generation/scripts/"
-size_x      = 4
-size_y      = 4
+size_x      = 8
+size_y      = 8
 ###########################
 
 
@@ -90,10 +90,11 @@ model_material_txt = """material """ + model_material_name + """/Image
     {
     
       scene_blend alpha_blend
-    
+      depth_write off
+      
       texture_unit
       {
-        texture """ + model_material_image + """ PF_L8
+        texture """ + model_material_image + """ PF_A8R8G8B8
 	    filtering anisotropic
         max_anisotropy 16
       }
