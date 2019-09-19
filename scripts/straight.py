@@ -77,7 +77,8 @@ def main():
 
     draw_line(context,line_width,road_witdh,road_length,x_mid,mid_line_lenght,mid_line_gap,DASH_OFFSET)
 
-    scenario_name = 'straight_' + str(ROAD_LENGTH) + 'cm.png'
+    scenario_name = 'straight_' + str(ROAD_LENGTH) + '.png'
+    print("saved: ", scenario_name[:-4])
     surface.write_to_png(scenario_name)
 
 if __name__ == "__main__":

@@ -2,17 +2,21 @@ import os
 import shutil
 import sys
 
-
-# for curve radius in meter * 2 for x y size
+''' SIZE CALC '''
+# right/left curve: 1:radius*2  [m] 
+# black tile:       1:1         [m]
+# straight:         1:1         [m] 
+# crosswalk         
 
 gazebo_path = "/home/tb/.gazebo/models/"
 
 
 ###########################
-model_name  = "right_curve_r_400cm"
+Floor = False
+model_name  = "island_gimp"
 image_path  = "/home/tb/gazebo_road_generation/scripts/"
-size_x      = 8
-size_y      = 8
+size_x      = 2
+size_y      = 1
 ###########################
 
 
@@ -20,7 +24,6 @@ model_path               = gazebo_path + model_name + "/"
 
 model_config_name        = model_name
 model_config_description = model_name
-
 
 model_sdf_name            = model_name
 model_material_fname      = model_name + ".material"
@@ -82,26 +85,49 @@ model_sdf_txt = """<?xml version="1.0" encoding="UTF-8"?>
 """
 
 # OGRE
-model_material_txt = """material """ + model_material_name + """/Image
-{
-  technique
-  {
-    pass
+
+if(Floor):
+    model_material_txt = """material """ + model_material_name + """/Image
     {
-    
-      scene_blend alpha_blend
-      depth_write off
-      
-      texture_unit
+      technique
       {
-        texture """ + model_material_image + """ PF_A8R8G8B8
-	    filtering anisotropic
-        max_anisotropy 16
+        pass
+        {
+          
+          texture_unit
+          {
+            texture """ + model_material_image + """ PF_L8
+    	    filtering anisotropic
+            max_anisotropy 16
+          }
+        }
       }
     }
-  }
-}
-"""
+    """
+    
+    
+    
+else:
+    model_material_txt = """material """ + model_material_name + """/Image
+    {
+      technique
+      {
+        pass
+        {
+        
+          scene_blend alpha_blend
+          depth_write off
+          
+          texture_unit
+          {
+            texture """ + model_material_image + """ PF_A8R8G8B8
+    	    filtering anisotropic
+            max_anisotropy 16
+          }
+        }
+      }
+    }
+    """
 
 def create_file(path, txt):
     

@@ -2,101 +2,70 @@ import cairocffi as cairo
 import math
 import argparse
 
-
 PIXEL_PER_METER = 500
-
+PIXEL_PER_CM    = 5
 
 def cm2pixel(cm):
     
-    return PIXEL_PER_METER * float(cm / 100.0) 
+    return PIXEL_PER_CM * cm 
 
 #def meter2pixel(m):
 #	return (PIXEL_PER_METER) * m 
 
-
 def get_args(parser):
-    parser.add_argument("-l","--left_legth", help="set road length",type=int)
-   
+    parser.add_argument("-rll","--right_lane_length", help="set right lane length in cm",type=int)
+    parser.add_argument("-lll","--left_lane_length", help="set left lane length in cm",type=int)   
     args = parser.parse_args()
-    return args.road_length
+    return args.right_lane_length, args.left_lane_length
+
+
+def draw_start_box(context, right_length, left_length, x_mid, line_width, road_width):
+    
+    context.set_line_width(line_width)
+    
+    
+    context.move_to(x_mid + road_width , 0)
+    context.line_to(x_mid + road_width, right_length)
+    context.stroke()
+
+    context.move_to(x_mid - road_width , right_length)
+    context.line_to(x_mid - road_width, right_length - left_length)
+    context.stroke()
+    
+    
+    context.move_to(x_mid - road_width, right_length - line_width/2)
+    context.line_to(x_mid + road_width, right_length - line_width/2)
+    context.stroke()
 
 def main():
 
     parser = argparse.ArgumentParser()
-    ROAD_LENGTH = get_args(parser)
+    RIGHT_LANE_LENGTH, LEFT_LANE_LENGTH = get_args(parser)
     
-    
-    ROAD_WIDTH  = 1
+    IMAGE_WIDTH = 100 * PIXEL_PER_CM
+    IMAGE_HEIGHT= RIGHT_LANE_LENGTH * PIXEL_PER_CM
 
-    IMAGE_WIDTH = ROAD_WIDTH * PIXEL_PER_METER
-    IMAGE_HEIGHT= int((ROAD_LENGTH/100.0) * PIXEL_PER_METER)
-    print(IMAGE_HEIGHT)
+    line_width             = cm2pixel(2)
+    road_width             = cm2pixel(22.5)
+    right_length           = cm2pixel(RIGHT_LANE_LENGTH)
+    left_length            = cm2pixel(LEFT_LANE_LENGTH)
+    x_mid                  = IMAGE_WIDTH / 2
 
-    normal_road_line_width = cm2pixel(2)
-    road_witdh             = cm2pixel(45)
-    mid_line_lenght        = cm2pixel(20)
-    mid_line_gap           = cm2pixel(20)
-    road_length            = cm2pixel(ROAD_LENGTH)
-
-
-    print(normal_road_line_width)
-
-    print(road_witdh)
-
-    print(mid_line_lenght)
-
-    print(mid_line_gap)
-
-    print(road_length)
-
-    surface = cairo.ImageSurface(cairo.FORMAT_RGB24,
-			             IMAGE_WIDTH,
-			             IMAGE_HEIGHT)
-
-
-
-
-		
-
-
-
+    surface = cairo.ImageSurface(cairo.FORMAT_ARGB32,IMAGE_WIDTH,IMAGE_HEIGHT)
 
     context = cairo.Context(surface)
-    context.scale(1, 1)
+    context.rectangle(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT)
+    context.set_source_rgba(0, 0, 0, 0)
+    context.fill()
+    
+    context.set_source_rgba(255, 255, 255, 255)
 
-    context.set_source_rgb(255, 255, 255)
+    draw_start_box(context, right_length, left_length, x_mid, line_width, road_width)
+   
 
+    scenario_name = 'start_box_ll' + str(LEFT_LANE_LENGTH) + '_rl' + str(RIGHT_LANE_LENGTH) + '.png'
 
-    x_mid = IMAGE_WIDTH / 2
-    #y_mid = HEIGHT / 2
-
-	 
-
-
-
-
-
-
-    context.set_line_width(normal_road_line_width)
-    context.move_to(x_mid , 0)
-    context.set_dash([mid_line_lenght, mid_line_gap],DASH_OFFSET)
-    context.line_to(x_mid, road_length)
-    context.stroke()
-
-    context.set_dash([mid_line_lenght, 0],0)
-    context.move_to(x_mid + road_witdh , 0)
-    context.line_to(x_mid + road_witdh, road_length)
-    context.stroke()
-
-    context.set_dash([mid_line_lenght, 0],0)
-    context.move_to(x_mid - road_witdh , 0)
-    context.line_to(x_mid - road_witdh, road_length)
-    context.stroke()
-
-
-    #scenario_name = 'straight_' + str(ROAD_LENGTH) + 'cm.png'
-
-    surface.write_to_png('start_box.png')
+    surface.write_to_png(scenario_name)
 
 if __name__ == "__main__":
     main()
