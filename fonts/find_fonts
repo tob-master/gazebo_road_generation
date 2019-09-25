@@ -1,0 +1,12 @@
+context.select_font_face('HelveticaNeueLT Std Lt', \
+    cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+
+It is possible to find font names by many softwares. On Linux fontconfig is able to list fonts, and the name in the second column what cairo recognizes:
+
+$ fc-list | grep HelveticaNeue
+...
+/usr/share/fonts/.../HelveticaNeueLTStd-Lt.otf: Helvetica Neue LT Std,HelveticaNeueLT Std Lt:style=45 Light,Regular
+...
+$ fc-list | sed 's/.*:\(.*,\|\s\)\(.*\):.*/\2/'
+...
+HelveticaNeueLT Std Lt

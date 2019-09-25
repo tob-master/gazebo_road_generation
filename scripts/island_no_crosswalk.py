@@ -65,25 +65,6 @@ crosswalk_end   = x_mid+island_width/2+road_width
 no_crosswalk_start  = x_mid-island_width/2
 no_crosswalk_end    = x_mid+island_width/2
 
-
-drawing_distance = crosswalk_marking_width
-context.set_line_width(crosswalk_marking_width)
-
-while drawing_distance < IMAGE_WIDTH:
-    
-    if drawing_distance > crosswalk_start and drawing_distance < no_crosswalk_start:
-
-        context.move_to(drawing_distance,0)
-        context.line_to(drawing_distance,IMAGE_HEIGHT)
-        context.stroke()
-     
-    if drawing_distance > no_crosswalk_end and drawing_distance < crosswalk_end:
-
-        context.move_to(drawing_distance,0)
-        context.line_to(drawing_distance,IMAGE_HEIGHT)
-        context.stroke()
-        
-    drawing_distance += crosswalk_marking_width * 2
   
 context.set_line_width(line_width)    
 context.move_to(no_crosswalk_start,0)

@@ -13,10 +13,10 @@ gazebo_path = "/home/tb/.gazebo/models/"
 
 ###########################
 Floor = False
-model_name  = "island_gimp"
+model_name  = "Fahrbahnmarkierung_Pfeil_L"
 image_path  = "/home/tb/gazebo_road_generation/scripts/"
-size_x      = 2
-size_y      = 1
+size_x      = 0.072
+size_y      = 0.5
 ###########################
 
 
