@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/tb/gazebo_road_generation/ros_ws/install/setup.sh

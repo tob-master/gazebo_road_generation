@@ -1,0 +1,2 @@
+ackermann-drive-teleop:ackermann_vehicle:ackermann_vehicle_description:ackermann_vehicle_gazebo:ackermann_vehicle_teleop
+-DCATKIN_DEVEL_PREFIX=/home/tb/gazebo_road_generation/ros_ws/devel -DCMAKE_INSTALL_PREFIX=/home/tb/gazebo_road_generation/ros_ws/install -G Unix Makefiles
