@@ -59,6 +59,7 @@ def main():
     mid_line_lenght        = cm2pixel(20)
     mid_line_gap           = cm2pixel(20)
     road_length            = cm2pixel(ROAD_LENGTH)
+    DASH_OFFSET_            = cm2pixel(DASH_OFFSET)
     x_mid = IMAGE_WIDTH / 2
 
     print("line_widht",line_width)
@@ -75,9 +76,9 @@ def main():
     
     context.set_source_rgba(255, 255, 255, 255)
 
-    draw_line(context,line_width,road_witdh,road_length,x_mid,mid_line_lenght,mid_line_gap,DASH_OFFSET)
+    draw_line(context,line_width,road_witdh,road_length,x_mid,mid_line_lenght,mid_line_gap,DASH_OFFSET_)
 
-    scenario_name = 'straight_' + str(ROAD_LENGTH) + '.png'
+    scenario_name = 'straight_' + str(ROAD_LENGTH) + '_o_' + str(DASH_OFFSET) + '.png'
     print("saved: ", scenario_name[:-4])
     surface.write_to_png(scenario_name)
 

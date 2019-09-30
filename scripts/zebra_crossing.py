@@ -69,16 +69,18 @@ def main():
     print(IMAGE_WIDTH)
     print(IMAGE_HEIGHT)
 
-    
+    #surface = cairo.ImageSurface(cairo.FORMAT_RGB24,IMAGE_WIDTH,IMAGE_HEIGHT)   
     surface = cairo.ImageSurface(cairo.FORMAT_ARGB32,IMAGE_WIDTH,IMAGE_HEIGHT)
     context = cairo.Context(surface)
     
     context.rectangle(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT)
     context.set_source_rgba(0, 0, 0, 0)
+    #context.set_source_rgb(0, 0, 0)
     context.fill()
     
     context.set_source_rgba(255, 255, 255, 255)
     
+    #context.set_source_rgb(255, 255, 255)
 
 
     crosswalk_marking_width  = cm2pixel(4)
