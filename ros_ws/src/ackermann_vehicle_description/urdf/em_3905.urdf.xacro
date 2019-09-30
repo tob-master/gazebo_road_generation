@@ -358,7 +358,7 @@ limitations under the License.
 
 	  <origin xyz="0.15 -0.09 -0.09" rpy="0 0 ${degrees_90}" />
           <geometry>
-  	    <mesh filename="package://ackermann_vehicle_description/meshes/car_black.dae" scale="1 1 1"/>
+  	    <mesh filename="package://ackermann_vehicle_description/meshes/car_white.dae" scale="1 1 1"/>
           </geometry>
         </visual>
 
