@@ -1,5 +1,7 @@
 #!/bin/bash
 
+bash 'source  ~/gazebo_road_generation/ros_ws/devel/setup.bash' 
+
 gnome-terminal -x bash -c 'source ~/anaconda3/etc/profile.d/conda.sh; 
                            conda activate ros_python; 
                            roslaunch ackermann_vehicle_gazebo ackermann_vehicle.launch' &
