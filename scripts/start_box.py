@@ -46,7 +46,7 @@ def main():
     IMAGE_HEIGHT= RIGHT_LANE_LENGTH * PIXEL_PER_CM
 
     line_width             = cm2pixel(2)
-    road_width             = cm2pixel(22.5)
+    road_width             = cm2pixel(20)
     right_length           = cm2pixel(RIGHT_LANE_LENGTH)
     left_length            = cm2pixel(LEFT_LANE_LENGTH)
     x_mid                  = IMAGE_WIDTH / 2

@@ -90,14 +90,14 @@ def main():
 
 
     line_width             = cm2pixel(2)
-    road_witdh             = cm2pixel(45)
+    road_witdh             = cm2pixel(40)
     mid_line_lenght        = cm2pixel(20)
     mid_line_offset        = cm2pixel(DASH_OFFSET)
     print(road_witdh)
     
     draw_curve(context, 0, 0, RADIUS, 0, ANGLE, line_width,road_witdh, mid_line_lenght,mid_line_offset,IMAGE_WIDTH,IMAGE_HEIGHT)
     
-    scenario_name = "right_curve_r" + str(CURVE_RADIUS) + "_a" + str(ANGLE) + ".png" 
+    scenario_name = "right_curve_r" + str(CURVE_RADIUS) + "_a" + str(ANGLE) + "_o" + str(DASH_OFFSET) + ".png" 
     
 
     

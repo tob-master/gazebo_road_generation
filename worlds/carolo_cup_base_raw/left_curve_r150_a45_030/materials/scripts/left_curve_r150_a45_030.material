@@ -1,0 +1,17 @@
+material left_curve_r150_a45_030/Image
+    {
+      technique
+      {
+        pass
+        {
+          
+          texture_unit
+          {
+            texture left_curve_r150_a45_030.png PF_L8
+    	    filtering anisotropic
+            max_anisotropy 16
+          }
+        }
+      }
+    }
+    

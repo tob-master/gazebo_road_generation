@@ -35,7 +35,7 @@ def main():
     
     
     normal_road_line_width = meter2pixel(0.02)
-    road_witdh             = meter2pixel(0.45)
+    road_witdh             = meter2pixel(0.40)
     mid_line_lenght        = meter2pixel(0.2)
     mid_line_gap           = meter2pixel(0.2)
     road_length            = meter2pixel(ROAD_LENGTH)

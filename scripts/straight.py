@@ -55,7 +55,7 @@ def main():
     print("image_width",IMAGE_WIDTH)
 
     line_width             = cm2pixel(2)
-    road_witdh             = cm2pixel(45)
+    road_witdh             = cm2pixel(40)
     mid_line_lenght        = cm2pixel(20)
     mid_line_gap           = cm2pixel(20)
     road_length            = cm2pixel(ROAD_LENGTH)
