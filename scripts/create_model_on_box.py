@@ -8,16 +8,20 @@ import sys
 # straight:         1:1         [m] 
 # crosswalk         
 
+#  box size_x: min 0.1
+#  box size_y: 0.1 - 0.4
+#  box size_z: 0.1 - 0-24
+
 gazebo_path = "/home/tb/.gazebo/models/"
 
 
 ###########################
 Floor = True
-model_name  = "line_remove"
+model_name  = "box_l100_w100_h100"
 image_path  = "/home/tb/gazebo_road_generation/scripts/"
 size_x      = 0.1
-size_y      = 0.3
-size_z      = 0.01
+size_y      = 0.1
+size_z      = 0.1
 ###########################
 
 

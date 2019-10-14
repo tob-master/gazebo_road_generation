@@ -37,7 +37,7 @@ limitations under the License.
 
 <launch>
   <arg name="namespace" default="/"/>
-  <arg name="world_name" default="worlds/carolo_cup_base5.world"/>
+  <arg name="world_name" default="worlds/carolo_base_track.world"/>
   <arg name="cmd_timeout" default="0.5"/>
   <arg name="gui" default="true"/>
 
@@ -47,7 +47,7 @@ limitations under the License.
   <arg name="z" default="0.1"/>
   <arg name="roll" default="0.0"/>
   <arg name="pitch" default="0.0"/>
-  <arg name="yaw" default="0.0"/>
+  <arg name="yaw" default="1.5707"/>
 
   <include file="$(find ackermann_vehicle_description)/launch/ackermann_vehicle.launch">
     <arg name="namespace" value="$(arg namespace)"/>
