@@ -138,6 +138,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/tb/gazebo_road_generation/ros_ws/build/ros_sample_image_transport/cmake_install.cmake")
   include("/home/tb/gazebo_road_generation/ros_ws/build/ackermann_vehicle_teleop/cmake_install.cmake")
   include("/home/tb/gazebo_road_generation/ros_ws/build/gazebo_tutorials/cmake_install.cmake")
+  include("/home/tb/gazebo_road_generation/ros_ws/build/track_annotation/cmake_install.cmake")
 
 endif()
 

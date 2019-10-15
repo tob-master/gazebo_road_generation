@@ -26,6 +26,8 @@ set(CMAKE_MAKEFILE_DEPENDS
   "gazebo_tutorials/catkin_generated/package.cmake"
   "ros_sample_image_transport/catkin_generated/ordered_paths.cmake"
   "ros_sample_image_transport/catkin_generated/package.cmake"
+  "track_annotation/catkin_generated/ordered_paths.cmake"
+  "track_annotation/catkin_generated/package.cmake"
   "/home/tb/gazebo_road_generation/ros_ws/src/CMakeLists.txt"
   "/home/tb/gazebo_road_generation/ros_ws/src/ackermann-drive-teleop/CMakeLists.txt"
   "/home/tb/gazebo_road_generation/ros_ws/src/ackermann-drive-teleop/package.xml"
@@ -42,6 +44,8 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/home/tb/gazebo_road_generation/ros_ws/src/gazebo_tutorials/package.xml"
   "/home/tb/gazebo_road_generation/ros_ws/src/ros_sample_image_transport/CMakeLists.txt"
   "/home/tb/gazebo_road_generation/ros_ws/src/ros_sample_image_transport/package.xml"
+  "/home/tb/gazebo_road_generation/ros_ws/src/track_annotation/CMakeLists.txt"
+  "/home/tb/gazebo_road_generation/ros_ws/src/track_annotation/package.xml"
   "/opt/ros/melodic/share/ackermann_msgs/cmake/ackermann_msgs-msg-extras.cmake"
   "/opt/ros/melodic/share/ackermann_msgs/cmake/ackermann_msgsConfig-version.cmake"
   "/opt/ros/melodic/share/ackermann_msgs/cmake/ackermann_msgsConfig.cmake"
@@ -370,6 +374,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "ros_sample_image_transport/CMakeFiles/CMakeDirectoryInformation.cmake"
   "ackermann_vehicle_teleop/CMakeFiles/CMakeDirectoryInformation.cmake"
   "gazebo_tutorials/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "track_annotation/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
@@ -464,4 +469,6 @@ set(CMAKE_DEPEND_INFO_FILES
   "gazebo_tutorials/CMakeFiles/dynamic_reconfigure_generate_messages_py.dir/DependInfo.cmake"
   "gazebo_tutorials/CMakeFiles/gazebo_msgs_generate_messages_lisp.dir/DependInfo.cmake"
   "gazebo_tutorials/CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/DependInfo.cmake"
+  "track_annotation/CMakeFiles/annotate_bag.dir/DependInfo.cmake"
+  "track_annotation/CMakeFiles/birdseye_image_test.dir/DependInfo.cmake"
   )

@@ -1337,6 +1337,32 @@ gazebo_msgs_generate_messages_nodejs/fast:
 	$(MAKE) -f gazebo_tutorials/CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/build.make gazebo_tutorials/CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir/build
 .PHONY : gazebo_msgs_generate_messages_nodejs/fast
 
+#=============================================================================
+# Target rules for targets named annotate_bag
+
+# Build rule for target.
+annotate_bag: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 annotate_bag
+.PHONY : annotate_bag
+
+# fast build rule for target.
+annotate_bag/fast:
+	$(MAKE) -f track_annotation/CMakeFiles/annotate_bag.dir/build.make track_annotation/CMakeFiles/annotate_bag.dir/build
+.PHONY : annotate_bag/fast
+
+#=============================================================================
+# Target rules for targets named birdseye_image_test
+
+# Build rule for target.
+birdseye_image_test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 birdseye_image_test
+.PHONY : birdseye_image_test
+
+# fast build rule for target.
+birdseye_image_test/fast:
+	$(MAKE) -f track_annotation/CMakeFiles/birdseye_image_test.dir/build.make track_annotation/CMakeFiles/birdseye_image_test.dir/build
+.PHONY : birdseye_image_test/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -1440,6 +1466,8 @@ help:
 	@echo "... dynamic_reconfigure_generate_messages_py"
 	@echo "... gazebo_msgs_generate_messages_lisp"
 	@echo "... gazebo_msgs_generate_messages_nodejs"
+	@echo "... annotate_bag"
+	@echo "... birdseye_image_test"
 .PHONY : help
 
 

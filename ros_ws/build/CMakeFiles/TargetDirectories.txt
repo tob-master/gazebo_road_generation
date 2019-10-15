@@ -165,3 +165,12 @@
 /home/tb/gazebo_road_generation/ros_ws/build/gazebo_tutorials/CMakeFiles/dynamic_reconfigure_generate_messages_py.dir
 /home/tb/gazebo_road_generation/ros_ws/build/gazebo_tutorials/CMakeFiles/gazebo_msgs_generate_messages_lisp.dir
 /home/tb/gazebo_road_generation/ros_ws/build/gazebo_tutorials/CMakeFiles/gazebo_msgs_generate_messages_nodejs.dir
+/home/tb/gazebo_road_generation/ros_ws/build/track_annotation/CMakeFiles/install/strip.dir
+/home/tb/gazebo_road_generation/ros_ws/build/track_annotation/CMakeFiles/install.dir
+/home/tb/gazebo_road_generation/ros_ws/build/track_annotation/CMakeFiles/annotate_bag.dir
+/home/tb/gazebo_road_generation/ros_ws/build/track_annotation/CMakeFiles/install/local.dir
+/home/tb/gazebo_road_generation/ros_ws/build/track_annotation/CMakeFiles/test.dir
+/home/tb/gazebo_road_generation/ros_ws/build/track_annotation/CMakeFiles/birdseye_image_test.dir
+/home/tb/gazebo_road_generation/ros_ws/build/track_annotation/CMakeFiles/list_install_components.dir
+/home/tb/gazebo_road_generation/ros_ws/build/track_annotation/CMakeFiles/edit_cache.dir
+/home/tb/gazebo_road_generation/ros_ws/build/track_annotation/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,7 @@
+<launch>
+
+  <node name="annotate_bag" pkg="track_annotation" type="annotate_bag" />
+  <node pkg="rosbag" type="play" name="bagfile" output="screen" args="--clock /home/tb/gazebo_road_generation/ros_ws/src/track_annotation/bagfiles/carolo_base_track.bag"/>
+</launch>
+
+
