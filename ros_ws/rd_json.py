@@ -1,6 +1,7 @@
 import json
+import cv2
 
-with open('img_0000.json') as json_file:
+with open('frame_5460.json') as json_file:
     data = json.load(json_file)
     
     p = data['shapes']
@@ -19,7 +20,7 @@ with open('img_0000.json') as json_file:
 
 
     for p in points:
-    	print(type(p[0]))
+    	print(p)
 
     '''
     for p in data['people']:
