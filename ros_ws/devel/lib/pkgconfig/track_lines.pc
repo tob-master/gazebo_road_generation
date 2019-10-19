@@ -1,0 +1,8 @@
+prefix=/home/tb/gazebo_road_generation/ros_ws/devel
+
+Name: track_lines
+Description: Description of track_lines
+Version: 0.1.0
+Cflags: -I/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include
+Libs: -L/home/tb/gazebo_road_generation/ros_ws/devel/lib -lte
+Requires: roscpp

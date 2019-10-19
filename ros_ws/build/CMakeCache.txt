@@ -903,6 +903,12 @@ message_runtime_DIR:PATH=/opt/ros/melodic/share/message_runtime/cmake
 //Path to a library.
 onelib:FILEPATH=/usr/lib/x86_64-linux-gnu/libsdformat.so
 
+//Value Computed by CMake
+pixel_coordinates_BINARY_DIR:STATIC=/home/tb/gazebo_road_generation/ros_ws/build/pixel_coordinates
+
+//Value Computed by CMake
+pixel_coordinates_SOURCE_DIR:STATIC=/home/tb/gazebo_road_generation/ros_ws/src/pixel_coordinates
+
 //The directory containing a CMake configuration file for pluginlib.
 pluginlib_DIR:PATH=/opt/ros/melodic/share/pluginlib/cmake
 
@@ -974,6 +980,12 @@ track_annotation_BINARY_DIR:STATIC=/home/tb/gazebo_road_generation/ros_ws/build/
 
 //Value Computed by CMake
 track_annotation_SOURCE_DIR:STATIC=/home/tb/gazebo_road_generation/ros_ws/src/track_annotation
+
+//Value Computed by CMake
+track_lines_BINARY_DIR:STATIC=/home/tb/gazebo_road_generation/ros_ws/build/track_lines
+
+//Value Computed by CMake
+track_lines_SOURCE_DIR:STATIC=/home/tb/gazebo_road_generation/ros_ws/src/track_lines
 
 //The directory containing a CMake configuration file for trajectory_msgs.
 trajectory_msgs_DIR:PATH=/opt/ros/melodic/share/trajectory_msgs/cmake
@@ -1305,7 +1317,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=12
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=14
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
