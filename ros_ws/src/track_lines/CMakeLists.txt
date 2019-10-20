@@ -138,6 +138,9 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(track_lines_node src/nodes/track_lines_node.cpp)
 
+add_executable(track_mid_line_node src/nodes/track_mid_line_node.cpp)
+
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -152,6 +155,12 @@ add_executable(track_lines_node src/nodes/track_lines_node.cpp)
 target_link_libraries(track_lines_node
    ${OpenCV_LIBRARIES} ${catkin_LIBRARIES}
  )
+
+target_link_libraries(track_mid_line_node
+   ${OpenCV_LIBRARIES} ${catkin_LIBRARIES}
+ )
+
+
 
 #############
 ## Install ##
@@ -175,7 +184,13 @@ target_link_libraries(track_lines_node
 
 ## Mark libraries for installation
 ## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
- install(TARGETS track_lines_node
+install(TARGETS track_lines_node
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+)
+
+install(TARGETS track_mid_line_node
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}

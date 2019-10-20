@@ -185,220 +185,165 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
       // Output
 
       cv::Mat image= warped(Rect(0,0,1280,417));
+    cv::Mat rgb;
+    cv::cvtColor(image, rgb, CV_GRAY2BGR);
 
-      const int kLineThreshold    = 200;
-      const int kSearchWindowSize = 5;
-
-      cv::Mat destination;
-
-
-      //cv::Mat image = cv::imread("/home/tb/gazebo_road_generation/ros_ws/src/track_annotation/images/straight.png", CV_LOAD_IMAGE_GRAYSCALE);
-
-
-      cv::Size image_size = image.size();
-      const int kImgRows = image_size.height;
-      const int kImgCols = image_size.width;
-
-      const int kRowStride = 5;
-      const int kIntensityThreshold = 200;
-
-      vector<int> row_spikes(image.cols,0);
-
-      clock_t begin = clock();
-
-       // std::vector<std::tuple<int, int, int>> artefacts_info;
-
-        std::vector<pair<int,int>> artefacts_count;
-
-        /*
-        int row0 = 357;
-        int row1 = 329;
-        int row2 = 300;
-*/
-        int row0 = 380;
-        int row1 = 360;
-        int row2 = 340;
+            clock_t begin = clock();
 
 
 
-        //std::multimap<std::vector<std::tuple<int, int, int>>,std::vector<pair<int,int>>> mm;
+      vector<pair<int,int>> scan, rescan;
 
-        std::multimap<int,std::tuple<int, int>> artefacts_info;
+      float fac = 1.5;
 
+      const int intensity_threshold = 240;
+      const int max_candidate_intensity = 120;
 
+      int midline_length = 30;
 
+      const int pointerLen  = ((midline_length * fac)/2);
+      const int pointerLen2 = ((midline_length * fac)/2) + 1;
 
+      float start_angle = PI;
+      float end_angle   = start_angle+2*PI;
 
-        //artefacts_info.emplace_back(row,artefact_length,artefact_start_id);
-    /*
-        mm.insert(pair<string,int>("b", 3));
-        mm.insert(pair<string,int>("b", 3));
-        mm.insert(pair<string,int>("a", 1));
-        mm.insert(pair<string,int>("a", 2));
-    */
+      for (float angle=start_angle; angle<end_angle; angle+=0.002)
+      {
+        float sin_ = sin(angle);
+        float cos_ = cos(angle);
 
+        int xC = cos_*pointerLen+0.5;
+        int yC = sin_*pointerLen+0.5;
+        int xC2 = cos_*pointerLen2+0.5;
+        int yC2 = sin_*pointerLen2+0.5;
 
+        if (!(std::find(scan.begin(), scan.end(), pair<int,int>{xC,yC}) != scan.end()))
+        {
+          scan.push_back({xC,yC});
+        }
 
-    //mm.insert(make_pair("hello world"), i);
+        if (!(std::find(rescan.begin(), rescan.end(), pair<int,int>{xC2,yC2}) != rescan.end()))
+        {
+          rescan.push_back({xC2,yC2});
+        }
 
-        artefacts_count.emplace_back(row0,0);
-        artefacts_count.emplace_back(row1,0);
-        artefacts_count.emplace_back(row2,0);
+      }
 
+      map<pair<int,int>,int> candidates_count_hashmap;
+      map<pair<int,int>,int> candidates_xmass_hashmap;
+      map<pair<int,int>,int> candidates_ymass_hashmap;
 
-        vector<int> line_search_regions = {row0,row1,row2};
-
-
-        for ( auto &row : line_search_regions )
+      for (int i=pointerLen2; i<image.rows-pointerLen2; i++)
+      {
+        for (int j=pointerLen2; j<image.cols-pointerLen2; j++)
         {
 
-          fill(row_spikes.begin(), row_spikes.end(), 0);
 
 
-          for (int i=((kRowStride-1)/2); i<kImgCols-((kRowStride-1)/2); i++)
+          int M = (int)image.at<uchar>(Point(j,i));
+          if (M > intensity_threshold)
           {
-            for (int k= -((kRowStride-1)/2); k<=((kRowStride-1)/2); k++)
+            bool is_candidate_scan = true;
+            bool is_candidate_rescan = true;
+
+            for (auto &it : scan)
             {
-
-              if((int)image.at<uchar>(row,i+k) >= kIntensityThreshold)
-              {
-                row_spikes.at(i) = 1;
-              }
-
+              int x = j + it.first;
+              int y = i + it.second;
+              if((int)image.at<uchar>(y,x) >= max_candidate_intensity) is_candidate_scan = false;
             }
-          }
-
-          int artefact_length=0;
-
-
-          for (int i=0;i<kImgCols;i++)
-          {
-            if(row_spikes.at(i)==1)
+            for (auto &it : rescan)
             {
-
-              int artefact_start_id = i;
-
-              while(row_spikes.at(i) == 1 && i<kImgCols)
-              {
-                artefact_length++;
-                i++;
-              }
-
-              artefacts_info.insert(pair<int,std::tuple<int,int>>(row, make_tuple(artefact_start_id,artefact_length)));
-              //cout << "row: " << row << "  id: " << artefact_start_id << "  lenght: " << artefact_length << endl;
-              artefact_length=0;
-
+              int x = j + it.first;
+              int y = i + it.second;
+              if((int)image.at<uchar>(y,x) >= max_candidate_intensity) is_candidate_rescan = false;
             }
 
-          }
+            if(is_candidate_scan && is_candidate_rescan)
+            {
+
+
+              int i_key = i / (pointerLen2*2);
+              int j_key = j / (pointerLen2*2);
+
+              cout << i_key << " " << j_key << endl;
+
+              if ( candidates_count_hashmap.find(make_pair(i_key,j_key)) == candidates_count_hashmap.end() )
+              {
+                  candidates_count_hashmap[make_pair(i_key,j_key)] = 1;
+
+                  candidates_xmass_hashmap[make_pair(i_key,j_key)] = i;
+                  candidates_ymass_hashmap[make_pair(i_key,j_key)] = j;
+
+                  for (auto const& hash : candidates_count_hashmap)
+                  {
+                      std::cout << "new: " << get<0>(hash.first) << " " << get<1>(hash.first) << " " << hash.second << std::endl ;
+                  }
+
+              }
+              else
+              {
+                int count = candidates_count_hashmap.at(make_pair(i_key,j_key)) + 1;
+                candidates_count_hashmap.at(make_pair(i_key,j_key)) = count;
+
+                candidates_xmass_hashmap[make_pair(i_key,j_key)] += i;
+                candidates_ymass_hashmap[make_pair(i_key,j_key)] += j;
+
+                for (auto const& hash : candidates_count_hashmap)
+                {
+                    std::cout << "add: " << get<0>(hash.first)<< " " << get<1>(hash.first) << " " << hash.second << std::endl ;
+                }
+
+              }
+
+
+              //circle(rgb, Point(j,i), 10, Scalar(0, 0, 255));
+
+            }
+         }
+
+
 
 
 
 
         }
+      }
 
-
-        //int midline_artefacts_counter = 0;
-
-
-        //vec.erase(vec.begin() + index);
-
-    /*
-        for ( auto &artefact : artefacts_info ) {
-
-          if(get<0>(artefact) == row1)
-          {
-            midline_artefacts_counter++;
-          }
-
-        }
-    */
-
-
-    if (artefacts_info.count(row1) >= 3)
-    {
-
-    std::vector<pair<int,int>> true_points_row0;
-    std::vector<pair<int,int>> true_points_row1;
-    std::vector<pair<int,int>> true_points_row2;
-
-    getTruePoints(row0,artefacts_info, true_points_row0);
-    getTruePoints(row1,artefacts_info, true_points_row1);
-    getTruePoints(row2,artefacts_info, true_points_row2);
-
-
-    //artefacts_info.begin()
-
-     //cout << "hi" << endl;
-
-
-    const int kMidlineSearchSpace = 7;
-
-     if(!true_points_row0.empty() && !true_points_row1.empty())
-     {
-          for ( auto &t : true_points_row0 )
-          {
-              std::cout <<"r0: " << t.first << " " << t.second << endl;
-          }
-
-
-
-      for ( auto &t : true_points_row1 )
+      for (auto const& hash : candidates_count_hashmap)
       {
-          std::cout <<"r1: " << t.first << " " << t.second << endl;
+          //std::cout << get<0>(hash.first)*pointerLen2 << " " << get<1>(hash.first)*pointerLen2 << " " << hash.second << std::endl ;
+
+          if(hash.second >= 7)
+          {
+
+            int xx = candidates_xmass_hashmap.at(hash.first) / hash.second;
+            int yy = candidates_ymass_hashmap.at(hash.first) / hash.second;
+
+            cout << xx << " " << yy << " " << candidates_xmass_hashmap.at(hash.first) << " " << candidates_ymass_hashmap.at(hash.first) << endl;
+
+            //int i = get<0>(hash.first)*pointerLen2*2;
+            //int j = get<1>(hash.first)*pointerLen2*2;
+            circle(rgb, Point(yy,xx), 10, Scalar(0, 255, 0));
+          }
+      }
+
+
+      /*
+      for (auto &it : rescan)
+      {
+        cout << it.first << " " << it.second << endl;
       }
 
 
 
+      clock_t end = clock();
+      double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+      std::cout << elapsed_secs << std::endl;
+*/
 
-
-
-    int mid_row0 = 0;
-    int mid_row1 = 0;
-
-
-    int k1_row0 = (true_points_row0.begin())->first;
-    int k2_row0 = (true_points_row0.begin())->second;
-    mid_row0 = (k1_row0 + k2_row0)/2;
-
-
-    int k1_row1 = (true_points_row1.begin())->first;
-    int k2_row1 = (true_points_row1.begin())->second;
-    mid_row1 = (k1_row1 + k2_row1)/2;
-
-
-
-
-
-
-    bool mid_pattern_row0 = false;
-    bool mid_pattern_row1 = false;
-    bool mid_pattern_row2 = false;
-
-
-
-
-      for (int k= -((kMidlineSearchSpace-1)/2); k<=((kMidlineSearchSpace-1)/2); k++)
-      {
-          if((int)image.at<uchar>(row0,mid_row0+k)<= kIntensityThreshold) mid_pattern_row0 = true;
-          if((int)image.at<uchar>(row1,mid_row1+k)>= kIntensityThreshold) mid_pattern_row1 = true;
-          if((int)image.at<uchar>(row2,mid_row1+k)<= kIntensityThreshold) mid_pattern_row2 = true;
-      }
-
-
-    cout << "row0: " << mid_pattern_row0 << " " << "row1: " << mid_pattern_row1 << " " << "row2: " << mid_pattern_row2 << endl;
-
-
-}
-
-}
-    cv::cvtColor(image, image, CV_GRAY2BGR);
-    line( image, Point( 0, row0 ), Point( 1279, row0), Scalar( 255, 0, 0 ),  2, 8 );
-    line( image, Point( 0, row1 ), Point( 1279, row1), Scalar( 0, 255, 0 ),  2, 8 );
-    line( image, Point( 0, row2 ), Point( 1279, row2), Scalar( 0, 0, 255 ),  2, 8 );
-
-      cv::imshow("Result", image);
-      cv::waitKey(1);
+      cv::imshow("Result", rgb);
+      cv::waitKey(0);
 
   } catch (cv_bridge::Exception& e) {
       ROS_ERROR("Could not convert from '%s' to 'mono8'.",
@@ -415,7 +360,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "track_lines_node");
+  ros::init(argc, argv, "track_mid_line_node");
   ros::NodeHandle nh;
 
 cv::namedWindow("Result", 1);
