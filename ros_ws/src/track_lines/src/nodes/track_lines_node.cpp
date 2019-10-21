@@ -185,7 +185,9 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
       // Output
 
       cv::Mat image= warped(Rect(0,0,1280,417));
+      cv::Mat rgb;
 
+      cv::cvtColor(image, rgb, CV_GRAY2BGR);
       const int kLineThreshold    = 200;
       const int kSearchWindowSize = 5;
 
@@ -334,8 +336,84 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 
     const int kMidlineSearchSpace = 7;
 
+    const int maxDistance = 15;
+
+    vector<tuple<int,int,int,int>> matched_points;
+
      if(!true_points_row0.empty() && !true_points_row1.empty())
      {
+
+
+       for(int i=0; i<true_points_row0.size();i++)
+       {
+         for(int j=0; j<true_points_row1.size();j++)
+         {
+
+           int g = row0 - row1;
+
+           int a1 = true_points_row0.at(i).first - true_points_row1.at(j).first;
+
+           int a2 = true_points_row0.at(i).second - true_points_row1.at(j).second;
+
+
+           if(abs(a1) < maxDistance && abs(a2) < maxDistance)
+           {
+             matched_points.push_back(make_tuple(true_points_row0.at(i).first,
+                                                 true_points_row0.at(i).second,
+                                                 true_points_row1.at(j).first,
+                                                 true_points_row1.at(j).second));
+           }
+           //cout << a1 << " " << a2 << endl;
+
+            /*
+           float val1 = 0, val2 = 0;
+
+           float angle1 = 0;
+           float angle2 = 0;
+
+           if(a1 != 0)
+           {
+             float val1 = g/a1;
+             angle1 = atan(val1) * 180/PI ;
+
+
+             cout << "a1 " << atan(val1) * 180/PI << endl;
+           }
+           else
+           {
+             cout << "a1 straight" << endl;
+             angle1 = 90;
+           }
+
+
+
+           if (a2 != 0)
+           {
+             float val2 = g/a2;
+             angle2 = atan(val2) * 180/PI ;
+             cout << "a2 " <<  atan(val2) * 180/PI << endl;
+           }
+           else
+           {
+             angle2 = 90;
+             cout << "a2 straight" << endl;
+           }
+
+
+          */
+
+
+         }
+       }
+
+
+
+
+      // cout << "tpsize: " << true_points_row0.at(0).first << endl;
+
+
+
+
           for ( auto &t : true_points_row0 )
           {
               std::cout <<"r0: " << t.first << " " << t.second << endl;
@@ -349,9 +427,64 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
       }
 
 
+      for ( auto &t : matched_points )
+      {
+
+
+        int mid_row0 = 0;
+        int mid_row1 = 0;
+
+
+        int k1_row0 = get<0>(t);
+        int k2_row0 = get<1>(t);
+        mid_row0 = (k1_row0 + k2_row0)/2;
+
+        int k1_row1 = get<2>(t);
+        int k2_row1 = get<3>(t);
+        mid_row1 = (k1_row1 + k2_row1)/2;
+
+        bool mid_pattern_row0 = false;
+        bool mid_pattern_row1 = false;
+        bool mid_pattern_row2 = false;
+
+        for (int k= -((kMidlineSearchSpace-1)/2); k<=((kMidlineSearchSpace-1)/2); k++)
+        {
+            if((int)image.at<uchar>(row0,mid_row0+k)<= kIntensityThreshold) mid_pattern_row0 = true;
+            if((int)image.at<uchar>(row1,mid_row1+k)>= kIntensityThreshold) mid_pattern_row1 = true;
+            if((int)image.at<uchar>(row2,mid_row1+k)<= kIntensityThreshold) mid_pattern_row2 = true;
+        }
+/*
+         circle(rgb, Point(get<0>(t),row0), 8, Scalar(0, 0, 255));
+         circle(rgb, Point(get<1>(t),row0), 8, Scalar(0, 0, 255));
+
+         circle(rgb, Point(get<2>(t),row1), 8, Scalar(255, 0, 0));
+         circle(rgb, Point(get<3>(t),row1), 8, Scalar(255, 0, 0));
+*/
+         //cout << "row0: " << mid_pattern_row0 << " " << "row1: " << mid_pattern_row1 << " " << "row2: " << mid_pattern_row2 << endl;
+         if(mid_pattern_row0 && mid_pattern_row1 && mid_pattern_row2)
+         {
 
 
 
+           circle(rgb, Point(get<0>(t),row0), 8, Scalar(0, 0, 255));
+           circle(rgb, Point(get<1>(t),row0), 8, Scalar(0, 0, 255));
+           circle(rgb, Point(mid_row0,row0), 8, Scalar(255, 0, 0));
+
+           circle(rgb, Point(get<2>(t),row1), 8, Scalar(0, 255, 0));
+           circle(rgb, Point(get<3>(t),row1), 8, Scalar(0, 255, 0));
+           circle(rgb, Point(mid_row1,row1), 8, Scalar(255, 0, 0));
+
+
+           circle(rgb, Point(mid_row1,row2), 8, Scalar(255, 0, 0));
+
+         }
+
+      }
+
+
+/*
+    if( matched_points.size() > 1)
+      cout << "mps: " << endl;
 
     int mid_row0 = 0;
     int mid_row1 = 0;
@@ -362,15 +495,20 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
     mid_row0 = (k1_row0 + k2_row0)/2;
 
 
+
+
     int k1_row1 = (true_points_row1.begin())->first;
     int k2_row1 = (true_points_row1.begin())->second;
     mid_row1 = (k1_row1 + k2_row1)/2;
 
 
 
+    circle(rgb, Point((true_points_row1.begin())->first,row1), 8, Scalar(0, 255, 0));
+    circle(rgb, Point((true_points_row1.begin())->second,row1), 8, Scalar(0, 255, 0));
+    circle(rgb, Point(mid_row1,row1), 8, Scalar(255, 0, 0));
 
 
-
+    circle(rgb, Point(mid_row1,row2), 8, Scalar(255, 0, 0));
     bool mid_pattern_row0 = false;
     bool mid_pattern_row1 = false;
     bool mid_pattern_row2 = false;
@@ -387,17 +525,30 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 
 
     cout << "row0: " << mid_pattern_row0 << " " << "row1: " << mid_pattern_row1 << " " << "row2: " << mid_pattern_row2 << endl;
+    if(mid_pattern_row0 && mid_pattern_row1 && mid_pattern_row2)
+    {
+      circle(rgb, Point((true_points_row0.begin())->first,row0), 8, Scalar(0, 0, 255));
+      circle(rgb, Point((true_points_row0.begin())->second,row0), 8, Scalar(0, 0, 255));
+      circle(rgb, Point(mid_row0,row0), 8, Scalar(255, 0, 0));
 
+      circle(rgb, Point((true_points_row1.begin())->first,row1), 8, Scalar(0, 255, 0));
+      circle(rgb, Point((true_points_row1.begin())->second,row1), 8, Scalar(0, 255, 0));
+      circle(rgb, Point(mid_row1,row1), 8, Scalar(255, 0, 0));
+
+
+      circle(rgb, Point(mid_row1,row2), 8, Scalar(255, 0, 0));
+
+    }*/
 
 }
 
 }
-    cv::cvtColor(image, image, CV_GRAY2BGR);
-    line( image, Point( 0, row0 ), Point( 1279, row0), Scalar( 255, 0, 0 ),  2, 8 );
-    line( image, Point( 0, row1 ), Point( 1279, row1), Scalar( 0, 255, 0 ),  2, 8 );
-    line( image, Point( 0, row2 ), Point( 1279, row2), Scalar( 0, 0, 255 ),  2, 8 );
-
-      cv::imshow("Result", image);
+else{
+    line( rgb, Point( 0, row0 ), Point( 1279, row0), Scalar( 255, 0, 0 ),  1, 8 );
+    line( rgb, Point( 0, row1 ), Point( 1279, row1), Scalar( 0, 255, 0 ),  1, 8 );
+    line( rgb, Point( 0, row2 ), Point( 1279, row2), Scalar( 0, 0, 255 ),  1, 8 );
+}
+      cv::imshow("Result", rgb);
       cv::waitKey(1);
 
   } catch (cv_bridge::Exception& e) {

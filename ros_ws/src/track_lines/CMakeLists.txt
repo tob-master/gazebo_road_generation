@@ -140,6 +140,7 @@ add_executable(track_lines_node src/nodes/track_lines_node.cpp)
 
 add_executable(track_mid_line_node src/nodes/track_mid_line_node.cpp)
 
+add_executable(line_tracker_node src/nodes/line_tracker_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -160,6 +161,9 @@ target_link_libraries(track_mid_line_node
    ${OpenCV_LIBRARIES} ${catkin_LIBRARIES}
  )
 
+target_link_libraries(line_tracker_node
+   ${OpenCV_LIBRARIES} ${catkin_LIBRARIES}
+ )
 
 
 #############
@@ -191,6 +195,12 @@ install(TARGETS track_lines_node
 )
 
 install(TARGETS track_mid_line_node
+   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+)
+
+install(TARGETS line_tracker_node
    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
