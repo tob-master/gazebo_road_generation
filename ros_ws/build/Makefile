@@ -294,7 +294,7 @@ _catkin_empty_exported_target: cmake_check_build_system
 
 # fast build rule for target.
 _catkin_empty_exported_target/fast:
-	$(MAKE) -f ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/build.make ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/build
+	$(MAKE) -f ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/build.make ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/build
 .PHONY : _catkin_empty_exported_target/fast
 
 #=============================================================================
@@ -725,71 +725,6 @@ image_transport_subscriber: cmake_check_build_system
 image_transport_subscriber/fast:
 	$(MAKE) -f ros_sample_image_transport/CMakeFiles/image_transport_subscriber.dir/build.make ros_sample_image_transport/CMakeFiles/image_transport_subscriber.dir/build
 .PHONY : image_transport_subscriber/fast
-
-#=============================================================================
-# Target rules for targets named diagnostic_msgs_generate_messages_eus
-
-# Build rule for target.
-diagnostic_msgs_generate_messages_eus: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 diagnostic_msgs_generate_messages_eus
-.PHONY : diagnostic_msgs_generate_messages_eus
-
-# fast build rule for target.
-diagnostic_msgs_generate_messages_eus/fast:
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/build
-.PHONY : diagnostic_msgs_generate_messages_eus/fast
-
-#=============================================================================
-# Target rules for targets named diagnostic_msgs_generate_messages_cpp
-
-# Build rule for target.
-diagnostic_msgs_generate_messages_cpp: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 diagnostic_msgs_generate_messages_cpp
-.PHONY : diagnostic_msgs_generate_messages_cpp
-
-# fast build rule for target.
-diagnostic_msgs_generate_messages_cpp/fast:
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/build
-.PHONY : diagnostic_msgs_generate_messages_cpp/fast
-
-#=============================================================================
-# Target rules for targets named diagnostic_msgs_generate_messages_lisp
-
-# Build rule for target.
-diagnostic_msgs_generate_messages_lisp: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 diagnostic_msgs_generate_messages_lisp
-.PHONY : diagnostic_msgs_generate_messages_lisp
-
-# fast build rule for target.
-diagnostic_msgs_generate_messages_lisp/fast:
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/build
-.PHONY : diagnostic_msgs_generate_messages_lisp/fast
-
-#=============================================================================
-# Target rules for targets named diagnostic_msgs_generate_messages_nodejs
-
-# Build rule for target.
-diagnostic_msgs_generate_messages_nodejs: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 diagnostic_msgs_generate_messages_nodejs
-.PHONY : diagnostic_msgs_generate_messages_nodejs
-
-# fast build rule for target.
-diagnostic_msgs_generate_messages_nodejs/fast:
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/build
-.PHONY : diagnostic_msgs_generate_messages_nodejs/fast
-
-#=============================================================================
-# Target rules for targets named diagnostic_msgs_generate_messages_py
-
-# Build rule for target.
-diagnostic_msgs_generate_messages_py: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 diagnostic_msgs_generate_messages_py
-.PHONY : diagnostic_msgs_generate_messages_py
-
-# fast build rule for target.
-diagnostic_msgs_generate_messages_py/fast:
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/build
-.PHONY : diagnostic_msgs_generate_messages_py/fast
 
 #=============================================================================
 # Target rules for targets named trajectory_msgs_generate_messages_nodejs
@@ -1377,6 +1312,19 @@ birdseye_image_test/fast:
 .PHONY : birdseye_image_test/fast
 
 #=============================================================================
+# Target rules for targets named track_mid_line_node
+
+# Build rule for target.
+track_mid_line_node: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 track_mid_line_node
+.PHONY : track_mid_line_node
+
+# fast build rule for target.
+track_mid_line_node/fast:
+	$(MAKE) -f track_lines/CMakeFiles/track_mid_line_node.dir/build.make track_lines/CMakeFiles/track_mid_line_node.dir/build
+.PHONY : track_mid_line_node/fast
+
+#=============================================================================
 # Target rules for targets named track_lines_node
 
 # Build rule for target.
@@ -1388,6 +1336,19 @@ track_lines_node: cmake_check_build_system
 track_lines_node/fast:
 	$(MAKE) -f track_lines/CMakeFiles/track_lines_node.dir/build.make track_lines/CMakeFiles/track_lines_node.dir/build
 .PHONY : track_lines_node/fast
+
+#=============================================================================
+# Target rules for targets named line_tracker_node
+
+# Build rule for target.
+line_tracker_node: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 line_tracker_node
+.PHONY : line_tracker_node
+
+# fast build rule for target.
+line_tracker_node/fast:
+	$(MAKE) -f track_lines/CMakeFiles/line_tracker_node.dir/build.make track_lines/CMakeFiles/line_tracker_node.dir/build
+.PHONY : line_tracker_node/fast
 
 # Help Target
 help:
@@ -1445,11 +1406,6 @@ help:
 	@echo "... rosgraph_msgs_generate_messages_cpp"
 	@echo "... image_transport_publisher"
 	@echo "... image_transport_subscriber"
-	@echo "... diagnostic_msgs_generate_messages_eus"
-	@echo "... diagnostic_msgs_generate_messages_cpp"
-	@echo "... diagnostic_msgs_generate_messages_lisp"
-	@echo "... diagnostic_msgs_generate_messages_nodejs"
-	@echo "... diagnostic_msgs_generate_messages_py"
 	@echo "... trajectory_msgs_generate_messages_nodejs"
 	@echo "... trajectory_msgs_generate_messages_lisp"
 	@echo "... trajectory_msgs_generate_messages_eus"
@@ -1495,7 +1451,9 @@ help:
 	@echo "... gazebo_msgs_generate_messages_nodejs"
 	@echo "... annotate_bag"
 	@echo "... birdseye_image_test"
+	@echo "... track_mid_line_node"
 	@echo "... track_lines_node"
+	@echo "... line_tracker_node"
 .PHONY : help
 
 

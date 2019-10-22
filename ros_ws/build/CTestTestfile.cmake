@@ -5,13 +5,11 @@
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.
 subdirs("gtest")
-subdirs("ackermann_vehicle")
 subdirs("ackermann_vehicle_description")
 subdirs("ackermann_vehicle_gazebo")
 subdirs("ackermann-drive-teleop")
 subdirs("pixel_coordinates")
 subdirs("ros_sample_image_transport")
-subdirs("ackermann_vehicle_teleop")
 subdirs("gazebo_tutorials")
 subdirs("track_annotation")
 subdirs("track_lines")

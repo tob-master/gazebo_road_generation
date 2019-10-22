@@ -35,9 +35,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
+
+
+
 <launch>
   <arg name="namespace" default="/"/>
-  <arg name="world_name" default="worlds/carolo_base_track.world"/>
+ <!-- <arg name="world_name" default="worlds/empty_world.launch"/> -->
+ <arg name="world_name" default="/home/tb/gazebo_road_generation/ros_ws/src/ackermann_vehicle_gazebo/worlds/carolo_base_track.world"/> 
+
+
+
   <arg name="cmd_timeout" default="0.5"/>
   <arg name="gui" default="true"/>
 

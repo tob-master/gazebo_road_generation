@@ -405,56 +405,6 @@ clean: gtest/googlemock/gtest/CMakeFiles/gtest.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Directory level rules for directory ackermann_vehicle
-
-# Convenience name for "all" pass in the directory.
-ackermann_vehicle/all:
-
-.PHONY : ackermann_vehicle/all
-
-# Convenience name for "clean" pass in the directory.
-ackermann_vehicle/clean: ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/clean
-
-.PHONY : ackermann_vehicle/clean
-
-# Convenience name for "preinstall" pass in the directory.
-ackermann_vehicle/preinstall:
-
-.PHONY : ackermann_vehicle/preinstall
-
-#=============================================================================
-# Target rules for target ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir
-
-# All Build rule for target.
-ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/all:
-	$(MAKE) -f ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/build.make ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/depend
-	$(MAKE) -f ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/build.make ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num= "Built target _catkin_empty_exported_target"
-.PHONY : ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/all
-
-# Build rule for subdir invocation for target.
-ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
-	$(MAKE) -f CMakeFiles/Makefile2 ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
-.PHONY : ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/rule
-
-# Convenience name for target.
-_catkin_empty_exported_target: ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/rule
-
-.PHONY : _catkin_empty_exported_target
-
-# clean rule for target.
-ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/clean:
-	$(MAKE) -f ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/build.make ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/clean
-.PHONY : ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/clean
-
-# clean rule for target.
-clean: ackermann_vehicle/CMakeFiles/_catkin_empty_exported_target.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
 # Directory level rules for directory ackermann_vehicle_description
 
 # Convenience name for "all" pass in the directory.
@@ -463,7 +413,7 @@ ackermann_vehicle_description/all:
 .PHONY : ackermann_vehicle_description/all
 
 # Convenience name for "clean" pass in the directory.
-ackermann_vehicle_description/clean:
+ackermann_vehicle_description/clean: ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/clean
 
 .PHONY : ackermann_vehicle_description/clean
 
@@ -471,6 +421,38 @@ ackermann_vehicle_description/clean:
 ackermann_vehicle_description/preinstall:
 
 .PHONY : ackermann_vehicle_description/preinstall
+
+#=============================================================================
+# Target rules for target ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir
+
+# All Build rule for target.
+ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/all:
+	$(MAKE) -f ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/build.make ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/depend
+	$(MAKE) -f ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/build.make ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num= "Built target _catkin_empty_exported_target"
+.PHONY : ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/all
+
+# Build rule for subdir invocation for target.
+ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
+	$(MAKE) -f CMakeFiles/Makefile2 ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
+.PHONY : ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/rule
+
+# Convenience name for target.
+_catkin_empty_exported_target: ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/rule
+
+.PHONY : _catkin_empty_exported_target
+
+# clean rule for target.
+ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/clean:
+	$(MAKE) -f ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/build.make ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/clean
+.PHONY : ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/clean
+
+# clean rule for target.
+clean: ackermann_vehicle_description/CMakeFiles/_catkin_empty_exported_target.dir/clean
+
+.PHONY : clean
 
 #=============================================================================
 # Directory level rules for directory ackermann_vehicle_gazebo
@@ -1042,7 +1024,7 @@ clean: pixel_coordinates/CMakeFiles/sensor_msgs_generate_messages_py.dir/clean
 pixel_coordinates/CMakeFiles/pixel_coordinates_node.dir/all:
 	$(MAKE) -f pixel_coordinates/CMakeFiles/pixel_coordinates_node.dir/build.make pixel_coordinates/CMakeFiles/pixel_coordinates_node.dir/depend
 	$(MAKE) -f pixel_coordinates/CMakeFiles/pixel_coordinates_node.dir/build.make pixel_coordinates/CMakeFiles/pixel_coordinates_node.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=22,23 "Built target pixel_coordinates_node"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=24,25 "Built target pixel_coordinates_node"
 .PHONY : pixel_coordinates/CMakeFiles/pixel_coordinates_node.dir/all
 
 # Include target in all.
@@ -1643,188 +1625,6 @@ ros_sample_image_transport/CMakeFiles/image_transport_subscriber.dir/clean:
 
 # clean rule for target.
 clean: ros_sample_image_transport/CMakeFiles/image_transport_subscriber.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
-# Directory level rules for directory ackermann_vehicle_teleop
-
-# Convenience name for "all" pass in the directory.
-ackermann_vehicle_teleop/all:
-
-.PHONY : ackermann_vehicle_teleop/all
-
-# Convenience name for "clean" pass in the directory.
-ackermann_vehicle_teleop/clean: ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/clean
-ackermann_vehicle_teleop/clean: ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/clean
-ackermann_vehicle_teleop/clean: ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/clean
-ackermann_vehicle_teleop/clean: ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/clean
-ackermann_vehicle_teleop/clean: ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/clean
-
-.PHONY : ackermann_vehicle_teleop/clean
-
-# Convenience name for "preinstall" pass in the directory.
-ackermann_vehicle_teleop/preinstall:
-
-.PHONY : ackermann_vehicle_teleop/preinstall
-
-#=============================================================================
-# Target rules for target ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir
-
-# All Build rule for target.
-ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/all:
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/depend
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num= "Built target diagnostic_msgs_generate_messages_eus"
-.PHONY : ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/all
-
-# Build rule for subdir invocation for target.
-ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
-	$(MAKE) -f CMakeFiles/Makefile2 ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
-.PHONY : ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/rule
-
-# Convenience name for target.
-diagnostic_msgs_generate_messages_eus: ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/rule
-
-.PHONY : diagnostic_msgs_generate_messages_eus
-
-# clean rule for target.
-ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/clean:
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/clean
-.PHONY : ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/clean
-
-# clean rule for target.
-clean: ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_eus.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
-# Target rules for target ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir
-
-# All Build rule for target.
-ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/all:
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/depend
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num= "Built target diagnostic_msgs_generate_messages_cpp"
-.PHONY : ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/all
-
-# Build rule for subdir invocation for target.
-ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
-	$(MAKE) -f CMakeFiles/Makefile2 ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
-.PHONY : ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/rule
-
-# Convenience name for target.
-diagnostic_msgs_generate_messages_cpp: ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/rule
-
-.PHONY : diagnostic_msgs_generate_messages_cpp
-
-# clean rule for target.
-ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/clean:
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/clean
-.PHONY : ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/clean
-
-# clean rule for target.
-clean: ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_cpp.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
-# Target rules for target ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir
-
-# All Build rule for target.
-ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/all:
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/depend
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num= "Built target diagnostic_msgs_generate_messages_lisp"
-.PHONY : ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/all
-
-# Build rule for subdir invocation for target.
-ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
-	$(MAKE) -f CMakeFiles/Makefile2 ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
-.PHONY : ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/rule
-
-# Convenience name for target.
-diagnostic_msgs_generate_messages_lisp: ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/rule
-
-.PHONY : diagnostic_msgs_generate_messages_lisp
-
-# clean rule for target.
-ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/clean:
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/clean
-.PHONY : ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/clean
-
-# clean rule for target.
-clean: ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_lisp.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
-# Target rules for target ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir
-
-# All Build rule for target.
-ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/all:
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/depend
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num= "Built target diagnostic_msgs_generate_messages_nodejs"
-.PHONY : ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/all
-
-# Build rule for subdir invocation for target.
-ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
-	$(MAKE) -f CMakeFiles/Makefile2 ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
-.PHONY : ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/rule
-
-# Convenience name for target.
-diagnostic_msgs_generate_messages_nodejs: ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/rule
-
-.PHONY : diagnostic_msgs_generate_messages_nodejs
-
-# clean rule for target.
-ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/clean:
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/clean
-.PHONY : ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/clean
-
-# clean rule for target.
-clean: ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_nodejs.dir/clean
-
-.PHONY : clean
-
-#=============================================================================
-# Target rules for target ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir
-
-# All Build rule for target.
-ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/all:
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/depend
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num= "Built target diagnostic_msgs_generate_messages_py"
-.PHONY : ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/all
-
-# Build rule for subdir invocation for target.
-ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
-	$(MAKE) -f CMakeFiles/Makefile2 ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
-.PHONY : ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/rule
-
-# Convenience name for target.
-diagnostic_msgs_generate_messages_py: ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/rule
-
-.PHONY : diagnostic_msgs_generate_messages_py
-
-# clean rule for target.
-ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/clean:
-	$(MAKE) -f ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/build.make ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/clean
-.PHONY : ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/clean
-
-# clean rule for target.
-clean: ackermann_vehicle_teleop/CMakeFiles/diagnostic_msgs_generate_messages_py.dir/clean
 
 .PHONY : clean
 
@@ -3367,12 +3167,16 @@ clean: track_annotation/CMakeFiles/birdseye_image_test.dir/clean
 # Directory level rules for directory track_lines
 
 # Convenience name for "all" pass in the directory.
+track_lines/all: track_lines/CMakeFiles/track_mid_line_node.dir/all
 track_lines/all: track_lines/CMakeFiles/track_lines_node.dir/all
+track_lines/all: track_lines/CMakeFiles/line_tracker_node.dir/all
 
 .PHONY : track_lines/all
 
 # Convenience name for "clean" pass in the directory.
+track_lines/clean: track_lines/CMakeFiles/track_mid_line_node.dir/clean
 track_lines/clean: track_lines/CMakeFiles/track_lines_node.dir/clean
+track_lines/clean: track_lines/CMakeFiles/line_tracker_node.dir/clean
 
 .PHONY : track_lines/clean
 
@@ -3382,13 +3186,50 @@ track_lines/preinstall:
 .PHONY : track_lines/preinstall
 
 #=============================================================================
+# Target rules for target track_lines/CMakeFiles/track_mid_line_node.dir
+
+# All Build rule for target.
+track_lines/CMakeFiles/track_mid_line_node.dir/all:
+	$(MAKE) -f track_lines/CMakeFiles/track_mid_line_node.dir/build.make track_lines/CMakeFiles/track_mid_line_node.dir/depend
+	$(MAKE) -f track_lines/CMakeFiles/track_mid_line_node.dir/build.make track_lines/CMakeFiles/track_mid_line_node.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=28,29 "Built target track_mid_line_node"
+.PHONY : track_lines/CMakeFiles/track_mid_line_node.dir/all
+
+# Include target in all.
+all: track_lines/CMakeFiles/track_mid_line_node.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+track_lines/CMakeFiles/track_mid_line_node.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 track_lines/CMakeFiles/track_mid_line_node.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
+.PHONY : track_lines/CMakeFiles/track_mid_line_node.dir/rule
+
+# Convenience name for target.
+track_mid_line_node: track_lines/CMakeFiles/track_mid_line_node.dir/rule
+
+.PHONY : track_mid_line_node
+
+# clean rule for target.
+track_lines/CMakeFiles/track_mid_line_node.dir/clean:
+	$(MAKE) -f track_lines/CMakeFiles/track_mid_line_node.dir/build.make track_lines/CMakeFiles/track_mid_line_node.dir/clean
+.PHONY : track_lines/CMakeFiles/track_mid_line_node.dir/clean
+
+# clean rule for target.
+clean: track_lines/CMakeFiles/track_mid_line_node.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
 # Target rules for target track_lines/CMakeFiles/track_lines_node.dir
 
 # All Build rule for target.
 track_lines/CMakeFiles/track_lines_node.dir/all:
 	$(MAKE) -f track_lines/CMakeFiles/track_lines_node.dir/build.make track_lines/CMakeFiles/track_lines_node.dir/depend
 	$(MAKE) -f track_lines/CMakeFiles/track_lines_node.dir/build.make track_lines/CMakeFiles/track_lines_node.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=24,25 "Built target track_lines_node"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=26,27 "Built target track_lines_node"
 .PHONY : track_lines/CMakeFiles/track_lines_node.dir/all
 
 # Include target in all.
@@ -3415,6 +3256,43 @@ track_lines/CMakeFiles/track_lines_node.dir/clean:
 
 # clean rule for target.
 clean: track_lines/CMakeFiles/track_lines_node.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target track_lines/CMakeFiles/line_tracker_node.dir
+
+# All Build rule for target.
+track_lines/CMakeFiles/line_tracker_node.dir/all:
+	$(MAKE) -f track_lines/CMakeFiles/line_tracker_node.dir/build.make track_lines/CMakeFiles/line_tracker_node.dir/depend
+	$(MAKE) -f track_lines/CMakeFiles/line_tracker_node.dir/build.make track_lines/CMakeFiles/line_tracker_node.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=22,23 "Built target line_tracker_node"
+.PHONY : track_lines/CMakeFiles/line_tracker_node.dir/all
+
+# Include target in all.
+all: track_lines/CMakeFiles/line_tracker_node.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+track_lines/CMakeFiles/line_tracker_node.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 2
+	$(MAKE) -f CMakeFiles/Makefile2 track_lines/CMakeFiles/line_tracker_node.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
+.PHONY : track_lines/CMakeFiles/line_tracker_node.dir/rule
+
+# Convenience name for target.
+line_tracker_node: track_lines/CMakeFiles/line_tracker_node.dir/rule
+
+.PHONY : line_tracker_node
+
+# clean rule for target.
+track_lines/CMakeFiles/line_tracker_node.dir/clean:
+	$(MAKE) -f track_lines/CMakeFiles/line_tracker_node.dir/build.make track_lines/CMakeFiles/line_tracker_node.dir/clean
+.PHONY : track_lines/CMakeFiles/line_tracker_node.dir/clean
+
+# clean rule for target.
+clean: track_lines/CMakeFiles/line_tracker_node.dir/clean
 
 .PHONY : clean
 
