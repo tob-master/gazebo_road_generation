@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/track_lines_node.dir/src/nodes/track_lines_node.cpp.o"
+  "CMakeFiles/track_lines_node.dir/src/midline_search.cpp.o"
+  "CMakeFiles/track_lines_node.dir/src/track_lines_node.cpp.o"
   "/home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track_lines_node.pdb"
   "/home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track_lines_node"
 )

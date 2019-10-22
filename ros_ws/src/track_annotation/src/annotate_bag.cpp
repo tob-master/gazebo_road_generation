@@ -22,7 +22,6 @@ using namespace cv;
 static const std::string TOPIC_NAME = "/rrbot/camera1/image_raw";
 int image_counter = 0;
 
-
 // default values of the homography parameters
 int alpha_=34;
 int  beta_=90;
@@ -30,10 +29,6 @@ int gamma_=90;
 int f_ = 211; 
 int dist_ = 65;
 
-
-
-//double f, dist;
-//double alpha, beta, gamma;
 double alpha = ((double)alpha_ - 90.)*PI/180;
 double beta = ((double)beta_ - 90.)*PI/180;
 double gammma = ((double)gamma_ - 90.)*PI/180;
@@ -92,57 +87,36 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 
 
     try {
-	cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "mono8");
+            cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "mono8");
 
+            //Apply matrix transformation
+            warpPerspective(cv_ptr->image, warped, transfo, taille, INTER_CUBIC | WARP_INVERSE_MAP);
 
+            cropped= warped(Rect(0,0,1280,417));
 
- 
-      //Apply matrix transformation
-      warpPerspective(cv_ptr->image, warped, transfo, taille, INTER_CUBIC | WARP_INVERSE_MAP);
- 
-      // Output
+            cv::imshow("Result", cropped);
+            cv::waitKey(1);
 
-      cropped= warped(Rect(0,0,1280,417));
-    
-      cv::imshow("Result", cropped);
-      cv::waitKey(1);
+            char c[5];
+            snprintf (c, 5, "%04d", image_counter);
 
-	char c[5];
-    	snprintf (c, 5, "%04d", image_counter);
+            std::string formatted_count(c);
+            std::string all_frames_path = "/home/tb/gazebo_road_generation/ros_ws/src/track_annotation/all_frames/frame_" + formatted_count + ".png";
 
-	std::string formatted_count(c);
+            if(image_counter % 20 == 0){
+                std::string annotated_frames_path = "/home/tb/gazebo_road_generation/ros_ws/src/track_annotation/annotated_frames/frame_" + formatted_count + ".png";
+                cv::imwrite(annotated_frames_path, cropped);
+            }
 
-    	std::string all_frames_path = "/home/tb/gazebo_road_generation/ros_ws/src/track_annotation/all_frames/frame_" + formatted_count + ".png";
+            cv::imwrite(all_frames_path, cropped);
+            image_counter++;
+            //cv::imshow("view", cv_bridge::toCvShare(msg, "mono8")->image);
 
-
-	if(image_counter % 20 == 0){
-		std::string annotated_frames_path = "/home/tb/gazebo_road_generation/ros_ws/src/track_annotation/annotated_frames/frame_" + formatted_count + ".png";
-		cv::imwrite(annotated_frames_path, cropped);
-	}
-	/*
-	bool row = false;
-	int row_val = 0;
-	for(int i=400; i<cropped.rows; i++)
-
-    	{	for(int j=0; j<cropped.cols; j++) 
-       		{
-        		if((int)cropped.at<uchar>(i,j) > 0){ row = true; row_val = i;}
-		}        
-
-		if(row == true) std::cout << row_val << std::endl;
-		row = false;
-
-	}
-	*/
-
-        cv::imwrite(all_frames_path, cropped);
-	image_counter++;
-        //cv::imshow("view", cv_bridge::toCvShare(msg, "mono8")->image);
-
-    } catch (cv_bridge::Exception& e) {
-        ROS_ERROR("Could not convert from '%s' to 'mono8'.",
-                msg->encoding.c_str());
-    }
+        }
+        catch (cv_bridge::Exception& e) {
+            ROS_ERROR("Could not convert from '%s' to 'mono8'.",
+            msg->encoding.c_str());
+        }
 	
 
 
@@ -150,17 +124,14 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 
 
 int main(int argc, char **argv) {
+
     ros::init(argc, argv, "image_transport_subscriber");
     ros::NodeHandle nh;
 
-
-
     cv::namedWindow("Result", 1);
-
 
     image_transport::ImageTransport it(nh);
     image_transport::Subscriber sub = it.subscribe(TOPIC_NAME, 10000, imageCallback);
-
 
     ros::spin();
     cv::destroyWindow("Result");

@@ -175,6 +175,31 @@ target_link_libraries ( birdseye_image_test ${OpenCV_LIBRARIES} ${catkin_LIBRARI
 add_executable( annotate_bag src/annotate_bag.cpp )
 target_link_libraries ( annotate_bag ${OpenCV_LIBRARIES} ${catkin_LIBRARIES} )
 
+add_executable(pixel_coordinates_node src/pixel_coordinates_node.cpp)
+target_link_libraries(pixel_coordinates_node ${OpenCV_LIBRARIES} ${catkin_LIBRARIES})
+
+#############
+## Install ##
+#############
+
+# all install targets should use catkin DESTINATION variables
+# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
+
+## Mark executable scripts (Python etc.) for installation
+## in contrast to setup.py, you can choose the destination
+# install(PROGRAMS
+#   scripts/my_python_script
+#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
+
+## Mark executables for installation
+## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
+# install(TARGETS ${PROJECT_NAME}_node
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
+
+## Mark libraries for installation
+## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
 
 
 #add_executable( image_transport_publisher src/image_transport_publisher.cpp )

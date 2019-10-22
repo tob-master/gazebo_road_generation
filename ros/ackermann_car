@@ -1,6 +1,0 @@
-(ros_python) tb@tbKI:~/ros_ws$ roslaunch ackermann_vehicle_gazebo ackermann_vehicle.launch
--> python 2.7 wegen tf imports
-
-rosrun joy joy_node
-
-rosrun ackermann_drive_teleop joyop.py

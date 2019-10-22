@@ -56,28 +56,6 @@ CMAKE_BINARY_DIR = /home/tb/gazebo_road_generation/ros_ws/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
-
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
-
 # Special rule for the target install/strip
 install/strip: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
@@ -89,17 +67,6 @@ install/strip/fast: preinstall/fast
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
 	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
 .PHONY : install/strip/fast
-
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
 
 # Special rule for the target install/local
 install/local: preinstall
@@ -124,6 +91,28 @@ test/fast: test
 
 .PHONY : test/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
@@ -134,6 +123,17 @@ edit_cache:
 edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
+
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -168,130 +168,127 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-track_lines/CMakeFiles/track_mid_line_node.dir/rule:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f CMakeFiles/Makefile2 track_lines/CMakeFiles/track_mid_line_node.dir/rule
-.PHONY : track_lines/CMakeFiles/track_mid_line_node.dir/rule
+track_lines/CMakeFiles/track.dir/rule:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f CMakeFiles/Makefile2 track_lines/CMakeFiles/track.dir/rule
+.PHONY : track_lines/CMakeFiles/track.dir/rule
 
 # Convenience name for target.
-track_mid_line_node: track_lines/CMakeFiles/track_mid_line_node.dir/rule
+track: track_lines/CMakeFiles/track.dir/rule
 
-.PHONY : track_mid_line_node
+.PHONY : track
 
 # fast build rule for target.
-track_mid_line_node/fast:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track_mid_line_node.dir/build.make track_lines/CMakeFiles/track_mid_line_node.dir/build
-.PHONY : track_mid_line_node/fast
+track/fast:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/build
+.PHONY : track/fast
 
-# Convenience name for target.
-track_lines/CMakeFiles/track_lines_node.dir/rule:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f CMakeFiles/Makefile2 track_lines/CMakeFiles/track_lines_node.dir/rule
-.PHONY : track_lines/CMakeFiles/track_lines_node.dir/rule
+include/line_classification.o: include/line_classification.cpp.o
 
-# Convenience name for target.
-track_lines_node: track_lines/CMakeFiles/track_lines_node.dir/rule
-
-.PHONY : track_lines_node
-
-# fast build rule for target.
-track_lines_node/fast:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track_lines_node.dir/build.make track_lines/CMakeFiles/track_lines_node.dir/build
-.PHONY : track_lines_node/fast
-
-# Convenience name for target.
-track_lines/CMakeFiles/line_tracker_node.dir/rule:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f CMakeFiles/Makefile2 track_lines/CMakeFiles/line_tracker_node.dir/rule
-.PHONY : track_lines/CMakeFiles/line_tracker_node.dir/rule
-
-# Convenience name for target.
-line_tracker_node: track_lines/CMakeFiles/line_tracker_node.dir/rule
-
-.PHONY : line_tracker_node
-
-# fast build rule for target.
-line_tracker_node/fast:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/line_tracker_node.dir/build.make track_lines/CMakeFiles/line_tracker_node.dir/build
-.PHONY : line_tracker_node/fast
-
-src/nodes/line_tracker_node.o: src/nodes/line_tracker_node.cpp.o
-
-.PHONY : src/nodes/line_tracker_node.o
+.PHONY : include/line_classification.o
 
 # target to build an object file
-src/nodes/line_tracker_node.cpp.o:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/line_tracker_node.dir/build.make track_lines/CMakeFiles/line_tracker_node.dir/src/nodes/line_tracker_node.cpp.o
-.PHONY : src/nodes/line_tracker_node.cpp.o
+include/line_classification.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_classification.cpp.o
+.PHONY : include/line_classification.cpp.o
 
-src/nodes/line_tracker_node.i: src/nodes/line_tracker_node.cpp.i
+include/line_classification.i: include/line_classification.cpp.i
 
-.PHONY : src/nodes/line_tracker_node.i
+.PHONY : include/line_classification.i
 
 # target to preprocess a source file
-src/nodes/line_tracker_node.cpp.i:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/line_tracker_node.dir/build.make track_lines/CMakeFiles/line_tracker_node.dir/src/nodes/line_tracker_node.cpp.i
-.PHONY : src/nodes/line_tracker_node.cpp.i
+include/line_classification.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_classification.cpp.i
+.PHONY : include/line_classification.cpp.i
 
-src/nodes/line_tracker_node.s: src/nodes/line_tracker_node.cpp.s
+include/line_classification.s: include/line_classification.cpp.s
 
-.PHONY : src/nodes/line_tracker_node.s
+.PHONY : include/line_classification.s
 
 # target to generate assembly for a file
-src/nodes/line_tracker_node.cpp.s:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/line_tracker_node.dir/build.make track_lines/CMakeFiles/line_tracker_node.dir/src/nodes/line_tracker_node.cpp.s
-.PHONY : src/nodes/line_tracker_node.cpp.s
+include/line_classification.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_classification.cpp.s
+.PHONY : include/line_classification.cpp.s
 
-src/nodes/track_lines_node.o: src/nodes/track_lines_node.cpp.o
+include/line_tracker.o: include/line_tracker.cpp.o
 
-.PHONY : src/nodes/track_lines_node.o
+.PHONY : include/line_tracker.o
 
 # target to build an object file
-src/nodes/track_lines_node.cpp.o:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track_lines_node.dir/build.make track_lines/CMakeFiles/track_lines_node.dir/src/nodes/track_lines_node.cpp.o
-.PHONY : src/nodes/track_lines_node.cpp.o
+include/line_tracker.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.o
+.PHONY : include/line_tracker.cpp.o
 
-src/nodes/track_lines_node.i: src/nodes/track_lines_node.cpp.i
+include/line_tracker.i: include/line_tracker.cpp.i
 
-.PHONY : src/nodes/track_lines_node.i
+.PHONY : include/line_tracker.i
 
 # target to preprocess a source file
-src/nodes/track_lines_node.cpp.i:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track_lines_node.dir/build.make track_lines/CMakeFiles/track_lines_node.dir/src/nodes/track_lines_node.cpp.i
-.PHONY : src/nodes/track_lines_node.cpp.i
+include/line_tracker.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.i
+.PHONY : include/line_tracker.cpp.i
 
-src/nodes/track_lines_node.s: src/nodes/track_lines_node.cpp.s
+include/line_tracker.s: include/line_tracker.cpp.s
 
-.PHONY : src/nodes/track_lines_node.s
+.PHONY : include/line_tracker.s
 
 # target to generate assembly for a file
-src/nodes/track_lines_node.cpp.s:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track_lines_node.dir/build.make track_lines/CMakeFiles/track_lines_node.dir/src/nodes/track_lines_node.cpp.s
-.PHONY : src/nodes/track_lines_node.cpp.s
+include/line_tracker.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.s
+.PHONY : include/line_tracker.cpp.s
 
-src/nodes/track_mid_line_node.o: src/nodes/track_mid_line_node.cpp.o
+include/midline_search.o: include/midline_search.cpp.o
 
-.PHONY : src/nodes/track_mid_line_node.o
+.PHONY : include/midline_search.o
 
 # target to build an object file
-src/nodes/track_mid_line_node.cpp.o:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track_mid_line_node.dir/build.make track_lines/CMakeFiles/track_mid_line_node.dir/src/nodes/track_mid_line_node.cpp.o
-.PHONY : src/nodes/track_mid_line_node.cpp.o
+include/midline_search.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/midline_search.cpp.o
+.PHONY : include/midline_search.cpp.o
 
-src/nodes/track_mid_line_node.i: src/nodes/track_mid_line_node.cpp.i
+include/midline_search.i: include/midline_search.cpp.i
 
-.PHONY : src/nodes/track_mid_line_node.i
+.PHONY : include/midline_search.i
 
 # target to preprocess a source file
-src/nodes/track_mid_line_node.cpp.i:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track_mid_line_node.dir/build.make track_lines/CMakeFiles/track_mid_line_node.dir/src/nodes/track_mid_line_node.cpp.i
-.PHONY : src/nodes/track_mid_line_node.cpp.i
+include/midline_search.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/midline_search.cpp.i
+.PHONY : include/midline_search.cpp.i
 
-src/nodes/track_mid_line_node.s: src/nodes/track_mid_line_node.cpp.s
+include/midline_search.s: include/midline_search.cpp.s
 
-.PHONY : src/nodes/track_mid_line_node.s
+.PHONY : include/midline_search.s
 
 # target to generate assembly for a file
-src/nodes/track_mid_line_node.cpp.s:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track_mid_line_node.dir/build.make track_lines/CMakeFiles/track_mid_line_node.dir/src/nodes/track_mid_line_node.cpp.s
-.PHONY : src/nodes/track_mid_line_node.cpp.s
+include/midline_search.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/midline_search.cpp.s
+.PHONY : include/midline_search.cpp.s
+
+src/line_tracker_node.o: src/line_tracker_node.cpp.o
+
+.PHONY : src/line_tracker_node.o
+
+# target to build an object file
+src/line_tracker_node.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o
+.PHONY : src/line_tracker_node.cpp.o
+
+src/line_tracker_node.i: src/line_tracker_node.cpp.i
+
+.PHONY : src/line_tracker_node.i
+
+# target to preprocess a source file
+src/line_tracker_node.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.i
+.PHONY : src/line_tracker_node.cpp.i
+
+src/line_tracker_node.s: src/line_tracker_node.cpp.s
+
+.PHONY : src/line_tracker_node.s
+
+# target to generate assembly for a file
+src/line_tracker_node.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.s
+.PHONY : src/line_tracker_node.cpp.s
 
 # Help Target
 help:
@@ -299,25 +296,26 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... install"
-	@echo "... list_install_components"
 	@echo "... install/strip"
-	@echo "... track_mid_line_node"
-	@echo "... rebuild_cache"
-	@echo "... track_lines_node"
-	@echo "... line_tracker_node"
 	@echo "... install/local"
 	@echo "... test"
+	@echo "... list_install_components"
+	@echo "... track"
+	@echo "... install"
 	@echo "... edit_cache"
-	@echo "... src/nodes/line_tracker_node.o"
-	@echo "... src/nodes/line_tracker_node.i"
-	@echo "... src/nodes/line_tracker_node.s"
-	@echo "... src/nodes/track_lines_node.o"
-	@echo "... src/nodes/track_lines_node.i"
-	@echo "... src/nodes/track_lines_node.s"
-	@echo "... src/nodes/track_mid_line_node.o"
-	@echo "... src/nodes/track_mid_line_node.i"
-	@echo "... src/nodes/track_mid_line_node.s"
+	@echo "... rebuild_cache"
+	@echo "... include/line_classification.o"
+	@echo "... include/line_classification.i"
+	@echo "... include/line_classification.s"
+	@echo "... include/line_tracker.o"
+	@echo "... include/line_tracker.i"
+	@echo "... include/line_tracker.s"
+	@echo "... include/midline_search.o"
+	@echo "... include/midline_search.i"
+	@echo "... include/midline_search.s"
+	@echo "... src/line_tracker_node.o"
+	@echo "... src/line_tracker_node.i"
+	@echo "... src/line_tracker_node.s"
 .PHONY : help
 
 

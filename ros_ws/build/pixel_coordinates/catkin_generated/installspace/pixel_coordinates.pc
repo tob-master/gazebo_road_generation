@@ -1,8 +1,0 @@
-prefix=/home/tb/gazebo_road_generation/ros_ws/install
-
-Name: pixel_coordinates
-Description: Description of pixel_coordinates
-Version: 0.1.0
-Cflags: -I/home/tb/gazebo_road_generation/ros_ws/install/include
-Libs: -L/home/tb/gazebo_road_generation/ros_ws/install/lib -lte
-Requires: roscpp
