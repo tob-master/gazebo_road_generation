@@ -78,15 +78,15 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
           cv::cvtColor(grey, rgb, CV_GRAY2BGR);
+        /*
 
+          MidLineSearcher.ScanImageToFindMidLineClusters(grey);
 
-          MidLineSearcher.FindMidlinesInFrame(grey);
-
-          vector<pair<int,int>> midline_cluster_coordinates = MidLineSearcher.GetMidlinePoints(7);
+          vector<pair<int,int>> midline_cluster_coordinates = MidLineSearcher.GetMidLineClustersCenterOfGravity();
 
 
             cout << "JOOO" << endl;
-          MidLineSearcher.CheckClusterConnections();
+          MidLineSearcher.FindConnectedClusters();
 
          // cout << midline_cluster_coordinates.size() << endl;
 
@@ -95,7 +95,10 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
              circle(rgb, Point(cluster.second,cluster.first), 10, Scalar(0, 255, 0));
 
            }
+*/
+           LineClassifier.FilterRows(grey);
 
+           /*
            vector<tuple<int,int,int,int,int,int>> matched_pattern_coordinates = LineClassifier.SearchLineFeatures(grey);
 
            for (int i=0; i<matched_pattern_coordinates.size(); i++)
@@ -118,7 +121,7 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
           cv::imshow("Result", rgb);
           cv::waitKey(1);
 
-
+            */
 
   } catch (cv_bridge::Exception& e)
   {

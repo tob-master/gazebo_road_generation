@@ -3,52 +3,82 @@
 
 
 LineClassification::LineClassification():
-  row0(380),
-  row1(360),
-  row2(340),
-  kLineThicknessMin(3),
-  kLineThicknessMax(9),
-  kTrackWidthMin(117),
-  kTrackWidthMax(143),
-  kRowStride(5),
-  kIntensityThreshold(200),
-  kImgRows(417),
-  kImgCols(1280),
-  row_spikes(kImgCols,0),
-  kMidlineSearchSpace(7),
-  kMaxColumnDistanceForRowPoints(15)
-
-
+  bottom_row_(380),
+  mid_row_(360),
+  top_row_(340),
+  kMinLineThickness_(3),
+  kMaxLineThickness_(9),
+  kMinLaneWidth_(117),
+  kMaxLaneWidth_(143),
+  kWindowSizeForLineSearch_(5),
+  kLineThreshold_(200),
+  kMidLineThreshold_(200),
+  kImageHeight_(417),
+  kImageWidth_(1280),
+  row_spikes(kImageWidth_,3),
+  kWindowSizeForMidLineSearch_(7),
+  kMaxColumnDistanceForBottomAndMidPoints_(15)
 {
+row_filter_activations.insert(make_pair(bottom_row_,vector<int>(kImageWidth_)));
+row_filter_activations.insert(make_pair(mid_row_,vector<int>(kImageWidth_)));
+row_filter_activations.insert(make_pair(top_row_,vector<int>(kImageWidth_)));
+}
+
+
+void LineClassification::FilterRows(Mat image)
+{
+
+
+
+    for ( auto &row : rows_to_search_for_lines_ )
+    {
+
+      std::fill(row_filter_activations[row].begin(), row_filter_activations[row].end(), 0);
+
+      for (int i=((kWindowSizeForLineSearch_-1)/2); i<kImageWidth_-((kWindowSizeForLineSearch_-1)/2); i++)
+      {
+        for (int k= -((kWindowSizeForLineSearch_-1)/2); k<=((kWindowSizeForLineSearch_-1)/2); k++)
+        {
+
+          if((int)image.at<uchar>(row,i+k) >= kLineThreshold_)
+          {
+            row_filter_activations[row].at(i) = 1;
+          }
+
+        }
+      }
+
+    }
 
 
 
 }
 
-
 vector<tuple<int,int,int,int,int,int>> LineClassification::SearchLineFeatures(Mat image)
 {
-  artefacts_count.emplace_back(row0,0);
-  artefacts_count.emplace_back(row1,0);
-  artefacts_count.emplace_back(row2,0);
+  artefacts_count.emplace_back(bottom_row_,0);
+  artefacts_count.emplace_back(mid_row_,0);
+  artefacts_count.emplace_back(top_row_,0);
   artefacts_info.clear();
    correct_features.clear();
 
         matched_pattern_coordinates.clear();
 
 
-  for ( auto &row : line_search_regions )
+
+
+  for ( auto &row : rows_to_search_for_lines_ )
   {
 
     fill(row_spikes.begin(), row_spikes.end(), 0);
 
 
-    for (int i=((kRowStride-1)/2); i<kImgCols-((kRowStride-1)/2); i++)
+    for (int i=((kWindowSizeForLineSearch_-1)/2); i<kImageWidth_-((kWindowSizeForLineSearch_-1)/2); i++)
     {
-      for (int k= -((kRowStride-1)/2); k<=((kRowStride-1)/2); k++)
+      for (int k= -((kWindowSizeForLineSearch_-1)/2); k<=((kWindowSizeForLineSearch_-1)/2); k++)
       {
 
-        if((int)image.at<uchar>(row,i+k) >= kIntensityThreshold)
+        if((int)image.at<uchar>(row,i+k) >= kLineThreshold_)
         {
           row_spikes.at(i) = 1;
         }
@@ -59,14 +89,14 @@ vector<tuple<int,int,int,int,int,int>> LineClassification::SearchLineFeatures(Ma
     int artefact_length=0;
 
 
-    for (int i=0;i<kImgCols;i++)
+    for (int i=0;i<kImageWidth_;i++)
     {
       if(row_spikes.at(i)==1)
       {
 
         int artefact_start_id = i;
 
-        while(row_spikes.at(i) == 1 && i<kImgCols)
+        while(row_spikes.at(i) == 1 && i<kImageWidth_)
         {
           artefact_length++;
           i++;
@@ -85,16 +115,16 @@ vector<tuple<int,int,int,int,int,int>> LineClassification::SearchLineFeatures(Ma
 
   }
 
-  if (artefacts_info.count(row1) >= 3)
+  if (artefacts_info.count(mid_row_) >= 3)
   {
 
     correct_features_row0.clear();
     correct_features_row1.clear();
     correct_features_row2.clear();
 
-    CheckThicknessAndDistancesPerRow(row0,artefacts_info,correct_features_row0);
-    CheckThicknessAndDistancesPerRow(row1,artefacts_info,correct_features_row1);
-    CheckThicknessAndDistancesPerRow(row2,artefacts_info,correct_features_row2);
+    CheckThicknessAndDistancesPerRow(bottom_row_,artefacts_info,correct_features_row0);
+    CheckThicknessAndDistancesPerRow(mid_row_,artefacts_info,correct_features_row1);
+    CheckThicknessAndDistancesPerRow(top_row_,artefacts_info,correct_features_row2);
 
 
 
@@ -112,14 +142,14 @@ vector<tuple<int,int,int,int,int,int>> LineClassification::SearchLineFeatures(Ma
          for(int j=0; j<correct_features_row1.size();j++)
          {
 
-           //int g = row0 - row1;
+           //int g = bottom_row_ - mid_row_;
 
            int a1 = correct_features_row0.at(i).first - correct_features_row1.at(j).first;
 
            int a2 = correct_features_row0.at(i).second - correct_features_row1.at(j).second;
 
 
-           if(abs(a1) < kMaxColumnDistanceForRowPoints && abs(a2) < kMaxColumnDistanceForRowPoints)
+           if(abs(a1) < kMaxColumnDistanceForBottomAndMidPoints_ && abs(a2) < kMaxColumnDistanceForBottomAndMidPoints_)
            {
              correct_features.push_back(make_tuple(correct_features_row0.at(i).first,
                                                  correct_features_row0.at(i).second,
@@ -179,14 +209,14 @@ vector<tuple<int,int,int,int,int,int>> LineClassification::SearchLineFeatures(Ma
         bool mid_pattern_row1 = false;
         bool mid_pattern_row2 = false;
 
-        for (int k= -((kMidlineSearchSpace-1)/2); k<=((kMidlineSearchSpace-1)/2); k++)
+        for (int k= -((kWindowSizeForMidLineSearch_-1)/2); k<=((kWindowSizeForMidLineSearch_-1)/2); k++)
         {
-            if((int)image.at<uchar>(row0,mid_row0+k)<= kIntensityThreshold) mid_pattern_row0 = true;
-            if((int)image.at<uchar>(row1,mid_row1+k)>= kIntensityThreshold) mid_pattern_row1 = true;
-            if((int)image.at<uchar>(row2,mid_row1+k)<= kIntensityThreshold) mid_pattern_row2 = true;
+            if((int)image.at<uchar>(bottom_row_,mid_row0+k)<= kMidLineThreshold_) mid_pattern_row0 = true;
+            if((int)image.at<uchar>(mid_row_,mid_row1+k)>= kMidLineThreshold_) mid_pattern_row1 = true;
+            if((int)image.at<uchar>(top_row_,mid_row1+k)<= kMidLineThreshold_) mid_pattern_row2 = true;
         }
 
-         //cout << "row0: " << mid_pattern_row0 << " " << "row1: " << mid_pattern_row1 << " " << "row2: " << mid_pattern_row2 << endl;
+         //cout << "bottom_row_: " << mid_pattern_row0 << " " << "mid_row_: " << mid_pattern_row1 << " " << "top_row_: " << mid_pattern_row2 << endl;
          if(mid_pattern_row0 && mid_pattern_row1 && mid_pattern_row2)
          {
 
@@ -268,7 +298,7 @@ void LineClassification::CheckThicknessAndDistancesPerRow(int row_id, std::multi
 
           int distance = abs(row_points.at(j)-row_points.at(i));
           //cout <<"row: "<< row_id<< " " << w << " " << row_points.at(j)<< " " << row_points.at(i)<< endl;
-          if(distance>=kTrackWidthMin && distance<=kTrackWidthMax)
+          if(distance>=kMinLaneWidth_ && distance<=kMaxLaneWidth_)
           {
             correct_features.push_back(make_pair(row_points.at(i),row_points.at(j)));
           }
@@ -283,7 +313,7 @@ void LineClassification::CheckThicknessAndDistancesPerRow(int row_id, std::multi
 
 bool LineClassification::CheckLineThickness(int thickness)
 {
-  if(thickness >= kLineThicknessMin && thickness <= kLineThicknessMax) { return true; }
+  if(thickness >= kMinLineThickness_ && thickness <= kMaxLineThickness_) { return true; }
   else { return false; }
 }
 

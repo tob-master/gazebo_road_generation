@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.9.2, 2019-10-22T21:07:09. -->
+<!-- Written by QtCreator 4.9.2, 2019-10-23T17:53:20. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -111,7 +111,7 @@
      <value type="QString">PWD=/home/tb/gazebo_road_generation/ros_ws</value>
      <value type="QString">ROSLISP_PACKAGE_DIRECTORIES=/home/tb/gazebo_road_generation/ros_ws/devel/share/common-lisp</value>
      <value type="QString">ROS_PACKAGE_PATH=/home/tb/gazebo_road_generation/ros_ws/src:/opt/ros/melodic/share</value>
-     <value type="QString">SHLVL=126</value>
+     <value type="QString">SHLVL=186</value>
      <value type="QString">TERM=xterm</value>
      <value type="QString">_=/usr/bin/env</value>
     </valuelist>
@@ -434,6 +434,19 @@
      <valuemap type="QVariantMap" key="ProjectExplorer.RunStepList.Step.0">
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName"></value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ROSProjectManager.ROSAttachToNode</value>
+      <value type="bool" key="ProjectExplorer.RunStep.Enabled">true</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.Arguments"></value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.Command">debug</value>
+      <value type="bool" key="ROSProjectManager.ROSGenericStep.DebugContinueOnAttach">false</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.Package">track_lines</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.PackagePath">/home/tb/gazebo_road_generation/ros_ws/src/track_lines</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.Target">track</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.TargetPath">/home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track</value>
+     </valuemap>
+     <valuemap type="QVariantMap" key="ProjectExplorer.RunStepList.Step.1">
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName"></value>
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ROSProjectManager.ROSRunStep</value>
       <value type="bool" key="ProjectExplorer.RunStep.Enabled">true</value>
       <value type="QString" key="ROSProjectManager.ROSGenericStep.Arguments"></value>
@@ -444,7 +457,7 @@
       <value type="QString" key="ROSProjectManager.ROSGenericStep.Target">track</value>
       <value type="QString" key="ROSProjectManager.ROSGenericStep.TargetPath">/home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track</value>
      </valuemap>
-     <value type="int" key="ProjectExplorer.RunStepList.StepsCount">1</value>
+     <value type="int" key="ProjectExplorer.RunStepList.StepsCount">2</value>
     </valuemap>
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>

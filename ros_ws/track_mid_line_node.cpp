@@ -192,7 +192,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 
 
 
-      vector<pair<int,int>> scan, rescan;
+      vector<pair<int,int>> radial_scan1_, radial_scan2_;
 
       float fac = 1.5;
 
@@ -217,14 +217,14 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
         int xC2 = cos_*pointerLen2+0.5;
         int yC2 = sin_*pointerLen2+0.5;
 
-        if (!(std::find(scan.begin(), scan.end(), pair<int,int>{xC,yC}) != scan.end()))
+        if (!(std::find(radial_scan1_.begin(), radial_scan1_.end(), pair<int,int>{xC,yC}) != radial_scan1_.end()))
         {
-          scan.push_back({xC,yC});
+          radial_scan1_.push_back({xC,yC});
         }
 
-        if (!(std::find(rescan.begin(), rescan.end(), pair<int,int>{xC2,yC2}) != rescan.end()))
+        if (!(std::find(radial_scan2_.begin(), radial_scan2_.end(), pair<int,int>{xC2,yC2}) != radial_scan2_.end()))
         {
-          rescan.push_back({xC2,yC2});
+          radial_scan2_.push_back({xC2,yC2});
         }
 
       }
@@ -246,13 +246,13 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
             bool is_candidate_scan = true;
             bool is_candidate_rescan = true;
 
-            for (auto &it : scan)
+            for (auto &it : radial_scan1_)
             {
               int x = j + it.first;
               int y = i + it.second;
               if((int)image.at<uchar>(y,x) >= max_candidate_intensity) is_candidate_scan = false;
             }
-            for (auto &it : rescan)
+            for (auto &it : radial_scan2_)
             {
               int x = j + it.first;
               int y = i + it.second;
@@ -330,7 +330,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& msg) {
 
 
       /*
-      for (auto &it : rescan)
+      for (auto &it : radial_scan2_)
       {
         cout << it.first << " " << it.second << endl;
       }

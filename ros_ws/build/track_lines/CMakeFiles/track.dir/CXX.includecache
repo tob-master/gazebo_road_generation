@@ -15,11 +15,15 @@ iostream
 -
 stdio.h
 -
+string
+-
+ctime
+-
 ros/ros.h
 -
-cv_bridge/cv_bridge.h
+image_transport/image_transport.h
 -
-string
+cv_bridge/cv_bridge.h
 -
 opencv2/core/mat.hpp
 -
@@ -28,10 +32,6 @@ opencv2/core/core.hpp
 opencv2/highgui/highgui.hpp
 -
 opencv2/imgcodecs.hpp
--
-image_transport/image_transport.h
--
-ctime
 -
 
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_tracker.cpp
@@ -53,11 +53,15 @@ iostream
 -
 stdio.h
 -
+string
+-
+ctime
+-
 ros/ros.h
 -
-cv_bridge/cv_bridge.h
+image_transport/image_transport.h
 -
-string
+cv_bridge/cv_bridge.h
 -
 opencv2/core/mat.hpp
 -
@@ -66,10 +70,6 @@ opencv2/core/core.hpp
 opencv2/highgui/highgui.hpp
 -
 opencv2/imgcodecs.hpp
--
-image_transport/image_transport.h
--
-ctime
 -
 
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/src/line_tracker_node.cpp
