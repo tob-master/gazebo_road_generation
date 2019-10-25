@@ -37,7 +37,7 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "pixel_coordinates_node");
     ros::NodeHandle nh;
 
-    cv::Mat image = cv::imread("/home/tb/gazebo_road_generation/ros_ws/src/track_annotation/test_images/test2.png", CV_LOAD_IMAGE_COLOR);
+    cv::Mat image = cv::imread("/home/tb/gazebo_road_generation/ros_ws/src/track_annotation/test_images/straight.png", CV_LOAD_IMAGE_COLOR);
 
     namedWindow("img", WINDOW_NORMAL);
 

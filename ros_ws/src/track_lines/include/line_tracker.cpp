@@ -71,13 +71,148 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
 
-
           warpPerspective(cv_ptr->image, grey, transfo, taille, INTER_CUBIC | WARP_INVERSE_MAP);
 
           grey= grey(Rect(0,0,1280,417));
 
+           clock_t begin = clock();
 
-          cv::cvtColor(grey, rgb, CV_GRAY2BGR);
+           Mat lc_im;
+
+          LineClassifier.FilterRowSegments(grey);
+          LineClassifier.FindStartAndWidthOfRowSegments();
+          if(LineClassifier.CheckMidRowMatch())
+          {
+              LineClassifier.RejectFalseWidthRowSegments();
+              LineClassifier.RejectFalseDistantRowSegments();
+              LineClassifier.RejectFalseDistantMidAndBottomRowSegments();
+              LineClassifier.RejectFalseMidLineSegments();
+
+          }
+
+
+            lc_im= LineClassifier.DrawMatches();
+
+
+
+          clock_t end = clock();
+          double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+          //cout << "eltime: " << elapsed_secs << endl;
+
+          imshow("grey",lc_im);
+
+          waitKey(20);
+
+
+           //Canny(grey, grey, 100, 200,3);
+/*
+           grey(Rect(620, 380, 40, 20)) = 0;
+
+
+          Mat roi;
+          grey(Rect(0, 350, 1280, 1)).copyTo(roi);
+
+
+          roi/=255;
+
+
+
+
+          Mat m = Mat(1, 128, CV_32F);
+          m=-1;
+
+          m.at<float>(0)     = 2;
+          m.at<float>(1)     = 2;
+          m.at<float>(2)     = 2;
+          m.at<float>(3)     = 2;
+
+          m.at<float>(63)    = 2;
+          m.at<float>(64)    = 2;
+          m.at<float>(65)    = 2;
+
+          m.at<float>(124)   = 2;
+          m.at<float>(125)   = 2;
+          m.at<float>(126)   = 2;
+          m.at<float>(127)   = 2;
+
+          roi.convertTo(roi, CV_32FC1);
+          Mat res;
+          filter2D(roi, res, -1 , m,Point(-1,-1));
+*/
+          //res.convertTo(res, CV_32SC1);
+  //        threshold( res, res, 9, 0,THRESH_TOZERO );
+          //cout << res << endl;
+    /*      for(int i=0; i<1280; i++)
+          {
+              if((int)res.at<float>(i) > 0)
+                cout << i << " " << (int)res.at<float>(i) << endl;
+          }
+      */     // cout << endl;
+
+/*
+          for(int i=0; i<1280; i++)
+          {
+              if(roi.at<uchar>(i)>0)
+                cout << i << " " << (int)roi.at<uchar>(i) << endl;
+          }
+*//*
+
+           // cout << m << endl;
+
+          Mat res;
+
+
+
+*/
+          /*
+          roi.convertTo(roi, CV_32FC1);
+
+          matchTemplate( roi, m, res, CV_TM_SQDIFF_NORMED );
+            normalize( res, res, 0, 1, NORM_MINMAX, -1, Mat() );
+*/
+         // cout << roi << endl;
+/*
+roi.convertTo(roi, CV_32FC1);
+
+          filter2D(roi, res, -1 , m,Point(-1,-1));
+
+cout << res << endl;
+
+           threshold( res, res, 250, 0,THRESH_TOZERO );
+            res.convertTo(res, CV_8UC1);
+*/
+          /*
+ *
+ *
+ *
+          for(int i=0; i<1280; i++)
+          {
+              if(res.at<uchar>(i)>0)
+                cout << i << " " << (int)res.at<uchar>(i) << endl;
+          }
+          */  //cout << endl;
+        //  imshow("grey",grey);
+         // imshow("roi",roi);
+          //imshow("filter",res);
+         // waitKey(20);
+          //memcpy(m.data, vec.data(), vec.size()*sizeof(uchar));
+
+
+/*
+          HoughLine.ApplyCannyEdge(grey, 100, 200,3);
+
+
+
+
+          int min_line_length = 1;
+          int max_line_gap = 3;
+
+
+          HoughLine.ApplyHoughLines(1, CV_PI/180, 10, min_line_length, max_line_gap);
+          HoughLine.ShowHoughLines();
+*/
+          //cv::cvtColor(grey, rgb, CV_GRAY2BGR);
         /*
 
           MidLineSearcher.ScanImageToFindMidLineClusters(grey);
@@ -96,7 +231,7 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
            }
 */
-           LineClassifier.FilterRows(grey);
+           //LineClassifier.FilterRows(grey);
 
            /*
            vector<tuple<int,int,int,int,int,int>> matched_pattern_coordinates = LineClassifier.SearchLineFeatures(grey);

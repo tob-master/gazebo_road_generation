@@ -29,8 +29,10 @@ class LineClassification
 {
 private:
 
-  const int kMinLineThickness_;
-  const int kMaxLineThickness_;
+    Mat current_image_;
+
+  const int kMinLineWidth_;
+  const int kMaxLineWidth_;
 
   const int kMaxLaneWidth_;
   const int kMinLaneWidth_;
@@ -51,8 +53,21 @@ private:
   const int kMaxColumnDistanceForBottomAndMidPoints_;
 
 
-  map<int,vector<int>> row_filter_activations;
+  map<int,vector<int>> row_filter_activations_;
+  multimap<int,tuple<int, int>> row_segments_start_and_width_;
 
+  bool found_mid_row_match_;
+
+  multimap<int,int> row_segments_true_width_ids_;
+
+
+  multimap<int,pair<int,int>> row_segments_true_width_and_distance_ids_;
+
+  vector<tuple<int,int,int,int>> row_segments_true_mid_and_bottom_;
+
+   vector<tuple<int,int,int,int,int,int,int>> matched_pattern_positions;
+
+  //std::vector<int> row_segments_true_width_ids;
 
   std::vector<pair<int,int>> correct_features_row0;
   std::vector<pair<int,int>> correct_features_row1;
@@ -61,11 +76,13 @@ private:
       vector<tuple<int,int,int,int>> correct_features;
 
 
-      vector<tuple<int,int,int,int,int,int>> matched_pattern_coordinates;
+
 
       vector<int> row_spikes;
 
          std::multimap<int,std::tuple<int, int>> artefacts_info;
+
+
 
         std::vector<pair<int,int>> artefacts_count;
 
@@ -80,7 +97,17 @@ public:
 
     void CheckThicknessAndDistancesPerRow(int row_id, std::multimap<int,std::tuple<int, int>> &row_elements, std::vector<pair<int,int>> &correct_features);
 
-    void FilterRows(Mat image);
+    void FilterRowSegments(Mat image);
+    void FindStartAndWidthOfRowSegments();
+    bool CheckMidRowMatch();
+    void CheckWidthAndDistancesOfRowSegments();
+    bool CheckRowSegmentWidth(int width);
+    void RejectFalseWidthRowSegments();
+    void RejectFalseDistantRowSegments();
+    void RejectFalseDistantMidAndBottomRowSegments();
+    void RejectFalseMidLineSegments();
+    Mat DrawMatches();
+    void ClearMemory();
 };
 
 

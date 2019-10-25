@@ -182,6 +182,33 @@ track/fast:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/build
 .PHONY : track/fast
 
+include/houghline_transform.o: include/houghline_transform.cpp.o
+
+.PHONY : include/houghline_transform.o
+
+# target to build an object file
+include/houghline_transform.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/houghline_transform.cpp.o
+.PHONY : include/houghline_transform.cpp.o
+
+include/houghline_transform.i: include/houghline_transform.cpp.i
+
+.PHONY : include/houghline_transform.i
+
+# target to preprocess a source file
+include/houghline_transform.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/houghline_transform.cpp.i
+.PHONY : include/houghline_transform.cpp.i
+
+include/houghline_transform.s: include/houghline_transform.cpp.s
+
+.PHONY : include/houghline_transform.s
+
+# target to generate assembly for a file
+include/houghline_transform.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/houghline_transform.cpp.s
+.PHONY : include/houghline_transform.cpp.s
+
 include/line_classification.o: include/line_classification.cpp.o
 
 .PHONY : include/line_classification.o
@@ -304,6 +331,9 @@ help:
 	@echo "... install"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... include/houghline_transform.o"
+	@echo "... include/houghline_transform.i"
+	@echo "... include/houghline_transform.s"
 	@echo "... include/line_classification.o"
 	@echo "... include/line_classification.i"
 	@echo "... include/line_classification.s"

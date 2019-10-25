@@ -78,6 +78,12 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/houghline_transform.cpp">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/houghline_transform.h">
+			<Option target="track"/>
+		</Unit>
 		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_classification.cpp">
 			<Option target="track"/>
 		</Unit>

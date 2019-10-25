@@ -7,6 +7,7 @@
 
 #include "midline_search.h"
 #include "line_classification.h"
+#include "houghline_transform.h"
 
 
 class LineTracker
@@ -33,6 +34,7 @@ private:
 
     MidLineSearch MidLineSearcher;
     LineClassification LineClassifier;
+    HoughLineTransform HoughLine;
 
 
 public:
