@@ -29,8 +29,8 @@ class MidLineSearch
       vector<pair<int,int>> radial_scan1_, radial_scan2_;
 
       const float kRadialScanScalingFactor_;
-      const int kRadialScanRadius1_;
-      const int kRadialScanRadius2_;
+      int radial_scan_radius_1_;
+      int radial_scan_radius_2_;
 
       const int kMinValuableClusterSize_;
 

@@ -7,11 +7,14 @@ MidLineSearch::MidLineSearch():
   kMaxRadialScanOutOfClusterValue_(120),
   kRadialScanScalingFactor_(1.5),
   kMidLineLength_(30),
-  kMinValuableClusterSize_(7),
-  kRadialScanRadius1_((kMidLineLength_ * kRadialScanScalingFactor_)/2),
-  kRadialScanRadius2_(((kMidLineLength_ * kRadialScanScalingFactor_)/2) + 1)
+  kMinValuableClusterSize_(7)
+
+
 
 {
+    radial_scan_radius_2_ = (((kMidLineLength_ * kRadialScanScalingFactor_)/2) + 1);
+    radial_scan_radius_1_ = ((kMidLineLength_ * kRadialScanScalingFactor_)/2);
+    //cout << radial_scan_radius_1_ <<endl;
   InitRadialScanners();
 }
 
@@ -84,10 +87,10 @@ void MidLineSearch::InitRadialScanners()
     float sin_ = sin(angle);
     float cos_ = cos(angle);
 
-    int x = cos_*kRadialScanRadius1_+0.5;
-    int y = sin_*kRadialScanRadius1_+0.5;
-    int x2 = cos_*kRadialScanRadius2_+0.5;
-    int y2 = sin_*kRadialScanRadius2_+0.5;
+    int x = cos_*radial_scan_radius_1_+0.5;
+    int y = sin_*radial_scan_radius_1_+0.5;
+    int x2 = cos_*radial_scan_radius_2_+0.5;
+    int y2 = sin_*radial_scan_radius_2_+0.5;
 
     if (!(std::find(radial_scan1_.begin(), radial_scan1_.end(), pair<int,int>{x,y}) != radial_scan1_.end()))
     {
@@ -112,9 +115,9 @@ void MidLineSearch::ScanImageToFindMidLineClusters(Mat image)
   midline_clusters_coordinates_.clear();
 
   // padding of borders with kRadialScanRadius2 to avoid a memory adress which is out of bounds
-  for (int x=kRadialScanRadius2_; x<image.rows-kRadialScanRadius2_; x++)
+  for (int y=radial_scan_radius_2_; y<image.rows-radial_scan_radius_2_; y++)
   {
-    for (int y=kRadialScanRadius2_; y<image.cols-kRadialScanRadius2_; y++)
+    for (int x=radial_scan_radius_2_; x<image.cols-radial_scan_radius_2_; x++)
     {
 
       // mat.at<type>(row,column) or mat.at<type>(cv::Point(x,y)) to access the same point if x=column and y=row
@@ -143,8 +146,8 @@ void MidLineSearch::ScanImageToFindMidLineClusters(Mat image)
         if(is_midline_scan1 && is_midline_scan2)
         {
 
-          int x_cluster_key = x / (kRadialScanRadius2_*2);
-          int y_cluster_key = y / (kRadialScanRadius2_*2);
+          int x_cluster_key = x / (radial_scan_radius_2_*2);
+          int y_cluster_key = y / (radial_scan_radius_2_*2);
 
           //cout << x_cluster_key << " " << y_cluster_key << endl;
 
@@ -202,7 +205,7 @@ vector<pair<int,int>> MidLineSearch::GetMidLineClustersCenterOfGravity()
   vector<pair<int,int>> midline_clusters_centers_of_gravity;
 
 
-  // cout << "AllSize "  << midline_clusters_coordinates_.size() << " " << midline_clusters_size_.size() << endl;
+   //cout << "AllSize "  << midline_clusters_coordinates_.size() << " " << midline_clusters_size_.size() << endl;
 
   for (auto const& it : midline_clusters_size_)
   {

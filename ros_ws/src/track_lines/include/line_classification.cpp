@@ -27,19 +27,29 @@ row_filter_activations_.insert(make_pair(top_row_,vector<int>(kImageWidth_)));
 //row_filter_activations_.insert(make_pair(280,vector<int>(kImageWidth_)));
 found_mid_row_match_ = false;
 
+
+mid_row_is_matched_ = false;
+
+
 }
 
 
 bool LineClassification::CheckMidRowMatch()
 {
-    if(row_segments_start_and_width_.count(mid_row_) >= 3) return true;
-    else return false;
+    if(row_segments_start_and_width_.count(mid_row_) >= 3) mid_row_is_matched_ = true;
+    else mid_row_is_matched_ = false;
 }
 
-void LineClassification::FilterRowSegments(Mat image)
+
+void LineClassification::SetImage(Mat image)
+{
+    current_image_ = image;
+}
+
+void LineClassification::FilterRowSegments()
 {
 
-current_image_ = image;
+
 
     for ( auto &row : rows_to_search_for_lines_ )
     {
@@ -51,7 +61,7 @@ current_image_ = image;
         for (int k= -((kWindowSizeForLineSearch_-1)/2); k<=((kWindowSizeForLineSearch_-1)/2); k++)
         {
 
-          if((int)image.at<uchar>(row,i+k) >= kLineThreshold_)
+          if((int)current_image_.at<uchar>(row,i+k) >= kLineThreshold_)
           {
             row_filter_activations_[row].at(i) = 1;
           }
@@ -114,7 +124,7 @@ void LineClassification::RejectFalseWidthRowSegments()
 
         for (multimap<int,tuple<int, int>>::iterator it=ret.first; it!=ret.second; ++it)
         {
-            //std::cout << "row: " << it->first << " id: " << std::get<0>(it->second) << " length: " << std::get<1>(it->second) << endl;
+           // std::cout << "row: " << it->first << " id: " << std::get<0>(it->second) << " length: " << std::get<1>(it->second) << endl;
 
               int start_id = std::get<0>(it->second);
               int width    = std::get<1>(it->second);
@@ -155,9 +165,11 @@ void LineClassification::RejectFalseDistantRowSegments()
             hash2=0;
             for (multimap<int,int>::iterator it_row2=ret.first; it_row2!=ret.second; ++it_row2)
             {
+                //cout << "id1: " << row_id << " r1: " << it_row1->second << " r2:" << it_row2->second
+                  //   << " h1: " << hash1 << " h2: " << hash2 << endl;
                 //cout << "k: " <<  it_row1._M_node << endl;
 
-                if(hash1==hash2) continue;
+                if(hash1==hash2){ hash2++; continue;}
 
 
                 string permutation_hash12 = to_string(hash1) + to_string(hash2);
@@ -167,6 +179,7 @@ void LineClassification::RejectFalseDistantRowSegments()
                 if (it != used_permutations.end())
                 {
                   //std::cout << "Element found in myvector: " << *it << '\n';
+                    hash2++;
                   continue;
                 }
                 else
@@ -179,12 +192,14 @@ void LineClassification::RejectFalseDistantRowSegments()
 
                 int distance = abs(it_row2->second - it_row1->second);
                 //cout <<"row: "<< row_id<< " " << w << " " << row_points.at(j)<< " " << row_points.at(i)<< endl;
+               // cout << "id2: " << row_id << " r1: " << it_row1->second << " r2:" << it_row2->second << " d: " << distance
+                 //    << " h1: " << hash1 << " h2: " << hash2 << endl;
                 if(distance>=kMinLaneWidth_ && distance<=kMaxLaneWidth_)
                 {
-                  //cout << "id: " << row_id << " r1: " << it_row1->second << " r2:" << it_row2->second << endl;
 
 
-
+                   // cout << "id3: " << row_id << " r1: " << it_row1->second << " r2:" << it_row2->second << " d: " << distance
+                     //    << " h1: " << hash1 << " h2: " << hash2 << endl;
                   row_segments_true_width_and_distance_ids_.insert(pair<int,pair<int,int>>(row_id, make_pair(it_row1->second,it_row2->second)));
 
                   //correct_features.push_back(make_pair(row_segments_true_width_ids.at(i),row_segments_true_width_ids.at(j)));
@@ -229,9 +244,9 @@ void LineClassification::RejectFalseDistantMidAndBottomRowSegments()
                   //cout << " " << get<0>(it_bottom_row->second) << " " << get<1>(it_bottom_row->second) <<
                   //        " " << get<0>(it_mid_row->second) << " " << get<1>(it_mid_row->second) << endl;
                   row_segments_true_mid_and_bottom_.push_back(make_tuple(get<0>(it_bottom_row->second),
-                                                        get<1>(it_bottom_row->second),
-                                                        get<0>(it_mid_row->second),
-                                                        get<1>(it_mid_row->second)));
+                                                                         get<1>(it_bottom_row->second),
+                                                                         get<0>(it_mid_row->second),
+                                                                         get<1>(it_mid_row->second)));
                 }
             }
         }
@@ -273,18 +288,15 @@ void LineClassification::RejectFalseMidLineSegments()
 
       int top_offset = mid_line_id_mid_row - mid_line_id_bottom_row;
 
-      if(top_offset > 0)
+
+
+      if(top_offset != 0)
       {
         mid_line_id_top_row = mid_line_id_mid_row + top_offset;
-      }
-      else if(top_offset < 0)
-      {
-          mid_line_id_top_row = mid_line_id_top_row - top_offset;
       }
       else {
           mid_line_id_top_row = mid_line_id_mid_row;
       }
-
 
 
 
@@ -305,8 +317,90 @@ void LineClassification::RejectFalseMidLineSegments()
 
           matched_pattern_positions.push_back(make_tuple(get<0>(segment_it),get<1>(segment_it),get<2>(segment_it),get<3>(segment_it), mid_line_id_bottom_row, mid_line_id_mid_row,mid_line_id_top_row));
 
+
+
+
        }
     }
+}
+
+float LineClassification::CalculateAngle(int opposite, int adjacent)
+{
+    float angle = 0;
+
+    if(adjacent != 0)
+    {
+        angle =atan(float(opposite/adjacent));
+        angle = angle * 180/PI;
+
+        if (adjacent > 0)
+        {
+            angle = 90 - angle;
+        }
+        else {
+            angle = -90 - angle;
+        }
+    }
+    else
+    {
+        angle = 0;
+    }
+
+    return angle;
+}
+
+
+
+
+
+
+
+
+void LineClassification::GetStartPointsAndAngles(vector<LineSearchStartParameters> &line_search_start_parameters)
+{
+
+
+
+    for ( auto &match_it : matched_pattern_positions )
+    {
+        int opposite =  bottom_row_ - mid_row_;
+
+        int left_adjacent =  get<2>(match_it) - get<0>(match_it);
+        int right_adjacent = get<3>(match_it) - get<1>(match_it);
+
+        float left_angle = CalculateAngle(opposite, left_adjacent);
+        float right_angle = CalculateAngle(opposite, right_adjacent);
+
+        line_search_start_parameters.push_back(LineSearchStartParameters{get<2>(match_it),
+                                                                          mid_row_,
+                                                                          left_angle,
+                                                                          get<3>(match_it),
+                                                                          mid_row_,
+                                                                          right_angle});
+
+
+
+    }
+
+}
+
+void LineClassification::DrawStartParameters(Mat grey, vector<LineSearchStartParameters> &line_search_start_parameters)
+{
+    Mat rgb;
+    cv::cvtColor(grey, rgb, CV_GRAY2BGR);
+
+    for ( auto &start_parameters_it : line_search_start_parameters )
+    {
+
+        circle(rgb, Point(start_parameters_it.left_x,start_parameters_it.left_y), 7, Scalar(0, 255, 255));
+        circle(rgb, Point(start_parameters_it.right_x,start_parameters_it.right_y), 7, Scalar(255, 255, 0));
+
+    }
+
+    imshow("start_parameters",rgb);
+    waitKey(30);
+
+
 }
 
 
@@ -318,20 +412,18 @@ Mat LineClassification::DrawMatches()
     for ( auto &match_it : matched_pattern_positions )
     {
 
+        circle(rgb, Point(get<0>(match_it),bottom_row_), 7, Scalar(0, 255, 255));
+        circle(rgb, Point(get<1>(match_it),bottom_row_), 7, Scalar(0, 0, 255));
+        circle(rgb, Point(get<4>(match_it),bottom_row_), 7, Scalar(255, 255, 0));
+
+        circle(rgb, Point(get<2>(match_it),mid_row_), 7, Scalar(0, 255, 0));
+        circle(rgb, Point(get<3>(match_it),mid_row_), 7, Scalar(0, 255, 0));
+        circle(rgb, Point(get<5>(match_it),mid_row_), 7, Scalar(255, 255, 0));
+
+        circle(rgb, Point(get<6>(match_it),top_row_), 7, Scalar(255, 255, 0));
 
 
 
-
-
-    circle(rgb, Point(get<0>(match_it),bottom_row_), 7, Scalar(0, 0, 255));
-    circle(rgb, Point(get<1>(match_it),bottom_row_), 7, Scalar(0, 0, 255));
-    circle(rgb, Point(get<4>(match_it),bottom_row_), 7, Scalar(255, 0, 0));
-
-    circle(rgb, Point(get<2>(match_it),mid_row_), 7, Scalar(0, 255, 0));
-    circle(rgb, Point(get<3>(match_it),mid_row_), 7, Scalar(0, 255, 0));
-    circle(rgb, Point(get<5>(match_it),mid_row_), 7, Scalar(255, 0, 0));
-
-    circle(rgb, Point(get<6>(match_it),top_row_), 7, Scalar(255, 0, 0));
 
    }
 
@@ -348,6 +440,26 @@ void LineClassification::ClearMemory()
 
     row_segments_true_width_and_distance_ids_.clear();
     row_segments_true_mid_and_bottom_.clear();
+}
+
+void LineClassification::FindStartParametersForLineTracking(Mat image,
+                                                            vector<LineSearchStartParameters> &line_search_start_parameters)
+{
+    SetImage(image);
+    FilterRowSegments();
+    FindStartAndWidthOfRowSegments();
+    CheckMidRowMatch();
+    if(mid_row_is_matched_)
+    {
+        RejectFalseWidthRowSegments();
+        RejectFalseDistantRowSegments();
+        RejectFalseDistantMidAndBottomRowSegments();
+        RejectFalseMidLineSegments();
+    }
+    GetStartPointsAndAngles(line_search_start_parameters);
+
+
+    ClearMemory();
 }
 
 /*

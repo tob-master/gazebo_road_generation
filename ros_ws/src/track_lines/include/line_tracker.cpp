@@ -64,45 +64,456 @@ void LineTracker::initBirdseye()
   transfo = A2 * (T * (R * A1));
 }
 
+
+Point PolarCoordinate(int x, int y, float a, int l)
+{
+    x = x + l * cos(a) + 0.5;
+    y = y - l * sin(a) + 0.5;
+
+    return Point(x,y);
+}
+
+Point ChangeToBrightestCoordinateWithinReach(Mat image, int center_of_gravitiy_x, int center_of_gravitiy_y)
+{
+
+    int x =  center_of_gravitiy_x;
+    int y =  center_of_gravitiy_y;
+
+    int cog_left   = (int)image.at<uchar>(Point(x-1,y));
+    int cog_right  = (int)image.at<uchar>(Point(x+1,y));
+    int cog        = (int)image.at<uchar>(Point(x,y));
+    int cog_top    = (int)image.at<uchar>(Point(x,y-1));
+    int cog_bottom = (int)image.at<uchar>(Point(x,y+1));
+
+    int cog_in_reach_intensities[] = {cog_left,cog_right,cog,cog_top,cog_bottom};
+
+
+
+    int max_id = distance(cog_in_reach_intensities, max_element(cog_in_reach_intensities, cog_in_reach_intensities+5));
+
+
+
+    switch(max_id)
+    {
+        case 0:
+                return Point(x-1,y);
+                break;
+        case 1:
+                return Point(x+1,y);
+                break;
+        case 2:
+                return Point(x,y);
+                break;
+        case 3:
+                return Point(x,y-1);
+                break;
+        case 4:
+                return Point(x,y+1);
+                break;
+        default:
+                 cout << "something went wrong??" << endl;
+                 return Point(x,y);
+                 break;
+    }
+
+}
+
+
+float CalculateAngle4Quadrants(int opposite, int adjacent)
+{
+    float angle = 0;
+
+    if(adjacent != 0 && opposite != 0)
+    {
+        angle = atan(float(abs(opposite)/abs(adjacent)));
+        angle = angle * 180/PI;
+
+        if (adjacent > 0 && opposite > 0)
+        ;
+        else if (adjacent < 0 && opposite > 0)
+        {
+            angle = 180 - angle;
+        }
+        else if (adjacent < 0 && opposite < 0)
+        {
+            angle = 180 + angle;
+        }
+        else if (adjacent > 0 && opposite < 0)
+        {
+            angle = 360 - angle;
+        }
+        else {
+            cout << "something went wrong??" << endl;
+        }
+    }
+    else if(adjacent > 0 && opposite == 0)
+    {
+            angle = 0;
+    }
+    else if(adjacent < 0 && opposite == 0)
+    {
+            angle = 180;
+    }
+    else if(adjacent == 0 && opposite > 0)
+    {
+            angle = 90;
+    }
+    else if(adjacent == 0 && opposite < 0)
+    {
+            angle = 270;
+    }
+    else
+    {
+        angle = 0;
+    }
+
+    return angle;
+}
+
+void LineTracker::FollowLinePoints(Mat grey, vector<LineSearchStartParameters> line_search_start_parameters)
+{
+    int search_length = 9;
+
+    int field_of_view = 144;
+
+    int start_x = line_search_start_parameters[0].left_x;
+    int start_y = line_search_start_parameters[0].left_y;
+    float search_direction = line_search_start_parameters[0].left_angle;
+
+    if(search_direction == 0)
+    {
+        float start_angle =  (field_of_view/2 ) * (PI/180) + PI/2;
+        float end_angle   =  PI/2 - (field_of_view/2) * (PI/180) - 0.001;
+        float step        =  ((field_of_view/ 4)* (PI/180)) ;
+
+        vector<int> scanned_intensities_for_otsu;
+
+        for (float angle=start_angle; angle>=end_angle; angle-=step)
+        {
+            for (int current_search_length=0; current_search_length<search_length; current_search_length++)
+            {
+                Point current_point = PolarCoordinate(start_x,start_y,angle,current_search_length);
+                int intensity = (int)grey.at<uchar>(current_point);
+                scanned_intensities_for_otsu.push_back(intensity);
+            }
+        }
+
+        Mat scanned_intensities_for_otsu_mat( 1,scanned_intensities_for_otsu.size(), CV_32SC1,scanned_intensities_for_otsu.data());
+        scanned_intensities_for_otsu_mat.convertTo(scanned_intensities_for_otsu_mat, CV_8UC1);
+        int otsu_threshold = threshold(scanned_intensities_for_otsu_mat, scanned_intensities_for_otsu_mat, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+
+        vector<LineSearchMoments> scanned_moments;
+
+        for (float angle=start_angle; angle>=end_angle; angle-=step)
+        {
+            int intensity_sum = 0;
+            bool scan_terminated = false;
+
+
+            for (int current_search_length=0; current_search_length<search_length; current_search_length++)
+            {
+                Point current_point = PolarCoordinate(start_x,start_y,angle,current_search_length);
+                int intensity = (int)grey.at<uchar>(current_point);
+
+
+
+                if(intensity <= otsu_threshold)
+                {
+                    Point current_point = PolarCoordinate(start_x,start_y,angle,current_search_length-1);
+                    scanned_moments.push_back(LineSearchMoments{current_point.x,current_point.y,intensity_sum});
+                    scan_terminated = true;
+                    break;
+                }
+
+                intensity_sum += intensity;
+
+            }
+
+            if(!scan_terminated)
+            {
+                Point current_point = PolarCoordinate(start_x,start_y,angle,search_length-1);
+                scanned_moments.push_back(LineSearchMoments{current_point.x,current_point.y,intensity_sum});
+            }
+        }
+
+
+        cout << "rd"
+<< endl;
+
+        float moment_weight = 0;
+        float moment_x = 0;
+        float moment_y = 0;
+
+        int max_weight_id = 0;
+        int max_weight = 0;
+
+        for (int id=0; id<scanned_moments.size(); id++)
+        {
+            if(max_weight < scanned_moments[id].sum)
+            {
+                max_weight = scanned_moments[id].sum;
+                max_weight_id = id;
+            }
+        }
+
+
+        for (int id=0; id<scanned_moments.size(); id++)
+        {
+            int weight = scanned_moments[id].sum;
+            int x = scanned_moments[id].x;
+            int y = scanned_moments[id].y;
+
+            if(id == max_weight_id) weight *= 6;
+
+            moment_weight += weight;
+            moment_x      += weight * x;
+            moment_y      += weight * y;
+        }
+
+        int center_of_gravity_x = moment_x / moment_weight;
+        int center_of_gravity_y = moment_y / moment_weight;
+
+        Point new_start_point = ChangeToBrightestCoordinateWithinReach(grey, center_of_gravity_x, center_of_gravity_y);
+
+        int new_start_x = new_start_point.x;
+        int new_start_y = new_start_point.y;
+
+        int opposite =  start_y - new_start_y;
+        int adjacent =  new_start_x - start_x;
+
+        float new_angle = CalculateAngle4Quadrants(opposite, adjacent);
+
+        cout << new_angle << " " << start_x << " " << start_y << " " << new_start_point << endl;
+    /*
+
+    vector<pair<int,int>> line_follow_scanner;
+
+    int search_width = 9;
+
+    int field_of_view = 144;
+
+    int start_x = line_search_start_parameters[0].left_x;
+    int start_y = line_search_start_parameters[0].left_y;
+    float search_direction = line_search_start_parameters[0].left_angle;
+
+
+
+
+    if(search_direction == 0)
+    {
+        float start_angle =  (field_of_view/2 ) * (PI/180) + PI/2;
+        float end_angle   =  PI/2 - (field_of_view/2) * (PI/180) - 0.001;
+        float step        =  ((field_of_view/ 4)* (PI/180)) ;
+
+        for (float angle=start_angle; angle>=end_angle; angle-=step)
+        {
+          cout << start_angle << " " << end_angle << " " << angle << " " << step << endl;
+
+          float sin_ = sin(angle);
+          float cos_ = cos(angle);
+
+          int x = cos_*search_width+0.5;
+          int y = sin_*search_width+0.5;
+
+
+          if (!(std::find(line_follow_scanner.begin(), line_follow_scanner.end(), pair<int,int>{x,y}) != line_follow_scanner.end()))
+          {
+            line_follow_scanner.push_back({x,y});
+          }
+
+         }
+
+
+        vector<int> scanned_pixels_for_otsu;
+
+
+        for(auto &direction_to_scan :  line_follow_scanner)
+        {
+            int end_x = start_x + direction_to_scan.first;
+            int end_y = start_y - direction_to_scan.second;
+
+            Point start_point(start_x,start_y);
+            Point end_point(end_x,end_y);
+
+            LineIterator it(grey, start_point, end_point, 4);
+
+
+
+            cout << start_point << " " << end_point << endl;
+
+            for(int i = 0; i < it.count; i++, ++it)
+            {
+                int pixel_intensity = (int)grey.at<uchar>(it.pos());
+                scanned_pixels_for_otsu.push_back(pixel_intensity);
+
+                cout << "it: " << it.pos() << endl;
+
+            }
+        }
+
+
+        Mat m2( 1,scanned_pixels_for_otsu.size(), CV_32SC1,scanned_pixels_for_otsu.data());
+
+        m2.convertTo(m2, CV_8UC1);
+        //cout << m2 << endl;
+        int otsu_threshold = threshold(m2, m2, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+
+
+
+        vector<LineSearchMoments> scanned_moments;
+
+        for(auto &direction_to_scan :  line_follow_scanner)
+        {
+            int end_x = start_x + direction_to_scan.first;
+            int end_y = start_y - direction_to_scan.second;
+
+            int intensity_sum = 0;
+
+            Point start_point(start_x,start_y);
+            Point end_point(end_x,end_y);
+
+            LineIterator it(grey, start_point, end_point, 4);
+
+            Point last_pos;
+            Point current_pos;
+            bool scan_terminated = false;
+
+            for(int i = 0; i < it.count; i++, ++it)
+            {
+
+                int pixel_intensity = (int)grey.at<uchar>(it.pos());
+
+                current_pos.x = it.pos().x;
+                current_pos.y = it.pos().y;
+
+                if(pixel_intensity <= otsu_threshold)
+                {
+
+                    scanned_moments.push_back(LineSearchMoments{last_pos.x,last_pos.y,intensity_sum});
+                    scan_terminated = true;
+                }
+
+                last_pos.x = current_pos.x;
+                last_pos.y = current_pos.y;
+
+                intensity_sum += pixel_intensity;
+
+            }
+        }
+
+
+*/
+        //cout << otsu_threshold << endl;
+
+        /*
+        Mat matrix= Mat::zeros(scanned_pixels_for_otsu.size(), 1, CV_32SC1);
+
+        matrix.col(0).copyTo(scanned_pixels_for_otsu);
+
+
+        //
+           for(auto &it : scanned_pixels_for_otsu)
+           {
+                cout << it << endl;
+           }
+*/
+        /*
+        int end_x = start_x + line_follow_scanner[0].first;
+        int end_y = start_y - line_follow_scanner[0].second;
+
+        Point start_point(start_x,start_y);
+        Point end_point(end_x,end_y);
+
+        LineIterator it(grey, start_point, end_point, 4);
+
+        //vector<uchar> buf(it.count);
+
+        cout << start_point << " " << end_point << endl;
+
+        for(int i = 0; i < it.count; i++, ++it)
+        {
+            cout << "it: " << it.pos() << endl;
+            //uchar val = grey.at<uchar>(it.pos());
+            //CV_Assert(buf[i] == val);
+        }
+*/
+      }
+
+
+
+
+
+/*
+    for (auto &it: line_follow_scanner) {
+
+        cout << it.first << " " << it.second << endl;
+    }
+
+    cout << "_" << endl;
+
+*/
+
+
+
+}
+
 void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
   try {
           cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "mono8");
 
 
-
+        imshow("d",cv_ptr->image);
           warpPerspective(cv_ptr->image, grey, transfo, taille, INTER_CUBIC | WARP_INVERSE_MAP);
 
           grey= grey(Rect(0,0,1280,417));
 
            clock_t begin = clock();
 
-           Mat lc_im;
+           //Mat otsu;
+           //GaussianBlur( grey, otsu, Size( 5, 5 ), 0, 0 );
+           //int otsu_threshold = cv::threshold(grey, otsu, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
 
-          LineClassifier.FilterRowSegments(grey);
-          LineClassifier.FindStartAndWidthOfRowSegments();
-          if(LineClassifier.CheckMidRowMatch())
+           // cout << otsu_threshold << endl;
+/*
+           imshow("grey", grey);
+           imshow("otsu", otsu);
+           waitKey(30);
+**/
+          vector<LineSearchStartParameters> line_search_start_parameters;
+
+          LineClassifier.FindStartParametersForLineTracking(grey,line_search_start_parameters);
+          LineClassifier.DrawStartParameters(grey, line_search_start_parameters);
+
+
+          if(!line_search_start_parameters.empty())
           {
-              LineClassifier.RejectFalseWidthRowSegments();
-              LineClassifier.RejectFalseDistantRowSegments();
-              LineClassifier.RejectFalseDistantMidAndBottomRowSegments();
-              LineClassifier.RejectFalseMidLineSegments();
+              //cv::cvtColor(grey, grey, CV_BGR2GRAY);
+              FollowLinePoints(grey, line_search_start_parameters);
 
           }
 
+/*
 
-            lc_im= LineClassifier.DrawMatches();
+          MidLineSearcher.ScanImageToFindMidLineClusters(grey);
 
+          vector<pair<int,int>> midline_cluster_coordinates = MidLineSearcher.GetMidLineClustersCenterOfGravity();
 
+*/
+/*
+           for (auto const& cluster : midline_cluster_coordinates)
+           {
+             //cout << cluster.second << endl;
+             circle(lc_im, Point(cluster.first,cluster.second), 10, Scalar(0, 255, 255));
 
+           }
+*/
           clock_t end = clock();
           double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 
           //cout << "eltime: " << elapsed_secs << endl;
 
-          imshow("grey",lc_im);
 
-          waitKey(20);
 
 
            //Canny(grey, grey, 100, 200,3);

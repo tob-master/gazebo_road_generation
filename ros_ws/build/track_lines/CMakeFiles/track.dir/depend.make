@@ -80,6 +80,7 @@ track_lines/CMakeFiles/track.dir/include/houghline_transform.cpp.o: /opt/ros/mel
 
 track_lines/CMakeFiles/track.dir/include/line_classification.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_classification.cpp
 track_lines/CMakeFiles/track.dir/include/line_classification.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_classification.h
+track_lines/CMakeFiles/track.dir/include/line_classification.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/own_datatypes.h
 track_lines/CMakeFiles/track.dir/include/line_classification.cpp.o: /opt/ros/melodic/include/cv_bridge/cv_bridge.h
 track_lines/CMakeFiles/track.dir/include/line_classification.cpp.o: /opt/ros/melodic/include/image_transport/camera_publisher.h
 track_lines/CMakeFiles/track.dir/include/line_classification.cpp.o: /opt/ros/melodic/include/image_transport/camera_subscriber.h
@@ -160,6 +161,7 @@ track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.o: /home/tb/gazebo_roa
 track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_tracker.cpp
 track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_tracker.h
 track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/midline_search.h
+track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/own_datatypes.h
 track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.o: /opt/ros/melodic/include/cv_bridge/cv_bridge.h
 track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.o: /opt/ros/melodic/include/image_transport/camera_publisher.h
 track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.o: /opt/ros/melodic/include/image_transport/camera_subscriber.h
@@ -316,6 +318,7 @@ track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /home/tb/gazebo_ro
 track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_classification.h
 track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_tracker.h
 track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/midline_search.h
+track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/own_datatypes.h
 track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/src/line_tracker_node.cpp
 track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /opt/ros/melodic/include/cv_bridge/cv_bridge.h
 track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /opt/ros/melodic/include/image_transport/camera_publisher.h

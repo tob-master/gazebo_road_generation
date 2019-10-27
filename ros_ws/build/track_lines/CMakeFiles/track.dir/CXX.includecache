@@ -61,6 +61,8 @@ opencv2/highgui/highgui.hpp
 -
 opencv2/imgcodecs.hpp
 -
+own_datatypes.h
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/own_datatypes.h
 
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_tracker.cpp
 line_tracker.h
@@ -73,6 +75,8 @@ line_classification.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_classification.h
 houghline_transform.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/houghline_transform.h
+own_datatypes.h
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/own_datatypes.h
 
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/midline_search.cpp
 midline_search.h
@@ -101,6 +105,8 @@ opencv2/highgui/highgui.hpp
 -
 opencv2/imgcodecs.hpp
 -
+
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/own_datatypes.h
 
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/src/line_tracker_node.cpp
 line_tracker.h

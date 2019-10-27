@@ -8,7 +8,7 @@
 #include "midline_search.h"
 #include "line_classification.h"
 #include "houghline_transform.h"
-
+#include "own_datatypes.h"
 
 class LineTracker
 {
@@ -34,13 +34,14 @@ private:
 
     MidLineSearch MidLineSearcher;
     LineClassification LineClassifier;
-    HoughLineTransform HoughLine;
+    //HoughLineTransform HoughLine;
 
 
 public:
   LineTracker(ros::NodeHandle* nh_);
   void imageCallback(const sensor_msgs::ImageConstPtr& msg);
   void initBirdseye();
+  void FollowLinePoints(Mat grey, vector<LineSearchStartParameters> line_search_start_parameters);
   image_transport::Subscriber image_sub;
 };
 
