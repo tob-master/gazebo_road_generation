@@ -130,7 +130,7 @@ public:
     void FindStartParametersForLineTracking(Mat image,
                                             vector<LineSearchStartParameters> &line_search_start_parameters);
 
-    void DrawStartParameters(Mat grey, vector<LineSearchStartParameters> &line_search_start_parameters);
+    void DrawStartParameters(Mat &rgb, vector<LineSearchStartParameters> &line_search_start_parameters);
 
     Mat DrawMatches();
 

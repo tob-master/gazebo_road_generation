@@ -175,7 +175,9 @@ vector<Point> found_points;
 
 int FollowLine(Mat grey, int start_x, int start_y, float search_direction, int search_length, int field_of_view)
 {
-    if(it_count == 25) return 0;
+    if(it_count == 500) return 0;
+
+    if(start_x < search_length || start_y < search_length || (grey.cols-search_length) < start_x || (grey.rows-search_length) < start_y)return 0;
 
     float start_angle =  (field_of_view/2 ) * (PI/180) + search_direction;
     float end_angle   =  search_direction - (field_of_view/2) * (PI/180) - 0.001;
@@ -265,8 +267,21 @@ int FollowLine(Mat grey, int start_x, int start_y, float search_direction, int s
         moment_y      += weight * y;
     }
 
-    int center_of_gravity_x = moment_x / moment_weight;
-    int center_of_gravity_y = moment_y / moment_weight;
+    int center_of_gravity_x = 0;
+    int center_of_gravity_y = 0;
+
+    if(moment_weight <= 0)
+    {
+        center_of_gravity_x = start_x;
+        center_of_gravity_y = start_y;
+    }
+    else
+    {
+        center_of_gravity_x = moment_x / moment_weight;
+        center_of_gravity_y = moment_y / moment_weight;
+    }
+
+
 
     Point new_start_point = ChangeToBrightestCoordinateWithinReach(grey, center_of_gravity_x, center_of_gravity_y);
 
@@ -278,7 +293,13 @@ int FollowLine(Mat grey, int start_x, int start_y, float search_direction, int s
 
     float new_angle = CalculateAngle4Quadrants(opposite, adjacent);
 
-    cout << new_angle << " " << start_x << " " << start_y << " " << new_start_point << endl;
+   // cout << new_angle << " " << start_x << " " << start_y << " " << new_start_point << endl;
+
+
+    //if(start_y < new_start_y) return 0;
+
+
+    if(new_angle == 270) new_angle = 90;
 
     found_points.push_back(new_start_point);
 
@@ -286,15 +307,23 @@ int FollowLine(Mat grey, int start_x, int start_y, float search_direction, int s
     FollowLine(grey, new_start_x, new_start_y, new_angle, search_length, field_of_view);
 }
 
+
+
+Mat rgb;
+
 void LineTracker::FollowLinePoints(Mat grey, vector<LineSearchStartParameters> line_search_start_parameters)
 {
-    int search_length = 9;
+    int search_length = 10;
 
-    int field_of_view = 144;
+    int field_of_view = 110;
 
-    int start_x = line_search_start_parameters[0].left_x;
-    int start_y = line_search_start_parameters[0].left_y;
-    float search_direction = line_search_start_parameters[0].left_angle  * (PI/180);
+    int start_left_x = line_search_start_parameters[0].left_x;
+    int start_left_y = line_search_start_parameters[0].left_y;
+    float search_direction_left = line_search_start_parameters[0].left_angle  * (PI/180);
+
+    int start_right_x = line_search_start_parameters[0].right_x;
+    int start_right_y = line_search_start_parameters[0].right_y;
+    float search_direction_right = line_search_start_parameters[0].right_angle  * (PI/180);
 
     //cout << "se " << search_direction << endl;
 
@@ -307,24 +336,27 @@ void LineTracker::FollowLinePoints(Mat grey, vector<LineSearchStartParameters> l
         float end_angle   =  PI/2 - (field_of_view/2) * (PI/180) - 0.001;
         float step        =  ((field_of_view/ 4)* (PI/180)) ;
 */
-        it_count = 0;
-        found_points.clear();
-        FollowLine(grey, start_x, start_y, search_direction, search_length, field_of_view);
 
-        Mat rgb;
-        cv::cvtColor(grey, rgb, CV_GRAY2BGR);
+
+        it_count = 0;
+
+        found_points.clear();
+        FollowLine(grey, start_left_x, start_left_y, search_direction_left, search_length, field_of_view);
 
         for(auto &it: found_points)
         {
+            circle(rgb, it, 7, Scalar(255, 0, 255));
+        }
+        it_count = 0;
+        found_points.clear();
+        FollowLine(grey, start_right_x, start_right_y, search_direction_right, search_length, field_of_view);
 
-
-             circle(rgb, it, 7, Scalar(0, 255, 255));
-
-
+        for(auto &it: found_points)
+        {
+            circle(rgb, it, 7, Scalar(255, 0, 255));
         }
 
-        imshow("points",rgb);
-        waitKey(1);
+
     /*
 
     vector<pair<int,int>> line_follow_scanner;
@@ -521,10 +553,12 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
            imshow("otsu", otsu);
            waitKey(30);
 **/
+          cv::cvtColor(grey, rgb, CV_GRAY2BGR);
+
           vector<LineSearchStartParameters> line_search_start_parameters;
 
           LineClassifier.FindStartParametersForLineTracking(grey,line_search_start_parameters);
-          LineClassifier.DrawStartParameters(grey, line_search_start_parameters);
+          LineClassifier.DrawStartParameters(rgb, line_search_start_parameters);
 
 
           if(!line_search_start_parameters.empty())
@@ -534,23 +568,26 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
           }
 
-/*
+
 
           MidLineSearcher.ScanImageToFindMidLineClusters(grey);
 
           vector<pair<int,int>> midline_cluster_coordinates = MidLineSearcher.GetMidLineClustersCenterOfGravity();
 
-*/
-/*
+
+
            for (auto const& cluster : midline_cluster_coordinates)
            {
              //cout << cluster.second << endl;
-             circle(lc_im, Point(cluster.first,cluster.second), 10, Scalar(0, 255, 255));
+             circle(rgb, Point(cluster.first,cluster.second), 10, Scalar(0, 255, 255));
 
            }
-*/
+
           clock_t end = clock();
           double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+            cout << "fps: " << 1/elapsed_secs << endl;
+          imshow("img",rgb);
+          waitKey(1);
 
           //cout << "eltime: " << elapsed_secs << endl;
 

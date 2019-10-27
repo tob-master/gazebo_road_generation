@@ -437,10 +437,10 @@ void LineClassification::GetStartPointsAndAngles(vector<LineSearchStartParameter
 
 }
 
-void LineClassification::DrawStartParameters(Mat grey, vector<LineSearchStartParameters> &line_search_start_parameters)
+void LineClassification::DrawStartParameters(Mat &rgb, vector<LineSearchStartParameters> &line_search_start_parameters)
 {
-    Mat rgb;
-    cv::cvtColor(grey, rgb, CV_GRAY2BGR);
+    //Mat rgb;
+    //cv::cvtColor(grey, rgb, CV_GRAY2BGR);
 
     for ( auto &start_parameters_it : line_search_start_parameters )
     {
@@ -450,8 +450,7 @@ void LineClassification::DrawStartParameters(Mat grey, vector<LineSearchStartPar
 
     }
 
-    imshow("start_parameters",rgb);
-    waitKey(30);
+
 
 
 }
