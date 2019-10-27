@@ -170,6 +170,122 @@ float CalculateAngle4Quadrants(int opposite, int adjacent)
     return angle;
 }
 
+int it_count = 0;
+vector<Point> found_points;
+
+int FollowLine(Mat grey, int start_x, int start_y, float search_direction, int search_length, int field_of_view)
+{
+    if(it_count == 25) return 0;
+
+    float start_angle =  (field_of_view/2 ) * (PI/180) + search_direction;
+    float end_angle   =  search_direction - (field_of_view/2) * (PI/180) - 0.001;
+    float step        =  ((field_of_view/ 4)* (PI/180)) ;
+
+
+    vector<int> scanned_intensities_for_otsu;
+
+    for (float angle=start_angle; angle>=end_angle; angle-=step)
+    {
+        for (int current_search_length=0; current_search_length<search_length; current_search_length++)
+        {
+            Point current_point = PolarCoordinate(start_x,start_y,angle,current_search_length);
+            int intensity = (int)grey.at<uchar>(current_point);
+            scanned_intensities_for_otsu.push_back(intensity);
+        }
+    }
+
+    Mat scanned_intensities_for_otsu_mat( 1,scanned_intensities_for_otsu.size(), CV_32SC1,scanned_intensities_for_otsu.data());
+    scanned_intensities_for_otsu_mat.convertTo(scanned_intensities_for_otsu_mat, CV_8UC1);
+    int otsu_threshold = threshold(scanned_intensities_for_otsu_mat, scanned_intensities_for_otsu_mat, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+
+    vector<LineSearchMoments> scanned_moments;
+
+    for (float angle=start_angle; angle>=end_angle; angle-=step)
+    {
+        int intensity_sum = 0;
+        bool scan_terminated = false;
+
+
+        for (int current_search_length=0; current_search_length<search_length; current_search_length++)
+        {
+            Point current_point = PolarCoordinate(start_x,start_y,angle,current_search_length);
+            int intensity = (int)grey.at<uchar>(current_point);
+
+
+
+            if(intensity <= otsu_threshold)
+            {
+                Point current_point = PolarCoordinate(start_x,start_y,angle,current_search_length-1);
+                scanned_moments.push_back(LineSearchMoments{current_point.x,current_point.y,intensity_sum});
+                scan_terminated = true;
+                break;
+            }
+
+            intensity_sum += intensity;
+
+        }
+
+        if(!scan_terminated)
+        {
+            Point current_point = PolarCoordinate(start_x,start_y,angle,search_length-1);
+            scanned_moments.push_back(LineSearchMoments{current_point.x,current_point.y,intensity_sum});
+        }
+    }
+
+
+
+
+    float moment_weight = 0;
+    float moment_x = 0;
+    float moment_y = 0;
+
+    int max_weight_id = 0;
+    int max_weight = 0;
+
+    for (int id=0; id<scanned_moments.size(); id++)
+    {
+        if(max_weight < scanned_moments[id].sum)
+        {
+            max_weight = scanned_moments[id].sum;
+            max_weight_id = id;
+        }
+    }
+
+
+    for (int id=0; id<scanned_moments.size(); id++)
+    {
+        int weight = scanned_moments[id].sum;
+        int x = scanned_moments[id].x;
+        int y = scanned_moments[id].y;
+
+        if(id == max_weight_id) weight *= 6;
+
+        moment_weight += weight;
+        moment_x      += weight * x;
+        moment_y      += weight * y;
+    }
+
+    int center_of_gravity_x = moment_x / moment_weight;
+    int center_of_gravity_y = moment_y / moment_weight;
+
+    Point new_start_point = ChangeToBrightestCoordinateWithinReach(grey, center_of_gravity_x, center_of_gravity_y);
+
+    int new_start_x = new_start_point.x;
+    int new_start_y = new_start_point.y;
+
+    int opposite =  start_y - new_start_y;
+    int adjacent =  new_start_x - start_x;
+
+    float new_angle = CalculateAngle4Quadrants(opposite, adjacent);
+
+    cout << new_angle << " " << start_x << " " << start_y << " " << new_start_point << endl;
+
+    found_points.push_back(new_start_point);
+
+    it_count++;
+    FollowLine(grey, new_start_x, new_start_y, new_angle, search_length, field_of_view);
+}
+
 void LineTracker::FollowLinePoints(Mat grey, vector<LineSearchStartParameters> line_search_start_parameters)
 {
     int search_length = 9;
@@ -178,112 +294,37 @@ void LineTracker::FollowLinePoints(Mat grey, vector<LineSearchStartParameters> l
 
     int start_x = line_search_start_parameters[0].left_x;
     int start_y = line_search_start_parameters[0].left_y;
-    float search_direction = line_search_start_parameters[0].left_angle;
+    float search_direction = line_search_start_parameters[0].left_angle  * (PI/180);
 
-    if(search_direction == 0)
-    {
+    //cout << "se " << search_direction << endl;
+
+    //if(search_direction == 90)
+    //{
+
+
+    /*
         float start_angle =  (field_of_view/2 ) * (PI/180) + PI/2;
         float end_angle   =  PI/2 - (field_of_view/2) * (PI/180) - 0.001;
         float step        =  ((field_of_view/ 4)* (PI/180)) ;
+*/
+        it_count = 0;
+        found_points.clear();
+        FollowLine(grey, start_x, start_y, search_direction, search_length, field_of_view);
 
-        vector<int> scanned_intensities_for_otsu;
+        Mat rgb;
+        cv::cvtColor(grey, rgb, CV_GRAY2BGR);
 
-        for (float angle=start_angle; angle>=end_angle; angle-=step)
+        for(auto &it: found_points)
         {
-            for (int current_search_length=0; current_search_length<search_length; current_search_length++)
-            {
-                Point current_point = PolarCoordinate(start_x,start_y,angle,current_search_length);
-                int intensity = (int)grey.at<uchar>(current_point);
-                scanned_intensities_for_otsu.push_back(intensity);
-            }
+
+
+             circle(rgb, it, 7, Scalar(0, 255, 255));
+
+
         }
 
-        Mat scanned_intensities_for_otsu_mat( 1,scanned_intensities_for_otsu.size(), CV_32SC1,scanned_intensities_for_otsu.data());
-        scanned_intensities_for_otsu_mat.convertTo(scanned_intensities_for_otsu_mat, CV_8UC1);
-        int otsu_threshold = threshold(scanned_intensities_for_otsu_mat, scanned_intensities_for_otsu_mat, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
-
-        vector<LineSearchMoments> scanned_moments;
-
-        for (float angle=start_angle; angle>=end_angle; angle-=step)
-        {
-            int intensity_sum = 0;
-            bool scan_terminated = false;
-
-
-            for (int current_search_length=0; current_search_length<search_length; current_search_length++)
-            {
-                Point current_point = PolarCoordinate(start_x,start_y,angle,current_search_length);
-                int intensity = (int)grey.at<uchar>(current_point);
-
-
-
-                if(intensity <= otsu_threshold)
-                {
-                    Point current_point = PolarCoordinate(start_x,start_y,angle,current_search_length-1);
-                    scanned_moments.push_back(LineSearchMoments{current_point.x,current_point.y,intensity_sum});
-                    scan_terminated = true;
-                    break;
-                }
-
-                intensity_sum += intensity;
-
-            }
-
-            if(!scan_terminated)
-            {
-                Point current_point = PolarCoordinate(start_x,start_y,angle,search_length-1);
-                scanned_moments.push_back(LineSearchMoments{current_point.x,current_point.y,intensity_sum});
-            }
-        }
-
-
-        cout << "rd"
-<< endl;
-
-        float moment_weight = 0;
-        float moment_x = 0;
-        float moment_y = 0;
-
-        int max_weight_id = 0;
-        int max_weight = 0;
-
-        for (int id=0; id<scanned_moments.size(); id++)
-        {
-            if(max_weight < scanned_moments[id].sum)
-            {
-                max_weight = scanned_moments[id].sum;
-                max_weight_id = id;
-            }
-        }
-
-
-        for (int id=0; id<scanned_moments.size(); id++)
-        {
-            int weight = scanned_moments[id].sum;
-            int x = scanned_moments[id].x;
-            int y = scanned_moments[id].y;
-
-            if(id == max_weight_id) weight *= 6;
-
-            moment_weight += weight;
-            moment_x      += weight * x;
-            moment_y      += weight * y;
-        }
-
-        int center_of_gravity_x = moment_x / moment_weight;
-        int center_of_gravity_y = moment_y / moment_weight;
-
-        Point new_start_point = ChangeToBrightestCoordinateWithinReach(grey, center_of_gravity_x, center_of_gravity_y);
-
-        int new_start_x = new_start_point.x;
-        int new_start_y = new_start_point.y;
-
-        int opposite =  start_y - new_start_y;
-        int adjacent =  new_start_x - start_x;
-
-        float new_angle = CalculateAngle4Quadrants(opposite, adjacent);
-
-        cout << new_angle << " " << start_x << " " << start_y << " " << new_start_point << endl;
+        imshow("points",rgb);
+        waitKey(1);
     /*
 
     vector<pair<int,int>> line_follow_scanner;
@@ -437,7 +478,7 @@ void LineTracker::FollowLinePoints(Mat grey, vector<LineSearchStartParameters> l
             //CV_Assert(buf[i] == val);
         }
 */
-      }
+
 
 
 
