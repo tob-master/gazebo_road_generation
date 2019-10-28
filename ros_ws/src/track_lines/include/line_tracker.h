@@ -10,10 +10,15 @@
 #include "houghline_transform.h"
 #include "own_datatypes.h"
 
+
+
 class LineTracker
 {
 
 private:
+
+    enum {LEFT_LINE, RIGHT_LINE};
+
     ros::NodeHandle n;
     image_transport::ImageTransport it;
 
@@ -27,6 +32,13 @@ private:
 
     Mat grey;
     Mat rgb;
+
+    int search_length_;
+    int field_of_view_;
+
+    int line_follow_iterations_counter_;
+    vector<LineSearchFoundPointAndDirection> found_points_and_directions_left_line_;
+    vector<LineSearchFoundPointAndDirection> found_points_and_directions_right_line_;
 
 
 
@@ -42,6 +54,14 @@ public:
   void imageCallback(const sensor_msgs::ImageConstPtr& msg);
   void initBirdseye();
   void FollowLinePoints(Mat grey, vector<LineSearchStartParameters> line_search_start_parameters);
+  int FollowLine(Mat grey, int start_x, int start_y, float search_direction, int line);
+  float CalculateAngle4Quadrants(int opposite, int adjacent);
+  Point ChangeToBrightestCoordinateWithinReach(Mat image, Point center_of_gravity);
+  Point PolarCoordinate(int x, int y, float a, int l);
+  int GetOtsuTheshold(Mat grey, int start_x, int start_y, float start_angle, float end_angle, float step);
+  vector<LineSearchMoments> GetScannedMoments(Mat grey, int otsu_threshold, int start_x, int start_y, float start_angle, float end_angle, float step);
+  Point GetCenterOfGravity(int start_x, int start_y, vector<LineSearchMoments> scanned_moments);
+  float GetNewAngle(int start_x, int start_y, Point new_start_point);
   image_transport::Subscriber image_sub;
 };
 

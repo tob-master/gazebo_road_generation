@@ -240,6 +240,7 @@ track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.o
 track_lines/CMakeFiles/track.dir/include/midline_search.cpp.o
  /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/midline_search.cpp
  /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/midline_search.h
+ /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/own_datatypes.h
  /opt/ros/melodic/include/cv_bridge/cv_bridge.h
  /opt/ros/melodic/include/image_transport/camera_publisher.h
  /opt/ros/melodic/include/image_transport/camera_subscriber.h

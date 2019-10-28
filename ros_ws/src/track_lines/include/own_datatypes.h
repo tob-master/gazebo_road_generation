@@ -19,6 +19,32 @@ struct LineSearchMoments
     int sum;
 };
 
+struct LineSearchFoundPointAndDirection
+{
+    int x;
+    int y;
+    float angle;
+};
+
+
+struct TwoConnectedClusters
+{
+    int top_cog_x;
+    int top_cog_y;
+    int bottom_cog_x;
+    int bottom_cog_y;
+
+};
+
+struct ConnectedClusterKeys
+{
+    int key_x_1;
+    int key_y_1;
+
+    int key_x_2;
+    int key_y_2;
+};
+
 
 
 #endif // OWN_DATATYPES_H

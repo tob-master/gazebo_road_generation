@@ -239,6 +239,7 @@ track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.o: /opt/ros/melodic/in
 
 track_lines/CMakeFiles/track.dir/include/midline_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/midline_search.cpp
 track_lines/CMakeFiles/track.dir/include/midline_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/midline_search.h
+track_lines/CMakeFiles/track.dir/include/midline_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/own_datatypes.h
 track_lines/CMakeFiles/track.dir/include/midline_search.cpp.o: /opt/ros/melodic/include/cv_bridge/cv_bridge.h
 track_lines/CMakeFiles/track.dir/include/midline_search.cpp.o: /opt/ros/melodic/include/image_transport/camera_publisher.h
 track_lines/CMakeFiles/track.dir/include/midline_search.cpp.o: /opt/ros/melodic/include/image_transport/camera_subscriber.h

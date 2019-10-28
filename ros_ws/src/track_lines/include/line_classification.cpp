@@ -540,8 +540,8 @@ void LineClassification::FindStartParametersForLineTracking(Mat image,
         }
       }
 
-}*/
-/*
+}
+
     for(int i=0; i<row_segments_true_width_ids_.size(); i++)
     {
       for(int j=0; j<row_segments_true_width_ids_.size(); j++)
@@ -576,9 +576,9 @@ void LineClassification::FindStartParametersForLineTracking(Mat image,
           }
       }
     }
-    */
 
-/*
+
+
 void LineClassification::CheckWidthAndDistancesOfRowSegments()
 {
 
@@ -602,11 +602,11 @@ void LineClassification::CheckWidthAndDistancesOfRowSegments()
                   {
                     row_points.push_back(start_id+width/2);
                   }
-                  *//*else {
+                 else {
                     row_points.push_back(idx);
-                  }*/
 
-     /*       }
+
+            }
 
 
           vector<string> used_permutations;
@@ -646,8 +646,8 @@ void LineClassification::CheckWidthAndDistancesOfRowSegments()
           }
    }
 }
-*/
-/*
+
+
 vector<tuple<int,int,int,int,int,int>> LineClassification::SearchLineFeatures(Mat image)
 {
   artefacts_count.emplace_back(bottom_row_,0);
@@ -765,8 +765,8 @@ vector<tuple<int,int,int,int,int,int>> LineClassification::SearchLineFeatures(Ma
       // cout << "tpsize: " << true_points_row0.at(0).first << endl;
 
 
-*/
-/*
+
+
           for ( auto &t : correct_features_row0 )
           {
               std::cout <<"r0: " << t.first << " " << t.second << endl;
@@ -779,12 +779,12 @@ vector<tuple<int,int,int,int,int,int>> LineClassification::SearchLineFeatures(Ma
           std::cout <<"r1: " << t.first << " " << t.second << endl;
       }
 
-*/
 
 
 
 
-/*
+
+
 
       for ( auto &t : correct_features )
       {
@@ -836,8 +836,8 @@ vector<tuple<int,int,int,int,int,int>> LineClassification::SearchLineFeatures(Ma
   return matched_pattern_coordinates;
 
 }
-*/
-/*
+
+
 void LineClassification::CheckThicknessAndDistancesPerRow(int row_id, std::multimap<int,std::tuple<int, int>> &row_elements, std::vector<pair<int,int>> &correct_features)
 {
   std::pair < std::multimap<int,std::tuple<int, int>>::iterator,  std::multimap<int,std::tuple<int, int>>::iterator> ret;
@@ -861,10 +861,10 @@ void LineClassification::CheckThicknessAndDistancesPerRow(int row_id, std::multi
     {
       row_points.push_back(idx+thickness/2);
     }
-    *//*else {
+    else {
       row_points.push_back(idx);
-    }*/
-/*
+    }
+
   }
 
 
@@ -906,9 +906,9 @@ void LineClassification::CheckThicknessAndDistancesPerRow(int row_id, std::multi
 
    // cout << "finished TP" << endl;
 }
+
+
 */
-
-
 
 bool LineClassification::CheckRowSegmentWidth(int width)
 {
