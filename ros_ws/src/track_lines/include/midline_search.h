@@ -18,11 +18,14 @@
 #include <opencv2/imgcodecs.hpp>
 
 #include "own_datatypes.h"
+#include "own_utils.h"
+#include "own_defines.h"
 
 using namespace std;
 using namespace cv;
 
-#define PI 3.14
+
+
 
 class MidLineSearch
 {
@@ -72,6 +75,8 @@ class MidLineSearch
       void DrawMidLineClusters(Mat &rgb);
 
       void DrawConnectedClusters(Mat &rgb);
+      void ComputeConnectedClusterSlopes();
+      //float CalculateAngle(int opposite, int adjacent);
 
 
       //void SortClusters();

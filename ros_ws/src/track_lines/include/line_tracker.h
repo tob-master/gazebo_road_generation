@@ -7,8 +7,9 @@
 
 #include "midline_search.h"
 #include "line_classification.h"
-#include "houghline_transform.h"
+//#include "houghline_transform.h"
 #include "own_datatypes.h"
+
 
 
 
@@ -28,7 +29,14 @@ private:
     const int kTrackWidthMax = 143;
     const int kTrackWidthMin = 117;
 
+     const int kMaxChangeInDegreePerIteration_ = 10;
+         const int kMinDistanceToNotGotStuck_ = 3;
+
     Mat transfo;
+        int got_stuck_counter_;
+        bool got_stuck;
+
+        int backwards_counter = 0;
 
     Mat grey;
     Mat rgb;
@@ -41,6 +49,11 @@ private:
     vector<LineSearchFoundPointAndDirection> found_points_and_directions_right_line_;
 
 
+    vector<RDP_Point> left_line_points_for_rdp_;
+    vector<RDP_Point> right_line_points_for_rdp_;
+
+    vector<RDP_Point> left_line_rdp_reduced_;
+    vector<RDP_Point> right_line_rdp_reduced_;
 
     Size taille;
 
@@ -55,7 +68,6 @@ public:
   void initBirdseye();
   void FollowLinePoints(Mat grey, vector<LineSearchStartParameters> line_search_start_parameters);
   int FollowLine(Mat grey, int start_x, int start_y, float search_direction, int line);
-  float CalculateAngle4Quadrants(int opposite, int adjacent);
   Point ChangeToBrightestCoordinateWithinReach(Mat image, Point center_of_gravity);
   Point PolarCoordinate(int x, int y, float a, int l);
   int GetOtsuTheshold(Mat grey, int start_x, int start_y, float start_angle, float end_angle, float step);

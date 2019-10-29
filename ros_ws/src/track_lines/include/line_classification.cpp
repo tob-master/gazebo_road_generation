@@ -323,7 +323,7 @@ void LineClassification::RejectFalseMidLineSegments()
        }
     }
 }
-
+/*
 float LineClassification::CalculateAngle(int opposite, int adjacent)
 {
 
@@ -331,7 +331,9 @@ float LineClassification::CalculateAngle(int opposite, int adjacent)
 
     if(adjacent != 0 && opposite != 0)
     {
-        angle = atan(float(abs(opposite)/abs(adjacent)));
+        float div = float(abs(opposite))/ float(abs(adjacent));
+
+        angle = atan(div);
         angle = angle * 180/PI;
 
         if (adjacent > 0 && opposite > 0)
@@ -376,7 +378,7 @@ float LineClassification::CalculateAngle(int opposite, int adjacent)
     return angle;
 
 
-    /*
+
     float angle = 0;
 
     if(adjacent != 0)
@@ -399,9 +401,9 @@ float LineClassification::CalculateAngle(int opposite, int adjacent)
 
     return angle;
 
-    */
-}
 
+}
+*/
 
 
 
@@ -421,8 +423,8 @@ void LineClassification::GetStartPointsAndAngles(vector<LineSearchStartParameter
         int left_adjacent =  get<2>(match_it) - get<0>(match_it);
         int right_adjacent = get<3>(match_it) - get<1>(match_it);
 
-        float left_angle = CalculateAngle(opposite, left_adjacent);
-        float right_angle = CalculateAngle(opposite, right_adjacent);
+        float left_angle = CalculateAngle4Quadrants(opposite, left_adjacent);
+        float right_angle = CalculateAngle4Quadrants(opposite, right_adjacent);
 
         line_search_start_parameters.push_back(LineSearchStartParameters{get<2>(match_it),
                                                                           mid_row_,

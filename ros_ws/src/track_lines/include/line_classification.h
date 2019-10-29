@@ -18,11 +18,12 @@
 #include <opencv2/imgcodecs.hpp>
 
 #include "own_datatypes.h"
+#include "own_utils.h"
+#include "own_defines.h"
 
 using namespace std;
 using namespace cv;
 
-#define PI 3.14159265359
 
 
 enum ROWS {BOTTOM_ROW, MID_ROW, TOP_ROW};
@@ -32,6 +33,9 @@ class LineClassification
 private:
 
     Mat current_image_;
+
+
+
 
     bool mid_row_is_matched_;
 
@@ -104,7 +108,7 @@ private:
 
         bool CheckRowSegmentWidth(int width);
 
-         float CalculateAngle(int opposite, int adjacent);
+         //float CalculateAngle(int opposite, int adjacent);
 
          void ClearMemory();
 

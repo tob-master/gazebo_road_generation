@@ -56,7 +56,178 @@ MidLineSearch::MidLineSearch():
       FindConnectedClusters();
 
 
+      ComputeConnectedClusterSlopes();
+
+
+
 }
+#include <algorithm>
+#include <numeric>
+ double slope(const std::vector<double>& x, const std::vector<double>& y) {
+    const auto n    = x.size();
+    const auto s_x  = std::accumulate(x.begin(), x.end(), 0.0);
+    const auto s_y  = std::accumulate(y.begin(), y.end(), 0.0);
+    const auto s_xx = std::inner_product(x.begin(), x.end(), x.begin(), 0.0);
+    const auto s_xy = std::inner_product(x.begin(), x.end(), y.begin(), 0.0);
+    const auto a    = (n * s_xy - s_x * s_y) / (n * s_xx - s_x * s_x);
+    return a;
+ }
+
+/*
+ float MidLineSearch::CalculateAngle(int opposite, int adjacent)
+ {
+
+     float angle = 0;
+
+     if(adjacent != 0 && opposite != 0)
+     {
+         float div = float(abs(opposite))/ float(abs(adjacent));
+         //cout << "div: " << div << endl;
+         angle = atan(div);
+         angle = angle * 180/PI;
+
+         if (adjacent > 0 && opposite > 0)
+         {
+             cout << "0" << angle << endl;
+         }
+         else if (adjacent < 0 && opposite > 0)
+         {
+             cout << "1" << angle << endl;
+             angle = 180 - angle;
+
+         }
+         else if (adjacent < 0 && opposite < 0)
+         {
+             cout << "2" <<angle <<  endl;
+             angle = 180 + angle;
+
+         }
+         else if (adjacent > 0 && opposite < 0)
+         {
+             cout << "3" <<angle <<  endl;
+             angle = 360 - angle;
+
+
+         }
+         else {
+             cout << "something went wrong??" << endl;
+         }
+     }
+     else if(adjacent > 0 && opposite == 0)
+     {
+         cout << "4" << angle << endl;
+             angle = 0;
+
+     }
+     else if(adjacent < 0 && opposite == 0)
+     {
+          cout << "5" << angle << endl;
+             angle = 180;
+
+     }
+     else if(adjacent == 0 && opposite > 0)
+     {
+          cout << "6" << angle << endl;
+             angle = 90;
+
+     }
+     else if(adjacent == 0 && opposite < 0)
+     {
+         cout << "7" << angle << endl;
+             angle = 270;
+
+     }
+     else
+     {
+          cout << "8" << angle << endl;
+         angle = 0;
+
+     }
+
+     return angle;
+
+
+
+     float angle = 0;
+
+     if(adjacent != 0)
+     {
+         angle =atan(float(opposite/adjacent));
+         angle = angle * 180/PI;
+
+         if (adjacent > 0)
+         {
+             angle = 90 - angle;
+         }
+         else {
+             angle = -90 - angle;
+         }
+     }
+     else
+     {
+         angle = 0;
+     }
+
+     return angle;
+
+
+ }
+ */
+
+ void MidLineSearch::ComputeConnectedClusterSlopes()
+ {
+
+
+
+     for (auto& it: found_graphs)
+     {
+
+         if(it.size() > 1)
+         {
+             vector<double> x;
+             vector<double> y;
+
+             for(int i=0; i<it.size()-1; i++)
+             {
+
+
+                 int y_bottom = centers_of_gravity[it[i]].begin()->second;
+                 int y_top    = centers_of_gravity[it[i+1]].begin()->second;
+
+                 int x_bottom = centers_of_gravity[it[i]].begin()->first;
+                 int x_top    = centers_of_gravity[it[i+1]].begin()->first;
+
+                 int opposite =  y_bottom - y_top;
+
+                 int adjacent =  x_top - x_bottom;
+
+
+                 float angle = CalculateAngle4Quadrants(opposite, adjacent);
+
+                /*
+                 x.push_back(double(centers_of_gravity[it[i]].begin()->first));
+                 y.push_back(double(centers_of_gravity[it[i]].begin()->second));
+
+                 x.push_back(double(centers_of_gravity[it[i+1]].begin()->first));
+                 y.push_back(double(centers_of_gravity[it[i+1]].begin()->second));
+
+                 cout << "slope: " << atan(slope(x,y)) * 180/PI << endl;
+                 */
+
+                 //cout <<  "op: " <<  opposite  << " adj: " << adjacent << " xb " << x_bottom << " yb " << y_bottom << " xt " << x_top << " yt " << y_top << " angle: " << angle << endl;
+
+             }
+
+
+         }
+         //cout << "nx_cluster" << endl;
+     }
+
+
+
+
+
+ }
 
 
 
@@ -442,7 +613,7 @@ void MidLineSearch::DrawConnectedClusters(Mat &rgb)
         int G = rand() % 255;
 
         int R = rand() % 255;
-        cout << "allg: " << found_graphs.size() << "  g: " << it.size() << endl;
+        //cout << "allg: " << found_graphs.size() << "  g: " << it.size() << endl;
         for(int i=0; i<it.size(); i++)
         {
             int x = centers_of_gravity[it[i]].begin()->first;
@@ -455,7 +626,7 @@ void MidLineSearch::DrawConnectedClusters(Mat &rgb)
         }
     }
 
-    cout << "__" << endl;
+    //cout << "__" << endl;
 
 
 }
