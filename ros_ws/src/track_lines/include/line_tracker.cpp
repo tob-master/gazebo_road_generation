@@ -812,7 +812,7 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
           double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
             cout << "fps: " << 1/elapsed_secs << endl;
           imshow("img",rgb);
-          waitKey(0);
+          waitKey(30);
 
           //cout << "eltime: " << elapsed_secs << endl;
 
