@@ -287,7 +287,7 @@ int LineTracker::FollowLine(Mat grey, int start_x, int start_y, float search_dir
 
     if(backwards_counter > 5)
     {
-        cout << "retback" << endl;
+        //cout << "retback" << endl;
         return 0;
     }
 
@@ -304,7 +304,7 @@ int LineTracker::FollowLine(Mat grey, int start_x, int start_y, float search_dir
 
 
      if(got_stuck_counter_>6){
-         cout << "retstuck" << endl;
+         //cout << "retstuck" << endl;
          return 0;
      }
 //######################################
@@ -514,6 +514,9 @@ void LineTracker::FollowLinePoints(Mat grey, vector<LineSearchStartParameters> l
 
         vector<float> right_angles;
 
+        vector<tuple<int,int,int,int>> right_line_pointers;
+        vector<tuple<int,int,int,int>> left_line_pointers;
+
         if(left_line_rdp_reduced_.size() > 1)
         {
             for(auto i=0; i<left_line_rdp_reduced_.size()-1; i++)
@@ -527,12 +530,16 @@ void LineTracker::FollowLinePoints(Mat grey, vector<LineSearchStartParameters> l
                 int opposite =  y_bottom - y_top;
                 int adjacent =  x_top - x_bottom;
 
-                left_angles.push_back(CalculateAngle4Quadrants(opposite, adjacent) * 180/PI);
+                int length = sqrt(pow(adjacent,2)+pow(opposite,2));
+
+                int angle =  CalculateAngle4Quadrants(opposite, adjacent);
+
+                left_line_pointers.push_back(make_tuple(x_bottom,y_bottom,length, angle));
             }
         }
         else{
 
-            left_angles.push_back(90);
+            left_line_pointers.push_back(make_tuple(0,0,0,0));
 
         }
 
@@ -550,13 +557,29 @@ void LineTracker::FollowLinePoints(Mat grey, vector<LineSearchStartParameters> l
                 int opposite =  y_bottom - y_top;
                 int adjacent =  x_top - x_bottom;
 
-                right_angles.push_back(CalculateAngle4Quadrants(opposite, adjacent) * 180/PI);
+                int length = sqrt(pow(adjacent,2)+pow(opposite,2));
+
+                int angle =  CalculateAngle4Quadrants(opposite, adjacent);
+
+                right_line_pointers.push_back(make_tuple(x_bottom,y_bottom,length, angle));
+
             }
         }
         else{
 
-            right_angles.push_back(90);
+            right_line_pointers.push_back(make_tuple(0,0,0,0));
 
+        }
+
+
+        for (auto&it:left_line_pointers)
+        {
+            cout << "l(" << get<0>(it) << "," << get<1>(it) << ")" << " " << get<2>(it) << " " << get<3>(it) << endl;
+        }
+
+        for (auto&it:right_line_pointers)
+        {
+            cout << "r(" << get<0>(it) << "," << get<1>(it) << ")" << " " << get<2>(it) << " " << get<3>(it) << endl;
         }
 
 
