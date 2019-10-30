@@ -7,6 +7,6 @@
 subdirs("gtest")
 subdirs("ackermann_vehicle_description")
 subdirs("ackermann_vehicle_gazebo")
-subdirs("ackermann-drive-teleop")
+subdirs("ackerman_vehicle_drive")
 subdirs("track_annotation")
 subdirs("track_lines")

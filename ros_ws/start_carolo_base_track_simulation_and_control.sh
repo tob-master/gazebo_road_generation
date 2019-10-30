@@ -10,7 +10,7 @@ gnome-terminal -x bash -c "source ~/anaconda3/etc/profile.d/conda.sh;
 
 gnome-terminal -x bash -c "rosrun joy joy_node" &
 gnome-terminal -x bash -c "source  ${CWD}/devel/setup.bash;
-		           rosrun ackermann_drive_teleop joyop.py" &
+		           rosrun ackermann_vehicle_drive joyop.py" &
 
 exit 0
 
