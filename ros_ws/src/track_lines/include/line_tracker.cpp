@@ -417,7 +417,7 @@ void RamerDouglasPeucker(const vector<RDP_Point> &pointList, double epsilon, vec
 
 
 
-void LineTracker::FollowLinePoints(Mat grey, vector<LineSearchStartParameters> line_search_start_parameters)
+void LineTracker::FollowLinePoints(Mat grey, StartParameters line_search_start_parameters)
 {
 
 
@@ -432,13 +432,13 @@ void LineTracker::FollowLinePoints(Mat grey, vector<LineSearchStartParameters> l
 
 
 
-    int start_left_x = line_search_start_parameters[0].left_x;
-    int start_left_y = line_search_start_parameters[0].left_y;
-    float search_direction_left = line_search_start_parameters[0].left_angle  * (PI/180);
+    int start_left_x = line_search_start_parameters.left_x;
+    int start_left_y = line_search_start_parameters.left_y;
+    float search_direction_left = line_search_start_parameters.left_angle  * (PI/180);
 
-    int start_right_x = line_search_start_parameters[0].right_x;
-    int start_right_y = line_search_start_parameters[0].right_y;
-    float search_direction_right = line_search_start_parameters[0].right_angle  * (PI/180);
+    int start_right_x = line_search_start_parameters.right_x;
+    int start_right_y = line_search_start_parameters.right_y;
+    float search_direction_right = line_search_start_parameters.right_angle  * (PI/180);
 
 
         line_follow_iterations_counter_ = 0;
@@ -571,7 +571,7 @@ void LineTracker::FollowLinePoints(Mat grey, vector<LineSearchStartParameters> l
 
         }
 
-
+/*
         for (auto&it:left_line_pointers)
         {
             cout << "l(" << get<0>(it) << "," << get<1>(it) << ")" << " " << get<2>(it) << " " << get<3>(it) << endl;
@@ -581,7 +581,7 @@ void LineTracker::FollowLinePoints(Mat grey, vector<LineSearchStartParameters> l
         {
             cout << "r(" << get<0>(it) << "," << get<1>(it) << ")" << " " << get<2>(it) << " " << get<3>(it) << endl;
         }
-
+*/
 
 
 
@@ -752,6 +752,8 @@ void LineTracker::FollowLinePoints(Mat grey, vector<LineSearchStartParameters> l
 void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
   try {
+
+        clock_t begin = clock();
           cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "mono8");
 
 
@@ -760,7 +762,7 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
           grey= grey(Rect(0,0,1280,417));
 
-           clock_t begin = clock();
+
 
            //Mat otsu;
            //GaussianBlur( grey, otsu, Size( 5, 5 ), 0, 0 );
@@ -771,27 +773,120 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
            imshow("grey", grey);
            imshow("otsu", otsu);
            waitKey(30);
-**/
-          cv::cvtColor(grey, rgb, CV_GRAY2BGR);
-
-          vector<LineSearchStartParameters> line_search_start_parameters;
-
-          LineClassifier.FindStartParametersForLineTracking(grey,line_search_start_parameters);
-          LineClassifier.DrawStartParameters(rgb, line_search_start_parameters);
 
 
-          if(!line_search_start_parameters.empty())
+
+
+**//*
+            Mat kk;
+           threshold(grey, kk, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+
+           Mat labels;
+               Mat stats;
+               Mat centroids;
+               cv::connectedComponentsWithStats(kk, labels, stats, centroids);
+
+             imshow("labels", labels);
+         cout << "labels: " << labels << endl;
+         // cout << "stats: " << stats << endl;
+          cout << "centroids: " << centroids << endl;
+            cout << endl;
+
+     */
+            //Mat kk;
+
+            //kk = grey;
+
+            //Mat imBin;
+            //threshold(kk,imBin,0,255,THRESH_BINARY| CV_THRESH_OTSU);
+
+
+            //Mat stats, centroids, labelImage;
+            //int nLabels = connectedComponentsWithStats(imBin, labelImage, stats, centroids, 8, CV_32S);
+
+            //cout << stats << endl;
+/*
+            std::vector<Vec3b> colors(nLabels);
+            colors[0] = Vec3b(0, 0, 0);//background
+
+
+            for (int label = 1; label < nLabels; ++label)
+            {
+
+                colors[label] = Vec3b((rand() & 255), (rand() & 255), (rand() & 255));
+
+            }
+
+            Mat dst(kk.size(), CV_8UC3,Scalar(0,0,0));
+
+            Mat maxMid =stats.col(4)<200;
+            Mat minMid = stats.col(4)>50;
+
+            for (int i = 1; i < nLabels; i++)
+            {
+
+                Mat mask(labelImage.size(), CV_8UC1, Scalar(0));
+                if (maxMid.at<uchar>(i, 0) && minMid.at<uchar>(i,0))
+                {
+                    mask = mask | (labelImage==i);
+
+                    //cout << mask << endl;
+
+
+                    for (int r = 0; r < dst.rows; ++r){
+                        for (int c = 0; c < dst.cols; ++c){
+
+                            int t = mask.at<uchar>(r, c);
+
+                            if(t==255)
+                            {
+                                dst.at<Vec3b>(r, c) = colors[i];
+
+                            }
+                        }
+                    }
+
+
+                }
+            }
+
+            //Mat r(kk.size(), CV_8UC1, Scalar(0));
+            //kk.copyTo(r,mask);
+            //imshow("Result", r);
+            //imshow("imbin", imBin);
+            imshow("colorccl", dst);
+
+*/
+
+       //   cv::cvtColor(grey, rgb, CV_GRAY2BGR);
+
+
+
+          bool found_start_parameters = LineClassifier.FindStartParametersForLineSearch(grey);
+
+/*
+          if(found_start_parameters)
           {
-              //cv::cvtColor(grey, grey, CV_BGR2GRAY);
+
+              //LineClassifier.DrawStartParameters(rgb);
+
+              StartParameters line_search_start_parameters = LineClassifier.GetStartParametersForLineSearch();
+
               FollowLinePoints(grey, line_search_start_parameters);
+
+
 
           }
 
+*/
 
 
-          MidLineSearcher.FindMidLineClusters(grey);
+
+
+
+          //MidLineSearcher.FindMidLineClusters(grey);
           //MidLineSearcher.DrawMidLineClusters(rgb);
-          MidLineSearcher.DrawConnectedClusters(rgb);
+          //MidLineSearcher.DrawConnectedClusters(rgb);
 
           /*
            * MidLineSearcher.ScanImageToFindMidLineClusters(grey);
@@ -808,11 +903,12 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
            }
 */
+
           clock_t end = clock();
           double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
             cout << "fps: " << 1/elapsed_secs << endl;
-          imshow("img",rgb);
-          waitKey(30);
+          //imshow("img",rgb);
+          waitKey(0);
 
           //cout << "eltime: " << elapsed_secs << endl;
 

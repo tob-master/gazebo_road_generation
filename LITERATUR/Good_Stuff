@@ -1,0 +1,140 @@
+XX  Lane-mark extraction for automobiles under complex conditions
+
+adaptive ROI from previous frame -> roi table
+
+false edge elimination maybe for bottom of image -> not on birdsview to get edge orientations in 4 quadrants -> mit linienbreite noch vergleichen und noise auswerfen
+
+divide image in regions and fit Ranscac on edge image if not in angle between 15 and 165 then throw out and false in otientation table
+
+otsu on image parts 
+
+kalman tracking
+
+
+
+
+
+XX  Lane detection and tracking using B-Snake
+
+This B-Snake lane model is particular suitable for lane
+tracking application, since the parameters of lane
+model for the current frame is usually similar to those
+in the previous frame, i.e. the movements of the
+control points are smaller. On the contrary, for other
+lane models such as the second order polynomial lane
+model, when the road shape has a small change, it
+may cause a large change in the parameters of model.
+
+
+
+XX  Real-time illumination invariant lane detection for lane departure
+warning system
+
+Connected Components
+
+The binary lane image is obtained by combining the binary
+white and yellow lane images using OR operation. We use the con-
+nected component clustering method (Rudra, Shahanaz, Subhadi, &
+Radhakrishna, 2009) in binary lane image since lanes have con-
+necting property. Each label is divided as shown in Fig. 8. We
+extract the center coordinate values in each label. We calculate
+the label’s angle and the intercept of y-axis. If the labels have sim-
+ilar angle and intercept values of y-axis, they are combined to
+make one region to form a cluster.
+We divide an image into 5 sections, each section represents
+equidistance from the vehicle as shown in Fig. 9(a). In each section,
+we extract a center point from each cluster. Extracted points in
+each cluster make one line by using least squares line fitting
+
+
+
+
+
+XX Single camera lane detection and tracking
+
+Hough Lines With Vanishing point on bottom of image not an birdseye only take line that cross each other the most
+
+
+Heuristics:
+
+Mean support-size of a pair: The support-size of a line is the
+number of data pixels whose perpendicular distance from
+the line is less than or equal to 1.5 pixels.
+
+Mean perpendicular gradient of a pair: Given line
+orientation and the support data, we compute the mean grey-
+level-based gradient in a direction which is perpendicular to
+the line.
+
+Similarity of a pair: We test for similarity between the two
+lines comprising the pair, in terms of the distribution of their
+data support.
+
+Mean continuity of a pair: In [9], the role of higher-order
+statistics in the verification of hypotheses was discussed. In
+our case it means that we favour a line that matches the data
+by a small number of large pieces over a line that matches
+the data by a large number of short unconnected pieces.
+
+Mean lateral accuracy: Finally, the last criterion is
+concerned with the lateral accuracy, i.e. the perpendicular
+distance of the support pixels from the line.
+
+
+Use Of Tracking
+
+The purpose of tracking is twofold: First, detection of the
+lane in previous frames should limit the search region for
+the lane in the current frame, thus reducing running time.
+Second, the information from previous frames serves as a
+consistency measure of the results of the current frame. This
+helps to prune wrong hypotheses. The geometric
+information the algorithm passed from frame to frame is the
+location of the vanishing point as well as the total width of
+the lane
+
+
+
+A Simple Implementation for Unmarked Road
+Tracking
+
+Vanishing Point With Hough Lines 
+
+Calculating Vanishing Point Location
+The location of the vanishing point can be determined
+using the following steps.
+1. The image is captured in full color into a color image.
+2. The color image is converted to grey scale image.
+3. The grey scale image undergoes edge detection to produce
+edges image.
+4. The edges image undergoes Hough transformation. The
+detected lines are redrawn each with intensity equals to 1
+unit to produce accumulator image. In case a line passes
+through a previously marked pixel, the pixel intensity value
+is incremented.
+
+Accumulator image is scanned to detect the pixel with the
+highest value. Fig. 3 shows the outputs of the above sequence
+steps. Note the intensity of grey pixels; as the lines intersect
+the pixel intensity value increases and as they become sparse it
+decreases.
+
+But Problem when accumulation is outside of the image
+
+
+
+
+Best Summary of Road Detection !!
+
+Constraints on Roads
+
+Symmetry Constraint
+Smoothness Constraint
+Continuity Constraint
+Lane Marker Width Constraint
+Lane or Road Width Constraint
+Lane or Road Orientation Constraint
+Vanishin Point Agreement Constraint
+
+
+

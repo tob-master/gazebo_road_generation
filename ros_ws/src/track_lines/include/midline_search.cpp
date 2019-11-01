@@ -34,7 +34,7 @@ MidLineSearch::MidLineSearch():
 
           // mat.at<type>(row,column) or mat.at<type>(cv::Point(x,y)) to access the same point if x=column and y=row
           int pixel_value = (int)current_image_.at<uchar>(Point(x,y));
-            if(pixel_value>0) cout << pixel_value << " ";
+            //if(pixel_value>0) cout << pixel_value << " ";
           if (pixel_value > kMinPixelValueForClustering_)
           {
             bool is_cluster = RadialScanPoint(x,y);

@@ -8,16 +8,29 @@ LineClassification::LineClassification():
   top_row_(340),
   kMinLineWidth_(3),
   kMaxLineWidth_(9),
-  kMinLaneWidth_(117),
-  kMaxLaneWidth_(143),
+  kMinTrackWidth_(117),
+  kMaxTrackWidth_(143),
   kWindowSizeForLineSearch_(5),
   kLineThreshold_(200),
-  kMidLineThreshold_(200),
+  kMidLineThreshold_(170),
   kImageHeight_(417),
   kImageWidth_(1280),
-  row_spikes(kImageWidth_,3),
   kWindowSizeForMidLineSearch_(7),
-  kMaxColumnDistanceForBottomAndMidPoints_(15)
+  kMaxDistanceBetweenAdjacentRowPairs_(15),
+  kCarPositionInFrame_(640),
+  kRoadModelLeftLine_(551),
+  kRoadModelRightLine_(675),
+  kLineToCarDistanceThreshold_(50),
+  kLeftLineToCarDistance_(kCarPositionInFrame_ - kRoadModelLeftLine_),
+  kRightLineToCarDistance_(kRoadModelRightLine_ - kCarPositionInFrame_),
+  kMinLeftLineToCarDistance_(kLeftLineToCarDistance_ - kLineToCarDistanceThreshold_),
+  kMaxLeftLineToCarDistance_(kLeftLineToCarDistance_ + kLineToCarDistanceThreshold_),
+  kMinRightLineToCarDistance_(kRightLineToCarDistance_ - kLineToCarDistanceThreshold_),
+  kMaxRightLineToCarDistance_(kRightLineToCarDistance_ + kLineToCarDistanceThreshold_)
+
+
+
+
 {
 row_filter_activations_.insert(make_pair(bottom_row_,vector<int>(kImageWidth_)));
 row_filter_activations_.insert(make_pair(mid_row_,vector<int>(kImageWidth_)));
@@ -36,434 +49,378 @@ mid_row_is_matched_ = false;
 
 bool LineClassification::CheckMidRowMatch()
 {
-    if(row_segments_start_and_width_.count(mid_row_) >= 3) mid_row_is_matched_ = true;
-    else mid_row_is_matched_ = false;
+    if(row_segments_raw_.count(mid_row_) >= 3)
+    {
+        mid_row_is_matched_ = true;
+    }
+    else {
+        mid_row_is_matched_ = false;
+    }
 }
-
 
 void LineClassification::SetImage(Mat image)
 {
-    current_image_ = image;
+    image_ = image;
 }
 
-void LineClassification::FilterRowSegments()
+
+void LineClassification::ClearRowFilterActivations()
 {
+    for ( auto &row : rows_to_search_for_lines_ )
+    {
+         std::fill(row_filter_activations_[row].begin(), row_filter_activations_[row].end(), 0);
+    }
+}
+
+int LineClassification::GetPixelValue(int x, int y)
+{
+    return (int)image_.at<uchar>(Point(x,y));
+}
 
 
+void LineClassification::SetRowFilterActivation(int row, int index)
+{
+    row_filter_activations_[row].at(index) = 1;
+}
+
+
+
+
+void LineClassification::FilterRowsForActivations()
+{
+    ClearRowFilterActivations();
+
+    int filtering_start = ((kWindowSizeForLineSearch_-1)/2);
+    int filtering_end   = kImageWidth_-((kWindowSizeForLineSearch_-1)/2);
+
+    int filter_start = -((kWindowSizeForLineSearch_-1)/2);
+    int filter_end   = ((kWindowSizeForLineSearch_-1)/2);
 
     for ( auto &row : rows_to_search_for_lines_ )
     {
-
-      std::fill(row_filter_activations_[row].begin(), row_filter_activations_[row].end(), 0);
-
-      for (int i=((kWindowSizeForLineSearch_-1)/2); i<kImageWidth_-((kWindowSizeForLineSearch_-1)/2); i++)
+      for (int i=filtering_start; i<filtering_end; i++)
       {
-        for (int k= -((kWindowSizeForLineSearch_-1)/2); k<=((kWindowSizeForLineSearch_-1)/2); k++)
+        for (int k=filter_start; k<=filter_end; k++)
         {
+          int x = i+k;
+          int y = row;
 
-          if((int)current_image_.at<uchar>(row,i+k) >= kLineThreshold_)
+          if( GetPixelValue(x,y) >= kLineThreshold_)
           {
-            row_filter_activations_[row].at(i) = 1;
+            SetRowFilterActivation(row,i);
           }
-
         }
       }
-
     }    
+  }
 
+
+bool LineClassification::RowFilterIndexActivated(int row, int index)
+{
+    if(row_filter_activations_[row].at(index)==1) return true;
+    else return false;
 }
 
+
+void LineClassification::MeasureSegment(int row, int &index, int &start_id, int &width)
+{
+
+    start_id = index;
+
+    while(RowFilterIndexActivated(row,index) && index<kImageWidth_)
+    {
+      width++;
+      index++;
+    }
+
+
+}
 
 void LineClassification::FindStartAndWidthOfRowSegments()
 {
+    for ( auto &row : rows_to_search_for_lines_ )
+    {
+        for (int i=0;i<kImageWidth_;i++)
+        {
+          if(RowFilterIndexActivated(row,i))
+          {
+            int width = 0;
+            int start_id = 0;
 
+            MeasureSegment(row,i,start_id,width);
 
+            row_segments_raw_.insert(pair<int,StartAndWidth>(row, StartAndWidth{start_id,width}));
+
+          }
+        }
+    }
+}
+
+bool LineClassification::HasCorrectLineWidth(int width)
+{
+    if(width >= kMinLineWidth_ && width <= kMaxLineWidth_) return true;
+    else return false;
+}
+
+void LineClassification::RejectFalseLineWidth()
+{
 
     for ( auto &row : rows_to_search_for_lines_ )
     {
-        int segment_width = 0;
+        //pair<multimap<int,StartAndWidth>::iterator,multimap<int,StartAndWidth>::iterator> ret;
+        auto ret = row_segments_raw_.equal_range(row);
 
-        for (int x=0;x<kImageWidth_;x++)
+        for (auto it=ret.first; it!=ret.second; ++it)
         {
-          if(row_filter_activations_[row].at(x)==1)
-          {
+              int start_id = it->second.start_id;
+              int width    = it->second.width;
 
-            int segment_start_id = x;
-
-            while(row_filter_activations_[row].at(x) == 1 && x<kImageWidth_)
-            {
-              segment_width++;
-              x++;
-            }
-
-
-            row_segments_start_and_width_.insert(pair<int,tuple<int,int>>(row, make_tuple(segment_start_id,segment_width)));
-            //cout << "row: " << row << "  id: " << segment_start_id << "  width: " << segment_width << endl;
-            //cout << row_segments_start_and_width_.size() << endl;
-            segment_width=0;
-
-          }
-
-        }
-    }
-
-}
-
-
-void LineClassification::RejectFalseWidthRowSegments()
-{
-
-
-    for ( auto &row_id : rows_to_search_for_lines_ )
-    {
-
-        pair<multimap<int,tuple<int,int>>::iterator,multimap<int,tuple<int,int>>::iterator> ret;
-        ret = row_segments_start_and_width_.equal_range(row_id);
-
-
-
-        for (multimap<int,tuple<int, int>>::iterator it=ret.first; it!=ret.second; ++it)
-        {
-           // std::cout << "row: " << it->first << " id: " << std::get<0>(it->second) << " length: " << std::get<1>(it->second) << endl;
-
-              int start_id = std::get<0>(it->second);
-              int width    = std::get<1>(it->second);
-
-              if(width >= kMinLineWidth_ && width <= kMaxLineWidth_)
+              if(HasCorrectLineWidth(width))
               {
-
-                row_segments_true_width_ids_.insert(pair<int,int>(row_id, start_id+width/2));
-                //cout << "row: "<< row_id<< " " << start_id+width/2 << endl;
-                //row_segments_true_width_ids.push_back(start_id+width/2);
+                int mid_of_segment = start_id+width/2;
+                row_segments_true_line_width_.insert(pair<int,TrueLineWidthRowId>(row, TrueLineWidthRowId{mid_of_segment}));
               }
-              /*else {
-                row_points.push_back(idx);
-              }*/
-
-         }
+        }
     }
-
 }
 
-void LineClassification::RejectFalseDistantRowSegments()
+
+bool LineClassification::IsPermuted(int it1_pos, int &it2_pos, vector<string> &used_permutations)
 {
+    if(it1_pos==it2_pos){ it2_pos++; return true;}
 
-    for ( auto &row_id : rows_to_search_for_lines_ )
+    string permutation_hash12 = to_string(it1_pos) + to_string(it2_pos);
+
+    auto it = find (used_permutations.begin(), used_permutations.end(), permutation_hash12);
+
+    if (it != used_permutations.end())
     {
+        it2_pos++;
+        return true;
+    }
+    else
+    {
+      string permutation_hash21 = std::to_string(it2_pos) + std::to_string(it1_pos);
+      used_permutations.push_back(permutation_hash12);
+      used_permutations.push_back(permutation_hash21);
+      return false;
+    }
+}
 
+bool LineClassification::HasCorrectTrackWidth(int id1, int id2)
+{
+    int distance = abs(id2 - id1);
+    if(distance>=kMinTrackWidth_ && distance<=kMaxTrackWidth_) return true;
+    else return false;
+}
+
+void LineClassification::RejectFalseTrackWidth()
+{
+    for ( auto &row : rows_to_search_for_lines_ )
+    {
         vector<string> used_permutations;
-        std::vector<string>::iterator it;
 
-        pair<multimap<int,int>::iterator,multimap<int,int>::iterator> ret;
-        ret = row_segments_true_width_ids_.equal_range(row_id);
+        auto ret = row_segments_true_line_width_.equal_range(row);
 
-        int hash1 = 0;
-        int hash2 = 0;
+        int it1_pos = 0;
+        int it2_pos = 0;
 
-        for (multimap<int,int>::iterator it_row1=ret.first; it_row1!=ret.second; ++it_row1)
+        for (auto it1=ret.first; it1!=ret.second; ++it1)
         {
-            hash2=0;
-            for (multimap<int,int>::iterator it_row2=ret.first; it_row2!=ret.second; ++it_row2)
+            it2_pos=0;
+            for (auto it2=ret.first; it2!=ret.second; ++it2)
             {
-                //cout << "id1: " << row_id << " r1: " << it_row1->second << " r2:" << it_row2->second
-                  //   << " h1: " << hash1 << " h2: " << hash2 << endl;
-                //cout << "k: " <<  it_row1._M_node << endl;
+                if(IsPermuted(it1_pos,it2_pos,used_permutations)) continue;
 
-                if(hash1==hash2){ hash2++; continue;}
+                int row_id1 = it1->second.row_id;
+                int row_id2 = it2->second.row_id;
 
-
-                string permutation_hash12 = to_string(hash1) + to_string(hash2);
-
-                it = find (used_permutations.begin(), used_permutations.end(), permutation_hash12);
-
-                if (it != used_permutations.end())
+                if(HasCorrectTrackWidth(row_id1,row_id2))
                 {
-                  //std::cout << "Element found in myvector: " << *it << '\n';
-                    hash2++;
-                  continue;
+                  row_segments_true_track_width_.insert(pair<int,TrueTrackWidthRowPairIds>(row, TrueTrackWidthRowPairIds{row_id1,row_id2}));
                 }
-                else
-                {
-                  //std::cout << "Element not found in myvector\n";
-                  string permutation_hash21 = std::to_string(hash2) + std::to_string(hash1);
-                  used_permutations.push_back(permutation_hash12);
-                  used_permutations.push_back(permutation_hash21);
-                }
-
-                int distance = abs(it_row2->second - it_row1->second);
-                //cout <<"row: "<< row_id<< " " << w << " " << row_points.at(j)<< " " << row_points.at(i)<< endl;
-               // cout << "id2: " << row_id << " r1: " << it_row1->second << " r2:" << it_row2->second << " d: " << distance
-                 //    << " h1: " << hash1 << " h2: " << hash2 << endl;
-                if(distance>=kMinLaneWidth_ && distance<=kMaxLaneWidth_)
-                {
-
-
-                   // cout << "id3: " << row_id << " r1: " << it_row1->second << " r2:" << it_row2->second << " d: " << distance
-                     //    << " h1: " << hash1 << " h2: " << hash2 << endl;
-                  row_segments_true_width_and_distance_ids_.insert(pair<int,pair<int,int>>(row_id, make_pair(it_row1->second,it_row2->second)));
-
-                  //correct_features.push_back(make_pair(row_segments_true_width_ids.at(i),row_segments_true_width_ids.at(j)));
-                }
-
-
-                hash2++;
+                it2_pos++;
             }
-            hash1++;
+            it1_pos++;
         }
-
-        //cout << endl;
     }
-    //cout << "----------" << endl;
 }
 
-void LineClassification::RejectFalseDistantMidAndBottomRowSegments()
+
+bool LineClassification::FoundAdjacentRowPairs()
 {
+    if(row_segments_true_track_width_.count(bottom_row_)>0 && row_segments_true_track_width_.count(mid_row_)>0) return true;
+    else return false;
+}
 
+bool LineClassification::HasCorrectAlignment(int bottom_row_left_id, int bottom_row_right_id, int mid_row_left_id, int mid_row_right_id)
+{
+    int distance_left  = bottom_row_left_id - mid_row_left_id;
+    int distance_right = bottom_row_right_id - mid_row_right_id;
 
-    if(row_segments_true_width_and_distance_ids_.count(bottom_row_)>0 && row_segments_true_width_and_distance_ids_.count(mid_row_)>0)
-    {
-        pair<multimap<int,pair<int,int>>::iterator,multimap<int,pair<int,int>>::iterator> ret_bottom_row;
-        ret_bottom_row = row_segments_true_width_and_distance_ids_.equal_range(bottom_row_);
-
-        pair<multimap<int,pair<int,int>>::iterator,multimap<int,pair<int,int>>::iterator> ret_mid_row;
-        ret_mid_row = row_segments_true_width_and_distance_ids_.equal_range(mid_row_);
-
-        for (multimap<int,pair<int,int>>::iterator it_bottom_row=ret_bottom_row.first; it_bottom_row!=ret_bottom_row.second; ++it_bottom_row)
-        {
-
-            for (multimap<int,pair<int,int>>::iterator it_mid_row=ret_mid_row.first; it_mid_row!=ret_mid_row.second; ++it_mid_row)
-            {
-
-                int column_distance1 = get<0>(it_bottom_row->second) - get<0>(it_mid_row->second);
-                int column_distance2 = get<1>(it_bottom_row->second) - get<1>(it_mid_row->second);
-
-                if(abs(column_distance1) < kMaxColumnDistanceForBottomAndMidPoints_ && abs(column_distance2) < kMaxColumnDistanceForBottomAndMidPoints_)
-                {
-
-
-                  //cout << " " << get<0>(it_bottom_row->second) << " " << get<1>(it_bottom_row->second) <<
-                  //        " " << get<0>(it_mid_row->second) << " " << get<1>(it_mid_row->second) << endl;
-                  row_segments_true_mid_and_bottom_.push_back(make_tuple(get<0>(it_bottom_row->second),
-                                                                         get<1>(it_bottom_row->second),
-                                                                         get<0>(it_mid_row->second),
-                                                                         get<1>(it_mid_row->second)));
-                }
-            }
-        }
-        //cout << "______" << endl;
-    }
-
+    if(abs(distance_left) < kMaxDistanceBetweenAdjacentRowPairs_ && abs(distance_right) < kMaxDistanceBetweenAdjacentRowPairs_) return true;
+    else return false;
 
 }
 
-void LineClassification::RejectFalseMidLineSegments()
+void LineClassification::RejectFalseAlignedAdjacentRowPairs()
+{
+    if(FoundAdjacentRowPairs())
+    {
+        auto ret_bottom_row = row_segments_true_track_width_.equal_range(bottom_row_);
+        auto ret_mid_row = row_segments_true_track_width_.equal_range(mid_row_);
+
+        for (auto itb=ret_bottom_row.first; itb!=ret_bottom_row.second; ++itb)
+        {
+            for (auto itm=ret_mid_row.first; itm!=ret_mid_row.second; ++itm)
+            {
+                int bottom_row_left_id = itb->second.row_id1;
+                int bottom_row_right_id = itb->second.row_id2;
+
+                int mid_row_left_id = itm->second.row_id1;
+                int mid_row_right_id = itm->second.row_id2;
+
+                if(HasCorrectAlignment(bottom_row_left_id,bottom_row_right_id,mid_row_left_id,mid_row_right_id))
+                {
+                    row_segments_true_adjacent_track_width_.push_back(TrueAdjacentTrackWidthRowPairIds{bottom_row_left_id,
+                                                                                                       bottom_row_right_id,
+                                                                                                       mid_row_left_id,
+                                                                                                       mid_row_right_id});
+                }
+            }
+        }
+    }
+}
+
+int LineClassification::GetMidId(int left_row_id, int right_row_id)
+{
+    return (left_row_id + right_row_id)/2;
+}
+
+int LineClassification::GetTopRowMidId(int bottom_row_mid_id, int mid_row_mid_id)
+{
+    int top_offset = mid_row_mid_id - bottom_row_mid_id;
+
+    if(top_offset != 0)
+    {
+      return mid_row_mid_id + top_offset;
+    }
+    else {
+        return mid_row_mid_id;
+    }
+}
+
+bool LineClassification::PatternHasMatched(int bottom_row_mid_id, int mid_row_mid_id, int top_row_mid_id)
 {
 
+    bool bottom_row_matched = false;
+    bool mid_row_matched = false;
+    bool top_row_matched = false;
 
+    int filter_start = -((kWindowSizeForMidLineSearch_-1)/2);
+    int filter_end   =  ((kWindowSizeForMidLineSearch_-1)/2);
 
-
-
-    for ( auto &segment_it : row_segments_true_mid_and_bottom_ )
+    for (int k=filter_start; k<=filter_end; k++)
     {
 
+        if(GetPixelValue(bottom_row_mid_id+k,bottom_row_)<= kMidLineThreshold_) bottom_row_matched = true;
+        if(GetPixelValue(mid_row_mid_id+k,mid_row_)>= kMidLineThreshold_) mid_row_matched = true;
+        if(GetPixelValue(top_row_mid_id+k,top_row_)<= kMidLineThreshold_) top_row_matched = true;
+    }
 
-      int mid_line_id_bottom_row = 0;
-      int mid_line_id_mid_row = 0;
+    if(bottom_row_matched && mid_row_matched && top_row_matched) return true;
+    else return false;
 
+}
 
-      int left_line_id_bottom_row = get<0>(segment_it);
-      int right_line_id_bottom_row = get<1>(segment_it);
+void LineClassification::CheckPatternMatch()
+{
+    for ( auto &pattern_it : row_segments_true_adjacent_track_width_ )
+    {
+        int bottom_row_left_id  = pattern_it.bottom_row_left_id;
+        int bottom_row_right_id = pattern_it.bottom_row_right_id;
 
-      mid_line_id_bottom_row = (left_line_id_bottom_row + right_line_id_bottom_row)/2;
+        int mid_row_left_id  = pattern_it.mid_row_left_id;
+        int mid_row_right_id = pattern_it.mid_row_right_id;
 
-      int left_line_id_mid_row = get<2>(segment_it);
-      int right_line_id_mid_row = get<3>(segment_it);
+        int bottom_row_mid_id = GetMidId(bottom_row_left_id,bottom_row_right_id);
+        int mid_row_mid_id    = GetMidId(mid_row_left_id,mid_row_right_id);
+        int top_row_mid_id    = GetTopRowMidId(bottom_row_mid_id,mid_row_mid_id);
 
-      mid_line_id_mid_row = (left_line_id_mid_row + right_line_id_mid_row)/2;
-
-
-      //int m = (bottom_row_ - mid_row_) /
-
-      int mid_line_id_top_row;
-
-      int top_offset = mid_line_id_mid_row - mid_line_id_bottom_row;
-
-
-
-      if(top_offset != 0)
-      {
-        mid_line_id_top_row = mid_line_id_mid_row + top_offset;
-      }
-      else {
-          mid_line_id_top_row = mid_line_id_mid_row;
-      }
-
-
-
-      bool mid_pattern_bottom_row = false;
-      bool mid_pattern_mid_row = false;
-      bool mid_pattern_top_row = false;
-
-      for (int k= -((kWindowSizeForMidLineSearch_-1)/2); k<=((kWindowSizeForMidLineSearch_-1)/2); k++)
-      {
-          if((int)current_image_.at<uchar>(bottom_row_,mid_line_id_bottom_row+k)<= kMidLineThreshold_) mid_pattern_bottom_row = true;
-          if((int)current_image_.at<uchar>(mid_row_,mid_line_id_mid_row+k)>= kMidLineThreshold_) mid_pattern_mid_row = true;
-          if((int)current_image_.at<uchar>(top_row_,mid_line_id_top_row+k)<= kMidLineThreshold_) mid_pattern_top_row = true;
-      }
-
-       //cout << "bottom_row_: " << mid_pattern_row0 << " " << "mid_row_: " << mid_pattern_row1 << " " << "top_row_: " << mid_pattern_row2 << endl;
-       if(mid_pattern_bottom_row && mid_pattern_mid_row && mid_pattern_top_row)
+       if(PatternHasMatched(bottom_row_mid_id,mid_row_mid_id,top_row_mid_id))
        {
-
-          matched_pattern_positions.push_back(make_tuple(get<0>(segment_it),get<1>(segment_it),get<2>(segment_it),get<3>(segment_it), mid_line_id_bottom_row, mid_line_id_mid_row,mid_line_id_top_row));
-
-
-
+          pattern_matches_.push_back(PatternMatchIds{bottom_row_left_id,
+                                                      bottom_row_right_id,
+                                                      mid_row_left_id,
+                                                      mid_row_right_id,
+                                                      bottom_row_mid_id,
+                                                      mid_row_mid_id,
+                                                      top_row_mid_id});
 
        }
     }
-}
-/*
-float LineClassification::CalculateAngle(int opposite, int adjacent)
-{
-
-    float angle = 0;
-
-    if(adjacent != 0 && opposite != 0)
-    {
-        float div = float(abs(opposite))/ float(abs(adjacent));
-
-        angle = atan(div);
-        angle = angle * 180/PI;
-
-        if (adjacent > 0 && opposite > 0)
-        ;
-        else if (adjacent < 0 && opposite > 0)
-        {
-            angle = 180 - angle;
-        }
-        else if (adjacent < 0 && opposite < 0)
-        {
-            angle = 180 + angle;
-        }
-        else if (adjacent > 0 && opposite < 0)
-        {
-            angle = 360 - angle;
-        }
-        else {
-            cout << "something went wrong??" << endl;
-        }
-    }
-    else if(adjacent > 0 && opposite == 0)
-    {
-            angle = 0;
-    }
-    else if(adjacent < 0 && opposite == 0)
-    {
-            angle = 180;
-    }
-    else if(adjacent == 0 && opposite > 0)
-    {
-            angle = 90;
-    }
-    else if(adjacent == 0 && opposite < 0)
-    {
-            angle = 270;
-    }
-    else
-    {
-        angle = 0;
-    }
-
-    return angle;
-
-
-
-    float angle = 0;
-
-    if(adjacent != 0)
-    {
-        angle =atan(float(opposite/adjacent));
-        angle = angle * 180/PI;
-
-        if (adjacent > 0)
-        {
-            angle = 90 - angle;
-        }
-        else {
-            angle = -90 - angle;
-        }
-    }
-    else
-    {
-        angle = 0;
-    }
-
-    return angle;
 
 
 }
-*/
 
 
 
 
 
 
-
-void LineClassification::GetStartPointsAndAngles(vector<LineSearchStartParameters> &line_search_start_parameters)
+void LineClassification::SetStartParameters()
 {
 
-
-
-    for ( auto &match_it : matched_pattern_positions )
+    if(pattern_matches_count_ == 1)
     {
+
         int opposite =  bottom_row_ - mid_row_;
 
-        int left_adjacent =  get<2>(match_it) - get<0>(match_it);
-        int right_adjacent = get<3>(match_it) - get<1>(match_it);
+        int bottom_row_left_id  =  pattern_to_car_matches_[0].bottom_row_left_id;
+        int bottom_row_right_id =  pattern_to_car_matches_[0].bottom_row_right_id;
+        int mid_row_left_id     =  pattern_to_car_matches_[0].mid_row_left_id;
+        int mid_row_right_id    =  pattern_to_car_matches_[0].mid_row_right_id;
+
+        int left_adjacent  = mid_row_left_id  - bottom_row_left_id;
+        int right_adjacent = mid_row_right_id - bottom_row_right_id;
 
         float left_angle = CalculateAngle4Quadrants(opposite, left_adjacent);
         float right_angle = CalculateAngle4Quadrants(opposite, right_adjacent);
 
-        line_search_start_parameters.push_back(LineSearchStartParameters{get<2>(match_it),
-                                                                          mid_row_,
-                                                                          left_angle,
-                                                                          get<3>(match_it),
-                                                                          mid_row_,
-                                                                          right_angle});
-
-
-
+        start_parameters_ = StartParameters{mid_row_left_id,
+                                            mid_row_,
+                                            left_angle,
+                                            mid_row_right_id,
+                                            mid_row_,
+                                            right_angle};
     }
+    else {
+
+        /* TODO: implement a case for more than one match */
+        cout << "pattern_matches_count_ > 1" << endl;
+    }
+
+
+
 
 }
 
-void LineClassification::DrawStartParameters(Mat &rgb, vector<LineSearchStartParameters> &line_search_start_parameters)
+
+void LineClassification::DrawStartParameters(Mat &rgb)
 {
-    //Mat rgb;
-    //cv::cvtColor(grey, rgb, CV_GRAY2BGR);
 
-    for ( auto &start_parameters_it : line_search_start_parameters )
-    {
-
-        circle(rgb, Point(start_parameters_it.left_x,start_parameters_it.left_y), 7, Scalar(0, 255, 255));
-        circle(rgb, Point(start_parameters_it.right_x,start_parameters_it.right_y), 7, Scalar(255, 255, 0));
-
-    }
-
-
-
+    circle(rgb, Point(start_parameters_.left_x,start_parameters_.left_y), 7, Scalar(0, 255, 255));
+    circle(rgb, Point(start_parameters_.right_x,start_parameters_.right_y), 7, Scalar(255, 255, 0));
 
 }
 
-
+/*
 Mat LineClassification::DrawMatches()
 {
     Mat rgb;
-    cv::cvtColor(current_image_, rgb, CV_GRAY2BGR);
+    cv::cvtColor(image_, rgb, CV_GRAY2BGR);
 
-    for ( auto &match_it : matched_pattern_positions )
+    for ( auto &match_it : pattern_matches_ )
     {
 
         circle(rgb, Point(get<0>(match_it),bottom_row_), 7, Scalar(0, 255, 255));
@@ -483,37 +440,118 @@ Mat LineClassification::DrawMatches()
 
     return rgb;
 }
-
+*/
 
 void LineClassification::ClearMemory()
 {
-    matched_pattern_positions.clear();
-    row_segments_start_and_width_.clear();
 
-    row_segments_true_width_ids_.clear();
+    row_segments_raw_.clear();
+    row_segments_true_line_width_.clear();
+    row_segments_true_track_width_.clear();
+    row_segments_true_adjacent_track_width_.clear();
 
-    row_segments_true_width_and_distance_ids_.clear();
-    row_segments_true_mid_and_bottom_.clear();
+    pattern_matches_.clear();
+    pattern_to_car_matches_.clear();
+
 }
 
-void LineClassification::FindStartParametersForLineTracking(Mat image,
-                                                            vector<LineSearchStartParameters> &line_search_start_parameters)
+
+void LineClassification::CountPatternMatches()
+{
+    pattern_matches_count_ = pattern_matches_.size();
+
+}
+
+
+void LineClassification::CountPatternToCarMatches()
+{
+    pattern_to_car_matches_count_ = pattern_to_car_matches_.size();
+}
+
+
+
+
+bool LineClassification::HasCorrectPatternToCarDistance(int bottom_row_left_id, int bottom_row_right_id)
+{
+
+    /* TODO: implement driving on other side of track */
+
+    int left_id_to_car_distance  = kCarPositionInFrame_ - bottom_row_left_id;
+    int right_id_to_car_distance = bottom_row_right_id - kCarPositionInFrame_;
+
+    bool has_correct_distance = left_id_to_car_distance  > kMinLeftLineToCarDistance_  &&
+                                left_id_to_car_distance  < kMaxLeftLineToCarDistance_  &&
+                                right_id_to_car_distance > kMinRightLineToCarDistance_ &&
+                                right_id_to_car_distance < kMaxRightLineToCarDistance_ ;
+
+    return has_correct_distance;
+}
+
+void LineClassification::CheckPatternToCarMatch()
+{
+
+    for ( auto &match_it : pattern_matches_ )
+    {
+
+        int bottom_row_left_id  = match_it.bottom_row_left_id;
+        int bottom_row_right_id = match_it.bottom_row_right_id;
+
+        if(HasCorrectPatternToCarDistance(bottom_row_left_id,bottom_row_right_id))
+        {
+            pattern_to_car_matches_.push_back(match_it);
+        }
+
+    }
+
+
+
+}
+
+
+StartParameters LineClassification::GetStartParametersForLineSearch()
+{
+    return start_parameters_;
+}
+
+bool LineClassification::FindStartParametersForLineSearch(Mat image)
 {
     SetImage(image);
-    FilterRowSegments();
+
+    FilterRowsForActivations();
     FindStartAndWidthOfRowSegments();
+
     CheckMidRowMatch();
+
     if(mid_row_is_matched_)
     {
-        RejectFalseWidthRowSegments();
-        RejectFalseDistantRowSegments();
-        RejectFalseDistantMidAndBottomRowSegments();
-        RejectFalseMidLineSegments();
+        RejectFalseLineWidth();
+        RejectFalseTrackWidth();
+        RejectFalseAlignedAdjacentRowPairs();
+
+        CheckPatternMatch();
+        CountPatternMatches();
+
+        if(pattern_matches_count_ >= 1)
+        {
+            // TODO: implement case when driving on right site
+
+            CheckPatternToCarMatch();
+            CountPatternToCarMatches();
+
+            if(pattern_to_car_matches_count_ >= 1)
+            {
+
+               SetStartParameters();
+               ClearMemory();
+               return true;
+            }
+
+
+        }
+
     }
-    GetStartPointsAndAngles(line_search_start_parameters);
-
-
     ClearMemory();
+    return false;
 }
 
 /*
@@ -529,7 +567,7 @@ void LineClassification::FindStartParametersForLineTracking(Mat image,
           int a2 = correct_features_row0.at(i).second - correct_features_row1.at(j).second;
 
 
-          if(abs(a1) < kMaxColumnDistanceForBottomAndMidPoints_ && abs(a2) < kMaxColumnDistanceForBottomAndMidPoints_)
+          if(abs(a1) < kMaxDistanceBetweenAdjacentRowPairs_ && abs(a2) < kMaxDistanceBetweenAdjacentRowPairs_)
           {
             correct_features.push_back(make_tuple(correct_features_row0.at(i).first,
                                                 correct_features_row0.at(i).second,
@@ -544,9 +582,9 @@ void LineClassification::FindStartParametersForLineTracking(Mat image,
 
 }
 
-    for(int i=0; i<row_segments_true_width_ids_.size(); i++)
+    for(int i=0; i<row_segments_true_line_width_.size(); i++)
     {
-      for(int j=0; j<row_segments_true_width_ids_.size(); j++)
+      for(int j=0; j<row_segments_true_line_width_.size(); j++)
       {
           if(i==j) continue;
 
@@ -570,7 +608,7 @@ void LineClassification::FindStartParametersForLineTracking(Mat image,
 
           int distance = abs(row_segments_true_width_ids.at(j)-row_segments_true_width_ids.at(i));
           //cout <<"row: "<< row_id<< " " << w << " " << row_points.at(j)<< " " << row_points.at(i)<< endl;
-          if(distance>=kMinLaneWidth_ && distance<=kMaxLaneWidth_)
+          if(distance>=kMinTrackWidth_ && distance<=kMaxTrackWidth_)
           {
             row_segments_true_width_and_distance_ids.insert(pair<int,std::tuple<int,int>>(row, make_tuple(row_segments_true_width_ids.at(i),row_segments_true_width_ids.at(j))));
 
@@ -588,7 +626,7 @@ void LineClassification::CheckWidthAndDistancesOfRowSegments()
         {
 
             pair<multimap<int,tuple<int,int>>::iterator,multimap<int,tuple<int,int>>::iterator> ret;
-            ret = row_segments_start_and_width_.equal_range(row_id);
+            ret = row_segments_raw_.equal_range(row_id);
 
 
             std::vector<int> row_points;
@@ -640,7 +678,7 @@ void LineClassification::CheckWidthAndDistancesOfRowSegments()
 
                 int distance = abs(row_points.at(j)-row_points.at(i));
                 //cout <<"row: "<< row_id<< " " << w << " " << row_points.at(j)<< " " << row_points.at(i)<< endl;
-                if(distance>=kMinLaneWidth_ && distance<=kMaxLaneWidth_)
+                if(distance>=kMinTrackWidth_ && distance<=kMaxTrackWidth_)
                 {
                   correct_features.push_back(make_pair(row_points.at(i),row_points.at(j)));
                 }
@@ -748,7 +786,7 @@ vector<tuple<int,int,int,int,int,int>> LineClassification::SearchLineFeatures(Ma
            int a2 = correct_features_row0.at(i).second - correct_features_row1.at(j).second;
 
 
-           if(abs(a1) < kMaxColumnDistanceForBottomAndMidPoints_ && abs(a2) < kMaxColumnDistanceForBottomAndMidPoints_)
+           if(abs(a1) < kMaxDistanceBetweenAdjacentRowPairs_ && abs(a2) < kMaxDistanceBetweenAdjacentRowPairs_)
            {
              correct_features.push_back(make_tuple(correct_features_row0.at(i).first,
                                                  correct_features_row0.at(i).second,
@@ -899,7 +937,7 @@ void LineClassification::CheckThicknessAndDistancesPerRow(int row_id, std::multi
 
           int distance = abs(row_points.at(j)-row_points.at(i));
           //cout <<"row: "<< row_id<< " " << w << " " << row_points.at(j)<< " " << row_points.at(i)<< endl;
-          if(distance>=kMinLaneWidth_ && distance<=kMaxLaneWidth_)
+          if(distance>=kMinTrackWidth_ && distance<=kMaxTrackWidth_)
           {
             correct_features.push_back(make_pair(row_points.at(i),row_points.at(j)));
           }

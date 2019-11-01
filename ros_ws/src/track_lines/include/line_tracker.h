@@ -30,7 +30,7 @@ private:
     const int kTrackWidthMin = 117;
 
      const int kMaxChangeInDegreePerIteration_ = 10;
-         const int kMinDistanceToNotGotStuck_ = 3;
+     const int kMinDistanceToNotGotStuck_ = 3;
 
     Mat transfo;
         int got_stuck_counter_;
@@ -66,7 +66,7 @@ public:
   LineTracker(ros::NodeHandle* nh_);
   void imageCallback(const sensor_msgs::ImageConstPtr& msg);
   void initBirdseye();
-  void FollowLinePoints(Mat grey, vector<LineSearchStartParameters> line_search_start_parameters);
+  void FollowLinePoints(Mat grey, StartParameters line_search_start_parameters);
   int FollowLine(Mat grey, int start_x, int start_y, float search_direction, int line);
   Point ChangeToBrightestCoordinateWithinReach(Mat image, Point center_of_gravity);
   Point PolarCoordinate(int x, int y, float a, int l);
