@@ -1,3 +1,4 @@
 # ignore all png images
 #*.png
 *.bag
+*.pdf
