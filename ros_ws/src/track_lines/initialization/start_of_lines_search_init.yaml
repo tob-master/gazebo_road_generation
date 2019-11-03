@@ -8,8 +8,6 @@
 /start_of_lines_search_init/window_size_for_line_search: 5
 /start_of_lines_search_init/line_threshold: 200
 /start_of_lines_search_init/mid_line_threshold: 170
-/start_of_lines_search_init/image_height: 417
-/start_of_lines_search_init/image_width: 1280
 /start_of_lines_search_init/window_size_for_mid_line_search: 7
 /start_of_lines_search_init/max_distance_between_adjacent_row_pairs: 15
 /start_of_lines_search_init/car_position_in_frame: 640

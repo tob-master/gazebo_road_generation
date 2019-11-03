@@ -2,6 +2,15 @@
 #define OWN_DATATYPES_H
 
 
+struct BirdseyeInitializationParameters
+{
+    int alpha;
+    int beta;
+    int gamma;
+    int fov;
+    int distance;
+};
+
 struct StartOfLinesSearchInitializationParameters
 {
     int top_row;
@@ -14,14 +23,24 @@ struct StartOfLinesSearchInitializationParameters
     int window_size_for_line_search;
     int line_threshold;
     int mid_line_threshold;
-    int image_height;
-    int image_width;
     int window_size_for_mid_line_search;
     int max_distance_between_adjacent_row_pairs;
     int car_position_in_frame;
     int road_model_left_line;
     int road_model_right_line;
     int line_to_car_distance_threshold;
+
+};
+
+struct LineFollowerInitializationParameters
+{
+    int max_iterations;
+    int search_radius;
+    int max_weight_direction_scaler;
+    int field_of_view;
+    int max_consecutive_back_steps;
+    int min_travel_distance_to_not_got_stuck;
+    int max_got_stuck_counts;
 
 };
 

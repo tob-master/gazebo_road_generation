@@ -1,6 +1,18 @@
 #include "line_follower.h"
 
-LineFollower::LineFollower()
+LineFollower::LineFollower(int image_height, int image_width, LineFollowerInitializationParameters init):
+kImageWidth_(image_width),
+kImageHeight_(image_height),
+kMaxIterations_(init.max_iterations),
+kSearchRadius_(init.search_radius),
+kMaxWeightDirectionScaler_(init.max_weight_direction_scaler),
+kFieldOfView_(init.field_of_view),
+kMaxConsecutiveBackSteps_(init.max_consecutive_back_steps),
+kMinTravelDistanceToNotGotStuck_(init.min_travel_distance_to_not_got_stuck),
+kMaxGotStuckCounts_(init.max_got_stuck_counts),
+kStartAngleFieldOfView_((kFieldOfView_/2 ) * (PI/180)),
+kEndAngleFieldOfView_((kFieldOfView_/2 ) * (PI/180) - 0.001),
+kStepFieldOfView_((kFieldOfView_/ 4) * (PI/180))
 {
 
 }
@@ -9,9 +21,74 @@ LineFollower::LineFollower()
 void LineFollower::SetImage(Mat image)
 {
     image_ = image;
-    //image_width_ = image_.cols;
-    //image_height_ = image_.rows;
 }
+
+
+void LineFollower::SetStartParameters(StartParameters start_parameters)
+{
+    start_left_x_ = start_parameters.left_x;
+    start_left_y_ = start_parameters.left_y;
+    start_angle_left_ = start_parameters.left_angle  * (PI/180);
+
+    start_right_x_ = start_parameters.right_x;
+    start_right_y_ = start_parameters.right_y;
+    start_angle_right_ = start_parameters.right_angle  * (PI/180);
+}
+
+
+void LineFollower::ClearMemory()
+{
+    left_line_points_and_directions_.clear();
+    right_line_points_and_directions_.clear();
+}
+
+
+void LineFollower::ResetCounters()
+{
+    iterations_counter_ = 0;
+    got_stuck_counter_ = 0;
+    walked_backwards_counter_ = 0;
+}
+
+
+int LineFollower::FollowLine(int x, int y, float search_direction, int line)
+{
+    if(MaxIterationsExceeded() || SearchRadiusIsNotInImage(x, y)){ return 0; }
+
+    SetSearchDirectionParameters(search_direction);
+
+    int otsu_threshold = GetOtsuThreshold(x, y);
+
+    vector<ScannedMoments> scanned_moments = GetScannedMoments(otsu_threshold, x, y);
+
+    Point center_of_gravity = GetCenterOfGravity(x, y, scanned_moments);
+
+    Point new_start_point = ChangeToBrightestCoordinateWithinReach(center_of_gravity);
+
+    float new_angle = GetNewAngle(x, y, new_start_point);
+
+    if(HasGotStuck(x,y,new_start_point) || IsWalkingBackwards(y,new_start_point)){ return 0; }
+
+    AddIteration(new_start_point, new_angle, line);
+
+    FollowLine(new_start_point.x, new_start_point.y, new_angle, line);
+
+    //TODO: check if angle may change only a little is better
+    //############################
+    /*
+       if( new_angle > (search_direction+kMaxChangeInDegreePerIteration_* PI/180) || new_angle < (search_direction-kMaxChangeInDegreePerIteration_* PI/180)  )
+        {
+            //cout << "an " << new_angle*180/PI << " " << search_direction*180/PI  << " " << search_direction*180/PI+kMaxChangeInDegreePerIteration_ <<
+            //        " " << search_direction*180/PI-kMaxChangeInDegreePerIteration_ << endl;
+            new_angle = search_direction;
+        }
+    */
+    //####################
+
+
+
+}
+
 
 
 Point LineFollower::GetPolarCoordinate(int x, int y, float angle, int radius)
@@ -212,7 +289,7 @@ bool LineFollower::MaxIterationsExceeded()
 
 bool LineFollower::SearchRadiusIsNotInImage(int x, int y)
 {
-    return (x < kSearchRadius_ || y < kSearchRadius_ ||(image_width_  - kSearchRadius_)  < x || (image_height_ - kSearchRadius_)  < y);
+    return (x < kSearchRadius_ || y < kSearchRadius_ ||(kImageWidth_  - kSearchRadius_)  < x || (kImageHeight_ - kSearchRadius_)  < y);
 }
 
 
@@ -276,97 +353,6 @@ void LineFollower::AddIteration(Point new_start_point, int new_angle, int line)
     iterations_counter_++;
 }
 
-int LineFollower::FollowLine(int x, int y, float search_direction, int line)
-{
-    if(MaxIterationsExceeded() || SearchRadiusIsNotInImage(x, y)){ return 0; }
-
-    SetSearchDirectionParameters(search_direction);
-
-    int otsu_threshold = GetOtsuThreshold(x, y);
-
-    vector<ScannedMoments> scanned_moments = GetScannedMoments(otsu_threshold, x, y);
-
-    Point center_of_gravity = GetCenterOfGravity(x, y, scanned_moments);
-
-    Point new_start_point = ChangeToBrightestCoordinateWithinReach(center_of_gravity);
-
-    float new_angle = GetNewAngle(x, y, new_start_point);
-
-    if(HasGotStuck(x,y,new_start_point) || IsWalkingBackwards(y,new_start_point)){ return 0; }
-
-    AddIteration(new_start_point, new_angle, line);
-
-    FollowLine(new_start_point.x, new_start_point.y, new_angle, line);
-
-    //TODO: check if angle may change only a little is better
-    //############################
-    /*
-       if( new_angle > (search_direction+kMaxChangeInDegreePerIteration_* PI/180) || new_angle < (search_direction-kMaxChangeInDegreePerIteration_* PI/180)  )
-        {
-            //cout << "an " << new_angle*180/PI << " " << search_direction*180/PI  << " " << search_direction*180/PI+kMaxChangeInDegreePerIteration_ <<
-            //        " " << search_direction*180/PI-kMaxChangeInDegreePerIteration_ << endl;
-            new_angle = search_direction;
-        }
-    */
-    //####################
-
-
-
-
-
-
-
-//######################################
-    //if(new_angle > 220 &&  new_angle < 320) new_angle = 90;
-
-   // cout << new_angle << " " << start_x << " " << start_y << " " << new_start_point << endl;
-
-
-    //if(start_y < new_start_y) return 0;
-
-
-    //if(new_angle == 270) new_angle = 90;
-
-    //if(new_angle > 220 && new_angle < 320) new_angle = 90;
-
-
-
-
-
-
-
-
-
-
-}
-
-
-
-void LineFollower::SetStartParameters(StartParameters start_parameters)
-{
-    start_left_x_ = start_parameters.left_x;
-    start_left_y_ = start_parameters.left_y;
-    start_angle_left_ = start_parameters.left_angle  * (PI/180);
-
-    start_right_x_ = start_parameters.right_x;
-    start_right_y_ = start_parameters.right_y;
-    start_angle_right_ = start_parameters.right_angle  * (PI/180);
-}
-
-void LineFollower::ResetCounters()
-{
-    iterations_counter_ = 0;
-    got_stuck_counter_ = 0;
-    walked_backwards_counter_ = 0;
-}
-
-
-void LineFollower::ClearMemory()
-{
-    left_line_points_and_directions_.clear();
-    right_line_points_and_directions_.clear();
-}
-
 
 void LineFollower::DrawLinePoints(Mat &rgb)
 {
@@ -387,135 +373,12 @@ void LineFollower::FollowLines(Mat image, StartParameters start_parameters)
     SetImage(image);
     SetStartParameters(start_parameters);
 
-    ResetCounters();
     ClearMemory();
 
+    ResetCounters();
     FollowLine(start_left_x_, start_left_y_, start_angle_left_, LEFT_LINE);
+
     ResetCounters();
     FollowLine(start_right_x_, start_right_y_, start_angle_right_, RIGHT_LINE);
 
-    /*
-        //cout << "ls: " << left_line_points_and_directions_.size() << endl;
-        for(auto &it: left_line_points_and_directions_)
-        {
-
-
-
-            left_line_points_for_rdp_.push_back(RDP_Point(double(it.x),double(it.y)));
-
-        }
-
-
-
-
-        RamerDouglasPeucker(left_line_points_for_rdp_, 10.0, left_line_rdp_reduced_);
-
-
-        for(size_t i=0;i< left_line_rdp_reduced_.size();i++)
-        {
-
-
-            circle(rgb, Point(left_line_rdp_reduced_[i].first,left_line_rdp_reduced_[i].second), 7, Scalar(0, 255, 255));
-
-            //cout << pointListOut[i].first << "," << pointListOut[i].second << endl;
-        }
-
-
-
-        iterations_counter_ = 0;
-        got_stuck_counter_ = 0;
-        walked_backwards_counter_=0;
-
-        FollowLine(grey, start_right_x_, start_right_y_, start_angle_right_, RIGHT_LINE);
-
-        //cout << "rs: " << right_line_points_and_directions_.size() << endl;
-
-
-
-
-        for(auto &it: right_line_points_and_directions_)
-        {
-            right_line_points_for_rdp_.push_back(RDP_Point(double(it.x),double(it.y)));
-            //cout << "right("<<it.x<<","<<it.y<<") -> "<< it.angle * 180/PI << endl;
-            //circle(rgb, Point(it.x,it.y), 7, Scalar(255, 0, 255));
-        }
-        RamerDouglasPeucker(right_line_points_for_rdp_, 10.0, right_line_rdp_reduced_);
-
-
-
-        for(size_t i=0;i< right_line_rdp_reduced_.size();i++)
-        {
-
-
-            circle(rgb, Point(right_line_rdp_reduced_[i].first,right_line_rdp_reduced_[i].second), 7, Scalar(255, 0, 255));
-
-            //cout << pointListOut[i].first << "," << pointListOut[i].second << endl;
-        }
-
-
-
-
-
-
-
-        vector<float> left_angles;
-
-        vector<float> right_angles;
-
-        vector<tuple<int,int,int,int>> right_line_pointers;
-        vector<tuple<int,int,int,int>> left_line_pointers;
-
-        if(left_line_rdp_reduced_.size() > 1)
-        {
-            for(auto i=0; i<left_line_rdp_reduced_.size()-1; i++)
-            {
-                int x_bottom = left_line_rdp_reduced_[i].first;
-                int y_bottom = left_line_rdp_reduced_[i].second;
-
-                int x_top = left_line_rdp_reduced_[i+1].first;
-                int y_top = left_line_rdp_reduced_[i+1].second;
-
-                int opposite =  y_bottom - y_top;
-                int adjacent =  x_top - x_bottom;
-
-                int length = sqrt(pow(adjacent,2)+pow(opposite,2));
-
-                int angle =  CalculateAngle4Quadrants(opposite, adjacent);
-
-                left_line_pointers.push_back(make_tuple(x_bottom,y_bottom,length, angle));
-            }
-        }
-        else{
-
-            left_line_pointers.push_back(make_tuple(0,0,0,0));
-
-        }
-
-
-        if(right_line_rdp_reduced_.size() > 1)
-        {
-            for(auto i=0; i<right_line_rdp_reduced_.size()-1; i++)
-            {
-                int x_bottom = right_line_rdp_reduced_[i].first;
-                int y_bottom = right_line_rdp_reduced_[i].second;
-
-                int x_top = right_line_rdp_reduced_[i+1].first;
-                int y_top = right_line_rdp_reduced_[i+1].second;
-
-                int opposite =  y_bottom - y_top;
-                int adjacent =  x_top - x_bottom;
-
-                int length = sqrt(pow(adjacent,2)+pow(opposite,2));
-
-                int angle =  CalculateAngle4Quadrants(opposite, adjacent);
-
-                right_line_pointers.push_back(make_tuple(x_bottom,y_bottom,length, angle));
-
-            }
-        }
-        else{
-
-            right_line_pointers.push_back(make_tuple(0,0,0,0));
-
-        }*/
 }

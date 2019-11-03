@@ -2,7 +2,9 @@
 
 
 
-StartOfLinesSearch::StartOfLinesSearch(StartOfLinesSearchInitializationParameters init):
+StartOfLinesSearch::StartOfLinesSearch(int image_height,int image_width,StartOfLinesSearchInitializationParameters init):
+  kImageHeight_(image_height),
+  kImageWidth_(image_width),
   kBottomRow_(init.bottom_row),
   kMidRow_(init.mid_row),
   kTopRow_(init.top_row),
@@ -13,8 +15,6 @@ StartOfLinesSearch::StartOfLinesSearch(StartOfLinesSearchInitializationParameter
   kWindowSizeForLineSearch_(init.window_size_for_line_search),
   kLineThreshold_(init.line_threshold),
   kMidLineThreshold_(init.mid_line_threshold),
-  kImageHeight_(init.image_height),
-  kImageWidth_(init.image_width),
   kWindowSizeForMidLineSearch_(init.window_size_for_mid_line_search),
   kMaxDistanceBetweenAdjacentRowPairs_(init.max_distance_between_adjacent_row_pairs),
   kCarPositionInFrame_(init.car_position_in_frame),
