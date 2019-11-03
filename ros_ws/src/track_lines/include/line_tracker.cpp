@@ -2,6 +2,41 @@
 
 
 
+
+
+void LineTracker::LoadAllClassInitializationParameters()
+{
+
+
+    string str = "rosparam load /home/tb/gazebo_road_generation/ros_ws/src/track_lines/initialization/start_of_lines_search_init.yaml";
+    const char *command = str.c_str();
+    system(command);
+
+
+    n.getParam("/start_of_lines_search_init/top_row", start_of_lines_search_init.top_row);
+    n.getParam("/start_of_lines_search_init/mid_row", start_of_lines_search_init.mid_row);
+    n.getParam("/start_of_lines_search_init/bottom_row", start_of_lines_search_init.bottom_row);
+    n.getParam("/start_of_lines_search_init/min_line_width", start_of_lines_search_init.min_line_width);
+    n.getParam("/start_of_lines_search_init/max_line_width", start_of_lines_search_init.max_line_width);
+    n.getParam("/start_of_lines_search_init/min_track_width", start_of_lines_search_init.min_track_width);
+    n.getParam("/start_of_lines_search_init/max_track_width", start_of_lines_search_init.max_track_width);
+    n.getParam("/start_of_lines_search_init/window_size_for_line_search", start_of_lines_search_init.window_size_for_line_search);
+    n.getParam("/start_of_lines_search_init/line_threshold", start_of_lines_search_init.line_threshold);
+    n.getParam("/start_of_lines_search_init/mid_line_threshold", start_of_lines_search_init.mid_line_threshold);
+    n.getParam("/start_of_lines_search_init/image_height", start_of_lines_search_init.image_height);
+    n.getParam("/start_of_lines_search_init/image_width", start_of_lines_search_init.image_width);
+    n.getParam("/start_of_lines_search_init/window_size_for_mid_line_search", start_of_lines_search_init.window_size_for_mid_line_search);
+    n.getParam("/start_of_lines_search_init/max_distance_between_adjacent_row_pairs", start_of_lines_search_init.max_distance_between_adjacent_row_pairs);
+    n.getParam("/start_of_lines_search_init/car_position_in_frame", start_of_lines_search_init.car_position_in_frame);
+    n.getParam("/start_of_lines_search_init/road_model_left_line", start_of_lines_search_init.road_model_left_line);
+    n.getParam("/start_of_lines_search_init/road_model_right_line", start_of_lines_search_init.road_model_right_line);
+    n.getParam("/start_of_lines_search_init/line_to_car_distance_threshold", start_of_lines_search_init.line_to_car_distance_threshold);
+
+
+}
+
+
+
 void LineTracker::initBirdseye()
 {
   // default values of the homography parameters
@@ -417,7 +452,7 @@ void RamerDouglasPeucker(const vector<RDP_Point> &pointList, double epsilon, vec
 
 
 
-void LineTracker::FollowLinePoints(Mat grey, StartParameters line_search_start_parameters)
+void LineTracker::FollowLinePoints(Mat grey, StartParameters start_parameters)
 {
 
 
@@ -432,20 +467,20 @@ void LineTracker::FollowLinePoints(Mat grey, StartParameters line_search_start_p
 
 
 
-    int start_left_x = line_search_start_parameters.left_x;
-    int start_left_y = line_search_start_parameters.left_y;
-    float search_direction_left = line_search_start_parameters.left_angle  * (PI/180);
+    int start_left_x_ = start_parameters.left_x;
+    int start_left_y_ = start_parameters.left_y;
+    float start_angle_left_ = start_parameters.left_angle  * (PI/180);
 
-    int start_right_x = line_search_start_parameters.right_x;
-    int start_right_y = line_search_start_parameters.right_y;
-    float search_direction_right = line_search_start_parameters.right_angle  * (PI/180);
+    int start_right_x_ = start_parameters.right_x;
+    int start_right_y_ = start_parameters.right_y;
+    float start_angle_right_ = start_parameters.right_angle  * (PI/180);
 
 
         line_follow_iterations_counter_ = 0;
         got_stuck_counter_ = 0;
         backwards_counter = 0;
         found_points_and_directions_left_line_.clear();
-        FollowLine(grey, start_left_x, start_left_y, search_direction_left, LEFT_LINE);
+        FollowLine(grey, start_left_x_, start_left_y_, start_angle_left_, LEFT_LINE);
 
         //cout << "ls: " << found_points_and_directions_left_line_.size() << endl;
         for(auto &it: found_points_and_directions_left_line_)
@@ -478,7 +513,7 @@ void LineTracker::FollowLinePoints(Mat grey, StartParameters line_search_start_p
         got_stuck_counter_ = 0;
         backwards_counter=0;
         found_points_and_directions_right_line_.clear();
-        FollowLine(grey, start_right_x, start_right_y, search_direction_right, RIGHT_LINE);
+        FollowLine(grey, start_right_x_, start_right_y_, start_angle_right_, RIGHT_LINE);
 
         //cout << "rs: " << found_points_and_directions_right_line_.size() << endl;
 
@@ -593,9 +628,9 @@ void LineTracker::FollowLinePoints(Mat grey, StartParameters line_search_start_p
 
     int field_of_view_ = 144;
 
-    int start_x = line_search_start_parameters[0].left_x;
-    int start_y = line_search_start_parameters[0].left_y;
-    float search_direction = line_search_start_parameters[0].left_angle;
+    int start_x = start_parameters[0].left_x;
+    int start_y = start_parameters[0].left_y;
+    float search_direction = start_parameters[0].left_angle;
 
 
 
@@ -753,12 +788,19 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
   try {
 
-        clock_t begin = clock();
+
+
           cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "mono8");
 
 
-        imshow("d",cv_ptr->image);
+
+
+
+
           warpPerspective(cv_ptr->image, grey, transfo, taille, INTER_CUBIC | WARP_INVERSE_MAP);
+
+
+
 
           grey= grey(Rect(0,0,1280,417));
 
@@ -858,21 +900,41 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 */
 
-       //   cv::cvtColor(grey, rgb, CV_GRAY2BGR);
+       cv::cvtColor(grey, rgb, CV_GRAY2BGR);
+
+
+          clock_t begin = clock();
 
 
 
-          bool found_start_parameters = LineClassifier.FindStartParametersForLineSearch(grey);
+
+          if(StartOfLinesSearcher_->FindStartParameters(grey))
+          {
+              StartOfLinesSearcher_->DrawStartParameters(rgb);
+              LineFollower_->FollowLines(grey,StartOfLinesSearcher_->GetStartParametersForLineSearch());
+              LineFollower_->DrawLinePoints(rgb);
+
+          }
+
+
+          clock_t end = clock();
+          double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+          cout << "fps: " << 1/elapsed_secs << endl;
+
+
+          imshow("input",cv_ptr->image);
+          imshow("output", rgb);
+          waitKey(0);
 
 /*
           if(found_start_parameters)
           {
 
-              //LineClassifier.DrawStartParameters(rgb);
+              //StartOfLinesSearcher_.DrawStartParameters(rgb);
 
-              StartParameters line_search_start_parameters = LineClassifier.GetStartParametersForLineSearch();
+              StartParameters start_parameters = StartOfLinesSearcher_.GetStartParametersForLineSearch();
 
-              FollowLinePoints(grey, line_search_start_parameters);
+              FollowLinePoints(grey, start_parameters);
 
 
 
@@ -904,11 +966,9 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
            }
 */
 
-          clock_t end = clock();
-          double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-            cout << "fps: " << 1/elapsed_secs << endl;
+
           //imshow("img",rgb);
-          waitKey(0);
+
 
           //cout << "eltime: " << elapsed_secs << endl;
 
@@ -1038,10 +1098,10 @@ cout << res << endl;
 
            }
 
-           //LineClassifier.FilterRows(grey);
+           //StartOfLinesSearcher_.FilterRows(grey);
 
 
-           vector<tuple<int,int,int,int,int,int>> matched_pattern_coordinates = LineClassifier.SearchLineFeatures(grey);
+           vector<tuple<int,int,int,int,int,int>> matched_pattern_coordinates = StartOfLinesSearcher_.SearchLineFeatures(grey);
 
            for (int i=0; i<matched_pattern_coordinates.size(); i++)
            {
@@ -1082,5 +1142,15 @@ LineTracker::LineTracker(ros::NodeHandle* nh_):n(*nh_),it(*nh_),taille(1280.,720
 
   field_of_view_ = 144;
   line_follow_iterations_counter_ = 0;
+
+
+
+
+
+  LoadAllClassInitializationParameters();
+
+  StartOfLinesSearcher_ = new StartOfLinesSearch(start_of_lines_search_init);
+  LineFollower_         = new LineFollower;
+
 
 };

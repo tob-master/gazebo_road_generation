@@ -7,6 +7,8 @@
 
 #include "midline_search.h"
 #include "line_classification.h"
+#include "line_follower.h"
+
 //#include "houghline_transform.h"
 #include "own_datatypes.h"
 
@@ -17,6 +19,15 @@ class LineTracker
 {
 
 private:
+
+
+
+    StartOfLinesSearchInitializationParameters start_of_lines_search_init;
+
+
+
+
+
 
     enum {LEFT_LINE, RIGHT_LINE};
 
@@ -58,15 +69,23 @@ private:
     Size taille;
 
     MidLineSearch MidLineSearcher;
-    LineClassification LineClassifier;
+
+    StartOfLinesSearch *StartOfLinesSearcher_;
+
+    LineFollower *LineFollower_;
+
+
     //HoughLineTransform HoughLine;
+
+
+    void LoadAllClassInitializationParameters();
 
 
 public:
   LineTracker(ros::NodeHandle* nh_);
   void imageCallback(const sensor_msgs::ImageConstPtr& msg);
   void initBirdseye();
-  void FollowLinePoints(Mat grey, StartParameters line_search_start_parameters);
+  void FollowLinePoints(Mat grey, StartParameters start_parameters);
   int FollowLine(Mat grey, int start_x, int start_y, float search_direction, int line);
   Point ChangeToBrightestCoordinateWithinReach(Mat image, Point center_of_gravity);
   Point PolarCoordinate(int x, int y, float a, int l);

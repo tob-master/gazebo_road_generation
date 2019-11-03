@@ -1,6 +1,32 @@
 #ifndef OWN_DATATYPES_H
 #define OWN_DATATYPES_H
 
+
+struct StartOfLinesSearchInitializationParameters
+{
+    int top_row;
+    int mid_row;
+    int bottom_row;
+    int min_line_width;
+    int max_line_width;
+    int min_track_width;
+    int max_track_width;
+    int window_size_for_line_search;
+    int line_threshold;
+    int mid_line_threshold;
+    int image_height;
+    int image_width;
+    int window_size_for_mid_line_search;
+    int max_distance_between_adjacent_row_pairs;
+    int car_position_in_frame;
+    int road_model_left_line;
+    int road_model_right_line;
+    int line_to_car_distance_threshold;
+
+};
+
+
+
 struct StartParameters
 {
     int left_x;
@@ -46,8 +72,40 @@ struct ConnectedClusterKeys
 };
 
 
-namespace lineclassification
+
+namespace line_follower
 {
+    struct PointAndDirection
+    {
+        int x;
+        int y;
+        float angle;
+    };
+
+    struct ScannedMoments
+    {
+        int x;
+        int y;
+        int intensity_sum;
+    };
+
+
+    struct SummedMoments
+    {
+        float moment_weight;
+        float moment_x;
+        float moment_y;
+        int max_weight;
+        int   max_weight_id;
+
+    };
+}
+
+namespace start_of_lines_search
+{
+
+
+
 
     struct StartAndWidth
     {

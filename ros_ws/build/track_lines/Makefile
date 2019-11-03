@@ -236,6 +236,60 @@ include/line_classification.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_classification.cpp.s
 .PHONY : include/line_classification.cpp.s
 
+include/line_classification_helper_functions.o: include/line_classification_helper_functions.cpp.o
+
+.PHONY : include/line_classification_helper_functions.o
+
+# target to build an object file
+include/line_classification_helper_functions.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_classification_helper_functions.cpp.o
+.PHONY : include/line_classification_helper_functions.cpp.o
+
+include/line_classification_helper_functions.i: include/line_classification_helper_functions.cpp.i
+
+.PHONY : include/line_classification_helper_functions.i
+
+# target to preprocess a source file
+include/line_classification_helper_functions.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_classification_helper_functions.cpp.i
+.PHONY : include/line_classification_helper_functions.cpp.i
+
+include/line_classification_helper_functions.s: include/line_classification_helper_functions.cpp.s
+
+.PHONY : include/line_classification_helper_functions.s
+
+# target to generate assembly for a file
+include/line_classification_helper_functions.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_classification_helper_functions.cpp.s
+.PHONY : include/line_classification_helper_functions.cpp.s
+
+include/line_follower.o: include/line_follower.cpp.o
+
+.PHONY : include/line_follower.o
+
+# target to build an object file
+include/line_follower.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_follower.cpp.o
+.PHONY : include/line_follower.cpp.o
+
+include/line_follower.i: include/line_follower.cpp.i
+
+.PHONY : include/line_follower.i
+
+# target to preprocess a source file
+include/line_follower.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_follower.cpp.i
+.PHONY : include/line_follower.cpp.i
+
+include/line_follower.s: include/line_follower.cpp.s
+
+.PHONY : include/line_follower.s
+
+# target to generate assembly for a file
+include/line_follower.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_follower.cpp.s
+.PHONY : include/line_follower.cpp.s
+
 include/line_tracker.o: include/line_tracker.cpp.o
 
 .PHONY : include/line_tracker.o
@@ -337,6 +391,12 @@ help:
 	@echo "... include/line_classification.o"
 	@echo "... include/line_classification.i"
 	@echo "... include/line_classification.s"
+	@echo "... include/line_classification_helper_functions.o"
+	@echo "... include/line_classification_helper_functions.i"
+	@echo "... include/line_classification_helper_functions.s"
+	@echo "... include/line_follower.o"
+	@echo "... include/line_follower.i"
+	@echo "... include/line_follower.s"
 	@echo "... include/line_tracker.o"
 	@echo "... include/line_tracker.i"
 	@echo "... include/line_tracker.s"
