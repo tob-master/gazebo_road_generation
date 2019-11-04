@@ -58,6 +58,20 @@ void LineTracker::LoadBirdseyeInitializationParameters()
 
 };
 
+void LineTracker::LoadMidLineSearchInitializationParameters()
+{
+    string str = "rosparam load /home/tb/gazebo_road_generation/ros_ws/src/track_lines/initialization/mid_line_search_init.yaml";
+    const char *command = str.c_str();
+    system(command);
+
+    n.getParam("/mid_line_search_init/min_pixel_value_for_clustering", mid_line_search_init.min_pixel_value_for_clustering);
+    n.getParam("/mid_line_search_init/max_radial_scan_out_of_cluster_value", mid_line_search_init.max_radial_scan_out_of_cluster_value);
+    n.getParam("/mid_line_search_init/radial_scan_scaling_factor", mid_line_search_init.radial_scan_scaling_factor);
+    n.getParam("/mid_line_search_init/mid_line_length", mid_line_search_init.mid_line_length);
+    n.getParam("/mid_line_search_init/min_valuable_cluster_size", mid_line_search_init.min_valuable_cluster_size);
+    n.getParam("/mid_line_search_init/max_connected_cluster_distance", mid_line_search_init.max_connected_cluster_distance);
+}
+
 
 
 
@@ -67,6 +81,7 @@ void LineTracker::LoadAllInitializationParameters()
     LoadStartOfLinesSearchInitializationParameters();
     LoadLineFollowerInitializationParameters();
     LoadBirdseyeInitializationParameters();
+    LoadMidLineSearchInitializationParameters();
 }
 
 
@@ -130,177 +145,6 @@ void LineTracker::InitializeBirdseyeTransformationMatrix()
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-void LineTracker::FollowLinePoints(Mat image_mono_, StartParameters start_parameters)
-{
-
-
-
-    left_line_points_for_rdp_.clear();
-    right_line_points_for_rdp_.clear();
-
-    left_line_rdp_reduced_.clear();
-    right_line_rdp_reduced_.clear();
-
-
-
-
-
-    int start_left_x_ = start_parameters.left_x;
-    int start_left_y_ = start_parameters.left_y;
-    float start_angle_left_ = start_parameters.left_angle  * (PI/180);
-
-    int start_right_x_ = start_parameters.right_x;
-    int start_right_y_ = start_parameters.right_y;
-    float start_angle_right_ = start_parameters.right_angle  * (PI/180);
-
-
-        line_follow_iterations_counter_ = 0;
-        got_stuck_counter_ = 0;
-        backwards_counter = 0;
-        found_points_and_directions_left_line_.clear();
-        FollowLine(image_mono_, start_left_x_, start_left_y_, start_angle_left_, LEFT_LINE);
-
-        //cout << "ls: " << found_points_and_directions_left_line_.size() << endl;
-        for(auto &it: found_points_and_directions_left_line_)
-        {
-
-
-
-            left_line_points_for_rdp_.push_back(RDP_Point(double(it.x),double(it.y)));
-
-        }
-
-
-
-
-        RamerDouglasPeucker(left_line_points_for_rdp_, 10.0, left_line_rdp_reduced_);
-
-
-        for(size_t i=0;i< left_line_rdp_reduced_.size();i++)
-        {
-
-
-            circle(image_rgb_, Point(left_line_rdp_reduced_[i].first,left_line_rdp_reduced_[i].second), 7, Scalar(0, 255, 255));
-
-            //cout << pointListOut[i].first << "," << pointListOut[i].second << endl;
-        }
-
-
-
-        line_follow_iterations_counter_ = 0;
-        got_stuck_counter_ = 0;
-        backwards_counter=0;
-        found_points_and_directions_right_line_.clear();
-        FollowLine(image_mono_, start_right_x_, start_right_y_, start_angle_right_, RIGHT_LINE);
-
-        //cout << "rs: " << found_points_and_directions_right_line_.size() << endl;
-
-
-
-
-        for(auto &it: found_points_and_directions_right_line_)
-        {
-            right_line_points_for_rdp_.push_back(RDP_Point(double(it.x),double(it.y)));
-            //cout << "right("<<it.x<<","<<it.y<<") -> "<< it.angle * 180/PI << endl;
-            //circle(image_rgb_, Point(it.x,it.y), 7, Scalar(255, 0, 255));
-        }
-        RamerDouglasPeucker(right_line_points_for_rdp_, 10.0, right_line_rdp_reduced_);
-
-
-
-        for(size_t i=0;i< right_line_rdp_reduced_.size();i++)
-        {
-
-
-            circle(image_rgb_, Point(right_line_rdp_reduced_[i].first,right_line_rdp_reduced_[i].second), 7, Scalar(255, 0, 255));
-
-            //cout << pointListOut[i].first << "," << pointListOut[i].second << endl;
-        }
-
-
-
-       // right_line_rdp_reduced_
-
-
-
-        vector<float> left_angles;
-
-        vector<float> right_angles;
-
-        vector<tuple<int,int,int,int>> right_line_pointers;
-        vector<tuple<int,int,int,int>> left_line_pointers;
-
-        if(left_line_rdp_reduced_.size() > 1)
-        {
-            for(auto i=0; i<left_line_rdp_reduced_.size()-1; i++)
-            {
-                int x_bottom = left_line_rdp_reduced_[i].first;
-                int y_bottom = left_line_rdp_reduced_[i].second;
-
-                int x_top = left_line_rdp_reduced_[i+1].first;
-                int y_top = left_line_rdp_reduced_[i+1].second;
-
-                int opposite =  y_bottom - y_top;
-                int adjacent =  x_top - x_bottom;
-
-                int length = sqrt(pow(adjacent,2)+pow(opposite,2));
-
-                int angle =  CalculateAngle4Quadrants(opposite, adjacent);
-
-                left_line_pointers.push_back(make_tuple(x_bottom,y_bottom,length, angle));
-            }
-        }
-        else{
-
-            left_line_pointers.push_back(make_tuple(0,0,0,0));
-
-        }
-
-
-        if(right_line_rdp_reduced_.size() > 1)
-        {
-            for(auto i=0; i<right_line_rdp_reduced_.size()-1; i++)
-            {
-                int x_bottom = right_line_rdp_reduced_[i].first;
-                int y_bottom = right_line_rdp_reduced_[i].second;
-
-                int x_top = right_line_rdp_reduced_[i+1].first;
-                int y_top = right_line_rdp_reduced_[i+1].second;
-
-                int opposite =  y_bottom - y_top;
-                int adjacent =  x_top - x_bottom;
-
-                int length = sqrt(pow(adjacent,2)+pow(opposite,2));
-
-                int angle =  CalculateAngle4Quadrants(opposite, adjacent);
-
-                right_line_pointers.push_back(make_tuple(x_bottom,y_bottom,length, angle));
-
-            }
-        }
-        else{
-
-            right_line_pointers.push_back(make_tuple(0,0,0,0));
-
-        }
-
-
-
-}
-*/
 void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
   try {
@@ -309,6 +153,18 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
           warpPerspective(cv_ptr->image, image_mono_, birdseye_transformation_matrix_, kInputImageSize_, INTER_CUBIC | WARP_INVERSE_MAP);
 
+
+          VanashingPoint.FindVanashingPoint(cv_ptr->image);
+
+          VanashingPoint.ApplyCannyEdge();
+          VanashingPoint.ShowCannyEdgeImage();
+
+          VanashingPoint.ApplyHoughLines();
+          VanashingPoint.ComputeIntersections();
+          VanashingPoint.ShowHoughLines();
+
+
+          /*
           image_mono_ = image_mono_(Rect(0,0,image_width_,image_height_));
 
           cv::cvtColor(image_mono_, image_rgb_, CV_GRAY2BGR);
@@ -347,16 +203,16 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
           }
 
-          MidLineSearcher.FindMidLineClusters(image_mono_);
-          MidLineSearcher.DrawClusters(image_rgb_);
-
+          MidLineSearcher->FindMidLineClusters(image_mono_);
+          MidLineSearcher->DrawClusters(image_rgb_);
+*/
           /*
            * TODO: Midline clean code
            *       Ramer douglas as class or in LineFollow ?
            *       CCL implementation
            */
 
-
+/*
           clock_t end = clock();
           double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
           cout << "fps: " << 1/elapsed_secs << endl;
@@ -364,7 +220,7 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
           imshow("input",cv_ptr->image);
           imshow("output", image_rgb_);
           waitKey(0);
-
+*/
   }
   catch (cv_bridge::Exception& e)
   {
@@ -384,6 +240,7 @@ LineTracker::LineTracker(ros::NodeHandle* nh_):n(*nh_),it(*nh_)
   StartOfLinesSearcher_ = new StartOfLinesSearch(image_height_,image_width_,start_of_lines_search_init);
   LineFollower_         = new LineFollower(image_height_,image_width_,line_follower_init);
   LinePointsReducer_    = new LinePointsReducer;
+  MidLineSearcher       = new MidLineSearch(image_height_,image_width_,mid_line_search_init);
 
 };
 

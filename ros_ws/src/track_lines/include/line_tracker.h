@@ -7,6 +7,7 @@
 #include "line_classification.h"
 #include "line_follower.h"
 #include "line_points_reducer.h"
+#include "houghline_transform.h"
 
 //#include "houghline_birdseye_transformation_matrix_rm.h"
 #include "own_datatypes.h"
@@ -32,24 +33,29 @@ private:
     StartOfLinesSearchInitializationParameters start_of_lines_search_init;
     LineFollowerInitializationParameters line_follower_init;
     BirdseyeInitializationParameters birdseye_init;
+    MidLineSearchInitializationParameters mid_line_search_init;
 
     Mat birdseye_transformation_matrix_;
 
     Mat image_mono_;
     Mat image_rgb_;
 
-    MidLineSearch MidLineSearcher;
+
 
     StartOfLinesSearch *StartOfLinesSearcher_;
     LineFollower *LineFollower_;
     LinePointsReducer *LinePointsReducer_;
+    MidLineSearch *MidLineSearcher;
 
+
+    HoughLineTransform VanashingPoint;
 
 
     void LoadAllInitializationParameters();
     void LoadStartOfLinesSearchInitializationParameters();
     void LoadLineFollowerInitializationParameters();
     void LoadBirdseyeInitializationParameters();
+    void LoadMidLineSearchInitializationParameters();
 
 public:
   LineTracker(ros::NodeHandle* nh_);

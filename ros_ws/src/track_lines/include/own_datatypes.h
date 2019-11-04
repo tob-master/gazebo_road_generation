@@ -45,6 +45,18 @@ struct LineFollowerInitializationParameters
 };
 
 
+struct MidLineSearchInitializationParameters
+{
+    int min_pixel_value_for_clustering;
+    int max_radial_scan_out_of_cluster_value;
+    float radial_scan_scaling_factor;
+    int mid_line_length;
+    int min_valuable_cluster_size;
+    int max_connected_cluster_distance;
+
+};
+
+
 
 struct StartParameters
 {

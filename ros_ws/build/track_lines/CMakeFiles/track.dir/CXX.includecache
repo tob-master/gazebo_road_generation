@@ -151,6 +151,8 @@ line_follower.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_follower.h
 line_points_reducer.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_points_reducer.h
+houghline_transform.h
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/houghline_transform.h
 own_datatypes.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/own_datatypes.h
 
