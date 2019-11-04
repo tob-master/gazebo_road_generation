@@ -351,7 +351,7 @@ void StartOfLinesSearch::DrawStartParameters(Mat &rgb)
 
 }
 
-StartParameters StartOfLinesSearch::GetStartParametersForLineSearch()
+StartParameters StartOfLinesSearch::GetStartParameters()
 {
     return start_parameters_;
 }

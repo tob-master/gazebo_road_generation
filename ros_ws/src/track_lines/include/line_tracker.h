@@ -6,6 +6,7 @@
 #include "midline_search.h"
 #include "line_classification.h"
 #include "line_follower.h"
+#include "line_points_reducer.h"
 
 //#include "houghline_birdseye_transformation_matrix_rm.h"
 #include "own_datatypes.h"
@@ -23,7 +24,7 @@ private:
 
     const int kInputImageWidth_  = 1280;
     const int kInputImageHeight_ =  720;
-    Size kInputImageSize_= Size(kInputImageWidth_,kInputImageHeight_);
+    const Size kInputImageSize_= Size(kInputImageWidth_,kInputImageHeight_);
 
     const int image_height_ = 417;
     const int image_width_ = 1280;
@@ -41,12 +42,8 @@ private:
 
     StartOfLinesSearch *StartOfLinesSearcher_;
     LineFollower *LineFollower_;
+    LinePointsReducer *LinePointsReducer_;
 
-    vector<RDP_Point> left_line_points_for_rdp_;
-    vector<RDP_Point> right_line_points_for_rdp_;
-
-    vector<RDP_Point> left_line_rdp_reduced_;
-    vector<RDP_Point> right_line_rdp_reduced_;
 
 
     void LoadAllInitializationParameters();

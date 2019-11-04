@@ -342,7 +342,7 @@ bool LineFollower::HasGotStuck(int x, int y, Point new_start_point)
 }
 
 
-void LineFollower::AddIteration(Point new_start_point, int new_angle, int line)
+void LineFollower::AddIteration(Point new_start_point, float new_angle, int line)
 {
     if(line == LEFT_LINE)
         left_line_points_and_directions_.push_back(PointAndDirection{new_start_point.x,new_start_point.y,new_angle});
@@ -363,7 +363,7 @@ void LineFollower::DrawLinePoints(Mat &rgb)
 
     for(auto &it : right_line_points_and_directions_)
     {
-        circle(rgb, Point(it.x,it.y), 7, Scalar(255, 0, 255));
+        circle(rgb, Point(it.x,it.y), 7, Scalar(255, 255, 0));
     }
 }
 
@@ -380,5 +380,14 @@ void LineFollower::FollowLines(Mat image, StartParameters start_parameters)
 
     ResetCounters();
     FollowLine(start_right_x_, start_right_y_, start_angle_right_, RIGHT_LINE);
+
+}
+
+void LineFollower::GetLines(vector<PointAndDirection> &left_line, vector<PointAndDirection> &right_line)
+{
+
+    left_line  = left_line_points_and_directions_;
+    right_line = right_line_points_and_directions_;
+
 
 }

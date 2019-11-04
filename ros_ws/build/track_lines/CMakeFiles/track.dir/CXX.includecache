@@ -106,6 +106,38 @@ own_utils.h
 own_defines.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/own_defines.h
 
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_points_reducer.cpp
+line_points_reducer.h
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_points_reducer.h
+
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_points_reducer.h
+iostream
+-
+stdio.h
+-
+string
+-
+ctime
+-
+ros/ros.h
+-
+image_transport/image_transport.h
+-
+cv_bridge/cv_bridge.h
+-
+opencv2/core/mat.hpp
+-
+opencv2/core/core.hpp
+-
+opencv2/highgui/highgui.hpp
+-
+opencv2/imgcodecs.hpp
+-
+own_utils.h
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/own_utils.h
+own_datatypes.h
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/own_datatypes.h
+
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_tracker.cpp
 line_tracker.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_tracker.h
@@ -117,6 +149,8 @@ line_classification.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_classification.h
 line_follower.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_follower.h
+line_points_reducer.h
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_points_reducer.h
 own_datatypes.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/own_datatypes.h
 

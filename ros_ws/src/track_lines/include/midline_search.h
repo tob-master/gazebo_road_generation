@@ -37,7 +37,12 @@ class MidLineSearch
       int radial_scan_radius_1_;
       int radial_scan_radius_2_;
 
+      const int kImageBorderPadding_;
+      const int kClusterBinSize;
+
       Mat current_image_;
+      const int image_width_  = 1280;
+      const int image_height_ =  417;
 
       const int kMinValuableClusterSize_;
 
@@ -57,6 +62,18 @@ class MidLineSearch
       vector<TwoConnectedClusters> connected_clusters;
       vector<ConnectedClusterKeys> connected_cluster_keys;
 
+
+      void SetImage(Mat image);
+      void ClearMemory();
+      int  GetPixelValue(int x, int y);
+      bool HasMinPixelValueForClustering(int pixel_value);
+      bool IsAClusterPoint(int x, int y);
+      void GroupValueablePointsInClusterBins();
+      void AddPointToClusterBin(int x, int y);
+      bool IsNewKey(int x_cluster_bin_key, int y_cluster_bin_key);
+      void AddNewClusterBin(int x, int y, int x_cluster_bin_key, int y_cluster_bin_key);
+      void AppendClusterBin(int x, int y, int x_cluster_bin_key, int y_cluster_bin_key);
+
     public:
 
       MidLineSearch();
@@ -68,11 +85,11 @@ class MidLineSearch
       void FindConnectedClusters();
       vector<pair<int,int>> GetMidLineClustersCenterOfGravity();
       void RejectClustersUnderSizeThreshold();
-      void AddPointToClustering(int x, int y, int x_cluster_key, int y_cluster_key);
-      void ClearMemory();
+
+
       bool RadialScanPoint(int x, int y);
       void ComputeClustersCenterOfGravity();
-      void DrawMidLineClusters(Mat &rgb);
+      void DrawClusters(Mat &rgb);
 
       void DrawConnectedClusters(Mat &rgb);
       void ComputeConnectedClusterSlopes();

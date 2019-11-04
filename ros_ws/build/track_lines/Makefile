@@ -290,6 +290,33 @@ include/line_follower.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_follower.cpp.s
 .PHONY : include/line_follower.cpp.s
 
+include/line_points_reducer.o: include/line_points_reducer.cpp.o
+
+.PHONY : include/line_points_reducer.o
+
+# target to build an object file
+include/line_points_reducer.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_points_reducer.cpp.o
+.PHONY : include/line_points_reducer.cpp.o
+
+include/line_points_reducer.i: include/line_points_reducer.cpp.i
+
+.PHONY : include/line_points_reducer.i
+
+# target to preprocess a source file
+include/line_points_reducer.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_points_reducer.cpp.i
+.PHONY : include/line_points_reducer.cpp.i
+
+include/line_points_reducer.s: include/line_points_reducer.cpp.s
+
+.PHONY : include/line_points_reducer.s
+
+# target to generate assembly for a file
+include/line_points_reducer.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_points_reducer.cpp.s
+.PHONY : include/line_points_reducer.cpp.s
+
 include/line_tracker.o: include/line_tracker.cpp.o
 
 .PHONY : include/line_tracker.o
@@ -397,6 +424,9 @@ help:
 	@echo "... include/line_follower.o"
 	@echo "... include/line_follower.i"
 	@echo "... include/line_follower.s"
+	@echo "... include/line_points_reducer.o"
+	@echo "... include/line_points_reducer.i"
+	@echo "... include/line_points_reducer.s"
 	@echo "... include/line_tracker.o"
 	@echo "... include/line_tracker.i"
 	@echo "... include/line_tracker.s"

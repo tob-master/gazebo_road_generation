@@ -86,13 +86,14 @@ class LineFollower
         float GetNewAngle(int x, int y, Point new_start_point);
         bool HasGotStuck(int x, int y, Point new_start_point);
         bool IsWalkingBackwards(int y, Point new_start_point);
-        void AddIteration(Point new_start_point, int new_angle, int line);
+        void AddIteration(Point new_start_point, float new_angle, int line);
 
 
 public:
         LineFollower(int image_height, int image_width, LineFollowerInitializationParameters init);
         void FollowLines(Mat grey, StartParameters start_parameters);
         void DrawLinePoints(Mat &rgb);
+        void GetLines(vector<PointAndDirection> &left_line, vector<PointAndDirection> &right_line);
 
 
 };

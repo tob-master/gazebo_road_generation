@@ -91,6 +91,28 @@ struct ConnectedClusterKeys
 };
 
 
+namespace line_points_reducer
+{
+    typedef std::pair<double, double> RamerDouglasPeuckerTypePoint;
+
+
+    struct ReducedPoints
+    {
+        int x;
+        int y;
+    };
+
+    struct LengthAndDirectionFromConsecutiveReducedLinePoints
+    {
+       int x;
+       int y;
+       int length;
+       float angle;
+    };
+}
+
+
+
 
 namespace line_follower
 {

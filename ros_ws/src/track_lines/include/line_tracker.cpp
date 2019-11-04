@@ -137,79 +137,9 @@ void LineTracker::InitializeBirdseyeTransformationMatrix()
 
 
 
-double PerpendicularDistance(const RDP_Point &pt, const RDP_Point &lineStart, const RDP_Point &lineEnd)
-{
-    double dx = lineEnd.first - lineStart.first;
-    double dy = lineEnd.second - lineStart.second;
 
-    //Normalise
-    double mag = pow(pow(dx,2.0)+pow(dy,2.0),0.5);
-    if(mag > 0.0)
-    {
-        dx /= mag; dy /= mag;
-    }
 
-    double pvx = pt.first - lineStart.first;
-    double pvy = pt.second - lineStart.second;
 
-    //Get dot product (project pv onto normalized direction)
-    double pvdot = dx * pvx + dy * pvy;
-
-    //Scale line direction vector
-    double dsx = pvdot * dx;
-    double dsy = pvdot * dy;
-
-    //Subtract this from pv
-    double ax = pvx - dsx;
-    double ay = pvy - dsy;
-
-    return pow(pow(ax,2.0)+pow(ay,2.0),0.5);
-}
-
-void RamerDouglasPeucker(const vector<RDP_Point> &pointList, double epsilon, vector<RDP_Point> &out)
-{
-    if(pointList.size()<2)
-        throw invalid_argument("Not enough points to simplify");
-
-    // Find the point with the maximum distance from line between start and end
-    double dmax = 0.0;
-    size_t index = 0;
-    size_t end = pointList.size()-1;
-    for(size_t i = 1; i < end; i++)
-    {
-        double d = PerpendicularDistance(pointList[i], pointList[0], pointList[end]);
-        if (d > dmax)
-        {
-            index = i;
-            dmax = d;
-        }
-    }
-
-    // If max distance is greater than epsilon, recursively simplify
-    if(dmax > epsilon)
-    {
-        // Recursive call
-        vector<RDP_Point> recResults1;
-        vector<RDP_Point> recResults2;
-        vector<RDP_Point> firstLine(pointList.begin(), pointList.begin()+index+1);
-        vector<RDP_Point> lastLine(pointList.begin()+index, pointList.end());
-        RamerDouglasPeucker(firstLine, epsilon, recResults1);
-        RamerDouglasPeucker(lastLine, epsilon, recResults2);
-
-        // Build the result list
-        out.assign(recResults1.begin(), recResults1.end()-1);
-        out.insert(out.end(), recResults2.begin(), recResults2.end());
-        if(out.size()<2)
-            throw runtime_error("Problem assembling output");
-    }
-    else
-    {
-        //Just return start and end points
-        out.clear();
-        out.push_back(pointList[0]);
-        out.push_back(pointList[end]);
-    }
-}
 
 /*
 
@@ -387,11 +317,38 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
           if(StartOfLinesSearcher_->FindStartParameters(image_mono_))
           {
-              StartOfLinesSearcher_->DrawStartParameters(image_rgb_);
-              LineFollower_->FollowLines(image_mono_,StartOfLinesSearcher_->GetStartParametersForLineSearch());
+              //StartOfLinesSearcher_->DrawStartParameters(image_rgb_);
+              LineFollower_->FollowLines(image_mono_,StartOfLinesSearcher_->GetStartParameters());
+
+              vector<PointAndDirection> left_line, right_line;
+
+              LineFollower_->GetLines(left_line,right_line);
               LineFollower_->DrawLinePoints(image_rgb_);
 
+              double max_distance = 10;
+
+              LinePointsReducer_->ReduceLinePoints(left_line,right_line,max_distance);
+              LinePointsReducer_->DrawReducedLinePoints(image_rgb_);
+
+              vector<ReducedPoints> left_line_points_reduced, right_line_points_reduced;
+              vector<LengthAndDirectionFromConsecutiveReducedLinePoints> left_line_points_reduced_length_direction, right_line_points_reduced_length_direction;
+
+              LinePointsReducer_->GetReducedLinePoints(left_line_points_reduced,right_line_points_reduced);
+              LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(left_line_points_reduced_length_direction,
+                                                                                        right_line_points_reduced_length_direction);
+
+              LinePointsReducer_->CoutLengthAndDirectionFromConsecutiveReducedLinePoints();
+
+
+
+
+
+
+
           }
+
+          MidLineSearcher.FindMidLineClusters(image_mono_);
+          MidLineSearcher.DrawClusters(image_rgb_);
 
           /*
            * TODO: Midline clean code
@@ -399,9 +356,6 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
            *       CCL implementation
            */
 
-          //MidLineSearcher.FindMidLineClusters(image_mono_);
-          //MidLineSearcher.DrawMidLineClusters(image_rgb_);
-          //MidLineSearcher.DrawConnectedClusters(image_rgb_);
 
           clock_t end = clock();
           double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
@@ -429,6 +383,7 @@ LineTracker::LineTracker(ros::NodeHandle* nh_):n(*nh_),it(*nh_)
 
   StartOfLinesSearcher_ = new StartOfLinesSearch(image_height_,image_width_,start_of_lines_search_init);
   LineFollower_         = new LineFollower(image_height_,image_width_,line_follower_init);
+  LinePointsReducer_    = new LinePointsReducer;
 
 };
 

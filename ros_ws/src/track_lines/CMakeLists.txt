@@ -143,6 +143,7 @@ add_executable(track include/line_classification.cpp
                      include/line_tracker.cpp
                      include/houghline_transform.cpp
                      include/line_follower.cpp
+                     include/line_points_reducer.cpp
                      src/line_tracker_node.cpp )
 
 #add_executable(track_mid_line_node src/nodes/track_mid_line_node.cpp)

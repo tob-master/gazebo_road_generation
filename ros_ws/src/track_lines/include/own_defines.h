@@ -4,6 +4,8 @@
 
 #define PI 3.14159265359
 
-typedef std::pair<double, double> RDP_Point;
+
+
+
 
 #endif // OWN_DEFINES_H

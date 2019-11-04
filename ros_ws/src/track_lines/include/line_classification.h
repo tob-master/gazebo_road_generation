@@ -120,7 +120,7 @@ class StartOfLinesSearch
 
         StartOfLinesSearch(int image_height,int image_width,StartOfLinesSearchInitializationParameters init);
         bool FindStartParameters(Mat image);
-        StartParameters GetStartParametersForLineSearch();
+        StartParameters GetStartParameters();
         void DrawStartParameters(Mat &rgb);
 
 

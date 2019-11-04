@@ -8,58 +8,73 @@ MidLineSearch::MidLineSearch():
   kRadialScanScalingFactor_(1.5),
   kMidLineLength_(30),
   kMinValuableClusterSize_(7),
-  kMaxClusterDistance_(60)
-
+  kMaxClusterDistance_(60),
+  kClusterBinSize((((30 * 1.5)/2) + 1) * 2),
+  kImageBorderPadding_(((30 * 1.5)/2) + 1)
 
 
 {
+
+
     radial_scan_radius_2_ = (((kMidLineLength_ * kRadialScanScalingFactor_)/2) + 1);
     radial_scan_radius_1_ = ((kMidLineLength_ * kRadialScanScalingFactor_)/2);
-    //cout << radial_scan_radius_1_ <<endl;
+
+
+
+
   InitRadialScanners();
 }
 
 
- void MidLineSearch::FindMidLineClusters(Mat image)
- {
-        current_image_ =  image;
+void MidLineSearch::SetImage(Mat image)
+{
+    current_image_ = image;
+}
 
-        ClearMemory();
+int MidLineSearch::GetPixelValue(int x, int y)
+{
+    return (int)current_image_.at<uchar>(Point(x,y));
+}
 
-      // padding of borders with kRadialScanRadius2 to avoid a memory adress which is out of bounds
-      for (int y=radial_scan_radius_2_; y<current_image_.rows-radial_scan_radius_2_; y++)
+
+bool MidLineSearch::HasMinPixelValueForClustering(int pixel_value)
+{
+    return (pixel_value > kMinPixelValueForClustering_);
+}
+
+bool MidLineSearch::IsAClusterPoint(int x, int y)
+{
+    return RadialScanPoint(x,y);
+}
+
+
+void MidLineSearch::GroupValueablePointsInClusterBins()
+{
+    for (int y=kImageBorderPadding_; y<image_height_ - kImageBorderPadding_; y++)
+    {
+      for (int x=kImageBorderPadding_; x<image_width_ - kImageBorderPadding_; x++)
       {
-        for (int x=radial_scan_radius_2_; x<current_image_.cols-radial_scan_radius_2_; x++)
+        if (HasMinPixelValueForClustering(GetPixelValue(x,y)))
         {
-
-          // mat.at<type>(row,column) or mat.at<type>(cv::Point(x,y)) to access the same point if x=column and y=row
-          int pixel_value = (int)current_image_.at<uchar>(Point(x,y));
-            //if(pixel_value>0) cout << pixel_value << " ";
-          if (pixel_value > kMinPixelValueForClustering_)
+          if(IsAClusterPoint(x,y))
           {
-            bool is_cluster = RadialScanPoint(x,y);
-
-            if(is_cluster)
-            {
-              int x_cluster_key = x / (radial_scan_radius_2_*2);
-              int y_cluster_key = y / (radial_scan_radius_2_*2);
-
-              AddPointToClustering(x,y,x_cluster_key, y_cluster_key);
-            }
+            AddPointToClusterBin(x,y);
           }
         }
       }
-      RejectClustersUnderSizeThreshold();
+    }
+}
 
-      ComputeClustersCenterOfGravity();
+ void MidLineSearch::FindMidLineClusters(Mat image)
+ {
+        SetImage(image);
+        ClearMemory();
+        GroupValueablePointsInClusterBins();
+        RejectClustersUnderSizeThreshold();
+        ComputeClustersCenterOfGravity();
 
-      FindConnectedClusters();
-
-
-      ComputeConnectedClusterSlopes();
-
-
-
+        //FindConnectedClusters();
+        //ComputeConnectedClusterSlopes();
 }
 #include <algorithm>
 #include <numeric>
@@ -73,106 +88,7 @@ MidLineSearch::MidLineSearch():
     return a;
  }
 
-/*
- float MidLineSearch::CalculateAngle(int opposite, int adjacent)
- {
 
-     float angle = 0;
-
-     if(adjacent != 0 && opposite != 0)
-     {
-         float div = float(abs(opposite))/ float(abs(adjacent));
-         //cout << "div: " << div << endl;
-         angle = atan(div);
-         angle = angle * 180/PI;
-
-         if (adjacent > 0 && opposite > 0)
-         {
-             cout << "0" << angle << endl;
-         }
-         else if (adjacent < 0 && opposite > 0)
-         {
-             cout << "1" << angle << endl;
-             angle = 180 - angle;
-
-         }
-         else if (adjacent < 0 && opposite < 0)
-         {
-             cout << "2" <<angle <<  endl;
-             angle = 180 + angle;
-
-         }
-         else if (adjacent > 0 && opposite < 0)
-         {
-             cout << "3" <<angle <<  endl;
-             angle = 360 - angle;
-
-
-         }
-         else {
-             cout << "something went wrong??" << endl;
-         }
-     }
-     else if(adjacent > 0 && opposite == 0)
-     {
-         cout << "4" << angle << endl;
-             angle = 0;
-
-     }
-     else if(adjacent < 0 && opposite == 0)
-     {
-          cout << "5" << angle << endl;
-             angle = 180;
-
-     }
-     else if(adjacent == 0 && opposite > 0)
-     {
-          cout << "6" << angle << endl;
-             angle = 90;
-
-     }
-     else if(adjacent == 0 && opposite < 0)
-     {
-         cout << "7" << angle << endl;
-             angle = 270;
-
-     }
-     else
-     {
-          cout << "8" << angle << endl;
-         angle = 0;
-
-     }
-
-     return angle;
-
-
-
-     float angle = 0;
-
-     if(adjacent != 0)
-     {
-         angle =atan(float(opposite/adjacent));
-         angle = angle * 180/PI;
-
-         if (adjacent > 0)
-         {
-             angle = 90 - angle;
-         }
-         else {
-             angle = -90 - angle;
-         }
-     }
-     else
-     {
-         angle = 0;
-     }
-
-     return angle;
-
-
- }
- */
 
  void MidLineSearch::ComputeConnectedClusterSlopes()
  {
@@ -370,63 +286,6 @@ else if(midline_clusters_size_.size() == 1)
    found_graphs.push_back(single_graph);
    single_graph.clear();
 }
-/*
-    vector<string> used_permutations;
-    std::vector<string>::iterator it;
-
-    int hash1 = 0;
-    int hash2 = 0;
-
-
-int graph_count = 0;
-
-    for (auto& i: connected_cluster_keys)
-    {
-
-                hash2=0;
-
-                for (auto& j: connected_cluster_keys)
-                {
-                    if(hash1==hash2){ hash2++; continue;}
-
-                    string permutation_hash12 = to_string(hash1) + to_string(hash2);
-
-                    it = find (used_permutations.begin(), used_permutations.end(), permutation_hash12);
-                    if (it != used_permutations.end())
-                    {
-                      hash2++;
-                      continue;
-                    }
-                    else
-                    {
-                      //std::cout << "Element not found in myvector\n";
-                      string permutation_hash21 = std::to_string(hash2) + std::to_string(hash1);
-                      used_permutations.push_back(permutation_hash12);
-                      used_permutations.push_back(permutation_hash21);
-                    }
-
-
-                    if(i.key_x_1 == j.key_x_1 && i.key_y_1 == j.key_y_1)
-                    {
-                        cout << " " << endl;
-                    }
-
-                    if(i.key_x_2 == j.key_x_1 && i.key_y_2 == j.key_y_1)
-                    {
-                        cout << " " << endl;
-
-                    }
-
-
-
-                    hash2++;
-                }
-                hash1++;
-    }
-
-*/
-
-   // cout << "_____________" << endl;
 
 }
 
@@ -462,40 +321,48 @@ void MidLineSearch::InitRadialScanners()
 
 }
 
-void MidLineSearch::AddPointToClustering(int x, int y, int x_cluster_key, int y_cluster_key)
+
+bool MidLineSearch::IsNewKey(int x_cluster_bin_key, int y_cluster_bin_key)
 {
-    if ( midline_clusters_size_.find(make_pair(x_cluster_key,y_cluster_key)) == midline_clusters_size_.end() )
+    return midline_clusters_size_.find(make_pair(x_cluster_bin_key,y_cluster_bin_key)) == midline_clusters_size_.end();
+}
+
+
+void MidLineSearch::AddNewClusterBin(int x, int y, int x_cluster_bin_key, int y_cluster_bin_key)
+{
+    midline_clusters_size_[make_pair(x_cluster_bin_key,y_cluster_bin_key)] = 1;
+
+    midline_clusters_xweight_[make_pair(x_cluster_bin_key,y_cluster_bin_key)] = x;
+    midline_clusters_yweight_[make_pair(x_cluster_bin_key,y_cluster_bin_key)] = y;
+
+    midline_clusters_coordinates_[make_pair(x_cluster_bin_key,y_cluster_bin_key)].push_back(make_pair(x,y));
+}
+
+
+void MidLineSearch::AppendClusterBin(int x, int y, int x_cluster_bin_key, int y_cluster_bin_key)
+{
+    int cluster_size = midline_clusters_size_.at(make_pair(x_cluster_bin_key,y_cluster_bin_key)) + 1;
+    midline_clusters_size_.at(make_pair(x_cluster_bin_key,y_cluster_bin_key)) = cluster_size;
+
+    midline_clusters_xweight_[make_pair(x_cluster_bin_key,y_cluster_bin_key)] += x;
+    midline_clusters_yweight_[make_pair(x_cluster_bin_key,y_cluster_bin_key)] += y;
+
+    midline_clusters_coordinates_[make_pair(x_cluster_bin_key,y_cluster_bin_key)].push_back(make_pair(x,y));
+}
+
+
+void MidLineSearch::AddPointToClusterBin(int x, int y)
+{
+    int x_cluster_bin_key = x / kClusterBinSize;
+    int y_cluster_bin_key = y / kClusterBinSize;
+
+    if (IsNewKey(x_cluster_bin_key,y_cluster_bin_key))
     {
-        midline_clusters_size_[make_pair(x_cluster_key,y_cluster_key)] = 1;
-
-        midline_clusters_xweight_[make_pair(x_cluster_key,y_cluster_key)] = x;
-        midline_clusters_yweight_[make_pair(x_cluster_key,y_cluster_key)] = y;
-
-        midline_clusters_coordinates_[make_pair(x_cluster_key,y_cluster_key)].push_back(make_pair(x,y));
-
-        /*
-        for (auto const& hash : midline_clusters_size_)
-        {
-            std::cout << "new: " << get<0>(hash.first) << " " << get<1>(hash.first) << " " << hash.second << std::endl ;
-        }
-        */
+        AddNewClusterBin(x,y,x_cluster_bin_key,y_cluster_bin_key);
     }
     else
     {
-      int cluster_size = midline_clusters_size_.at(make_pair(x_cluster_key,y_cluster_key)) + 1;
-      midline_clusters_size_.at(make_pair(x_cluster_key,y_cluster_key)) = cluster_size;
-
-      midline_clusters_xweight_[make_pair(x_cluster_key,y_cluster_key)] += x;
-      midline_clusters_yweight_[make_pair(x_cluster_key,y_cluster_key)] += y;
-
-      midline_clusters_coordinates_[make_pair(x_cluster_key,y_cluster_key)].push_back(make_pair(x,y));
-
-       /*
-      for (auto const& hash : midline_clusters_size_)
-      {
-          std::cout << "add: " << get<0>(hash.first)<< " " << get<1>(hash.first) << " " << hash.second << std::endl ;
-      }
-      */
+        AppendClusterBin(x,y,x_cluster_bin_key,y_cluster_bin_key);
     }
 }
 
@@ -515,15 +382,12 @@ void MidLineSearch::ClearMemory()
 
 bool MidLineSearch::RadialScanPoint(int x, int y)
 {
-    bool is_midline_scan1 = true;
-    bool is_midline_scan2 = true;
-
     for (auto &it : radial_scan1_)
     {
       int xR = x + it.first;
       int yR = y + it.second;
 
-      if((int)current_image_.at<uchar>(Point(xR,yR)) >= kMaxRadialScanOutOfClusterValue_) is_midline_scan1 = false;
+      if(GetPixelValue(xR, yR) >= kMaxRadialScanOutOfClusterValue_) return false;
     }
 
     for (auto &it : radial_scan2_)
@@ -531,29 +395,23 @@ bool MidLineSearch::RadialScanPoint(int x, int y)
       int xR = y + it.first;
       int yR = y + it.second;
 
-      if((int)current_image_.at<uchar>(Point(xR,yR)) >= kMaxRadialScanOutOfClusterValue_) is_midline_scan2 = false;
+      if(GetPixelValue(xR, yR) >= kMaxRadialScanOutOfClusterValue_) return false;
     }
 
-    if(is_midline_scan1 && is_midline_scan2) return true;
-    return false;
-
+    return true;
 }
 
 
 void MidLineSearch::RejectClustersUnderSizeThreshold()
 {
-
     vector<pair<int,int>> cluster_ids_to_remove;
 
     for (auto const& it : midline_clusters_size_)
     {
-        //cout << it.second << endl;
         if(it.second <= kMinValuableClusterSize_)
         {
-
             cluster_ids_to_remove.push_back(it.first);
         }
-
     }
 
     for( auto& it: cluster_ids_to_remove)
@@ -563,8 +421,6 @@ void MidLineSearch::RejectClustersUnderSizeThreshold()
         midline_clusters_yweight_.erase(it);
         midline_clusters_coordinates_.erase(it);
     }
-
-
 }
 
 
@@ -581,17 +437,22 @@ void MidLineSearch::ComputeClustersCenterOfGravity()
     }
 }
 
-void MidLineSearch::DrawMidLineClusters(Mat &rgb)
+void MidLineSearch::DrawClusters(Mat &rgb)
 {
     for (auto const& cluster : centers_of_gravity)
     {
         int x = cluster.second.begin()->first;
         int y = cluster.second.begin()->second;
 
-      circle(rgb, Point(x,y), 10, Scalar(0, 255, 255));
+      circle(rgb, Point(x,y), 10, Scalar(255, 255, 0));
 
     }
 }
+
+
+
+
+
 
 void MidLineSearch::DrawConnectedClusters(Mat &rgb)
 {
