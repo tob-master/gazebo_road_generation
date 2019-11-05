@@ -29,6 +29,8 @@ class StartOfLinesSearch
 {
     private:
 
+
+
         Mat image_;
         const int kImageHeight_;
         const int kImageWidth_;
@@ -83,6 +85,7 @@ class StartOfLinesSearch
         vector<PatternMatchIds> pattern_to_car_matches_;
 
         StartParameters start_parameters_;
+        bool has_found_start_parameters_;
 
 
         void ClearRowFilterActivations();
@@ -115,11 +118,13 @@ class StartOfLinesSearch
         void SetStartParameters();
         void ClearMemory();
 
+        StartOfLinesSearchReturnInfo GetReturnInfo();
+
 
     public:
 
         StartOfLinesSearch(int image_height,int image_width,StartOfLinesSearchInitializationParameters init);
-        bool FindStartParameters(Mat image);
+        StartOfLinesSearchReturnInfo FindStartParameters(Mat image);
         StartParameters GetStartParameters();
         void DrawStartParameters(Mat &rgb);
 

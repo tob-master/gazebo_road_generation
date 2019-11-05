@@ -17,12 +17,16 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 
+#include <stdlib.h>
+#include <time.h>
+
 #include "own_datatypes.h"
 #include "own_utils.h"
 #include "own_defines.h"
 
 using namespace std;
 using namespace cv;
+using namespace mid_line_search;
 
 class MidLineSearch
 {
@@ -50,16 +54,22 @@ class MidLineSearch
 
         const int kMaxConnectedClusterDistance_;
 
+        bool has_found_mid_line_clusters_ ;
+        bool has_found_group_;
+
         map<pair<int,int>,int> midline_clusters_size_;
         map<pair<int,int>,int> midline_clusters_xweight_;
         map<pair<int,int>,int> midline_clusters_yweight_;
         map<pair<int,int>,vector<pair<int,int>>> midline_clusters_coordinates_;
         map<pair<int,int>,vector<pair<int,int>>> centers_of_gravity;
 
-        vector<vector<pair<int,int>>> found_graphs;
 
-        vector<TwoConnectedClusters> connected_clusters;
-        vector<ConnectedClusterKeys> connected_cluster_keys;
+        vector<ClusterBinKey> connected_cluster_bin_keys_;
+        vector<vector<ClusterBinKey>> grouped_cluster_bin_keys_;
+
+
+        vector<vector<LengthAndDirectionFromConnectedClusters>> grouped_clusters_length_and_direction;
+        vector<LengthAndDirectionFromConnectedClusters> connected_clusters_length_and_direction;
 
         void InitRadialScanners();
         void SetImage(Mat image);
@@ -76,21 +86,41 @@ class MidLineSearch
         void RejectClustersUnderSizeThreshold();
         void ComputeClustersCenterOfGravity();
 
+
+        Point GetStartPointOfCurrentCluster(ReverseMidLineCoordinatesIterator it);
+        Point GetEndPointOfNextCluster(ReverseMidLineCoordinatesIterator it);
+        float GetCurrentStartToNextEndClusterDistance(Point start_point_of_current_cluster, Point end_point_of_next_cluster);
+        bool  ClustersAreConnected(float distance);
+        ClusterBinKey GetClusterBinKeyOfCurrentClusterFromIterator(ReverseMidLineCoordinatesIterator it);
+        ClusterBinKey GetClusterBinKeyOfNextClusterFromIterator(ReverseMidLineCoordinatesIterator it);
+        bool IsNewGroup();
+
+        void AddClusterBinKeyToGroup(ClusterBinKey cluster_bin_key);
+        void SafeGroup();
+        void NewGroup();
+        bool IsGroupAble();
+        bool HasSingleCluster();
+        ClusterBinKey GetSingleClusterBinKey();
+        Point GetCenterOfGravityPointFromClusterBinKey(ClusterBinKey cluster_bin_key);
+        void GroupClusters();
+        void ComputeLengthAndDirectionOfConnectedClusters();
+
+        bool HasFoundMidLineClusters();
+        bool HasFoundGroup();
+        MidLineSearchReturnInfo GetReturnInfo();
+
+
     public:
 
       MidLineSearch(int image_height, int image_width, MidLineSearchInitializationParameters init);
-      void FindMidLineClusters(Mat image);
+       MidLineSearchReturnInfo  FindMidLineClusters(Mat image);
+      void CoutLengthAndDirectionOfConnectedClusters();
 
 
-
-
-
-      void FindConnectedClusters();
-      vector<pair<int,int>> GetMidLineClustersCenterOfGravity();
 
       void DrawClusters(Mat &rgb);
       void DrawConnectedClusters(Mat &rgb);
-      void ComputeConnectedClusterSlopes();
+
       //float CalculateAngle(int opposite, int adjacent);
 
 

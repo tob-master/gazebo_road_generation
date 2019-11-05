@@ -154,27 +154,40 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
           warpPerspective(cv_ptr->image, image_mono_, birdseye_transformation_matrix_, kInputImageSize_, INTER_CUBIC | WARP_INVERSE_MAP);
 
 
-          VanashingPoint.FindVanashingPoint(cv_ptr->image);
 
-          VanashingPoint.ApplyCannyEdge();
-          VanashingPoint.ShowCannyEdgeImage();
+            image_mono_ = image_mono_(Rect(0,0,image_width_,image_height_));
 
-          VanashingPoint.ApplyHoughLines();
-          VanashingPoint.ComputeIntersections();
-          VanashingPoint.ShowHoughLines();
+            cv::cvtColor(image_mono_, image_rgb_, CV_GRAY2BGR);
 
+            //Mat image_rgb_2;
+            //cv::cvtColor(image_mono_, image_rgb_2, CV_GRAY2BGR);
 
-          /*
-          image_mono_ = image_mono_(Rect(0,0,image_width_,image_height_));
-
-          cv::cvtColor(image_mono_, image_rgb_, CV_GRAY2BGR);
 
           clock_t begin = clock();
 
-          if(StartOfLinesSearcher_->FindStartParameters(image_mono_))
+          VanashingPoint.FindVanashingPoint(cv_ptr->image);
+
+          VanashingPoint.ApplyCannyEdge();
+          //VanashingPoint.ShowCannyEdgeImage();
+
+          VanashingPoint.ApplyHoughLines();
+          VanashingPoint.ComputeIntersections();
+          //VanashingPoint.ShowHoughLines();
+
+
+          StartOfLinesSearchReturnInfo start_of_lines_search_return_info = StartOfLinesSearcher_->FindStartParameters(image_mono_);
+
+
+          if(start_of_lines_search_return_info.has_found_start_parameters)
           {
-              //StartOfLinesSearcher_->DrawStartParameters(image_rgb_);
-              LineFollower_->FollowLines(image_mono_,StartOfLinesSearcher_->GetStartParameters());
+              StartOfLinesSearcher_->DrawStartParameters(image_rgb_);
+
+
+              LineFollowerReturnInfo line_follower_return_info = LineFollower_->FollowLines(image_mono_,StartOfLinesSearcher_->GetStartParameters());
+
+
+              //TODO: cout return info
+              // points of LPReducer info
 
               vector<PointAndDirection> left_line, right_line;
 
@@ -187,7 +200,8 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
               LinePointsReducer_->DrawReducedLinePoints(image_rgb_);
 
               vector<ReducedPoints> left_line_points_reduced, right_line_points_reduced;
-              vector<LengthAndDirectionFromConsecutiveReducedLinePoints> left_line_points_reduced_length_direction, right_line_points_reduced_length_direction;
+              vector<LengthAndDirectionFromConsecutiveReducedLinePoints> left_line_points_reduced_length_direction,
+                                                                         right_line_points_reduced_length_direction;
 
               LinePointsReducer_->GetReducedLinePoints(left_line_points_reduced,right_line_points_reduced);
               LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(left_line_points_reduced_length_direction,
@@ -196,23 +210,33 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
               LinePointsReducer_->CoutLengthAndDirectionFromConsecutiveReducedLinePoints();
 
 
+        }
 
 
 
 
 
+          MidLineSearchReturnInfo mid_line_search_return_info = MidLineSearcher->FindMidLineClusters(image_mono_);
+
+          if(mid_line_search_return_info.has_found_mid_line_clusters)
+          {
+              //MidLineSearcher->DrawClusters(image_rgb_);
+
+              if(mid_line_search_return_info.has_found_group)
+              {
+                  MidLineSearcher->DrawConnectedClusters(image_rgb_);
+                  MidLineSearcher->CoutLengthAndDirectionOfConnectedClusters();
+              }
           }
 
-          MidLineSearcher->FindMidLineClusters(image_mono_);
-          MidLineSearcher->DrawClusters(image_rgb_);
-*/
+
           /*
            * TODO: Midline clean code
            *       Ramer douglas as class or in LineFollow ?
            *       CCL implementation
            */
 
-/*
+
           clock_t end = clock();
           double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
           cout << "fps: " << 1/elapsed_secs << endl;
@@ -220,7 +244,7 @@ void LineTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
           imshow("input",cv_ptr->image);
           imshow("output", image_rgb_);
           waitKey(0);
-*/
+
   }
   catch (cv_bridge::Exception& e)
   {

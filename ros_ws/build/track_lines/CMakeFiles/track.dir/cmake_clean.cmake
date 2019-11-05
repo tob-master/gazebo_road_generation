@@ -1,6 +1,5 @@
 file(REMOVE_RECURSE
   "CMakeFiles/track.dir/include/line_classification.cpp.o"
-  "CMakeFiles/track.dir/include/line_classification_helper_functions.cpp.o"
   "CMakeFiles/track.dir/include/midline_search.cpp.o"
   "CMakeFiles/track.dir/include/line_tracker.cpp.o"
   "CMakeFiles/track.dir/include/houghline_transform.cpp.o"

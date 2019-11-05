@@ -54,14 +54,19 @@ void MidLineSearch::SetImage(Mat image)
 
 void MidLineSearch::ClearMemory()
 {
+    has_found_mid_line_clusters_ = false;
+    has_found_group_ = false;
+
     midline_clusters_size_.clear();
     midline_clusters_xweight_.clear();
     midline_clusters_yweight_.clear();
     midline_clusters_coordinates_.clear();
     centers_of_gravity.clear();
-    connected_clusters.clear();
-    connected_cluster_keys.clear();
-    found_graphs.clear();
+    grouped_clusters_length_and_direction.clear();
+    connected_clusters_length_and_direction.clear();
+
+    connected_cluster_bin_keys_.clear();
+    grouped_cluster_bin_keys_.clear();
 }
 
 void MidLineSearch::GroupValueablePointsInClusterBins()
@@ -192,20 +197,52 @@ void MidLineSearch::ComputeClustersCenterOfGravity()
 }
 
 
+bool MidLineSearch::HasFoundMidLineClusters()
+{
+    has_found_mid_line_clusters_ = (midline_clusters_coordinates_.size() > 0);
+    return (midline_clusters_coordinates_.size() > 0);
+}
+
+bool MidLineSearch::HasFoundGroup()
+{
+    for (auto& it: grouped_cluster_bin_keys_)
+    {
+        if(it.size() > 1)
+        {
+            has_found_group_ = true;
+            return true;
+        }
+    }
+
+    has_found_group_ = false;
+    return false;
+}
 
 
- void MidLineSearch::FindMidLineClusters(Mat image)
+MidLineSearchReturnInfo MidLineSearch::GetReturnInfo()
+{
+    return MidLineSearchReturnInfo{has_found_mid_line_clusters_,has_found_group_};
+}
+
+ MidLineSearchReturnInfo MidLineSearch::FindMidLineClusters(Mat image)
  {
         SetImage(image);
         ClearMemory();
         GroupValueablePointsInClusterBins();
         RejectClustersUnderSizeThreshold();
-        ComputeClustersCenterOfGravity();
 
+        if(HasFoundMidLineClusters())
+        {
+            ComputeClustersCenterOfGravity();
+            GroupClusters();
 
-        // TODO: Clean this mess
-        //FindConnectedClusters();
-        //ComputeConnectedClusterSlopes();
+            if(HasFoundGroup())
+            {
+               ComputeLengthAndDirectionOfConnectedClusters();
+            }
+        }
+
+        return GetReturnInfo();
 }
 
 
@@ -224,36 +261,41 @@ void MidLineSearch::ComputeClustersCenterOfGravity()
 */
 
 
- void MidLineSearch::ComputeConnectedClusterSlopes()
+ Point MidLineSearch::GetCenterOfGravityPointFromClusterBinKey(ClusterBinKey cluster_bin_key)
  {
+     pair<int,int> key = make_pair(cluster_bin_key.x_cluster_bin_key,cluster_bin_key.y_cluster_bin_key);
 
+    int x = centers_of_gravity[key].begin()->first;
+    int y = centers_of_gravity[key].begin()->second;
 
+    return Point(x,y);
+ }
 
-     for (auto& it: found_graphs)
+ void MidLineSearch::ComputeLengthAndDirectionOfConnectedClusters()
+ {
+     for (auto& it: grouped_cluster_bin_keys_)
      {
-
          if(it.size() > 1)
          {
-             vector<double> x;
-             vector<double> y;
+             //vector<double> x;
+             //vector<double> y;
 
              for(int i=0; i<it.size()-1; i++)
              {
+                 Point current_cluster_center_of_gravity = GetCenterOfGravityPointFromClusterBinKey(it[i]);
+                 Point next_cluster_center_of_gravity    = GetCenterOfGravityPointFromClusterBinKey(it[i+1]);
 
+                 int opposite =  current_cluster_center_of_gravity.y - next_cluster_center_of_gravity.y;
+                 int adjacent =  next_cluster_center_of_gravity.x - current_cluster_center_of_gravity.x;
 
-                 int y_bottom = centers_of_gravity[it[i]].begin()->second;
-                 int y_top    = centers_of_gravity[it[i+1]].begin()->second;
+                 int length = sqrt(pow(adjacent,2)+pow(opposite,2));
 
-                 int x_bottom = centers_of_gravity[it[i]].begin()->first;
-                 int x_top    = centers_of_gravity[it[i+1]].begin()->first;
+                 float angle = CalculateAngle4Quadrants(opposite, adjacent) * PI/180;
 
-                 int opposite =  y_bottom - y_top;
-
-                 int adjacent =  x_top - x_bottom;
-
-
-                 float angle = CalculateAngle4Quadrants(opposite, adjacent);
-
+                 connected_clusters_length_and_direction.push_back(LengthAndDirectionFromConnectedClusters{current_cluster_center_of_gravity.x,
+                                                                                                           current_cluster_center_of_gravity.y,
+                                                                                                           length,
+                                                                                                           angle});
                 /*
                  x.push_back(double(centers_of_gravity[it[i]].begin()->first));
                  y.push_back(double(centers_of_gravity[it[i]].begin()->second));
@@ -263,192 +305,206 @@ void MidLineSearch::ComputeClustersCenterOfGravity()
 
                  cout << "slope: " << atan(slope(x,y)) * 180/PI << endl;
                  */
-
                  //cout <<  "op: " <<  opposite  << " adj: " << adjacent << " xb " << x_bottom << " yb " << y_bottom << " xt " << x_top << " yt " << y_top << " angle: " << angle << endl;
-
              }
-
-
+             grouped_clusters_length_and_direction.push_back(connected_clusters_length_and_direction);
+             connected_clusters_length_and_direction.clear();
          }
-         //cout << "nx_cluster" << endl;
      }
+ }
 
-
-
-
-
+ void MidLineSearch::CoutLengthAndDirectionOfConnectedClusters()
+ {
+     for(int i=0; i<grouped_clusters_length_and_direction.size(); i++)
+     {
+         for(int j=0; j<grouped_clusters_length_and_direction[i].size(); j++)
+         {
+             cout << "Cluster " << i << ": " << grouped_clusters_length_and_direction[i][j].x
+                                             << " "  << grouped_clusters_length_and_direction[i][j].y
+                                             << " "  << grouped_clusters_length_and_direction[i][j].length
+                                             << " "  << grouped_clusters_length_and_direction[i][j].angle * 180/PI << endl;
+         }
+     }
  }
 
 
-
-void MidLineSearch::FindConnectedClusters()
+Point MidLineSearch::GetStartPointOfCurrentCluster(ReverseMidLineCoordinatesIterator it)
 {
-    vector<pair<int,int>> single_graph;
+
+ int x = it->second.begin()->first;
+ int y = it->second.begin()->second;
+
+ return Point(x,y);
+}
+
+
+Point MidLineSearch::GetEndPointOfNextCluster(ReverseMidLineCoordinatesIterator it)
+{
+  auto it_next =  next(it,1);
+
+  int x = it_next->second.rbegin()->first;
+  int y = it_next->second.rbegin()->second;
+
+  return Point(x,y);
+}
+
+
+float MidLineSearch::GetCurrentStartToNextEndClusterDistance(Point start_point_of_current_cluster, Point end_point_of_next_cluster)
+{
+   float distance = sqrt(pow(start_point_of_current_cluster.x - end_point_of_next_cluster.x,2) +
+                         pow(start_point_of_current_cluster.y - end_point_of_next_cluster.y,2));
+
+   return distance;
+}
+
+bool MidLineSearch::ClustersAreConnected(float distance)
+{
+  return (distance <= kMaxConnectedClusterDistance_);
+}
 
 
 
+ClusterBinKey MidLineSearch::GetClusterBinKeyOfCurrentClusterFromIterator(ReverseMidLineCoordinatesIterator it)
+{
+  int x_cluster_bin_key = it->first.first;
+  int y_cluster_bin_key = it->first.second;
 
-    if (midline_clusters_coordinates_.size() >= 2)
+  return ClusterBinKey{x_cluster_bin_key,y_cluster_bin_key};
+}
+
+ClusterBinKey MidLineSearch::GetClusterBinKeyOfNextClusterFromIterator(ReverseMidLineCoordinatesIterator it)
+{
+  auto it_next =  next(it,1);
+
+  int x_cluster_bin_key = it_next->first.first;
+  int y_cluster_bin_key = it_next->first.second;
+
+  return ClusterBinKey{x_cluster_bin_key,y_cluster_bin_key};
+}
+
+ClusterBinKey MidLineSearch::GetSingleClusterBinKey()
+{
+  int x_cluster_bin_key =  midline_clusters_coordinates_.begin()->first.first;
+  int y_cluster_bin_key =  midline_clusters_coordinates_.begin()->first.second;
+
+  return ClusterBinKey{x_cluster_bin_key,y_cluster_bin_key};
+}
+
+
+bool MidLineSearch::IsNewGroup()
+{
+  return connected_cluster_bin_keys_.empty();
+}
+
+
+void MidLineSearch::AddClusterBinKeyToGroup(ClusterBinKey cluster_bin_key)
+{
+  connected_cluster_bin_keys_.push_back(cluster_bin_key);
+  }
+
+void MidLineSearch::SafeGroup()
+{
+    grouped_cluster_bin_keys_.push_back(connected_cluster_bin_keys_);
+}
+
+void MidLineSearch::NewGroup()
+{
+    connected_cluster_bin_keys_.clear();
+}
+
+
+bool MidLineSearch::IsGroupAble()
+{
+    return midline_clusters_coordinates_.size() >= 2;
+}
+
+
+bool MidLineSearch::HasSingleCluster()
+{
+    return midline_clusters_size_.size() == 1;
+}
+
+void MidLineSearch::GroupClusters()
+{
+    if (IsGroupAble())
     {
-        // stop iteration at last but one adress
-        auto end = --midline_clusters_coordinates_.rend();
-        auto p = --midline_clusters_coordinates_.rend();
-        // rbegin is used to iterate from bottom to the top of the image
-        // because at the bottom the midline clusters should be almost at
-        // the same position
+        auto it_start = midline_clusters_coordinates_.rbegin();
+        auto it_end = next(midline_clusters_coordinates_.rend(),-1);
+        auto last_iteration = next(midline_clusters_coordinates_.rend(),-2);
 
-
-
-
-        auto last_iteration = --p;
-
-        bool previous_connection = false;
-
-        //bool initial_run = true;
-
-
-map<pair<int,int>,vector<pair<int,int>>> midline_clusters_coordinates_;
-        vector<vector<pair<int,int>>> found_graphs;
-
-        for (auto it = midline_clusters_coordinates_.rbegin(); it != end; ++it )
+        for (auto it = it_start; it != it_end; ++it )
         {
+            float distance = GetCurrentStartToNextEndClusterDistance(GetStartPointOfCurrentCluster(it), GetEndPointOfNextCluster(it));
 
-
-          auto it_next =  next(it,1);
-
-          int x_start = it->second.begin()->first;
-          int y_start = it->second.begin()->second;
-
-          int x_next_end = it_next->second.rbegin()->first;
-          int y_next_end = it_next->second.rbegin()->second;
-
-
-          //cout <<"co " <<  x_start << " " << x_next_end << " " <<  y_start << " " << y_next_end << endl;
-
-          float distance = sqrt(pow(x_start - x_next_end,2) + pow(y_start - y_next_end,2));
-
-          if(distance <= kMaxConnectedClusterDistance_)
-          {
-
-    /*
-                int itf = it->first.first;
-                int its = it->first.second;
-
-                int x = centers_of_gravity[it->first].begin()->first;
-                int y = centers_of_gravity[it->first].begin()->second;
-
-                int x_nx = centers_of_gravity[it_next->first].begin()->first;
-                int y_nx = centers_of_gravity[it_next->first].begin()->second;
-
-                //connected_clusters.push_back(TwoConnectedClusters{x,y,x_nx,y_nx});
-                cout <<"cog " <<  itf << " " << its << " " << x << " " << y << " " << x_nx << " "  << y_nx << endl;
-      */
-
-                int key_x_it = it->first.first;
-                int key_y_it = it->first.second;
-
-                int key_x_it_next = it_next->first.first;
-                int key_y_it_next = it_next->first.second;
-
-                if(!previous_connection)
+            if(ClustersAreConnected(distance))
+            {
+                if(IsNewGroup())
                 {
-                    single_graph.push_back(make_pair(key_x_it,key_y_it));
-                    single_graph.push_back(make_pair(key_x_it_next,key_y_it_next));
+                    AddClusterBinKeyToGroup(GetClusterBinKeyOfCurrentClusterFromIterator(it));
+                    AddClusterBinKeyToGroup(GetClusterBinKeyOfNextClusterFromIterator(it));
                 }
                 else
                 {
-                    single_graph.push_back(make_pair(key_x_it_next,key_y_it_next));
+                    AddClusterBinKeyToGroup(GetClusterBinKeyOfNextClusterFromIterator(it));
                 }
 
+                if(last_iteration == it) SafeGroup();
 
-                //connected_cluster_keys.push_back(ConnectedClusterKeys{key_x_it,key_y_it,key_x_it_next,key_y_it_next});
-
-                previous_connection = true;
-
-                if(last_iteration == it)
+                continue;
+            }
+            else
+            {
+                if(IsNewGroup())
                 {
-                    found_graphs.push_back(single_graph);
-                    continue;
+                    if(last_iteration == it)
+                    {
+                        AddClusterBinKeyToGroup(GetClusterBinKeyOfCurrentClusterFromIterator(it));
+                        SafeGroup();
+                        NewGroup();
+
+                        AddClusterBinKeyToGroup(GetClusterBinKeyOfNextClusterFromIterator(it));
+                        SafeGroup();
+                        NewGroup();
+                    }
+                    else
+                    {
+                        AddClusterBinKeyToGroup(GetClusterBinKeyOfCurrentClusterFromIterator(it));
+                        SafeGroup();
+                        NewGroup();
+                    }
                 }
                 else
                 {
-                    continue;
+                    if(last_iteration == it)
+                    {
+                        SafeGroup();
+                        NewGroup();
+
+                        AddClusterBinKeyToGroup(GetClusterBinKeyOfNextClusterFromIterator(it));
+                        SafeGroup();
+                        NewGroup();
+                    }
+                    else
+                    {
+                        SafeGroup();
+                        NewGroup();
+                    }
                 }
-
-
-          }
-
-          //cout <<"xdist: " <<  x_start - x_next_end << endl;
-          //cout <<"ydist: " <<  y_start - y_next_end << endl;
-          //cout <<"pow: " << sqrt(pow(x_start - x_next_end,2) + pow(y_start - y_next_end,2)) << endl;
-
-          if(single_graph.size() == 0 && !(last_iteration==it))
-          {
-              single_graph.push_back(make_pair(it->first.first,it->first.second));
-              found_graphs.push_back(single_graph);
-          }
-          else if(last_iteration == it && previous_connection)
-          {
-              found_graphs.push_back(single_graph);
-              single_graph.clear();
-              single_graph.push_back(make_pair(it_next->first.first,it_next->first.second));
-              found_graphs.push_back(single_graph);
-
-          }
-          else if(last_iteration == it && !previous_connection)
-          {
-
-              single_graph.push_back(make_pair(it->first.first,it->first.second));
-              found_graphs.push_back(single_graph);
-
-              single_graph.clear();
-              single_graph.push_back(make_pair(it_next->first.first,it_next->first.second));
-              found_graphs.push_back(single_graph);
-
-          }
-          else{
-              found_graphs.push_back(single_graph);
-              single_graph.clear();
-          }
-          single_graph.clear();
-          previous_connection = false;
-
-
+            }
         }
+    }
+    else if(HasSingleCluster())
+    {
+        AddClusterBinKeyToGroup(GetSingleClusterBinKey());
+        SafeGroup();
+        NewGroup();
+    }
+    else
+    {
+        cout << "no clusters found " << endl;
+        system("pause");
+    }
 }
-else if(midline_clusters_size_.size() == 1)
-{
-
-   int x_start = midline_clusters_coordinates_.begin()->first.first;
-   int y_start = midline_clusters_coordinates_.begin()->first.second;
-
-   single_graph.push_back(make_pair(x_start,y_start));
-   found_graphs.push_back(single_graph);
-   single_graph.clear();
-}
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void MidLineSearch::DrawClusters(Mat &rgb)
 {
@@ -457,52 +513,29 @@ void MidLineSearch::DrawClusters(Mat &rgb)
         int x = cluster.second.begin()->first;
         int y = cluster.second.begin()->second;
 
-      circle(rgb, Point(x,y), 10, Scalar(255, 0, 255));
+        circle(rgb, Point(x,y), 10, Scalar(255, 0, 255));
 
     }
 }
 
-
-
-
-
-
 void MidLineSearch::DrawConnectedClusters(Mat &rgb)
 {
+    srand (time(NULL));
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
-
-
-
-        srand (time(NULL));
-
-    for (auto& it: found_graphs)
+    for (auto& it: grouped_cluster_bin_keys_)
     {
-
         int B = rand() % 255;
-
         int G = rand() % 255;
-
         int R = rand() % 255;
-        //cout << "allg: " << found_graphs.size() << "  g: " << it.size() << endl;
+
         for(int i=0; i<it.size(); i++)
         {
-            int x = centers_of_gravity[it[i]].begin()->first;
-            int y = centers_of_gravity[it[i]].begin()->second;
+            int x = centers_of_gravity[make_pair(it[i].x_cluster_bin_key,it[i].y_cluster_bin_key)].begin()->first;
+            int y = centers_of_gravity[make_pair(it[i].x_cluster_bin_key,it[i].y_cluster_bin_key)].begin()->second;
 
             circle(rgb, Point(x,y), 10, Scalar(B, G, R));
-
-
-
         }
     }
-
-    //cout << "__" << endl;
-
-
 }
 
 

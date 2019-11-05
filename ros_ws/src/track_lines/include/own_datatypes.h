@@ -1,6 +1,8 @@
 #ifndef OWN_DATATYPES_H
 #define OWN_DATATYPES_H
 
+#include <iostream>
+using namespace std;
 
 struct BirdseyeInitializationParameters
 {
@@ -57,6 +59,38 @@ struct MidLineSearchInitializationParameters
 };
 
 
+struct MidLineSearchReturnInfo
+{
+    bool has_found_mid_line_clusters;
+    bool has_found_group;
+
+};
+
+struct StartOfLinesSearchReturnInfo
+{
+    bool has_found_start_parameters;
+};
+
+struct LineFollowerReturnInfo
+{
+    bool left_line_max_iterations_exceeded;
+    bool left_line_search_radius_out_of_image;
+    bool left_line_has_got_stuck;
+    bool left_line_is_walking_backwards;
+    int left_line_iterations_counter;
+    int left_line_got_stuck_counter;
+    int left_line_walked_backwards_counter;
+
+    bool right_line_max_iterations_exceeded;
+    bool right_line_search_radius_out_of_image;
+    bool right_line_has_got_stuck;
+    bool right_line_is_walking_backwards;
+    int right_line_iterations_counter;
+    int right_line_got_stuck_counter;
+    int right_line_walked_backwards_counter;
+};
+
+
 
 struct StartParameters
 {
@@ -69,37 +103,50 @@ struct StartParameters
     float right_angle;
 };
 
-struct LineSearchMoments
+
+
+
+
+
+
+
+
+
+
+
+
+namespace mid_line_search
 {
-    int x;
-    int y;
-    int sum;
-};
-
-struct LineSearchFoundPointAndDirection
-{
-    int x;
-    int y;
-    float angle;
-};
 
 
-struct TwoConnectedClusters
-{
-    int top_cog_x;
-    int top_cog_y;
-    int bottom_cog_x;
-    int bottom_cog_y;
 
-};
 
-struct ConnectedClusterKeys
-{
-    int key_x_1;
-    int key_y_1;
+    typedef reverse_iterator<_Rb_tree_iterator<pair<pair<int, int> const, vector<pair<int, int>,allocator<pair<int, int>>>>>> ReverseMidLineCoordinatesIterator;
 
-    int key_x_2;
-    int key_y_2;
+
+    struct ClusterBinKey
+    {
+        int x_cluster_bin_key;
+        int y_cluster_bin_key;
+    };
+
+    struct TwoConnectedClustersCentersOfGravity
+    {
+        int x_top_center_of_gravity;
+        int y_top_center_of_gravity;
+        int x_bottom_center_of_gravity;
+        int y_bottom_center_of_gravity;
+
+    };
+
+    struct LengthAndDirectionFromConnectedClusters
+    {
+       int x;
+       int y;
+       int length;
+       float angle;
+    };
+
 };
 
 

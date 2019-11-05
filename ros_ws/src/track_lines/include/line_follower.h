@@ -62,6 +62,23 @@ class LineFollower
         int got_stuck_counter_;
         int walked_backwards_counter_;
 
+        bool left_line_max_iterations_exceeded_;
+        bool left_line_search_radius_out_of_image_;
+        bool left_line_has_got_stuck_;
+        bool left_line_is_walking_backwards_;
+        int left_line_iterations_counter_;
+        int left_line_got_stuck_counter_;
+        int left_line_walked_backwards_counter_;
+
+        bool right_line_max_iterations_exceeded_;
+        bool right_line_search_radius_out_of_image_;
+        bool right_line_has_got_stuck_;
+        bool right_line_is_walking_backwards_;
+        int right_line_iterations_counter_;
+        int right_line_got_stuck_counter_;
+        int right_line_walked_backwards_counter_;
+
+
         vector<PointAndDirection> left_line_points_and_directions_;
         vector<PointAndDirection> right_line_points_and_directions_;
 
@@ -71,8 +88,8 @@ class LineFollower
         void ClearMemory();
         void ResetCounters();
         int FollowLine(int x, int y, float search_direction, int line);
-        bool MaxIterationsExceeded();
-        bool SearchRadiusIsNotInImage(int x, int y);
+        bool MaxIterationsExceeded(int line);
+        bool SearchRadiusIsNotInImage(int x, int y, int line);
         void SetSearchDirectionParameters(float search_direction);
         int GetOtsuThreshold(int x, int y);
         vector<int> ScanIntensitiesInSearchDirection(int x, int y);
@@ -84,14 +101,17 @@ class LineFollower
         void SumUpMoments(SummedMoments &summed_moments, vector<ScannedMoments> scanned_moments);
         Point ChangeToBrightestCoordinateWithinReach(Point center_of_gravity);
         float GetNewAngle(int x, int y, Point new_start_point);
-        bool HasGotStuck(int x, int y, Point new_start_point);
-        bool IsWalkingBackwards(int y, Point new_start_point);
+        bool HasGotStuck(int x, int y, Point new_start_point, int line);
+        bool IsWalkingBackwards(int y, Point new_start_point, int line);
         void AddIteration(Point new_start_point, float new_angle, int line);
+
+        void SaveCounterValuesToReturnInfo(int line);
+        LineFollowerReturnInfo GetReturnInfo();
 
 
 public:
         LineFollower(int image_height, int image_width, LineFollowerInitializationParameters init);
-        void FollowLines(Mat grey, StartParameters start_parameters);
+        LineFollowerReturnInfo FollowLines(Mat grey, StartParameters start_parameters);
         void DrawLinePoints(Mat &rgb);
         void GetLines(vector<PointAndDirection> &left_line, vector<PointAndDirection> &right_line);
 

@@ -138,7 +138,6 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(track include/line_classification.cpp
-                     include/line_classification_helper_functions.cpp
                      include/midline_search.cpp
                      include/line_tracker.cpp
                      include/houghline_transform.cpp
