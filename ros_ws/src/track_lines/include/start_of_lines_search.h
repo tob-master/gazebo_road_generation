@@ -1,5 +1,5 @@
-#ifndef LINE_CLASSIFICATION_H
-#define LINE_CLASSIFICATION_H
+#ifndef START_OF_LINES_SEARCH_H
+#define START_OF_LINES_SEARCH_H
 
 //#pragma once
 
@@ -17,9 +17,9 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 
-#include "own_datatypes.h"
-#include "own_utils.h"
-#include "own_defines.h"
+#include "datatypes.h"
+#include "utils.h"
+#include "defines.h"
 
 using namespace std;
 using namespace cv;
@@ -132,4 +132,4 @@ class StartOfLinesSearch
 };
 
 
-#endif // LINE_CLASSIFICATION_H
+#endif // START_OF_LINES_SEARCH_H

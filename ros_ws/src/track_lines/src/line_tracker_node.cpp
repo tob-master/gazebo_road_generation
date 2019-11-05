@@ -1,7 +1,7 @@
 ﻿
 
 
-#include "line_tracker.h"
+#include "lane_tracker.h"
 
 
 /*! \mainpage Autopilot Introduction
@@ -56,7 +56,7 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "line_tracker_node");
     ros::NodeHandle node_handle;
 
-    LineTracker tracker(&node_handle);
+    LaneTracker tracker(&node_handle);
 
     ros::spin();
     ros::shutdown();

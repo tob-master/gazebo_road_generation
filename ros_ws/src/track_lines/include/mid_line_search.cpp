@@ -1,6 +1,6 @@
 
 
-#include "midline_search.h"
+#include "mid_line_search.h"
 
 MidLineSearch::MidLineSearch(int image_height, int image_width, MidLineSearchInitializationParameters init):
 kImageWidth_(image_width),
@@ -315,16 +315,18 @@ MidLineSearchReturnInfo MidLineSearch::GetReturnInfo()
 
  void MidLineSearch::CoutLengthAndDirectionOfConnectedClusters()
  {
+         cout << "___MidLineSearch LengthAndDirectionOfConnectedClusters___" << endl;
      for(int i=0; i<grouped_clusters_length_and_direction.size(); i++)
      {
          for(int j=0; j<grouped_clusters_length_and_direction[i].size(); j++)
          {
-             cout << "Cluster " << i << ": " << grouped_clusters_length_and_direction[i][j].x
-                                             << " "  << grouped_clusters_length_and_direction[i][j].y
-                                             << " "  << grouped_clusters_length_and_direction[i][j].length
-                                             << " "  << grouped_clusters_length_and_direction[i][j].angle * 180/PI << endl;
+             cout << "Cluster " << i << ": \tPoint(" << grouped_clusters_length_and_direction[i][j].x
+                                             << ","  << grouped_clusters_length_and_direction[i][j].y
+                                             << ") \t Direction: "  <<grouped_clusters_length_and_direction[i][j].angle * 180/PI
+                                             << "° \tLength: "  << grouped_clusters_length_and_direction[i][j].length <<"px" <<  endl;
          }
      }
+     cout << "#######################################" << endl;
  }
 
 

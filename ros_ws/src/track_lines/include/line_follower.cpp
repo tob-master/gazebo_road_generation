@@ -237,6 +237,36 @@ vector<ScannedMoments> LineFollower::GetScannedMoments(int otsu_threshold, int x
 }
 
 
+
+
+
+void LineFollower::CoutReturnInfo()
+{
+    LineFollowerReturnInfo info = GetReturnInfo();
+
+    cout << "___LineFollow ReturnInfo___" << endl;
+    cout << "LEFT: " << endl;
+    cout << "max it: \t\t" <<std::boolalpha <<info.left_line_max_iterations_exceeded << endl;
+    cout << "out range: \t\t" <<std::boolalpha << info.left_line_search_radius_out_of_image << endl;
+    cout << "has got stuck: \t\t" << std::boolalpha << info.left_line_has_got_stuck << endl;
+    cout << "walked backwards: \t" << std::boolalpha << info.left_line_is_walking_backwards << endl;
+    cout << "it count: \t\t" << info.left_line_iterations_counter << endl;
+    cout << "got stuck count: \t" << info.left_line_got_stuck_counter << endl;
+    cout << "walked backwards count: " << info.left_line_walked_backwards_counter << endl<< endl;
+
+    cout << "RIGHT: " << endl;
+    cout << "max it: \t\t" <<std::boolalpha <<info.right_line_max_iterations_exceeded << endl;
+    cout << "out range: \t\t" <<std::boolalpha << info.right_line_search_radius_out_of_image << endl;
+    cout << "has got stuck: \t\t" << std::boolalpha << info.right_line_has_got_stuck << endl;
+    cout << "walked backwards: \t" << std::boolalpha << info.right_line_is_walking_backwards << endl;
+    cout << "it count: \t\t" << info.right_line_iterations_counter << endl;
+    cout << "got stuck count: \t" << info.right_line_got_stuck_counter << endl;
+    cout << "walked backwards count: " << info.right_line_walked_backwards_counter << endl;
+        cout << "#######################################" << endl;
+
+}
+
+
 void LineFollower::SearchMaxWeightMoment(SummedMoments &summed_moments, vector<ScannedMoments> scanned_moments)
 {
     for (int id=0; id<scanned_moments.size(); id++)
@@ -402,16 +432,22 @@ void LineFollower::AddIteration(Point new_start_point, float new_angle, int line
 }
 
 
-void LineFollower::DrawLinePoints(Mat &rgb)
+void LineFollower::DrawLinePoints(Mat &rgb, int line)
 {
-    for(auto &it : left_line_points_and_directions_)
+    if(line == LEFT_LINE)
     {
-        circle(rgb, Point(it.x,it.y), 7, Scalar(0, 255, 255));
+        for(auto &it : left_line_points_and_directions_)
+        {
+            circle(rgb, Point(it.x,it.y), 7, Scalar(0, 255, 255));
+        }
     }
 
-    for(auto &it : right_line_points_and_directions_)
+    if(line == RIGHT_LINE)
     {
-        circle(rgb, Point(it.x,it.y), 7, Scalar(255, 255, 0));
+        for(auto &it : right_line_points_and_directions_)
+        {
+            circle(rgb, Point(it.x,it.y), 7, Scalar(255, 255, 0));
+        }
     }
 }
 
@@ -472,11 +508,16 @@ LineFollowerReturnInfo LineFollower::FollowLines(Mat image, StartParameters star
     return GetReturnInfo();
 }
 
-void LineFollower::GetLines(vector<PointAndDirection> &left_line, vector<PointAndDirection> &right_line)
+void LineFollower::GetLine(vector<PointAndDirection> &_line, int line)
 {
+    if(line == LEFT_LINE)
+    {
+        _line = left_line_points_and_directions_;
+    }
 
-    left_line  = left_line_points_and_directions_;
-    right_line = right_line_points_and_directions_;
-
-
+    if(line == RIGHT_LINE)
+    {
+        _line = right_line_points_and_directions_;
+    }
 }
+

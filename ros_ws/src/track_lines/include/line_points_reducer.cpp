@@ -99,6 +99,10 @@ void LinePointsReducer::SetContainers(vector<line_follower::PointAndDirection>le
 
 void LinePointsReducer::ClearMemory()
 {
+
+    left_line_is_reduced_ = false;
+    right_line_is_reduced_ = false;
+
     left_line_points_.clear();
     right_line_points_.clear();
     left_line_points_reduced_.clear();
@@ -108,115 +112,167 @@ void LinePointsReducer::ClearMemory()
     right_line_points_reduced_length_direction_.clear();
 }
 
-void LinePointsReducer::DrawReducedLinePoints(Mat &rgb)
+void LinePointsReducer::DrawReducedLinePoints(Mat &rgb, int line)
 {
-    for(auto &it: left_line_points_reduced_)
+    if(line == LEFT_LINE)
     {
-        circle(rgb, Point((int)it.first,(int)it.second), 7, Scalar(0, 0, 255));
+        for(auto &it: left_line_points_reduced_)
+        {
+            circle(rgb, Point((int)it.first,(int)it.second), 7, Scalar(0, 0, 255));
+        }
     }
 
-    for(auto &it: right_line_points_reduced_)
+    if(line == RIGHT_LINE)
     {
-        circle(rgb, Point((int)it.first,(int)it.second), 7, Scalar(0, 0, 255));
+        for(auto &it: right_line_points_reduced_)
+        {
+            circle(rgb, Point((int)it.first,(int)it.second), 7, Scalar(0, 0, 255));
+        }
     }
 }
 
 
-void LinePointsReducer::ReduceLinePoints(vector<line_follower::PointAndDirection> left_line, vector<line_follower::PointAndDirection> right_line, double max_distance)
+LinePointsReducerReturnInfo LinePointsReducer::GetReturnInfo()
+{
+    return LinePointsReducerReturnInfo{left_line_is_reduced_,
+                                       left_line_points_reduced_.size(),
+                                       right_line_is_reduced_,
+                                       right_line_points_reduced_.size()};
+}
+
+LinePointsReducerReturnInfo LinePointsReducer::ReduceLinePoints(vector<line_follower::PointAndDirection> left_line, vector<line_follower::PointAndDirection> right_line, double max_distance)
 {
 
     ClearMemory();
     SetContainers(left_line,right_line);
     SetMaxDistance(max_distance);
 
-    ApplyRamerDouglasPeucker(left_line_points_, max_distance_, left_line_points_reduced_);
-    ApplyRamerDouglasPeucker(right_line_points_, max_distance_, right_line_points_reduced_);
 
-    ComputeLengthAndDirectionFromConsecutiveReducedLinePoints();
+
+    if(left_line_points_.size() >= 2)
+    {
+        ApplyRamerDouglasPeucker(left_line_points_, max_distance_, left_line_points_reduced_);
+        ComputeLengthAndDirectionFromConsecutiveReducedLinePoints(LEFT_LINE);
+        left_line_is_reduced_ = true;
+    }
+    else
+    {
+       left_line_is_reduced_ = false;
+    }
+
+    if(right_line_points_.size() >= 2)
+    {
+         ApplyRamerDouglasPeucker(right_line_points_, max_distance_, right_line_points_reduced_);
+         ComputeLengthAndDirectionFromConsecutiveReducedLinePoints(RIGHT_LINE);
+         right_line_is_reduced_ = true;
+    }
+    else
+    {
+       right_line_is_reduced_ = false;
+    }
+
+
+    return GetReturnInfo();
 
 }
 
-void LinePointsReducer::GetReducedLinePoints(vector<ReducedPoints> &left_line_points_reduced, vector<ReducedPoints> &right_line_points_reduced)
+void LinePointsReducer::GetReducedLinePoints(vector<ReducedPoints> &line_points_reduced, int line)
 {
-    for(auto &it: left_line_points_reduced_)
+    if(line == LEFT_LINE)
     {
-        left_line_points_reduced.push_back(ReducedPoints{int(it.first),int(it.second)});
+        for(auto &it: left_line_points_reduced_)
+        {
+            line_points_reduced.push_back(ReducedPoints{int(it.first),int(it.second)});
+        }
     }
 
-    for(auto &it: right_line_points_reduced_)
+    if(line == RIGHT_LINE)
     {
-        right_line_points_reduced.push_back(ReducedPoints{int(it.first),int(it.second)});
+        for(auto &it: right_line_points_reduced_)
+        {
+            line_points_reduced.push_back(ReducedPoints{int(it.first),int(it.second)});
+        }
     }
 }
 
-void LinePointsReducer::GetLengthAndDirectionFromConsecutiveReducedLinePoints(vector<LengthAndDirectionFromConsecutiveReducedLinePoints> &left_line_points_reduced_length_direction,
-                                                           vector<LengthAndDirectionFromConsecutiveReducedLinePoints> &right_line_points_reduced_length_direction)
+void LinePointsReducer::GetLengthAndDirectionFromConsecutiveReducedLinePoints(vector<LengthAndDirectionFromConsecutiveReducedLinePoints> &line_points_reduced_length_direction, int line)
 {
-    for(auto &it: left_line_points_reduced_length_direction_)
+    if(line == LEFT_LINE)
     {
-        left_line_points_reduced_length_direction.push_back(it);
+        for(auto &it: left_line_points_reduced_length_direction_)
+        {
+            line_points_reduced_length_direction.push_back(it);
+        }
     }
 
-    for(auto &it: right_line_points_reduced_length_direction_)
+    if(line == RIGHT_LINE)
     {
-        right_line_points_reduced_length_direction.push_back(it);
+        for(auto &it: right_line_points_reduced_length_direction_)
+        {
+            line_points_reduced_length_direction.push_back(it);
+        }
     }
 }
 
-void LinePointsReducer::ComputeLengthAndDirectionFromConsecutiveReducedLinePoints()
+void LinePointsReducer::ComputeLengthAndDirectionFromConsecutiveReducedLinePoints(int line)
 {
 
-    for(auto i=0; i<left_line_points_reduced_.size()-1; i++)
+    if(line == LEFT_LINE)
     {
-        int x = left_line_points_reduced_[i].first;
-        int y = left_line_points_reduced_[i].second;
+        for(auto i=0; i<left_line_points_reduced_.size()-1; i++)
+        {
+            int x = left_line_points_reduced_[i].first;
+            int y = left_line_points_reduced_[i].second;
 
-        int x_next = left_line_points_reduced_[i+1].first;
-        int y_next = left_line_points_reduced_[i+1].second;
+            int x_next = left_line_points_reduced_[i+1].first;
+            int y_next = left_line_points_reduced_[i+1].second;
 
-        int opposite =  y - y_next;
-        int adjacent =  x_next - x;
+            int opposite =  y - y_next;
+            int adjacent =  x_next - x;
 
-        int length = sqrt(pow(adjacent,2)+pow(opposite,2));
+            int length = sqrt(pow(adjacent,2)+pow(opposite,2));
 
-        float angle =  CalculateAngle4Quadrants(opposite, adjacent) * (PI/180);
+            float angle =  CalculateAngle4Quadrants(opposite, adjacent) * (PI/180);
 
-        left_line_points_reduced_length_direction_.push_back(LengthAndDirectionFromConsecutiveReducedLinePoints{x,y,length, angle});
+            left_line_points_reduced_length_direction_.push_back(LengthAndDirectionFromConsecutiveReducedLinePoints{x,y,length, angle});
+        }
     }
 
-    for(auto i=0; i<right_line_points_reduced_.size()-1; i++)
+    if(line == RIGHT_LINE)
     {
-        int x = right_line_points_reduced_[i].first;
-        int y = right_line_points_reduced_[i].second;
+        for(auto i=0; i<right_line_points_reduced_.size()-1; i++)
+        {
+            int x = right_line_points_reduced_[i].first;
+            int y = right_line_points_reduced_[i].second;
 
-        int x_next = right_line_points_reduced_[i+1].first;
-        int y_next = right_line_points_reduced_[i+1].second;
+            int x_next = right_line_points_reduced_[i+1].first;
+            int y_next = right_line_points_reduced_[i+1].second;
 
-        int opposite =  y - y_next;
-        int adjacent =  x_next - x;
+            int opposite =  y - y_next;
+            int adjacent =  x_next - x;
 
-        int length = sqrt(pow(adjacent,2)+pow(opposite,2));
+            int length = sqrt(pow(adjacent,2)+pow(opposite,2));
 
-        float angle =  CalculateAngle4Quadrants(opposite, adjacent) * (PI/180);
+            float angle =  CalculateAngle4Quadrants(opposite, adjacent) * (PI/180);
 
-        right_line_points_reduced_length_direction_.push_back(LengthAndDirectionFromConsecutiveReducedLinePoints{x,y,length, angle});
+            right_line_points_reduced_length_direction_.push_back(LengthAndDirectionFromConsecutiveReducedLinePoints{x,y,length, angle});
+        }
     }
-
 }
 
 
 void LinePointsReducer::CoutLengthAndDirectionFromConsecutiveReducedLinePoints()
 {
-    cout << "___LengthAndDirectionFromConsecutiveReducedLinePoints___" << endl;
+    cout << "___LinePointsReducer LengthAndDirectionFromConsecutiveReducedLinePoints___" << endl;
     for (auto &it : left_line_points_reduced_length_direction_)
     {
-        cout <<"left: ("<< it.x << "," << it.y << ") " << it.angle * (180/PI) << "° " << it.length <<"px" << endl;
+        cout <<"left: \tPoint("<< it.x << "," << it.y << ") \tDirection: " << it.angle * (180/PI) << "° \tLength: " << it.length <<"px" << endl;
     }
 
 
     for (auto &it : right_line_points_reduced_length_direction_)
     {
-        cout <<"right: ("<< it.x << "," << it.y << ") " << it.angle * (180/PI) << "° " << it.length <<"px" << endl;
+        cout <<"right: \tPoint("<< it.x << "," << it.y << ") \tDirection: " << it.angle * (180/PI) << "° \tLength: " << it.length <<"px" << endl;
     }
-    cout << "______" << endl;
+    cout << "#######################################" << endl;
 }

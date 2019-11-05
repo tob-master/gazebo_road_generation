@@ -182,59 +182,32 @@ track/fast:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/build
 .PHONY : track/fast
 
-include/houghline_transform.o: include/houghline_transform.cpp.o
+include/lane_tracker.o: include/lane_tracker.cpp.o
 
-.PHONY : include/houghline_transform.o
-
-# target to build an object file
-include/houghline_transform.cpp.o:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/houghline_transform.cpp.o
-.PHONY : include/houghline_transform.cpp.o
-
-include/houghline_transform.i: include/houghline_transform.cpp.i
-
-.PHONY : include/houghline_transform.i
-
-# target to preprocess a source file
-include/houghline_transform.cpp.i:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/houghline_transform.cpp.i
-.PHONY : include/houghline_transform.cpp.i
-
-include/houghline_transform.s: include/houghline_transform.cpp.s
-
-.PHONY : include/houghline_transform.s
-
-# target to generate assembly for a file
-include/houghline_transform.cpp.s:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/houghline_transform.cpp.s
-.PHONY : include/houghline_transform.cpp.s
-
-include/line_classification.o: include/line_classification.cpp.o
-
-.PHONY : include/line_classification.o
+.PHONY : include/lane_tracker.o
 
 # target to build an object file
-include/line_classification.cpp.o:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_classification.cpp.o
-.PHONY : include/line_classification.cpp.o
+include/lane_tracker.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/lane_tracker.cpp.o
+.PHONY : include/lane_tracker.cpp.o
 
-include/line_classification.i: include/line_classification.cpp.i
+include/lane_tracker.i: include/lane_tracker.cpp.i
 
-.PHONY : include/line_classification.i
+.PHONY : include/lane_tracker.i
 
 # target to preprocess a source file
-include/line_classification.cpp.i:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_classification.cpp.i
-.PHONY : include/line_classification.cpp.i
+include/lane_tracker.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/lane_tracker.cpp.i
+.PHONY : include/lane_tracker.cpp.i
 
-include/line_classification.s: include/line_classification.cpp.s
+include/lane_tracker.s: include/lane_tracker.cpp.s
 
-.PHONY : include/line_classification.s
+.PHONY : include/lane_tracker.s
 
 # target to generate assembly for a file
-include/line_classification.cpp.s:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_classification.cpp.s
-.PHONY : include/line_classification.cpp.s
+include/lane_tracker.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/lane_tracker.cpp.s
+.PHONY : include/lane_tracker.cpp.s
 
 include/line_follower.o: include/line_follower.cpp.o
 
@@ -290,59 +263,86 @@ include/line_points_reducer.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_points_reducer.cpp.s
 .PHONY : include/line_points_reducer.cpp.s
 
-include/line_tracker.o: include/line_tracker.cpp.o
+include/mid_line_search.o: include/mid_line_search.cpp.o
 
-.PHONY : include/line_tracker.o
-
-# target to build an object file
-include/line_tracker.cpp.o:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.o
-.PHONY : include/line_tracker.cpp.o
-
-include/line_tracker.i: include/line_tracker.cpp.i
-
-.PHONY : include/line_tracker.i
-
-# target to preprocess a source file
-include/line_tracker.cpp.i:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.i
-.PHONY : include/line_tracker.cpp.i
-
-include/line_tracker.s: include/line_tracker.cpp.s
-
-.PHONY : include/line_tracker.s
-
-# target to generate assembly for a file
-include/line_tracker.cpp.s:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_tracker.cpp.s
-.PHONY : include/line_tracker.cpp.s
-
-include/midline_search.o: include/midline_search.cpp.o
-
-.PHONY : include/midline_search.o
+.PHONY : include/mid_line_search.o
 
 # target to build an object file
-include/midline_search.cpp.o:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/midline_search.cpp.o
-.PHONY : include/midline_search.cpp.o
+include/mid_line_search.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/mid_line_search.cpp.o
+.PHONY : include/mid_line_search.cpp.o
 
-include/midline_search.i: include/midline_search.cpp.i
+include/mid_line_search.i: include/mid_line_search.cpp.i
 
-.PHONY : include/midline_search.i
+.PHONY : include/mid_line_search.i
 
 # target to preprocess a source file
-include/midline_search.cpp.i:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/midline_search.cpp.i
-.PHONY : include/midline_search.cpp.i
+include/mid_line_search.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/mid_line_search.cpp.i
+.PHONY : include/mid_line_search.cpp.i
 
-include/midline_search.s: include/midline_search.cpp.s
+include/mid_line_search.s: include/mid_line_search.cpp.s
 
-.PHONY : include/midline_search.s
+.PHONY : include/mid_line_search.s
 
 # target to generate assembly for a file
-include/midline_search.cpp.s:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/midline_search.cpp.s
-.PHONY : include/midline_search.cpp.s
+include/mid_line_search.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/mid_line_search.cpp.s
+.PHONY : include/mid_line_search.cpp.s
+
+include/start_of_lines_search.o: include/start_of_lines_search.cpp.o
+
+.PHONY : include/start_of_lines_search.o
+
+# target to build an object file
+include/start_of_lines_search.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/start_of_lines_search.cpp.o
+.PHONY : include/start_of_lines_search.cpp.o
+
+include/start_of_lines_search.i: include/start_of_lines_search.cpp.i
+
+.PHONY : include/start_of_lines_search.i
+
+# target to preprocess a source file
+include/start_of_lines_search.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/start_of_lines_search.cpp.i
+.PHONY : include/start_of_lines_search.cpp.i
+
+include/start_of_lines_search.s: include/start_of_lines_search.cpp.s
+
+.PHONY : include/start_of_lines_search.s
+
+# target to generate assembly for a file
+include/start_of_lines_search.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/start_of_lines_search.cpp.s
+.PHONY : include/start_of_lines_search.cpp.s
+
+include/vanishing_point_search.o: include/vanishing_point_search.cpp.o
+
+.PHONY : include/vanishing_point_search.o
+
+# target to build an object file
+include/vanishing_point_search.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/vanishing_point_search.cpp.o
+.PHONY : include/vanishing_point_search.cpp.o
+
+include/vanishing_point_search.i: include/vanishing_point_search.cpp.i
+
+.PHONY : include/vanishing_point_search.i
+
+# target to preprocess a source file
+include/vanishing_point_search.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/vanishing_point_search.cpp.i
+.PHONY : include/vanishing_point_search.cpp.i
+
+include/vanishing_point_search.s: include/vanishing_point_search.cpp.s
+
+.PHONY : include/vanishing_point_search.s
+
+# target to generate assembly for a file
+include/vanishing_point_search.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/vanishing_point_search.cpp.s
+.PHONY : include/vanishing_point_search.cpp.s
 
 src/line_tracker_node.o: src/line_tracker_node.cpp.o
 
@@ -385,24 +385,24 @@ help:
 	@echo "... install"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... include/houghline_transform.o"
-	@echo "... include/houghline_transform.i"
-	@echo "... include/houghline_transform.s"
-	@echo "... include/line_classification.o"
-	@echo "... include/line_classification.i"
-	@echo "... include/line_classification.s"
+	@echo "... include/lane_tracker.o"
+	@echo "... include/lane_tracker.i"
+	@echo "... include/lane_tracker.s"
 	@echo "... include/line_follower.o"
 	@echo "... include/line_follower.i"
 	@echo "... include/line_follower.s"
 	@echo "... include/line_points_reducer.o"
 	@echo "... include/line_points_reducer.i"
 	@echo "... include/line_points_reducer.s"
-	@echo "... include/line_tracker.o"
-	@echo "... include/line_tracker.i"
-	@echo "... include/line_tracker.s"
-	@echo "... include/midline_search.o"
-	@echo "... include/midline_search.i"
-	@echo "... include/midline_search.s"
+	@echo "... include/mid_line_search.o"
+	@echo "... include/mid_line_search.i"
+	@echo "... include/mid_line_search.s"
+	@echo "... include/start_of_lines_search.o"
+	@echo "... include/start_of_lines_search.i"
+	@echo "... include/start_of_lines_search.s"
+	@echo "... include/vanishing_point_search.o"
+	@echo "... include/vanishing_point_search.i"
+	@echo "... include/vanishing_point_search.s"
 	@echo "... src/line_tracker_node.o"
 	@echo "... src/line_tracker_node.i"
 	@echo "... src/line_tracker_node.s"

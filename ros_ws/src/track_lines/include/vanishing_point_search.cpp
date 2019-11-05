@@ -1,28 +1,28 @@
-#include "houghline_transform.h"
+#include "vanishing_point_search.h"
 
-HoughLineTransform::HoughLineTransform()
+VanishingPointSearch::VanishingPointSearch()
 {
 
 }
 
- void HoughLineTransform::FindVanashingPoint(Mat image)
+ void VanishingPointSearch::FindVanashingPoint(Mat image)
  {
      current_image_ = image;
  }
 
 
-void HoughLineTransform::ApplyCannyEdge()
+void VanishingPointSearch::ApplyCannyEdge()
 {
     Canny(current_image_, canny_image_, kLowThreshold_, kHighThreshold_, kKernelSize_);
 }
 
-void HoughLineTransform::ShowCannyEdgeImage()
+void VanishingPointSearch::ShowCannyEdgeImage()
 {
     imshow("Canny Imgae", canny_image_);
     waitKey(0);
 }
 
-void HoughLineTransform::ApplyHoughLines()
+void VanishingPointSearch::ApplyHoughLines()
 {
 
     cv::Rect myROI(0, 350, 1280, 67);
@@ -66,7 +66,7 @@ pdd lineLineIntersection(pdd A, pdd B, pdd C, pdd D)
 
 
 
-void HoughLineTransform::ComputeIntersections()
+void VanishingPointSearch::ComputeIntersections()
 {
 
 
@@ -106,7 +106,7 @@ void HoughLineTransform::ComputeIntersections()
     }
 }
 
-void HoughLineTransform::ShowHoughLines()
+void VanishingPointSearch::ShowHoughLines()
 {
 
     cv::cvtColor(hough_image_, hough_image_, CV_GRAY2BGR);

@@ -15,9 +15,9 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 
-#include "own_datatypes.h"
-#include "own_utils.h"
-#include "own_defines.h"
+#include "datatypes.h"
+#include "utils.h"
+#include "defines.h"
 
 using namespace std;
 using namespace cv;
@@ -28,7 +28,7 @@ class LineFollower
 
     private:
 
-        enum {LEFT_LINE, RIGHT_LINE};
+
 
         Mat image_;
         const int kImageWidth_ = 1280;
@@ -112,8 +112,9 @@ class LineFollower
 public:
         LineFollower(int image_height, int image_width, LineFollowerInitializationParameters init);
         LineFollowerReturnInfo FollowLines(Mat grey, StartParameters start_parameters);
-        void DrawLinePoints(Mat &rgb);
-        void GetLines(vector<PointAndDirection> &left_line, vector<PointAndDirection> &right_line);
+        void DrawLinePoints(Mat &rgb, int line);
+        void GetLine(vector<PointAndDirection> &_line, int line);
+        void CoutReturnInfo();
 
 
 };

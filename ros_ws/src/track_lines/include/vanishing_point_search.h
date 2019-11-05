@@ -1,5 +1,5 @@
-#ifndef HOUGHLINE_TRANSFORM_H
-#define HOUGHLINE_TRANSFORM_H
+#ifndef VANISHING_POINT_SEARCH_H
+#define VANISHING_POINT_SEARCH_H
 
 #include <iostream>
 #include <stdio.h>
@@ -20,7 +20,7 @@ using namespace cv;
 
 #define PI 3.14
 
-class HoughLineTransform
+class VanishingPointSearch
 {
 
     Mat current_image_;
@@ -56,7 +56,7 @@ class HoughLineTransform
 
 
     public:
-        HoughLineTransform();
+        VanishingPointSearch();
 
         void FindVanashingPoint(Mat image);
 
@@ -67,4 +67,4 @@ class HoughLineTransform
         void ShowHoughLines();
 };
 
-#endif // HOUGHLINE_TRANSFORM_H
+#endif // VANISHING_POINT_SEARCH_H

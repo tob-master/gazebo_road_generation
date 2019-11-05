@@ -1,9 +1,9 @@
-#ifndef OWN_UTILS_H
-#define OWN_UTILS_H
+#ifndef UTILS_H
+#define UTILS_H
 
 #include <iostream>
 #include <stdlib.h>
-#include "own_defines.h"
+#include "defines.h"
 using namespace std;
 
 
@@ -63,4 +63,4 @@ inline float CalculateAngle4Quadrants(int opposite, int adjacent)
 };
 
 
-#endif // OWN_UTILS_H
+#endif // UTILS_H

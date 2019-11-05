@@ -1,5 +1,5 @@
-#ifndef MIDLINE_SEARCH_H
-#define MIDLINE_SEARCH_H
+#ifndef MID_LINE_SEARCH_H
+#define MID_LINE_SEARCH_H
 
 //#pragma once
 
@@ -20,9 +20,9 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "own_datatypes.h"
-#include "own_utils.h"
-#include "own_defines.h"
+#include "datatypes.h"
+#include "utils.h"
+#include "defines.h"
 
 using namespace std;
 using namespace cv;
@@ -128,4 +128,4 @@ class MidLineSearch
 
 };
 
-#endif
+#endif // MID_LINE_SEARCH_H

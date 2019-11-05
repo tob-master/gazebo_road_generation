@@ -1,5 +1,5 @@
-#ifndef LINE_POINT_REDUCER_H
-#define LINE_POINT_REDUCER_H
+#ifndef LINE_POINTS_REDUCER_H
+#define LINE_POINTS_REDUCER_H
 
 #include <iostream>
 #include <stdio.h>
@@ -16,8 +16,8 @@
 #include <opencv2/imgcodecs.hpp>
 
 
-#include "own_utils.h"
-#include "own_datatypes.h"
+#include "utils.h"
+#include "datatypes.h"
 
 using namespace std;
 using namespace cv;
@@ -29,6 +29,9 @@ using namespace line_points_reducer;
 class LinePointsReducer
 {
     private:
+
+
+
         vector<RamerDouglasPeuckerTypePoint> left_line_points_;
         vector<RamerDouglasPeuckerTypePoint> right_line_points_;
 
@@ -41,23 +44,25 @@ class LinePointsReducer
 
         double max_distance_;
 
+        bool left_line_is_reduced_;
+        bool right_line_is_reduced_;
 
         void ClearMemory();
         void SetContainers(vector<line_follower::PointAndDirection> left_line, vector<line_follower::PointAndDirection> right_line);
         void SetMaxDistance(double max_distance);
         void ApplyRamerDouglasPeucker(const vector<RamerDouglasPeuckerTypePoint> &pointList, double epsilon, vector<RamerDouglasPeuckerTypePoint> &out);
         double GetPerpendicularDistance(const RamerDouglasPeuckerTypePoint &pt, const RamerDouglasPeuckerTypePoint &lineStart, const RamerDouglasPeuckerTypePoint &lineEnd);
-        void ComputeLengthAndDirectionFromConsecutiveReducedLinePoints();
+        void ComputeLengthAndDirectionFromConsecutiveReducedLinePoints(int line);
+        LinePointsReducerReturnInfo GetReturnInfo();
 
     public:
         LinePointsReducer();
-        void ReduceLinePoints(vector<line_follower::PointAndDirection> left_line, vector<line_follower::PointAndDirection> right_line, double max_distance);
-        void GetLengthAndDirectionFromConsecutiveReducedLinePoints(vector<LengthAndDirectionFromConsecutiveReducedLinePoints> &left_line_points_reduced_length_direction,
-                                                                   vector<LengthAndDirectionFromConsecutiveReducedLinePoints> &right_line_points_reduced_length_direction);
-        void GetReducedLinePoints(vector<ReducedPoints> &left_line_points_reduced, vector<ReducedPoints> &right_line_points_reduced);
-        void DrawReducedLinePoints(Mat &rgb);
+        LinePointsReducerReturnInfo ReduceLinePoints(vector<line_follower::PointAndDirection> left_line, vector<line_follower::PointAndDirection> right_line, double max_distance);
+        void GetLengthAndDirectionFromConsecutiveReducedLinePoints(vector<LengthAndDirectionFromConsecutiveReducedLinePoints> &line_points_reduced_length_direction,int line);
+        void GetReducedLinePoints(vector<ReducedPoints> &line_points_reduced, int line);
+        void DrawReducedLinePoints(Mat &rgb, int line);
 
         void CoutLengthAndDirectionFromConsecutiveReducedLinePoints();
 };
 
-#endif // LINE_POINT_REDUCER_H
+#endif // LINE_POINTS_REDUCER_H

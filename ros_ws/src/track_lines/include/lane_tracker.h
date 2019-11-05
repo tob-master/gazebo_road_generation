@@ -1,19 +1,19 @@
-#ifndef LINE_TRACKER_H
-#define LINE_TRACKER_H
+#ifndef LANE_TRACKER_H
+#define LANE_TRACKER_H
 
 //#pragma once
 
-#include "midline_search.h"
-#include "line_classification.h"
+#include "mid_line_search.h"
+#include "start_of_lines_search.h"
 #include "line_follower.h"
 #include "line_points_reducer.h"
-#include "houghline_transform.h"
-
-//#include "houghline_birdseye_transformation_matrix_rm.h"
-#include "own_datatypes.h"
+#include "vanishing_point_search.h"
 
 
-class LineTracker
+#include "datatypes.h"
+
+
+class LaneTracker
 {
 
 private:
@@ -48,7 +48,7 @@ private:
     MidLineSearch *MidLineSearcher;
 
 
-    HoughLineTransform VanashingPoint;
+    VanishingPointSearch VanashingPoint;
 
 
     void LoadAllInitializationParameters();
@@ -58,11 +58,11 @@ private:
     void LoadMidLineSearchInitializationParameters();
 
 public:
-  LineTracker(ros::NodeHandle* nh_);
+  LaneTracker(ros::NodeHandle* nh_);
   void imageCallback(const sensor_msgs::ImageConstPtr& msg);
   void InitializeBirdseyeTransformationMatrix();
 
 
 };
 
-#endif // LINE_TRACKER_H
+#endif // LANE_TRACKER_H

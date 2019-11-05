@@ -1,8 +1,11 @@
-#ifndef OWN_DATATYPES_H
-#define OWN_DATATYPES_H
+#ifndef DATATYPES_H
+#define DATATYPES_H
 
 #include <iostream>
 using namespace std;
+
+
+enum {LEFT_LINE, RIGHT_LINE};
 
 struct BirdseyeInitializationParameters
 {
@@ -90,7 +93,13 @@ struct LineFollowerReturnInfo
     int right_line_walked_backwards_counter;
 };
 
-
+struct LinePointsReducerReturnInfo
+{
+    bool left_line_is_reduced;
+    int left_line_reduced_size;
+    bool right_line_is_reduced;
+    int right_line_reduced_size;
+};
 
 struct StartParameters
 {
@@ -245,4 +254,4 @@ namespace start_of_lines_search
       int top_row_mid_id;
     };
 }
-#endif // OWN_DATATYPES_H
+#endif // DATATYPES_H

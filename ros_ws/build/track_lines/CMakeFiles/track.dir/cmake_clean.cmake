@@ -1,8 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/track.dir/include/line_classification.cpp.o"
-  "CMakeFiles/track.dir/include/midline_search.cpp.o"
-  "CMakeFiles/track.dir/include/line_tracker.cpp.o"
-  "CMakeFiles/track.dir/include/houghline_transform.cpp.o"
+  "CMakeFiles/track.dir/include/start_of_lines_search.cpp.o"
+  "CMakeFiles/track.dir/include/mid_line_search.cpp.o"
+  "CMakeFiles/track.dir/include/lane_tracker.cpp.o"
+  "CMakeFiles/track.dir/include/vanishing_point_search.cpp.o"
   "CMakeFiles/track.dir/include/line_follower.cpp.o"
   "CMakeFiles/track.dir/include/line_points_reducer.cpp.o"
   "CMakeFiles/track.dir/src/line_tracker_node.cpp.o"
