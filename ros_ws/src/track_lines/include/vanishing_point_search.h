@@ -15,6 +15,11 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 
+#include "dbscan.h"
+
+#define MINIMUM_POINTS 3     // minimum number of cluster
+#define EPSILON (5)  // distance for clustering, metre^2
+
 #include "datatypes.h"
 #include "utils.h"
 
@@ -22,7 +27,7 @@ using namespace std;
 using namespace cv;
 using namespace vanishing_point_search;
 
-#define PI 3.14
+
 
 class VanishingPointSearch
 {
@@ -72,6 +77,8 @@ class VanishingPointSearch
 
         const int kCarMidPositionInFrame = 640;
 
+        Point CarMidPoint_ = Point(640,416);
+
         Mat canny_image_;
         Mat hough_image_;
         Mat current_image_roi_;
@@ -88,7 +95,13 @@ class VanishingPointSearch
         vector<HoughLinesWarpedPerspektive> right_hough_lines_warped_perspektive_;
 
 
+        vector<Point> intersections_;
 
+        float kMaxStandardDeviationForValidVanishingPoint_ = 5.0;
+
+        Point vanishing_point_;
+
+        bool has_found_vanishing_point_ = false;
 
         void ClearMemory();
         void SetImage(Mat image);
@@ -100,7 +113,12 @@ class VanishingPointSearch
         void RejectFalseLeftAndRightLineAngles();
         void WarpPerspektiveOfHoughLines(int _line);
 
-        void ComputeIntersections();
+        pair<double, double> ComputeLineIntersection(pair<double, double> A, pair<double, double> B,
+                                                     pair<double, double> C, pair<double, double> D);
+
+        void ComputeLeftAndRightHoughLineIntersections();
+        void ApplyDBScan();
+        void FilterVanishingPoint();
 
     public:
         VanishingPointSearch();
@@ -110,6 +128,8 @@ class VanishingPointSearch
         void ShowCannyEdgeImage();
         void DrawHoughLines(Mat &image, int _line);
         void DrawWarpedPerspektiveHoughLines(Mat &rgb, int _line);
+        void DrawLineIntersections(Mat &rgb);
+        void DrawVanishingPoint(Mat &rgb);
         void CoutHoughLines();
 };
 

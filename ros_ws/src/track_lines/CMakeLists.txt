@@ -143,6 +143,7 @@ add_executable(track include/start_of_lines_search.cpp
                      include/vanishing_point_search.cpp
                      include/line_follower.cpp
                      include/line_points_reducer.cpp
+                     include/dbscan.cpp
                      src/line_tracker_node.cpp )
 
 #add_executable(track_mid_line_node src/nodes/track_mid_line_node.cpp)

@@ -116,7 +116,6 @@ struct StartParameters
 
 
 
-
 namespace vanishing_point_search
 {
 
@@ -157,7 +156,7 @@ namespace mid_line_search
 
 
 
-    typedef reverse_iterator<_Rb_tree_iterator<pair<pair<int, int> const, vector<pair<int, int>,allocator<pair<int, int>>>>>> ReverseMidLineCoordinatesIterator;
+    typedef std::reverse_iterator<std::_Rb_tree_iterator<pair<pair<int, int> const, vector<pair<int, int>,allocator<pair<int, int>>>>>> ReverseMidLineCoordinatesIterator;
 
 
     struct ClusterBinKey

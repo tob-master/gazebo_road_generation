@@ -26,8 +26,10 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         VanishingPoint.FindVanishingPoint(image_mono_,birdseye_transformation_matrix_);
         VanishingPoint.DrawHoughLines(image_rgb_, LEFT_LINE);
         VanishingPoint.DrawHoughLines(image_rgb_, RIGHT_LINE);
+        //VanishingPoint.DrawLineIntersections(image_rgb_);
         VanishingPoint.DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
         VanishingPoint.DrawWarpedPerspektiveHoughLines(image_rgb_bird_, RIGHT_LINE);
+        VanishingPoint.DrawVanishingPoint(image_rgb_);
 
 /*
 

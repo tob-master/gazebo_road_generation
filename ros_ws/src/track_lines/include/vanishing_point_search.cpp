@@ -30,12 +30,88 @@ void VanishingPointSearch::CropToRegionOfInterest()
      GatherTrueRangeLeftAndRightLines();
      RejectFalseLeftAndRightLineAngles();
 
+     ComputeLeftAndRightHoughLineIntersections();
+
+     FilterVanishingPoint();
+     //ApplyDBScan();
+ }
 
 
+ void VanishingPointSearch::FilterVanishingPoint()
+ {
+     if(intersections_.size() > 0)
+     {
+         float x_sum = 0;
+         float y_sum = 0;
+
+         for(auto it: intersections_)
+         {
+             x_sum += it.x;
+             y_sum += abs(it.y);
+
+             cout << it.x << " " << it.y << endl;
+         }
+
+         float x_mean = x_sum / intersections_.size();
+         float y_mean = y_sum / intersections_.size();
+
+         int valid_point_counter = 0;
+         int std_add = 0;
+         float standard_deviation = 0;
+         do{
+         x_sum = 0;
+         y_sum = 0;
+         valid_point_counter = 0;
+
+         for (auto it: intersections_)
+         {
+              standard_deviation= sqrt(pow(it.x-x_mean,2) + pow(abs(it.y)-y_mean,2));
+
+              cout << standard_deviation << endl;
+             if(standard_deviation < kMaxStandardDeviationForValidVanishingPoint_+std_add)
+             {
+                 x_sum += it.x;
+                 y_sum += abs(it.y);
+                 ++valid_point_counter;
+             }
+
+         }
+         ++std_add;
+         }while(valid_point_counter == 0);
+
+         int x = (x_sum / valid_point_counter) + kXROIStart_;
+         int y = kYROIStart_ - (y_sum / valid_point_counter);
+
+         vanishing_point_ = Point(x,y);
+         cout <<intersections_.size() <<" " << standard_deviation << " " <<  vanishing_point_ << " " << valid_point_counter << " " << x_mean << " " << y_mean << " " << x_sum << " " << y_sum << endl;
+         has_found_vanishing_point_ = true;
+    }
+     else {
+         has_found_vanishing_point_ = false;
+     }
 
 
+ }
 
+ void VanishingPointSearch::DrawVanishingPoint(Mat &rgb)
+ {
+        if(has_found_vanishing_point_)
+        {
+            circle(rgb, vanishing_point_, 7, Scalar(255, 0, 255));
+            circle(rgb, CarMidPoint_, 7, Scalar(255, 0, 255));
+            line( rgb,CarMidPoint_, vanishing_point_, Scalar(255,0,255), 3, CV_AA);
 
+            int opposite =  CarMidPoint_.y - vanishing_point_.y;
+            int adjacent =  vanishing_point_.x - CarMidPoint_.x;
+
+            int angle = CalculateAngle4Quadrants(opposite, adjacent);
+
+            string text = to_string(angle) + " deg";
+
+            putText(rgb, text, Point(CarMidPoint_.x + 30,CarMidPoint_.y),
+                FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,0,255), 1, CV_AA);
+
+        }
  }
 
  void VanishingPointSearch::ClearMemory()
@@ -48,6 +124,8 @@ void VanishingPointSearch::CropToRegionOfInterest()
 
      left_hough_lines_warped_perspektive_.clear();
      right_hough_lines_warped_perspektive_.clear();
+
+     intersections_.clear();
  }
 
 
@@ -152,6 +230,97 @@ void VanishingPointSearch::RejectFalseLeftAndRightLineAngles()
 
     }
 }
+
+
+void VanishingPointSearch::ComputeLeftAndRightHoughLineIntersections()
+{
+
+
+
+    for (int i = 0; i < left_hough_lines_points_and_angle_.size(); ++i)
+    {
+         double left_x_bottom = left_hough_lines_points_and_angle_[i].x_bottom;
+         double left_y_bottom = left_hough_lines_points_and_angle_[i].y_bottom;
+         double left_x_top = left_hough_lines_points_and_angle_[i].x_top;
+         double left_y_top = left_hough_lines_points_and_angle_[i].y_top;
+
+         pair<double, double> A = make_pair(left_x_bottom,left_y_bottom);
+         pair<double, double> B = make_pair(left_x_top,left_y_top);
+
+        for (int j = 0; j < right_hough_lines_points_and_angle_.size(); ++j)
+        {
+            double right_x_bottom = right_hough_lines_points_and_angle_[j].x_bottom;
+            double right_y_bottom = right_hough_lines_points_and_angle_[j].y_bottom;
+            double right_x_top = right_hough_lines_points_and_angle_[j].x_top;
+            double right_y_top = right_hough_lines_points_and_angle_[j].y_top;
+
+            pair<double, double> C = make_pair(right_x_bottom,right_y_bottom);
+            pair<double, double> D = make_pair(right_x_top,right_y_top);
+
+            pair<double, double> intersection = ComputeLineIntersection(A, B, C, D);
+
+            if (intersection.first == FLT_MAX &&
+                intersection.second==FLT_MAX)
+            {
+                //cout << i << " The given lines AB and CD are parallel.\n";
+            }
+
+            else
+            {
+                //cout << "The intersection of the given lines AB "
+                //        "and CD is: ";
+                //cout << i << "(" << intersection.first << ", " << intersection.second<< ")" << endl;
+
+
+                intersections_.push_back(Point((int)intersection.first, (int)intersection.second));
+
+            }
+
+        }
+    }
+}
+
+
+void VanishingPointSearch::ApplyDBScan()
+{
+    vector<DBScanPoint> intersections_dbscan_;
+
+    for (auto it : intersections_) {
+
+
+    intersections_dbscan_.push_back(DBScanPoint{float(it.x),
+                                                float(it.y),
+                                                0.0,
+                                                UNCLASSIFIED});
+    }
+    DBSCAN ds(MINIMUM_POINTS, EPSILON, intersections_dbscan_);
+
+    ds.run();
+
+
+
+    vector<DBScanPoint> db_points = ds.getDBScanPoint();
+    int num_points = ds.getTotalPointSize();
+
+
+    int i = 0;
+    printf("Number of points: %u\n"
+        " x     y     z     cluster_id\n"
+        "-----------------------------\n"
+        , num_points);
+    while (i < num_points)
+    {
+          printf("%5.2lf %5.2lf %5.2lf: %d\n",
+                 db_points[i].x,
+                 db_points[i].y, db_points[i].z,
+                 db_points[i].clusterID);
+          ++i;
+    }
+
+
+
+}
+
 
 
 void VanishingPointSearch::WarpPerspektiveOfHoughLines(int _line)
@@ -329,10 +498,9 @@ void VanishingPointSearch::CoutHoughLines()
 }
 
 
-/*
-#define pdd pair<double, double>
 
-pdd lineLineIntersection(pdd A, pdd B, pdd C, pdd D)
+
+pair<double, double> VanishingPointSearch::ComputeLineIntersection(pair<double, double> A, pair<double, double> B, pair<double, double> C, pair<double, double> D)
 {
     // Line AB represented as a1x + b1y = c1
     double a1 = B.second - A.second;
@@ -362,43 +530,15 @@ pdd lineLineIntersection(pdd A, pdd B, pdd C, pdd D)
 
 
 
-void VanishingPointSearch::ComputeIntersections()
+
+
+void VanishingPointSearch::DrawLineIntersections(Mat &rgb)
 {
-
-
-
-
-
-
-    if(found_lines_.size()>= 2)
+    for(auto it: intersections_)
     {
+        int x = it.x + kXROIStart_;
+        int y = it.y + kYROIStart_;
 
-        for(int i=0; i<found_lines_.size()-1;i++)
-        {
-             pdd A = make_pair(found_lines_[i][0], found_lines_[i][1]);
-             pdd B = make_pair(found_lines_[i][2], found_lines_[i][3]);
-             pdd C = make_pair(found_lines_[i+1][0], found_lines_[i+1][1]);
-             pdd D = make_pair(found_lines_[i+1][2], found_lines_[i+1][3]);
-
-             pdd intersection = lineLineIntersection(A, B, C, D);
-
-
-             if (intersection.first == FLT_MAX &&
-                 intersection.second==FLT_MAX)
-             {
-                 cout << i << " The given lines AB and CD are parallel.\n";
-             }
-
-             else
-             {
-                 // NOTE: Further check can be applied in case
-                 // of line segments. Here, we have considered AB
-                 // and CD as lines
-                 cout << "The intersection of the given lines AB "
-                         "and CD is: ";
-                 cout << i << "(" << intersection.first << ", " << intersection.second<< ")" << endl;
-             }
-        }
+        circle(rgb, Point(x,y), 7, Scalar(255, 0, 255));
     }
 }
-*/

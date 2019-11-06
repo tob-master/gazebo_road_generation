@@ -182,6 +182,33 @@ track/fast:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/build
 .PHONY : track/fast
 
+include/dbscan.o: include/dbscan.cpp.o
+
+.PHONY : include/dbscan.o
+
+# target to build an object file
+include/dbscan.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/dbscan.cpp.o
+.PHONY : include/dbscan.cpp.o
+
+include/dbscan.i: include/dbscan.cpp.i
+
+.PHONY : include/dbscan.i
+
+# target to preprocess a source file
+include/dbscan.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/dbscan.cpp.i
+.PHONY : include/dbscan.cpp.i
+
+include/dbscan.s: include/dbscan.cpp.s
+
+.PHONY : include/dbscan.s
+
+# target to generate assembly for a file
+include/dbscan.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/dbscan.cpp.s
+.PHONY : include/dbscan.cpp.s
+
 include/lane_tracker.o: include/lane_tracker.cpp.o
 
 .PHONY : include/lane_tracker.o
@@ -385,6 +412,9 @@ help:
 	@echo "... install"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... include/dbscan.o"
+	@echo "... include/dbscan.i"
+	@echo "... include/dbscan.s"
 	@echo "... include/lane_tracker.o"
 	@echo "... include/lane_tracker.i"
 	@echo "... include/lane_tracker.s"
