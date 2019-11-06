@@ -39,6 +39,9 @@ private:
 
     Mat image_mono_;
     Mat image_rgb_;
+    Mat image_mono_bird_;
+    Mat image_rgb_bird_;
+    Mat image_rgb_warped_back_;
 
 
 
@@ -48,7 +51,7 @@ private:
     MidLineSearch *MidLineSearcher;
 
 
-    VanishingPointSearch VanashingPoint;
+    VanishingPointSearch VanishingPoint;
 
 
     void LoadAllInitializationParameters();

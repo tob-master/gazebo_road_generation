@@ -117,7 +117,34 @@ struct StartParameters
 
 
 
+namespace vanishing_point_search
+{
 
+    struct HoughLinesWarpedPerspektive
+    {
+        int x_bottom;
+        int y_bottom;
+        int x_top;
+        int y_top;
+    };
+
+    struct HoughLinesInDriveDirection
+    {
+        int x_bottom;
+        int y_bottom;
+        int x_top;
+        int y_top;
+    };
+
+    struct HoughLinesPointsAndAngle
+    {
+        int x_bottom;
+        int y_bottom;
+        int x_top;
+        int y_top;
+        int angle;
+    };
+};
 
 
 

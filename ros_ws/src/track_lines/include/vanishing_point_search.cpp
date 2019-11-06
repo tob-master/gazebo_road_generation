@@ -5,35 +5,331 @@ VanishingPointSearch::VanishingPointSearch()
 
 }
 
- void VanishingPointSearch::FindVanashingPoint(Mat image)
+
+void VanishingPointSearch::SetImage(Mat image)
+{
+    current_image_ = image;
+}
+
+void VanishingPointSearch::CropToRegionOfInterest()
+{
+    current_image_roi_ =  current_image_(cv::Rect(kXROIStart_, kYROIStart_, kROIWidth_, kROIHeight_));
+}
+
+ void VanishingPointSearch::FindVanishingPoint(Mat image, Mat warp_matrix)
  {
-     current_image_ = image;
+     warp_matrix_ = warp_matrix;
+
+     SetImage(image);
+     ClearMemory();
+     CropToRegionOfInterest();
+     ApplyCannyEdge();
+     ApplyHoughLines();
+
+     ChangeLinePointsToDriveDirection();
+     GatherTrueRangeLeftAndRightLines();
+     RejectFalseLeftAndRightLineAngles();
+
+
+
+
+
+
+
+ }
+
+ void VanishingPointSearch::ClearMemory()
+ {
+     hough_lines_in_drive_direction_.clear();
+     left_hough_lines_in_drive_direction_.clear();
+     right_hough_lines_in_drive_direction_.clear();
+     left_hough_lines_points_and_angle_.clear();
+     right_hough_lines_points_and_angle_.clear();
+
+     left_hough_lines_warped_perspektive_.clear();
+     right_hough_lines_warped_perspektive_.clear();
  }
 
 
 void VanishingPointSearch::ApplyCannyEdge()
 {
-    Canny(current_image_, canny_image_, kLowThreshold_, kHighThreshold_, kKernelSize_);
+    Canny(current_image_roi_, canny_image_, kLowThreshold_, kHighThreshold_, kKernelSize_);
 }
 
 void VanishingPointSearch::ShowCannyEdgeImage()
 {
-    imshow("Canny Imgae", canny_image_);
+    imshow("Canny Imgage", canny_image_);
     waitKey(0);
 }
 
 void VanishingPointSearch::ApplyHoughLines()
 {
-
-    cv::Rect myROI(0, 350, 1280, 67);
-
-    hough_image_ = canny_image_(myROI);
-
-    //hough_image_ = current_image_;
-
-    HoughLinesP(hough_image_, found_lines_, kRho_, kTheta_, kMinIntersections, kMinLineLength, kMaxLineGap );
+    HoughLinesP(canny_image_, hough_lines_, kRho_, kTheta_, kMinIntersections, kMinLineLength, kMaxLineGap );
 }
 
+
+
+void VanishingPointSearch::ChangeLinePointsToDriveDirection()
+{
+    for( size_t i = 0; i < hough_lines_.size(); i++ )
+    {
+      int x1 = hough_lines_[i][0];
+      int y1 = hough_lines_[i][1];
+      int x2 = hough_lines_[i][2];
+      int y2 = hough_lines_[i][3];
+
+      if(y2 > y1)
+      {
+          int tmp;
+          tmp = x1;
+          x1  = x2;
+          x2  = tmp;
+          tmp = y1;
+          y1  = y2;
+          y2 = tmp;
+      }
+
+      hough_lines_in_drive_direction_.push_back(HoughLinesInDriveDirection{x1,y1,x2,y2});
+    }
+}
+
+
+void VanishingPointSearch::GatherTrueRangeLeftAndRightLines()
+{
+    for(auto it: hough_lines_in_drive_direction_)
+    {
+
+        if(it.x_bottom >= kXMinLeftLine && it.x_bottom <= kXMaxLeftLine)
+        {
+            left_hough_lines_in_drive_direction_.push_back(it);
+        }
+
+        if(it.x_bottom >= kXMinRightLine && it.x_bottom <= kXMaxRightLine)
+        {
+            right_hough_lines_in_drive_direction_.push_back(it);
+        }
+
+    }
+}
+
+
+void VanishingPointSearch::RejectFalseLeftAndRightLineAngles()
+{
+
+
+
+    for(auto it: left_hough_lines_in_drive_direction_)
+    {
+        int opposite =  it.y_bottom - it.y_top;
+        int adjacent =  it.x_top - it.x_bottom;
+        int angle =CalculateAngle4Quadrants(opposite, adjacent);
+
+        if(angle >= kMinLeftLineAngle &&  angle <= kMaxLeftLineAngle)
+        {
+            left_hough_lines_points_and_angle_.push_back({it.x_bottom,
+                                                          it.y_bottom,
+                                                          it.x_top,
+                                                          it.y_top,
+                                                          angle});
+        }
+
+    }
+
+    for(auto it: right_hough_lines_in_drive_direction_)
+    {
+        int opposite =  it.y_bottom - it.y_top;
+        int adjacent =  it.x_top - it.x_bottom;
+        int angle =CalculateAngle4Quadrants(opposite, adjacent);
+
+        if(angle >= kMinRightLineAngle &&  angle <= kMaxRightLineAngle)
+        {
+            right_hough_lines_points_and_angle_.push_back({it.x_bottom,
+                                                          it.y_bottom,
+                                                          it.x_top,
+                                                          it.y_top,
+                                                          angle});
+        }
+
+    }
+}
+
+
+void VanishingPointSearch::WarpPerspektiveOfHoughLines(int _line)
+{
+
+    if(_line == LEFT_LINE)
+    {
+        left_hough_lines_warped_perspektive_.clear();
+
+
+        for (auto it: left_hough_lines_points_and_angle_)
+        {
+            int x1 = it.x_bottom + kXROIStart_;
+            int y1 = it.y_bottom + kYROIStart_;
+
+            int x2 = it.x_top + kXROIStart_;
+            int y2 = it.y_top + kYROIStart_;
+
+            cv::Point2f bottom = Point2f(float(x1), float(y1));
+            cv::Point2f top    = Point2f(float(x2), float(y2));
+
+            vector<Point2f> src, dst;
+            src.push_back(bottom);
+            src.push_back(top);
+
+            cv::perspectiveTransform(src,dst,warp_matrix_.inv());
+
+            x1 = int(dst[0].x);
+            y1 = int(dst[0].y);
+
+            x2 = int(dst[1].x);
+            y2 = int(dst[1].y);
+
+            left_hough_lines_warped_perspektive_.push_back({x1,y1,x2,y2});
+
+        }
+    }
+
+    if(_line == RIGHT_LINE)
+    {
+       right_hough_lines_warped_perspektive_.clear();
+
+        for (auto it: right_hough_lines_points_and_angle_)
+        {
+            int x1 = it.x_bottom + kXROIStart_;
+            int y1 = it.y_bottom + kYROIStart_;
+
+            int x2 = it.x_top + kXROIStart_;
+            int y2 = it.y_top + kYROIStart_;
+
+            cv::Point2f bottom = Point2f(float(x1), float(y1));
+            cv::Point2f top    = Point2f(float(x2), float(y2));
+
+            vector<Point2f> src, dst;
+            src.push_back(bottom);
+            src.push_back(top);
+
+            cv::perspectiveTransform(src,dst,warp_matrix_.inv());
+
+            x1 = int(dst[0].x);
+            y1 = int(dst[0].y);
+
+            x2 = int(dst[1].x);
+            y2 = int(dst[1].y);
+
+            right_hough_lines_warped_perspektive_.push_back({x1,y1,x2,y2});
+
+        }
+    }
+}
+
+
+void VanishingPointSearch::DrawWarpedPerspektiveHoughLines(Mat &rgb, int _line)
+{
+
+
+
+    WarpPerspektiveOfHoughLines(_line);
+
+    if(_line == LEFT_LINE)
+    {
+        for (auto it: left_hough_lines_warped_perspektive_)
+        {
+            int x1 = it.x_bottom;
+            int y1 = it.y_bottom;
+
+            int x2 = it.x_top;
+            int y2 = it.y_top;
+
+            line( rgb,Point(x1,y1), Point(x2,y2), Scalar(0,0,255), 3, CV_AA);
+        }
+    }
+
+    if(_line == RIGHT_LINE)
+    {
+        for (auto it: right_hough_lines_warped_perspektive_)
+        {
+            int x1 = it.x_bottom;
+            int y1 = it.y_bottom;
+
+            int x2 = it.x_top;
+            int y2 = it.y_top;
+
+            line( rgb, Point(x1, y1), Point(x2, y2), Scalar(0,255,0), 3, CV_AA);
+        }
+    }
+}
+
+
+void VanishingPointSearch::DrawHoughLines(Mat &image, int _line)
+{
+
+    if(_line == LEFT_LINE)
+    {
+        for (auto it: left_hough_lines_points_and_angle_)
+        {
+            int x1 = it.x_bottom + kXROIStart_;
+            int y1 = it.y_bottom + kYROIStart_;
+
+            int x2 = it.x_top + kXROIStart_;
+            int y2 = it.y_top + kYROIStart_;
+
+            line( image,Point(x1,y1), Point(x2,y2), Scalar(0,0,255), 3, CV_AA);
+        }
+    }
+
+    if(_line == RIGHT_LINE)
+    {
+        for (auto it: right_hough_lines_points_and_angle_)
+        {
+            int x1 = it.x_bottom + kXROIStart_;
+            int y1 = it.y_bottom + kYROIStart_;
+
+            int x2 = it.x_top + kXROIStart_;
+            int y2 = it.y_top + kYROIStart_;
+
+            line( image, Point(x1, y1), Point(x2, y2), Scalar(0,255,0), 3, CV_AA);
+        }
+    }
+
+}
+
+
+void VanishingPointSearch::CoutHoughLines()
+{
+    cout << "___VanishingPointSearch HoughLines___" << endl;
+
+        for (auto it: left_hough_lines_points_and_angle_)
+        {
+            int x1 = it.x_bottom + kXROIStart_;
+            int y1 = it.y_bottom + kYROIStart_;
+
+            int x2 = it.x_top + kXROIStart_;
+            int y2 = it.y_top + kYROIStart_;
+
+            int angle = it.angle;
+
+            cout << "LEFT: \t(" << x1 << ","<<y1 << ") \t(" << x2 << "," << y2 << ")  \tangle: " << angle<< "°" << endl;
+
+        }
+
+        for (auto it: right_hough_lines_points_and_angle_)
+        {
+            int x1 = it.x_bottom + kXROIStart_;
+            int y1 = it.y_bottom + kYROIStart_;
+
+            int x2 = it.x_top + kXROIStart_;
+            int y2 = it.y_top + kYROIStart_;
+
+            int angle = it.angle;
+
+            cout << "RIGHT: \t(" << x1 << ","<< y1 << ") \t(" << x2 << "," << y2 << ")  \tangle: " << angle <<"°" << endl;
+        }
+        cout << "#######################################" << endl;
+}
+
+
+/*
 #define pdd pair<double, double>
 
 pdd lineLineIntersection(pdd A, pdd B, pdd C, pdd D)
@@ -105,49 +401,4 @@ void VanishingPointSearch::ComputeIntersections()
         }
     }
 }
-
-void VanishingPointSearch::ShowHoughLines()
-{
-
-    cv::cvtColor(hough_image_, hough_image_, CV_GRAY2BGR);
-
-
-    int min_angle =  87;
-
-    for( size_t i = 0; i < found_lines_.size(); i++ )
-    {
-      Vec4i l = found_lines_[i];
-
-
-      line( hough_image_, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0,0,255), 3, CV_AA);
-
-
-
-
-        /*
-      if(l[2]-l[0] == 0)
-      {
-          cout << "90" << endl;
-          line( hough_image_, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0,0,255), 3, CV_AA);
-      }
-      else
-      {
-          float angle = abs(atan((l[3]-l[1])/(l[2]-l[0])) * 180/PI);
-          if(angle > min_angle)
-          {
-            cout << angle << endl;
-            line( hough_image_, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0,0,255), 3, CV_AA);
-          }
-      }
-
-
 */
-
-    }
-
-
-    imshow("Hough Lines Imgae", hough_image_);
-    waitKey(0);
-}
-
-

@@ -1,6 +1,123 @@
 #include "lane_tracker.h"
 
 
+void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
+{
+    try
+    {
+        cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "mono8");
+
+        image_mono_ = cv_ptr->image;
+        cv::cvtColor(image_mono_, image_rgb_, CV_GRAY2BGR);
+
+        warpPerspective(image_mono_, image_mono_bird_, birdseye_transformation_matrix_, kInputImageSize_, INTER_CUBIC | WARP_INVERSE_MAP);
+        image_mono_bird_ = image_mono_bird_(Rect(0,0,image_width_,image_height_));
+
+        cv::cvtColor(image_mono_bird_, image_rgb_bird_, CV_GRAY2BGR);
+
+
+
+        //cv::Mat image_rgb2_;
+
+        //cv::cvtColor(image_mono_bird_, image_rgb2_, CV_GRAY2BGR);
+        clock_t begin = clock();
+
+
+        VanishingPoint.FindVanishingPoint(image_mono_,birdseye_transformation_matrix_);
+        VanishingPoint.DrawHoughLines(image_rgb_, LEFT_LINE);
+        VanishingPoint.DrawHoughLines(image_rgb_, RIGHT_LINE);
+        VanishingPoint.DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
+        VanishingPoint.DrawWarpedPerspektiveHoughLines(image_rgb_bird_, RIGHT_LINE);
+
+/*
+
+        StartOfLinesSearchReturnInfo start_of_lines_search_return_info = StartOfLinesSearcher_->FindStartParameters(image_mono_bird_);
+
+        if(start_of_lines_search_return_info.has_found_start_parameters)
+        {
+            StartOfLinesSearcher_->DrawStartParameters(image_rgb_bird_);
+
+            LineFollowerReturnInfo line_follower_return_info = LineFollower_->FollowLines(image_mono_bird_,StartOfLinesSearcher_->GetStartParameters());
+            LineFollower_->CoutReturnInfo();
+
+            vector<PointAndDirection> left_line, right_line;
+
+            if(line_follower_return_info.left_line_iterations_counter >= 2)
+            {
+                LineFollower_->GetLine(left_line, LEFT_LINE);
+                LineFollower_->DrawLinePoints(image_rgb_bird_,LEFT_LINE);
+            }
+
+            if(line_follower_return_info.right_line_iterations_counter >= 2)
+            {
+                LineFollower_->GetLine(right_line, RIGHT_LINE);
+                LineFollower_->DrawLinePoints(image_rgb_bird_,RIGHT_LINE);
+            }
+
+            double max_distance = 10;
+
+            LinePointsReducerReturnInfo line_points_reducer_return_info = LinePointsReducer_->ReduceLinePoints(left_line,right_line,max_distance);
+
+            vector<ReducedPoints> left_line_points_reduced, right_line_points_reduced;
+            vector<LengthAndDirectionFromConsecutiveReducedLinePoints> left_line_points_reduced_length_direction,
+                                                                       right_line_points_reduced_length_direction;
+
+            if(line_points_reducer_return_info.left_line_is_reduced)
+            {
+                LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,LEFT_LINE);
+                LinePointsReducer_->GetReducedLinePoints(left_line_points_reduced,LEFT_LINE);
+                LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(left_line_points_reduced_length_direction, LEFT_LINE);
+            }
+
+            if(line_points_reducer_return_info.right_line_is_reduced)
+            {
+                LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,RIGHT_LINE);
+                LinePointsReducer_->GetReducedLinePoints(right_line_points_reduced,RIGHT_LINE);
+                LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(right_line_points_reduced_length_direction,RIGHT_LINE);
+            }
+
+            LinePointsReducer_->CoutLengthAndDirectionFromConsecutiveReducedLinePoints();
+
+        }
+
+        MidLineSearchReturnInfo mid_line_search_return_info = MidLineSearcher->FindMidLineClusters(image_mono_bird_);
+
+        if(mid_line_search_return_info.has_found_mid_line_clusters)
+        {
+            //MidLineSearcher->DrawClusters(image_rgb_bird_);
+
+            if(mid_line_search_return_info.has_found_group)
+            {
+                MidLineSearcher->DrawConnectedClusters(image_rgb_bird_);
+                MidLineSearcher->CoutLengthAndDirectionOfConnectedClusters();
+            }
+        }
+
+
+
+*/
+
+        clock_t end = clock();
+        double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+        cout << "fps: " << 1/elapsed_secs << endl;
+
+        warpPerspective(image_rgb_bird_, image_rgb_warped_back_, birdseye_transformation_matrix_.inv(), Size(image_width_,image_height_), INTER_CUBIC | WARP_INVERSE_MAP);
+
+
+        imshow("normal",image_rgb_);
+        imshow("bird", image_rgb_bird_);
+        imshow("warped_back",image_rgb_warped_back_);
+        waitKey(0);
+
+    }
+    catch (cv_bridge::Exception& e)
+    {
+        ROS_ERROR("Could not convert from '%s' to 'mono8'.",
+        msg->encoding.c_str());
+    }
+};
+
+
 void LaneTracker::LoadStartOfLinesSearchInitializationParameters()
 {
     string str = "rosparam load /home/tb/gazebo_road_generation/ros_ws/src/track_lines/initialization/start_of_lines_search_init.yaml";
@@ -135,106 +252,13 @@ void LaneTracker::InitializeBirdseyeTransformationMatrix()
 
   // Final and overall birdseye_transformation_matrix_rmation matrix
   birdseye_transformation_matrix_ = A2 * (T * (R * A1));
+
+
+
 }
 
 
-void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
-{
-    try
-    {
-        cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "mono8");
-        warpPerspective(cv_ptr->image, image_mono_, birdseye_transformation_matrix_, kInputImageSize_, INTER_CUBIC | WARP_INVERSE_MAP);
-        image_mono_ = image_mono_(Rect(0,0,image_width_,image_height_));
-        cv::cvtColor(image_mono_, image_rgb_, CV_GRAY2BGR);
 
-        clock_t begin = clock();
-
-        /*
-        VanashingPoint.FindVanashingPoint(cv_ptr->image);
-        VanashingPoint.ApplyCannyEdge();
-        //VanashingPoint.ShowCannyEdgeImage();
-        VanashingPoint.ApplyHoughLines();
-        VanashingPoint.ComputeIntersections();
-        //VanashingPoint.ShowHoughLines();
-        */
-
-        StartOfLinesSearchReturnInfo start_of_lines_search_return_info = StartOfLinesSearcher_->FindStartParameters(image_mono_);
-
-        if(start_of_lines_search_return_info.has_found_start_parameters)
-        {
-            StartOfLinesSearcher_->DrawStartParameters(image_rgb_);
-
-            LineFollowerReturnInfo line_follower_return_info = LineFollower_->FollowLines(image_mono_,StartOfLinesSearcher_->GetStartParameters());
-            LineFollower_->CoutReturnInfo();
-
-            vector<PointAndDirection> left_line, right_line;
-
-            if(line_follower_return_info.left_line_iterations_counter >= 2)
-            {
-                LineFollower_->GetLine(left_line, LEFT_LINE);
-                LineFollower_->DrawLinePoints(image_rgb_,LEFT_LINE);
-            }
-
-            if(line_follower_return_info.right_line_iterations_counter >= 2)
-            {
-                LineFollower_->GetLine(right_line, RIGHT_LINE);
-                LineFollower_->DrawLinePoints(image_rgb_,RIGHT_LINE);
-            }
-
-            double max_distance = 10;
-
-            LinePointsReducerReturnInfo line_points_reducer_return_info = LinePointsReducer_->ReduceLinePoints(left_line,right_line,max_distance);
-
-            vector<ReducedPoints> left_line_points_reduced, right_line_points_reduced;
-            vector<LengthAndDirectionFromConsecutiveReducedLinePoints> left_line_points_reduced_length_direction,
-                                                                       right_line_points_reduced_length_direction;
-
-            if(line_points_reducer_return_info.left_line_is_reduced)
-            {
-                LinePointsReducer_->DrawReducedLinePoints(image_rgb_,LEFT_LINE);
-                LinePointsReducer_->GetReducedLinePoints(left_line_points_reduced,LEFT_LINE);
-                LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(left_line_points_reduced_length_direction, LEFT_LINE);
-            }
-
-            if(line_points_reducer_return_info.right_line_is_reduced)
-            {
-                LinePointsReducer_->DrawReducedLinePoints(image_rgb_,RIGHT_LINE);
-                LinePointsReducer_->GetReducedLinePoints(right_line_points_reduced,RIGHT_LINE);
-                LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(right_line_points_reduced_length_direction,RIGHT_LINE);
-            }
-
-            LinePointsReducer_->CoutLengthAndDirectionFromConsecutiveReducedLinePoints();
-
-        }
-
-        MidLineSearchReturnInfo mid_line_search_return_info = MidLineSearcher->FindMidLineClusters(image_mono_);
-
-        if(mid_line_search_return_info.has_found_mid_line_clusters)
-        {
-            //MidLineSearcher->DrawClusters(image_rgb_);
-
-            if(mid_line_search_return_info.has_found_group)
-            {
-                MidLineSearcher->DrawConnectedClusters(image_rgb_);
-                MidLineSearcher->CoutLengthAndDirectionOfConnectedClusters();
-            }
-        }
-
-        clock_t end = clock();
-        double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-        cout << "fps: " << 1/elapsed_secs << endl;
-
-        imshow("input",cv_ptr->image);
-        imshow("output", image_rgb_);
-        waitKey(0);
-
-    }
-    catch (cv_bridge::Exception& e)
-    {
-        ROS_ERROR("Could not convert from '%s' to 'mono8'.",
-        msg->encoding.c_str());
-    }
-};
 
 LaneTracker::LaneTracker(ros::NodeHandle* nh_):n(*nh_),it(*nh_)
 {
@@ -253,7 +277,7 @@ LaneTracker::LaneTracker(ros::NodeHandle* nh_):n(*nh_),it(*nh_)
 
 /*
             Mat kk;
-           threshold(image_mono_, kk, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+           threshold(image_mono_bird_, kk, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
 
            Mat labels;
                Mat stats;
@@ -269,7 +293,7 @@ LaneTracker::LaneTracker(ros::NodeHandle* nh_):n(*nh_),it(*nh_)
      */
             //Mat kk;
 
-            //kk = image_mono_;
+            //kk = image_mono_bird_;
 
             //Mat imBin;
             //threshold(kk,imBin,0,255,THRESH_BINARY| CV_THRESH_OTSU);

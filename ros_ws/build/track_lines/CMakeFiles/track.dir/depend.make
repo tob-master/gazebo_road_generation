@@ -406,6 +406,9 @@ track_lines/CMakeFiles/track.dir/include/start_of_lines_search.cpp.o: /opt/ros/m
 track_lines/CMakeFiles/track.dir/include/start_of_lines_search.cpp.o: /opt/ros/melodic/include/xmlrpcpp/XmlRpcDecl.h
 track_lines/CMakeFiles/track.dir/include/start_of_lines_search.cpp.o: /opt/ros/melodic/include/xmlrpcpp/XmlRpcValue.h
 
+track_lines/CMakeFiles/track.dir/include/vanishing_point_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/datatypes.h
+track_lines/CMakeFiles/track.dir/include/vanishing_point_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/defines.h
+track_lines/CMakeFiles/track.dir/include/vanishing_point_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/utils.h
 track_lines/CMakeFiles/track.dir/include/vanishing_point_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/vanishing_point_search.cpp
 track_lines/CMakeFiles/track.dir/include/vanishing_point_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/vanishing_point_search.h
 track_lines/CMakeFiles/track.dir/include/vanishing_point_search.cpp.o: /opt/ros/melodic/include/cv_bridge/cv_bridge.h
