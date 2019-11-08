@@ -8,10 +8,14 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "mono8");
 
         image_mono_ = cv_ptr->image;
+
+
+
         cv::cvtColor(image_mono_, image_rgb_, CV_GRAY2BGR);
 
         warpPerspective(image_mono_, image_mono_bird_, birdseye_transformation_matrix_, kInputImageSize_, INTER_CUBIC | WARP_INVERSE_MAP);
         image_mono_bird_ = image_mono_bird_(Rect(0,0,image_width_,image_height_));
+        threshold(image_mono_bird_, image_mono_bird_otsu_, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
 
         cv::cvtColor(image_mono_bird_, image_rgb_bird_, CV_GRAY2BGR);
 
@@ -23,24 +27,35 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         clock_t begin = clock();
 
 
-        VanishingPoint.FindVanishingPoint(image_mono_,birdseye_transformation_matrix_);
-        VanishingPoint.DrawHoughLines(image_rgb_, LEFT_LINE);
-        VanishingPoint.DrawHoughLines(image_rgb_, RIGHT_LINE);
-        //VanishingPoint.DrawLineIntersections(image_rgb_);
-        VanishingPoint.DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
-        VanishingPoint.DrawWarpedPerspektiveHoughLines(image_rgb_bird_, RIGHT_LINE);
-        VanishingPoint.DrawVanishingPoint(image_rgb_);
+        VanishingPointSearchReturnInfo info = VanishingPointSearcher_->FindVanishingPoint(image_mono_);
 
-/*
+        //cout << info.vanishing_point << endl;
+        //cout << info.car_mid_point_to_vanishing_point_angle << endl;
 
-        StartOfLinesSearchReturnInfo start_of_lines_search_return_info = StartOfLinesSearcher_->FindStartParameters(image_mono_bird_);
+
+        VanishingPointSearcher_->DrawHoughLines(image_rgb_, LEFT_LINE);
+        VanishingPointSearcher_->DrawHoughLines(image_rgb_, RIGHT_LINE);
+        //VanishingPointSearcher_->DrawLineIntersections(image_rgb_);
+        VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
+        VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, RIGHT_LINE);
+        VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
+
+        if(info.has_found_vanishing_point)
+        {
+            VanishingPointSearcher_->DrawWarpedVanishingPointDirection(image_rgb_bird_);
+        }
+
+
+
+
+        StartOfLinesSearchReturnInfo start_of_lines_search_return_info = StartOfLinesSearcher_->FindStartParameters(image_mono_bird_otsu_);
 
         if(start_of_lines_search_return_info.has_found_start_parameters)
         {
             StartOfLinesSearcher_->DrawStartParameters(image_rgb_bird_);
 
             LineFollowerReturnInfo line_follower_return_info = LineFollower_->FollowLines(image_mono_bird_,StartOfLinesSearcher_->GetStartParameters());
-            LineFollower_->CoutReturnInfo();
+            //LineFollower_->CoutReturnInfo();
 
             vector<PointAndDirection> left_line, right_line;
 
@@ -78,38 +93,40 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                 LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(right_line_points_reduced_length_direction,RIGHT_LINE);
             }
 
-            LinePointsReducer_->CoutLengthAndDirectionFromConsecutiveReducedLinePoints();
+            //LinePointsReducer_->CoutLengthAndDirectionFromConsecutiveReducedLinePoints();
 
         }
 
-        MidLineSearchReturnInfo mid_line_search_return_info = MidLineSearcher->FindMidLineClusters(image_mono_bird_);
+        MidLineSearchReturnInfo mid_line_search_return_info = MidLineSearcher_->FindMidLineClusters(image_mono_bird_otsu_);
 
         if(mid_line_search_return_info.has_found_mid_line_clusters)
         {
-            //MidLineSearcher->DrawClusters(image_rgb_bird_);
+            //MidLineSearcher_->DrawClusters(image_rgb_bird_);
 
             if(mid_line_search_return_info.has_found_group)
             {
-                MidLineSearcher->DrawConnectedClusters(image_rgb_bird_);
-                MidLineSearcher->CoutLengthAndDirectionOfConnectedClusters();
+                MidLineSearcher_->DrawConnectedClusters(image_rgb_bird_);
+                //MidLineSearcher_->CoutLengthAndDirectionOfConnectedClusters();
             }
         }
 
 
 
-*/
+
 
         clock_t end = clock();
         double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
         cout << "fps: " << 1/elapsed_secs << endl;
 
-        warpPerspective(image_rgb_bird_, image_rgb_warped_back_, birdseye_transformation_matrix_.inv(), Size(image_width_,image_height_), INTER_CUBIC | WARP_INVERSE_MAP);
+        //warpPerspective(image_rgb_bird_, image_rgb_warped_back_, birdseye_transformation_matrix_.inv(), Size(image_width_,image_height_), INTER_CUBIC | WARP_INVERSE_MAP);
 
-
-        imshow("normal",image_rgb_);
+        //imshow("input",cv_ptr->image);
+        //imshow("mono",image_mono_);
+        //imshow("ostu bird",image_mono_bird_otsu_);
+        //imshow("normal",image_rgb_);
         imshow("bird", image_rgb_bird_);
-        imshow("warped_back",image_rgb_warped_back_);
-        waitKey(0);
+        //imshow("warped_back",image_rgb_warped_back_);
+        waitKey(1);
 
     }
     catch (cv_bridge::Exception& e)
@@ -163,6 +180,39 @@ void LaneTracker::LoadLineFollowerInitializationParameters()
 
 }
 
+void LaneTracker::LoadVanishingPointSearchInitializationParameters()
+{
+
+    string str = "rosparam load /home/tb/gazebo_road_generation/ros_ws/src/track_lines/initialization/vanishing_point_search_init.yaml";
+    const char *command = str.c_str();
+    system(command);
+
+    n.getParam("/vanishing_point_search_init/canny_low_threshold",vanishing_point_search_init.canny_low_threshold);
+    n.getParam("/vanishing_point_search_init/canny_high_threshold",vanishing_point_search_init.canny_high_threshold);
+    n.getParam("/vanishing_point_search_init/canny_kernel_size",vanishing_point_search_init.canny_kernel_size);
+    n.getParam("/vanishing_point_search_init/hough_lines_rho",vanishing_point_search_init.hough_lines_rho);
+    n.getParam("/vanishing_point_search_init/hough_lines_theta",vanishing_point_search_init.hough_lines_theta);
+    n.getParam("/vanishing_point_search_init/hough_lines_min_intersections",vanishing_point_search_init.hough_lines_min_intersections);
+    n.getParam("/vanishing_point_search_init/hough_lines_min_line_length",vanishing_point_search_init.hough_lines_min_line_length);
+    n.getParam("/vanishing_point_search_init/hough_lines_min_line_gap",vanishing_point_search_init.hough_lines_min_line_gap);
+    n.getParam("/vanishing_point_search_init/x_roi_start",vanishing_point_search_init.x_roi_start);
+    n.getParam("/vanishing_point_search_init/y_roi_start",vanishing_point_search_init.y_roi_start);
+    n.getParam("/vanishing_point_search_init/roi_width",vanishing_point_search_init.roi_width);
+    n.getParam("/vanishing_point_search_init/roi_height",vanishing_point_search_init.roi_height);
+    n.getParam("/vanishing_point_search_init/min_left_line_angle",vanishing_point_search_init.min_left_line_angle);
+    n.getParam("/vanishing_point_search_init/max_left_line_angle",vanishing_point_search_init.max_left_line_angle);
+    n.getParam("/vanishing_point_search_init/min_right_line_angle",vanishing_point_search_init.min_right_line_angle);
+    n.getParam("/vanishing_point_search_init/max_right_line_angle",vanishing_point_search_init.max_right_line_angle);
+    n.getParam("/vanishing_point_search_init/x_min_left_line",vanishing_point_search_init.x_min_left_line);
+    n.getParam("/vanishing_point_search_init/x_max_left_line",vanishing_point_search_init.x_max_left_line);
+    n.getParam("/vanishing_point_search_init/x_min_right_line",vanishing_point_search_init.x_min_right_line);
+    n.getParam("/vanishing_point_search_init/x_max_right_line",vanishing_point_search_init.x_max_right_line);
+    n.getParam("/vanishing_point_search_init/car_mid_position_x",vanishing_point_search_init.car_mid_position_x);
+    n.getParam("/vanishing_point_search_init/car_mid_position_y",vanishing_point_search_init.car_mid_position_y);
+    n.getParam("/vanishing_point_search_init/max_standard_deviation_for_valid_vanishing_point",vanishing_point_search_init.max_standard_deviation_for_valid_vanishing_point);
+
+}
+
 void LaneTracker::LoadBirdseyeInitializationParameters()
 {
     string str = "rosparam load /home/tb/gazebo_road_generation/ros_ws/src/track_lines/initialization/birdseye_init.yaml";
@@ -201,6 +251,7 @@ void LaneTracker::LoadAllInitializationParameters()
     LoadLineFollowerInitializationParameters();
     LoadBirdseyeInitializationParameters();
     LoadMidLineSearchInitializationParameters();
+    LoadVanishingPointSearchInitializationParameters();
 }
 
 
@@ -272,7 +323,8 @@ LaneTracker::LaneTracker(ros::NodeHandle* nh_):n(*nh_),it(*nh_)
   StartOfLinesSearcher_ = new StartOfLinesSearch(image_height_,image_width_,start_of_lines_search_init);
   LineFollower_         = new LineFollower(image_height_,image_width_,line_follower_init);
   LinePointsReducer_    = new LinePointsReducer;
-  MidLineSearcher       = new MidLineSearch(image_height_,image_width_,mid_line_search_init);
+  MidLineSearcher_       = new MidLineSearch(image_height_,image_width_,mid_line_search_init);
+  VanishingPointSearcher_ = new VanishingPointSearch(birdseye_transformation_matrix_,vanishing_point_search_init);
 
 };
 

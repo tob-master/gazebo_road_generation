@@ -1,0 +1,24 @@
+/vanishing_point_search_init/canny_low_threshold: 100
+/vanishing_point_search_init/canny_high_threshold: 200
+/vanishing_point_search_init/canny_kernel_size: 3
+/vanishing_point_search_init/hough_lines_rho: 1
+/vanishing_point_search_init/hough_lines_theta: 0.01745329251
+/vanishing_point_search_init/hough_lines_min_intersections: 20
+/vanishing_point_search_init/hough_lines_min_line_length: 10
+/vanishing_point_search_init/hough_lines_min_line_gap: 50
+/vanishing_point_search_init/x_roi_start: 0
+/vanishing_point_search_init/y_roi_start: 350
+/vanishing_point_search_init/roi_width: 1280
+/vanishing_point_search_init/roi_height: 64
+/vanishing_point_search_init/min_left_line_angle: 20
+/vanishing_point_search_init/max_left_line_angle: 90
+/vanishing_point_search_init/min_right_line_angle: 90
+/vanishing_point_search_init/max_right_line_angle: 160
+/vanishing_point_search_init/x_min_left_line: 150
+/vanishing_point_search_init/x_max_left_line: 300
+/vanishing_point_search_init/x_min_right_line: 650
+/vanishing_point_search_init/x_max_right_line: 850
+/vanishing_point_search_init/car_mid_position_x: 640
+/vanishing_point_search_init/car_mid_position_y: 416
+/vanishing_point_search_init/max_standard_deviation_for_valid_vanishing_point: 10.0
+

@@ -28,57 +28,43 @@ using namespace cv;
 using namespace vanishing_point_search;
 
 
-
 class VanishingPointSearch
 {
     private:
+
+        const cv::Matx33f birdseye_transformation_matrix_;
+
+        const int kCannyLowThreshold_;
+        const int kCannyHighThreshold_;
+        const int kCannyKernelSize_;
+
+        const int kHoghLinesRho_;
+        const float kHoughLinesTheta_;
+        const int kHoughLinesMinIntersections_;
+        const int kHoughLinesMinLineLength_;
+        const int kHoughLinesMaxLineGap_;
+
+        const int kXROIStart_;
+        const int kYROIStart_;
+        const int kROIWidth_;
+        const int kROIHeight_;
+
+        const int kMinLeftLineAngle_;
+        const int kMaxLeftLineAngle_;
+
+        const int kMinRightLineAngle_;
+        const int kMaxRightLineAngle_;
+
+        const int kXMinLeftLine_;
+        const int kXMaxLeftLine_;
+        const int kXMinRightLine_;
+        const int kXMaxRightLine_;
+
+        const Point kCarMidPoint_;
+
+        const float kMaxStandardDeviationForValidVanishingPoint_;
+
         Mat current_image_;
-
-
-        cv::Matx33f warp_matrix_;
-
-        const int kLowThreshold_ = 100;
-        const int kHighThreshold_ = 200;
-        const int kKernelSize_ = 3;
-
-
-        /*
-        image – 8-bit, single-channel binary source image. The image may be modified by the function.
-        lines – Output vector of lines. Each line is represented by a 4-element vector (x_1, y_1, x_2, y_2) , where (x_1,y_1) and (x_2, y_2) are the ending points of each detected line segment.
-        rho – Distance resolution of the accumulator in pixels.
-        theta – Angle resolution of the accumulator in radians.
-        threshold – Accumulator threshold parameter. Only those lines are returned that get enough votes ( >\texttt{threshold} ).
-        minLineLength – Minimum line length. Line segments shorter than that are rejected.
-        maxLineGap – Maximum allowed gap between points on the same line to link them.
-        */
-
-        const int kRho_ = 1;
-        const float kTheta_ = CV_PI/180;
-        const int kMinIntersections = 20;
-        const int kMinLineLength = 10;
-        const int kMaxLineGap = 50;
-
-        const int kXROIStart_ =    0;
-        const int kYROIStart_ =  350;
-        const int kROIWidth_  = 1280;
-        const int kROIHeight_ =   67;
-
-        const int kMinLeftLineAngle =  20;
-        const int kMaxLeftLineAngle = 90;
-
-        const int kMinRightLineAngle =  90;
-        const int kMaxRightLineAngle = 160;
-
-
-        const int kXMinLeftLine = 150;
-        const int kXMaxLeftLine = 300;
-        const int kXMinRightLine = 650;
-        const int kXMaxRightLine = 850;
-
-        const int kCarMidPositionInFrame = 640;
-
-        Point CarMidPoint_ = Point(640,416);
-
         Mat canny_image_;
         Mat hough_image_;
         Mat current_image_roi_;
@@ -91,27 +77,36 @@ class VanishingPointSearch
         vector<HoughLinesPointsAndAngle> left_hough_lines_points_and_angle_;
         vector<HoughLinesPointsAndAngle> right_hough_lines_points_and_angle_;
 
+        vector<Point> intersections_;
+        Point vanishing_point_;
+        Point warped_vanishing_point_;
+        Point warped_car_mid_point_;
+
+        int left_hough_lines_count_;
+        int right_hough_lines_count_;
+        int intersections_count_;
+
+        bool has_found_left_hough_line_;
+        bool has_found_right_hough_line_;
+        bool has_found_intersections_;
+        bool has_found_vanishing_point_;
+
         vector<HoughLinesWarpedPerspektive> left_hough_lines_warped_perspektive_;
         vector<HoughLinesWarpedPerspektive> right_hough_lines_warped_perspektive_;
 
+        float car_mid_point_to_vanishing_point_angle_;
 
-        vector<Point> intersections_;
+        void WarpCarMidPointToBirdsview();
 
-        float kMaxStandardDeviationForValidVanishingPoint_ = 5.0;
-
-        Point vanishing_point_;
-
-        bool has_found_vanishing_point_ = false;
-
-        void ClearMemory();
         void SetImage(Mat image);
-        void CropToRegionOfInterest();
+        void ClearMemory();
+        void CropImageToRegionOfInterest();
         void ApplyCannyEdge();
         void ApplyHoughLines();
+        void AddRegionOfInterestOffsetToHoughLinePoints();
         void ChangeLinePointsToDriveDirection();
         void GatherTrueRangeLeftAndRightLines();
         void RejectFalseLeftAndRightLineAngles();
-        void WarpPerspektiveOfHoughLines(int _line);
 
         pair<double, double> ComputeLineIntersection(pair<double, double> A, pair<double, double> B,
                                                      pair<double, double> C, pair<double, double> D);
@@ -120,17 +115,30 @@ class VanishingPointSearch
         void ApplyDBScan();
         void FilterVanishingPoint();
 
-    public:
-        VanishingPointSearch();
+        void CheckFoundLeftAndRightHoughLines();
+        void CheckFoundIntersections();
 
-        void FindVanishingPoint(Mat image, Mat warp_matrix);
+        void ComputeCarMidPointToVanishingPointAngle();
+
+        void WarpPerspektiveOfHoughLines();
+
+        VanishingPointSearchReturnInfo GetReturnInfo();
+
+
+
+
+    public:
+        VanishingPointSearch(Mat birdseye_transformation_matrix, VanishingPointSearchParameterInitialization init);
+
+        VanishingPointSearchReturnInfo FindVanishingPoint(Mat image);
 
         void ShowCannyEdgeImage();
         void DrawHoughLines(Mat &image, int _line);
-        void DrawWarpedPerspektiveHoughLines(Mat &rgb, int _line);
+        void CoutHoughLines();
+        void DrawWarpedPerspektiveHoughLines(Mat &rgb,int _line);
         void DrawLineIntersections(Mat &rgb);
         void DrawVanishingPoint(Mat &rgb);
-        void CoutHoughLines();
+        void DrawWarpedVanishingPointDirection(Mat &rgb);
 };
 
 #endif // VANISHING_POINT_SEARCH_H

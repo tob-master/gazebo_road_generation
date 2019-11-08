@@ -34,12 +34,14 @@ private:
     LineFollowerInitializationParameters line_follower_init;
     BirdseyeInitializationParameters birdseye_init;
     MidLineSearchInitializationParameters mid_line_search_init;
+    VanishingPointSearchParameterInitialization vanishing_point_search_init;
 
     Mat birdseye_transformation_matrix_;
 
     Mat image_mono_;
     Mat image_rgb_;
     Mat image_mono_bird_;
+    Mat image_mono_bird_otsu_;
     Mat image_rgb_bird_;
     Mat image_rgb_warped_back_;
 
@@ -48,10 +50,10 @@ private:
     StartOfLinesSearch *StartOfLinesSearcher_;
     LineFollower *LineFollower_;
     LinePointsReducer *LinePointsReducer_;
-    MidLineSearch *MidLineSearcher;
+    MidLineSearch *MidLineSearcher_;
+    VanishingPointSearch *VanishingPointSearcher_;
 
 
-    VanishingPointSearch VanishingPoint;
 
 
     void LoadAllInitializationParameters();
@@ -59,6 +61,7 @@ private:
     void LoadLineFollowerInitializationParameters();
     void LoadBirdseyeInitializationParameters();
     void LoadMidLineSearchInitializationParameters();
+    void LoadVanishingPointSearchInitializationParameters();
 
 public:
   LaneTracker(ros::NodeHandle* nh_);

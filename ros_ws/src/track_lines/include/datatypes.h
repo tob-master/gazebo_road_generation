@@ -61,6 +61,41 @@ struct MidLineSearchInitializationParameters
 
 };
 
+struct VanishingPointSearchParameterInitialization
+{
+    int canny_low_threshold;
+    int canny_high_threshold;
+    int canny_kernel_size;
+
+    int hough_lines_rho;
+    float hough_lines_theta;
+    int hough_lines_min_intersections;
+    int hough_lines_min_line_length;
+    int hough_lines_min_line_gap;
+
+    int x_roi_start;
+    int y_roi_start;
+    int roi_width;
+    int roi_height;
+
+    int min_left_line_angle;
+    int max_left_line_angle;
+
+    int min_right_line_angle;
+    int max_right_line_angle;
+
+    int x_min_left_line;
+    int x_max_left_line;
+    int x_min_right_line;
+    int x_max_right_line;
+
+    int car_mid_position_x;
+    int car_mid_position_y;
+
+    float max_standard_deviation_for_valid_vanishing_point;
+
+};
+
 
 struct MidLineSearchReturnInfo
 {
@@ -99,6 +134,26 @@ struct LinePointsReducerReturnInfo
     int left_line_reduced_size;
     bool right_line_is_reduced;
     int right_line_reduced_size;
+};
+
+
+struct VanishingPointSearchReturnInfo
+{
+    bool has_found_left_hough_line;
+    int left_hough_lines_count;
+
+    bool has_found_right_hough_line;
+    int right_hough_lines_count;
+
+    bool has_found_intersections;
+    int  intersections_count;
+
+    bool has_found_vanishing_point;
+
+    cv::Point vanishing_point;
+
+    float car_mid_point_to_vanishing_point_angle;
+
 };
 
 struct StartParameters
