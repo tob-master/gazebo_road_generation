@@ -1,6 +1,6 @@
 #include "vanishing_point_search.h"
 
-VanishingPointSearch::VanishingPointSearch(Mat birdseye_transformation_matrix, VanishingPointSearchParameterInitialization init):
+VanishingPointSearch::VanishingPointSearch(Mat birdseye_transformation_matrix, VanishingPointSearchInitializationParameters init):
 birdseye_transformation_matrix_(birdseye_transformation_matrix),
 kCannyLowThreshold_(init.canny_low_threshold),
 kCannyHighThreshold_(init.canny_high_threshold),

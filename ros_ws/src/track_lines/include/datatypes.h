@@ -16,6 +16,21 @@ struct BirdseyeInitializationParameters
     int distance;
 };
 
+struct ConnectedComponentsSearchInitializationParameters
+{
+    int connection_count;
+    int max_mid_line_component_size;
+    int min_mid_line_component_size;
+    int max_mid_line_component_volume;
+    int min_mid_line_component_volume;
+    int min_mid_line_component_distance;
+    int max_mid_line_component_distance;
+    int end_of_linkage_marker;
+    float max_roi_center_to_centroid_distance;
+};
+
+
+
 struct StartOfLinesSearchInitializationParameters
 {
     int top_row;
@@ -61,7 +76,7 @@ struct MidLineSearchInitializationParameters
 
 };
 
-struct VanishingPointSearchParameterInitialization
+struct VanishingPointSearchInitializationParameters
 {
     int canny_low_threshold;
     int canny_high_threshold;
@@ -169,7 +184,27 @@ struct StartParameters
 
 
 
+namespace connected_components_search
+{
+    struct ConnectedComponent
+    {
+        int centroid_x;
+        int centroid_y;
+        int roi_x;
+        int roi_y;
+        int roi_width;
+        int roi_height;
+        int mass;
+    };
 
+    struct LengthAndDirectionFromConnectedComponents
+    {
+       int x;
+       int y;
+       int length;
+       float angle;
+    };
+}
 
 namespace vanishing_point_search
 {

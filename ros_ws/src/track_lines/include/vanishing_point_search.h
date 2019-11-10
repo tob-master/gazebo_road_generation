@@ -128,7 +128,7 @@ class VanishingPointSearch
 
 
     public:
-        VanishingPointSearch(Mat birdseye_transformation_matrix, VanishingPointSearchParameterInitialization init);
+        VanishingPointSearch(Mat birdseye_transformation_matrix, VanishingPointSearchInitializationParameters init);
 
         VanishingPointSearchReturnInfo FindVanishingPoint(Mat image);
 

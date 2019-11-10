@@ -7,6 +7,10 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     {
         cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "mono8");
 
+
+        cv_ptr->image(Rect(500, 400, 250, 150)) = 0;
+
+
         image_mono_ = cv_ptr->image;
 
 
@@ -101,7 +105,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         if(mid_line_search_return_info.has_found_mid_line_clusters)
         {
-            //MidLineSearcher_->DrawClusters(image_rgb_bird_);
+            //MidLineSearcher_->DrawGroupedMidLineComponents(image_rgb_bird_);
 
             if(mid_line_search_return_info.has_found_group)
             {
@@ -112,6 +116,10 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
 
+
+
+        ConnectedComponentsSearcher_->FindConnectedComponents(image_mono_bird_otsu_);
+        ConnectedComponentsSearcher_->DrawMidLineComponentsRect(image_rgb_bird_);
 
 
         clock_t end = clock();
@@ -242,6 +250,25 @@ void LaneTracker::LoadMidLineSearchInitializationParameters()
 }
 
 
+void LaneTracker::LoadConnectedComponentsSearchInitializationParameters()
+{
+
+    string str = "rosparam load /home/tb/gazebo_road_generation/ros_ws/src/track_lines/initialization/connected_components_search_init.yaml";
+    const char *command = str.c_str();
+    system(command);
+
+    n.getParam("/connected_components_search_init/connection_count", connected_components_search_init.connection_count);
+    n.getParam("/connected_components_search_init/max_mid_line_component_size", connected_components_search_init.max_mid_line_component_size);
+    n.getParam("/connected_components_search_init/min_mid_line_component_size", connected_components_search_init.min_mid_line_component_size);
+    n.getParam("/connected_components_search_init/max_mid_line_component_volume", connected_components_search_init.max_mid_line_component_volume);
+    n.getParam("/connected_components_search_init/min_mid_line_component_volume", connected_components_search_init.min_mid_line_component_volume);
+    n.getParam("/connected_components_search_init/min_mid_line_component_distance", connected_components_search_init.min_mid_line_component_distance);
+    n.getParam("/connected_components_search_init/max_mid_line_component_distance", connected_components_search_init.max_mid_line_component_distance);
+    n.getParam("/connected_components_search_init/end_of_linkage_marker", connected_components_search_init.end_of_linkage_marker);
+    n.getParam("/connected_components_search_init/max_roi_center_to_centroid_distance", connected_components_search_init.max_roi_center_to_centroid_distance);
+
+}
+
 
 
 void LaneTracker::LoadAllInitializationParameters()
@@ -252,6 +279,7 @@ void LaneTracker::LoadAllInitializationParameters()
     LoadBirdseyeInitializationParameters();
     LoadMidLineSearchInitializationParameters();
     LoadVanishingPointSearchInitializationParameters();
+    LoadConnectedComponentsSearchInitializationParameters();
 }
 
 
@@ -325,87 +353,8 @@ LaneTracker::LaneTracker(ros::NodeHandle* nh_):n(*nh_),it(*nh_)
   LinePointsReducer_    = new LinePointsReducer;
   MidLineSearcher_       = new MidLineSearch(image_height_,image_width_,mid_line_search_init);
   VanishingPointSearcher_ = new VanishingPointSearch(birdseye_transformation_matrix_,vanishing_point_search_init);
+  ConnectedComponentsSearcher_ = new ConnectedComponentsSearch(image_height_, image_width_, connected_components_search_init);
 
 };
 
 
-/*
-            Mat kk;
-           threshold(image_mono_bird_, kk, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
-
-           Mat labels;
-               Mat stats;
-               Mat centroids;
-               cv::connectedComponentsWithStats(kk, labels, stats, centroids);
-
-             imshow("labels", labels);
-         cout << "labels: " << labels << endl;
-         // cout << "stats: " << stats << endl;
-          cout << "centroids: " << centroids << endl;
-            cout << endl;
-
-     */
-            //Mat kk;
-
-            //kk = image_mono_bird_;
-
-            //Mat imBin;
-            //threshold(kk,imBin,0,255,THRESH_BINARY| CV_THRESH_OTSU);
-
-
-            //Mat stats, centroids, labelImage;
-            //int nLabels = connectedComponentsWithStats(imBin, labelImage, stats, centroids, 8, CV_32S);
-
-            //cout << stats << endl;
-/*
-            std::vector<Vec3b> colors(nLabels);
-            colors[0] = Vec3b(0, 0, 0);//background
-
-
-            for (int label = 1; label < nLabels; ++label)
-            {
-
-                colors[label] = Vec3b((rand() & 255), (rand() & 255), (rand() & 255));
-
-            }
-
-            Mat dst(kk.size(), CV_8UC3,Scalar(0,0,0));
-
-            Mat maxMid =stats.col(4)<200;
-            Mat minMid = stats.col(4)>50;
-
-            for (int i = 1; i < nLabels; i++)
-            {
-
-                Mat mask(labelImage.size(), CV_8UC1, Scalar(0));
-                if (maxMid.at<uchar>(i, 0) && minMid.at<uchar>(i,0))
-                {
-                    mask = mask | (labelImage==i);
-
-                    //cout << mask << endl;
-
-
-                    for (int r = 0; r < dst.rows; ++r){
-                        for (int c = 0; c < dst.cols; ++c){
-
-                            int t = mask.at<uchar>(r, c);
-
-                            if(t==255)
-                            {
-                                dst.at<Vec3b>(r, c) = colors[i];
-
-                            }
-                        }
-                    }
-
-
-                }
-            }
-
-            //Mat r(kk.size(), CV_8UC1, Scalar(0));
-            //kk.copyTo(r,mask);
-            //imshow("Result", r);
-            //imshow("imbin", imBin);
-            imshow("colorccl", dst);
-
-*/

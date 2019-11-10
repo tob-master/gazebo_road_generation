@@ -182,6 +182,33 @@ track/fast:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/build
 .PHONY : track/fast
 
+include/connected_components.o: include/connected_components.cpp.o
+
+.PHONY : include/connected_components.o
+
+# target to build an object file
+include/connected_components.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/connected_components.cpp.o
+.PHONY : include/connected_components.cpp.o
+
+include/connected_components.i: include/connected_components.cpp.i
+
+.PHONY : include/connected_components.i
+
+# target to preprocess a source file
+include/connected_components.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/connected_components.cpp.i
+.PHONY : include/connected_components.cpp.i
+
+include/connected_components.s: include/connected_components.cpp.s
+
+.PHONY : include/connected_components.s
+
+# target to generate assembly for a file
+include/connected_components.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/connected_components.cpp.s
+.PHONY : include/connected_components.cpp.s
+
 include/dbscan.o: include/dbscan.cpp.o
 
 .PHONY : include/dbscan.o
@@ -412,6 +439,9 @@ help:
 	@echo "... install"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... include/connected_components.o"
+	@echo "... include/connected_components.i"
+	@echo "... include/connected_components.s"
 	@echo "... include/dbscan.o"
 	@echo "... include/dbscan.i"
 	@echo "... include/dbscan.s"

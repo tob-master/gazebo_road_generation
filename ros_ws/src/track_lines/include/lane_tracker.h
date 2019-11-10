@@ -8,6 +8,7 @@
 #include "line_follower.h"
 #include "line_points_reducer.h"
 #include "vanishing_point_search.h"
+#include "connected_components.h"
 
 
 #include "datatypes.h"
@@ -34,7 +35,8 @@ private:
     LineFollowerInitializationParameters line_follower_init;
     BirdseyeInitializationParameters birdseye_init;
     MidLineSearchInitializationParameters mid_line_search_init;
-    VanishingPointSearchParameterInitialization vanishing_point_search_init;
+    VanishingPointSearchInitializationParameters vanishing_point_search_init;
+    ConnectedComponentsSearchInitializationParameters connected_components_search_init;
 
     Mat birdseye_transformation_matrix_;
 
@@ -52,6 +54,7 @@ private:
     LinePointsReducer *LinePointsReducer_;
     MidLineSearch *MidLineSearcher_;
     VanishingPointSearch *VanishingPointSearcher_;
+    ConnectedComponentsSearch *ConnectedComponentsSearcher_;
 
 
 
@@ -62,6 +65,7 @@ private:
     void LoadBirdseyeInitializationParameters();
     void LoadMidLineSearchInitializationParameters();
     void LoadVanishingPointSearchInitializationParameters();
+    void LoadConnectedComponentsSearchInitializationParameters();
 
 public:
   LaneTracker(ros::NodeHandle* nh_);

@@ -1,0 +1,9 @@
+/connected_components_search_init/connection_count: 8
+/connected_components_search_init/max_mid_line_component_size: 400
+/connected_components_search_init/min_mid_line_component_size: 50
+/connected_components_search_init/max_mid_line_component_volume: 500
+/connected_components_search_init/min_mid_line_component_volume: 50
+/connected_components_search_init/min_mid_line_component_distance: 30
+/connected_components_search_init/max_mid_line_component_distance: 90
+/connected_components_search_init/end_of_linkage_marker: -1
+/connected_components_search_init/max_roi_center_to_centroid_distance: 1.0
