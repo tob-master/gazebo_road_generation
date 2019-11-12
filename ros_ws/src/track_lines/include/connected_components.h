@@ -16,7 +16,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 
-
+#include "depth_first_search.h"
 #include "utils.h"
 #include "datatypes.h"
 using namespace connected_components_search;
@@ -59,6 +59,8 @@ private:
     const int kImageHeight_;
     const int kImageWidth_;
     const Size kImageSize_;
+    const Point kCarPosition_;
+
 
     int components_count_;
 
@@ -68,27 +70,41 @@ private:
 
     vector<vector<int>> grouped_mid_line_components_;
 
+    vector<Point> cluster_centroids_;
+    vector<vector<Point>> mid_line_cluster_groups_;
+
     vector<LengthAndDirectionFromConnectedComponents> connected_mid_line_clusters_length_and_direction_;
     vector<vector<LengthAndDirectionFromConnectedComponents>> grouped_connected_mid_line_clusters_length_and_direction_;
 
+
+    bool has_found_mid_line_components_;
+    bool has_found_mid_line_group_;
 
     void SetImage(Mat image);
     void ClearMemory();
     void ApplyConnectedComponents();
     void FilterMidLineComponents();
-    void ComputeLengthAndDirectionOfConnectedComponents();
+    void ComputeLengthAndDirectionOfConnectedMidLineComponents();
     void GroupMidLineComponents();
     bool IdAlreadyConnected(int id);
     vector<int> LinkInDistanceComponents();
     bool IsPermuted(int i, int j, vector<string> &used_permutations);
 
+    double Distance2d(const Point& lhs, const Point& rhs);
+    vector<pair<int,int>> FindClusterConnections(vector<pair<int,int>> &cluster_connections);
+
+    bool HasFoundMidLineComponents();
+    bool HasFoundGroup();
+
+    ConnectedComponentsSearchReturnInfo GetReturnInfo();
 
 public:
     ConnectedComponentsSearch(int image_height, int image_width, ConnectedComponentsSearchInitializationParameters init);
-    void FindConnectedComponents(Mat image);
+    ConnectedComponentsSearchReturnInfo FindConnectedComponents(Mat image);
     void DrawConnectedComponents(Mat &rgb);
     void DrawMidLineComponentsRect(Mat &rgb);
     void DrawGroupedMidLineComponents(Mat &rgb);
+    void DrawGroupedMidLineComponentsDirections(Mat &rgb);
 };
 
 #endif // CONNECTED_COMPONENTS_H

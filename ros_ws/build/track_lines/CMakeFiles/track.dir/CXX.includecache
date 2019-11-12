@@ -33,6 +33,8 @@ opencv2/highgui/highgui.hpp
 -
 opencv2/imgcodecs.hpp
 -
+depth_first_search.h
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/depth_first_search.h
 utils.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/utils.h
 datatypes.h
@@ -54,6 +56,18 @@ cmath
 
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/defines.h
 iostream
+-
+
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/depth_first_search.cpp
+depth_first_search.h
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/depth_first_search.h
+
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/depth_first_search.h
+list
+-
+iostream
+-
+vector
 -
 
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/lane_tracker.cpp
@@ -145,10 +159,6 @@ datatypes.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/mid_line_search.cpp
 mid_line_search.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/mid_line_search.h
-algorithm
--
-numeric
--
 
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/mid_line_search.h
 iostream
@@ -183,6 +193,8 @@ utils.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/utils.h
 defines.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/defines.h
+depth_first_search.h
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/depth_first_search.h
 
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/start_of_lines_search.cpp
 start_of_lines_search.h

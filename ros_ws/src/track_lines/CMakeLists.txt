@@ -145,6 +145,7 @@ add_executable(track include/start_of_lines_search.cpp
                      include/line_points_reducer.cpp
                      include/dbscan.cpp
                      include/connected_components.cpp
+                     include/depth_first_search.cpp
                      src/line_tracker_node.cpp )
 
 #add_executable(track_mid_line_node src/nodes/track_mid_line_node.cpp)
@@ -161,16 +162,16 @@ add_executable(track include/start_of_lines_search.cpp
 ## same as for the library above
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-## Specify libraries to link a library or executable target against
+## Specify libraries to GroupClusters a library or executable target against
 target_link_libraries(track
    ${OpenCV_LIBRARIES} ${catkin_LIBRARIES}
  )
 
-#target_link_libraries(track_mid_line_node
+#target_GroupClusters_libraries(track_mid_line_node
 #   ${OpenCV_LIBRARIES} ${catkin_LIBRARIES}
 # )
 
-#target_link_libraries(line_tracker_node
+#target_GroupClusters_libraries(line_tracker_node
 #   ${OpenCV_LIBRARIES} ${catkin_LIBRARIES}
 # )
 
@@ -233,10 +234,10 @@ target_link_libraries(track
 ## Testing ##
 #############
 
-## Add gtest based cpp test target and link libraries
+## Add gtest based cpp test target and GroupClusters libraries
 # catkin_add_gtest(${PROJECT_NAME}-test test/test_te.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
+#   target_GroupClusters_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 
 ## Add folders to be run by python nosetests

@@ -56,7 +56,8 @@ private:
     VanishingPointSearch *VanishingPointSearcher_;
     ConnectedComponentsSearch *ConnectedComponentsSearcher_;
 
-
+    Point pt = Point(-1,-1);
+    bool newCoords = false;
 
 
     void LoadAllInitializationParameters();
@@ -66,6 +67,8 @@ private:
     void LoadMidLineSearchInitializationParameters();
     void LoadVanishingPointSearchInitializationParameters();
     void LoadConnectedComponentsSearchInitializationParameters();
+
+
 
 public:
   LaneTracker(ros::NodeHandle* nh_);

@@ -4,6 +4,6 @@
     <DefaultBuildSystem value="0"/>
     <WatchDirectories>
           <Directory>src/track_lines</Directory>
-       <!--  <Directory>src/track_annotation</Directory> -->
+    <!--  <Directory>src/track_annotation</Directory> -->
     </WatchDirectories>
 </Workspace>

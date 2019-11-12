@@ -2,6 +2,10 @@
 /mid_line_search_init/max_radial_scan_out_of_cluster_value: 120
 /mid_line_search_init/radial_scan_scaling_factor: 1.5
 /mid_line_search_init/mid_line_length: 30
-/mid_line_search_init/min_valuable_cluster_size: 10
-/mid_line_search_init/max_connected_cluster_distance: 70
+/mid_line_search_init/min_valuable_cluster_size: 0
+/mid_line_search_init/min_cluster_distance: 0
+/mid_line_search_init/max_cluster_distance: 90
+/mid_line_search_init/car_position_x: 640
+/mid_line_search_init/car_position_y: 416
+
 

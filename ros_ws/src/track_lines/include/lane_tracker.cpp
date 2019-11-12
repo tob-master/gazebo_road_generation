@@ -8,7 +8,9 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "mono8");
 
 
-        cv_ptr->image(Rect(500, 400, 250, 150)) = 0;
+
+        circle(cv_ptr->image, Point(709,454),35, Scalar(0,0,0),CV_FILLED, 8,0);
+        circle(cv_ptr->image, Point(574,454),35, Scalar(0,0,0),CV_FILLED, 8,0);
 
 
         image_mono_ = cv_ptr->image;
@@ -21,7 +23,10 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         image_mono_bird_ = image_mono_bird_(Rect(0,0,image_width_,image_height_));
         threshold(image_mono_bird_, image_mono_bird_otsu_, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
 
+         Mat bird2;
         cv::cvtColor(image_mono_bird_, image_rgb_bird_, CV_GRAY2BGR);
+        cv::cvtColor(image_mono_bird_, bird2, CV_GRAY2BGR);
+
 
 
 
@@ -31,21 +36,32 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         clock_t begin = clock();
 
 
-        VanishingPointSearchReturnInfo info = VanishingPointSearcher_->FindVanishingPoint(image_mono_);
+
+        VanishingPointSearchReturnInfo vanishing_point_search_return_info = VanishingPointSearcher_->FindVanishingPoint(image_mono_);
 
         //cout << info.vanishing_point << endl;
         //cout << info.car_mid_point_to_vanishing_point_angle << endl;
 
-
-        VanishingPointSearcher_->DrawHoughLines(image_rgb_, LEFT_LINE);
-        VanishingPointSearcher_->DrawHoughLines(image_rgb_, RIGHT_LINE);
-        //VanishingPointSearcher_->DrawLineIntersections(image_rgb_);
-        VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
-        VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, RIGHT_LINE);
-        VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
-
-        if(info.has_found_vanishing_point)
+        if(vanishing_point_search_return_info.has_found_left_hough_line)
         {
+           VanishingPointSearcher_->DrawHoughLines(image_rgb_, LEFT_LINE);
+           VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
+        }
+
+        if(vanishing_point_search_return_info.has_found_right_hough_line)
+        {
+            VanishingPointSearcher_->DrawHoughLines(image_rgb_, RIGHT_LINE);
+            VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, RIGHT_LINE);
+        }
+
+        if(vanishing_point_search_return_info.has_found_intersections)
+        {
+          VanishingPointSearcher_->DrawLineIntersections(image_rgb_);
+        }
+
+        if(vanishing_point_search_return_info.has_found_vanishing_point)
+        {
+            VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
             VanishingPointSearcher_->DrawWarpedVanishingPointDirection(image_rgb_bird_);
         }
 
@@ -101,7 +117,9 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         }
 
-        MidLineSearchReturnInfo mid_line_search_return_info = MidLineSearcher_->FindMidLineClusters(image_mono_bird_otsu_);
+
+
+        MidLineSearchReturnInfo mid_line_search_return_info = MidLineSearcher_->FindMidLineClusters(image_mono_bird_);
 
         if(mid_line_search_return_info.has_found_mid_line_clusters)
         {
@@ -109,7 +127,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
             if(mid_line_search_return_info.has_found_group)
             {
-                MidLineSearcher_->DrawConnectedClusters(image_rgb_bird_);
+                MidLineSearcher_->DrawGroupedMidLineClustersDirections(image_rgb_bird_);
                 //MidLineSearcher_->CoutLengthAndDirectionOfConnectedClusters();
             }
         }
@@ -117,9 +135,22 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
 
-
+        /*
+        ConnectedComponentsSearchReturnInfo connected_component_search_return_info =
         ConnectedComponentsSearcher_->FindConnectedComponents(image_mono_bird_otsu_);
-        ConnectedComponentsSearcher_->DrawMidLineComponentsRect(image_rgb_bird_);
+
+        if(connected_component_search_return_info.has_found_mid_line_components)
+        {
+            ConnectedComponentsSearcher_->DrawMidLineComponentsRect(image_rgb_bird_);
+
+            if(connected_component_search_return_info.has_found_mid_line_group)
+            {
+                //ConnectedComponentsSearcher_->DrawGroupedMidLineComponents(image_rgb_bird_);
+                ConnectedComponentsSearcher_->DrawGroupedMidLineComponentsDirections(image_rgb_bird_);
+            }
+        }
+        */
+
 
 
         clock_t end = clock();
@@ -129,12 +160,13 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         //warpPerspective(image_rgb_bird_, image_rgb_warped_back_, birdseye_transformation_matrix_.inv(), Size(image_width_,image_height_), INTER_CUBIC | WARP_INVERSE_MAP);
 
         //imshow("input",cv_ptr->image);
-        //imshow("mono",image_mono_);
+        //imshow("bird",image_mono_bird_);
         //imshow("ostu bird",image_mono_bird_otsu_);
         //imshow("normal",image_rgb_);
-        imshow("bird", image_rgb_bird_);
+        imshow("bird_rgb", image_rgb_bird_);
+        //imshow("bird2",bird2);
         //imshow("warped_back",image_rgb_warped_back_);
-        waitKey(1);
+        waitKey(0);
 
     }
     catch (cv_bridge::Exception& e)
@@ -246,8 +278,14 @@ void LaneTracker::LoadMidLineSearchInitializationParameters()
     n.getParam("/mid_line_search_init/radial_scan_scaling_factor", mid_line_search_init.radial_scan_scaling_factor);
     n.getParam("/mid_line_search_init/mid_line_length", mid_line_search_init.mid_line_length);
     n.getParam("/mid_line_search_init/min_valuable_cluster_size", mid_line_search_init.min_valuable_cluster_size);
-    n.getParam("/mid_line_search_init/max_connected_cluster_distance", mid_line_search_init.max_connected_cluster_distance);
+    n.getParam("/mid_line_search_init/min_cluster_distance", mid_line_search_init.min_cluster_distance);
+    n.getParam("/mid_line_search_init/max_cluster_distance", mid_line_search_init.max_cluster_distance);
+    n.getParam("/mid_line_search_init/car_position_x", mid_line_search_init.car_position_x);
+    n.getParam("/mid_line_search_init/car_position_y", mid_line_search_init.car_position_y);
 }
+
+
+
 
 
 void LaneTracker::LoadConnectedComponentsSearchInitializationParameters()
@@ -266,6 +304,9 @@ void LaneTracker::LoadConnectedComponentsSearchInitializationParameters()
     n.getParam("/connected_components_search_init/max_mid_line_component_distance", connected_components_search_init.max_mid_line_component_distance);
     n.getParam("/connected_components_search_init/end_of_linkage_marker", connected_components_search_init.end_of_linkage_marker);
     n.getParam("/connected_components_search_init/max_roi_center_to_centroid_distance", connected_components_search_init.max_roi_center_to_centroid_distance);
+    n.getParam("/connected_components_search_init/car_position_x", connected_components_search_init.car_position_x);
+    n.getParam("/connected_components_search_init/car_position_y", connected_components_search_init.car_position_y);
+
 
 }
 
@@ -338,12 +379,26 @@ void LaneTracker::InitializeBirdseyeTransformationMatrix()
 
 }
 
-
+void mouse_callback(int  event, int  x, int  y, int  flag, void *param)
+{
+    if (event == EVENT_LBUTTONDOWN)
+    {
+        std::cout << x << " " << y << std::endl;
+    }
+      /*if (event == EVENT_MOUSEMOVE)
+      {
+          std::cout << x << " " << y << std::endl;
+      }*/
+}
 
 
 LaneTracker::LaneTracker(ros::NodeHandle* nh_):n(*nh_),it(*nh_)
 {
   camera_subscriber_ = it.subscribe("/rrbot/camera1/image_raw", 1, &LaneTracker::imageCallback, this);
+
+
+  namedWindow("bird_rgb", WINDOW_NORMAL);
+  setMouseCallback("bird_rgb", mouse_callback);
 
   LoadAllInitializationParameters();
   InitializeBirdseyeTransformationMatrix();

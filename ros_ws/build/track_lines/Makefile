@@ -236,6 +236,33 @@ include/dbscan.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/dbscan.cpp.s
 .PHONY : include/dbscan.cpp.s
 
+include/depth_first_search.o: include/depth_first_search.cpp.o
+
+.PHONY : include/depth_first_search.o
+
+# target to build an object file
+include/depth_first_search.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/depth_first_search.cpp.o
+.PHONY : include/depth_first_search.cpp.o
+
+include/depth_first_search.i: include/depth_first_search.cpp.i
+
+.PHONY : include/depth_first_search.i
+
+# target to preprocess a source file
+include/depth_first_search.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/depth_first_search.cpp.i
+.PHONY : include/depth_first_search.cpp.i
+
+include/depth_first_search.s: include/depth_first_search.cpp.s
+
+.PHONY : include/depth_first_search.s
+
+# target to generate assembly for a file
+include/depth_first_search.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/depth_first_search.cpp.s
+.PHONY : include/depth_first_search.cpp.s
+
 include/lane_tracker.o: include/lane_tracker.cpp.o
 
 .PHONY : include/lane_tracker.o
@@ -445,6 +472,9 @@ help:
 	@echo "... include/dbscan.o"
 	@echo "... include/dbscan.i"
 	@echo "... include/dbscan.s"
+	@echo "... include/depth_first_search.o"
+	@echo "... include/depth_first_search.i"
+	@echo "... include/depth_first_search.s"
 	@echo "... include/lane_tracker.o"
 	@echo "... include/lane_tracker.i"
 	@echo "... include/lane_tracker.s"

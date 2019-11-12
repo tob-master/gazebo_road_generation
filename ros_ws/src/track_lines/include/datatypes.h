@@ -27,6 +27,8 @@ struct ConnectedComponentsSearchInitializationParameters
     int max_mid_line_component_distance;
     int end_of_linkage_marker;
     float max_roi_center_to_centroid_distance;
+    int car_position_x;
+    int car_position_y;
 };
 
 
@@ -72,7 +74,11 @@ struct MidLineSearchInitializationParameters
     float radial_scan_scaling_factor;
     int mid_line_length;
     int min_valuable_cluster_size;
-    int max_connected_cluster_distance;
+    int min_cluster_distance;
+    int max_cluster_distance;
+    int car_position_x;
+    int car_position_y;
+
 
 };
 
@@ -118,6 +124,13 @@ struct MidLineSearchReturnInfo
     bool has_found_group;
 
 };
+
+struct ConnectedComponentsSearchReturnInfo
+{
+    bool has_found_mid_line_components;
+    bool has_found_mid_line_group;
+};
+
 
 struct StartOfLinesSearchReturnInfo
 {
@@ -254,6 +267,7 @@ namespace mid_line_search
         int x_cluster_bin_key;
         int y_cluster_bin_key;
     };
+
 
     struct TwoConnectedClustersCentersOfGravity
     {

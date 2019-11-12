@@ -10,13 +10,37 @@ kMaxRadialScanOutOfClusterValue_(init.max_radial_scan_out_of_cluster_value),
 kRadialScanScalingFactor_(init.radial_scan_scaling_factor),
 kMidLineLength_(init.mid_line_length),
 kMinValuableClusterSize_(init.min_valuable_cluster_size),
-kMaxConnectedClusterDistance_(init.max_connected_cluster_distance),
+kMinMidLineClusterDistance_(init.min_cluster_distance),
+kMaxMidLineClusterDistance_(init.max_cluster_distance),
+kCarPosition_(init.car_position_x,init.car_position_y ),
 kClusterBinSize((((init.mid_line_length * init.radial_scan_scaling_factor)/2) + 1) * 2),
 kImageBorderPadding_(((init.mid_line_length * init.radial_scan_scaling_factor)/2) + 1),
 kRadialScanRadius1_((init.mid_line_length * init.radial_scan_scaling_factor)/2),
 kRadialScanRadius2_(((init.mid_line_length * init.radial_scan_scaling_factor)/2) + 1)
 {
    InitRadialScanners();
+}
+
+
+MidLineSearchReturnInfo MidLineSearch::FindMidLineClusters(Mat image)
+{
+       SetImage(image);
+       ClearMemory();
+       GroupValueablePointsInClusterBins();
+       RejectClustersUnderSizeThreshold();
+
+       if(HasFoundMidLineClusters())
+       {
+           ComputeClustersCentroid();
+           GroupClusters();
+
+           if(HasFoundGroup())
+           {
+              ComputeLengthAndDirectionOfConnectedClusters();
+           }
+       }
+
+       return GetReturnInfo();
 }
 
 void MidLineSearch::InitRadialScanners()
@@ -62,11 +86,19 @@ void MidLineSearch::ClearMemory()
     midline_clusters_yweight_.clear();
     midline_clusters_coordinates_.clear();
     centers_of_gravity.clear();
-    grouped_clusters_length_and_direction.clear();
-    connected_clusters_length_and_direction.clear();
+    grouped_clusters_length_and_direction_.clear();
+    connected_clusters_length_and_direction_.clear();
 
-    connected_cluster_bin_keys_.clear();
-    grouped_cluster_bin_keys_.clear();
+    //connected_cluster_bin_keys_.clear();
+    //grouped_cluster_bin_keys_.clear();
+
+    //sorted_centroid_groups_.clear();
+
+    cluster_centroids_.clear();
+    used_permutations_.clear();
+    //grouped_mid_line_clusters_.clear();
+
+    mid_line_cluster_groups_.clear();
 }
 
 void MidLineSearch::GroupValueablePointsInClusterBins()
@@ -184,14 +216,17 @@ void MidLineSearch::RejectClustersUnderSizeThreshold()
     }
 }
 
-void MidLineSearch::ComputeClustersCenterOfGravity()
+void MidLineSearch::ComputeClustersCentroid()
 {
     for (auto const& it : midline_clusters_size_)
     {
+
+      cout << it.first.first << " , " << it.first.second << endl;
+
       int x = midline_clusters_xweight_.at(it.first) / it.second;
       int y = midline_clusters_yweight_.at(it.first) / it.second;
 
-      centers_of_gravity[it.first].push_back(make_pair(x,y));
+      cluster_centroids_.push_back(Point(x,y));
 
     }
 }
@@ -205,7 +240,7 @@ bool MidLineSearch::HasFoundMidLineClusters()
 
 bool MidLineSearch::HasFoundGroup()
 {
-    for (auto& it: grouped_cluster_bin_keys_)
+    for (auto& it: mid_line_cluster_groups_)
     {
         if(it.size() > 1)
         {
@@ -224,41 +259,411 @@ MidLineSearchReturnInfo MidLineSearch::GetReturnInfo()
     return MidLineSearchReturnInfo{has_found_mid_line_clusters_,has_found_group_};
 }
 
- MidLineSearchReturnInfo MidLineSearch::FindMidLineClusters(Mat image)
+
+ void MidLineSearch::ComputeLengthAndDirectionOfConnectedClusters()
  {
-        SetImage(image);
-        ClearMemory();
-        GroupValueablePointsInClusterBins();
-        RejectClustersUnderSizeThreshold();
+     for (auto& it: mid_line_cluster_groups_)
+     {
+         for(int i=0; i<it.size()-1; i++)
+         {
+             Point current_cluster_center_of_gravity = it[i];
+             Point next_cluster_center_of_gravity    = it[i+1];
 
-        if(HasFoundMidLineClusters())
-        {
-            ComputeClustersCenterOfGravity();
-            GroupClusters();
+             int opposite =  current_cluster_center_of_gravity.y - next_cluster_center_of_gravity.y;
+             int adjacent =  next_cluster_center_of_gravity.x - current_cluster_center_of_gravity.x;
 
-            if(HasFoundGroup())
-            {
-               ComputeLengthAndDirectionOfConnectedClusters();
-            }
-        }
+             int length = sqrt(pow(adjacent,2)+pow(opposite,2));
 
-        return GetReturnInfo();
+             float angle = CalculateAngle4Quadrants(opposite, adjacent);
+
+             connected_clusters_length_and_direction_.push_back(LengthAndDirectionFromConnectedClusters{current_cluster_center_of_gravity.x,
+                                                                                                       current_cluster_center_of_gravity.y,
+                                                                                                       length,
+                                                                                                       angle});
+         }
+         grouped_clusters_length_and_direction_.push_back(connected_clusters_length_and_direction_);
+         connected_clusters_length_and_direction_.clear();
+
+     }
+ }
+
+
+ void MidLineSearch::CoutLengthAndDirectionOfConnectedClusters()
+ {
+         cout << "___MidLineSearch LengthAndDirectionOfConnectedClusters___" << endl;
+     for(int i=0; i<grouped_clusters_length_and_direction_.size(); i++)
+     {
+         for(int j=0; j<grouped_clusters_length_and_direction_[i].size(); j++)
+         {
+             cout << "Cluster " << i << ": \tPoint(" << grouped_clusters_length_and_direction_[i][j].x
+                                             << ","  << grouped_clusters_length_and_direction_[i][j].y
+                                             << ") \t Direction: "  <<grouped_clusters_length_and_direction_[i][j].angle
+                                             << "° \tLength: "  << grouped_clusters_length_and_direction_[i][j].length <<"px" <<  endl;
+         }
+     }
+     cout << "#######################################" << endl;
+ }
+
+
+
+
+
+
+bool MidLineSearch::IsPermuted(int i, int j, vector<string> &used_permutations)
+{
+    if(i==j){ return true;}
+
+    string permutation_hash12 = to_string(i) + to_string(j);
+
+    auto it = find (used_permutations.begin(), used_permutations.end(), permutation_hash12);
+
+    if (it != used_permutations.end())
+    {
+        return true;
+    }
+    else
+    {
+      string permutation_hash21 = std::to_string(j) + std::to_string(i);
+      used_permutations.push_back(permutation_hash12);
+      used_permutations.push_back(permutation_hash21);
+      return false;
+    }
 }
 
 
- /*
-#include <algorithm>
-#include <numeric>
- double slope(const std::vector<double>& x, const std::vector<double>& y) {
-    const auto n    = x.size();
-    const auto s_x  = std::accumulate(x.begin(), x.end(), 0.0);
-    const auto s_y  = std::accumulate(y.begin(), y.end(), 0.0);
-    const auto s_xx = std::inner_product(x.begin(), x.end(), x.begin(), 0.0);
-    const auto s_xy = std::inner_product(x.begin(), x.end(), y.begin(), 0.0);
-    const auto a    = (n * s_xy - s_x * s_y) / (n * s_xx - s_x * s_x);
-    return a;
+
+
+
+
+
+
+double MidLineSearch::Distance2d(const Point& lhs, const Point& rhs)
+{
+    return sqrt(pow(lhs.x-rhs.x,2) + pow(lhs.y-rhs.y,2));
+}
+
+
+bool MidLineSearch::IsConnected(float cluster_distance)
+{
+    return cluster_distance > kMinMidLineClusterDistance_ && cluster_distance < kMaxMidLineClusterDistance_;
+}
+
+void MidLineSearch::FindClusterConnections(vector<pair<int,int>> &cluster_connections)
+{
+    for(int i=0; i<cluster_centroids_.size(); i++)
+    {
+        int clusters_ix = cluster_centroids_[i].x;
+        int clusters_iy = cluster_centroids_[i].y;
+
+        for(int j=0; j<cluster_centroids_.size(); j++)
+        {
+            if(IsPermuted(i,j,used_permutations_)) continue;
+
+            int clusters_jx = cluster_centroids_[j].x;
+            int clusters_jy = cluster_centroids_[j].y;
+
+            float cluster_distance = sqrt(pow(clusters_jx-clusters_ix,2) + pow(clusters_jy-clusters_iy,2));
+
+            if(IsConnected(cluster_distance))
+            {
+                cluster_connections.push_back(make_pair(i,j));
+            }
+        }
+    }
+}
+
+void MidLineSearch::GroupClusters()
+{
+
+    vector<pair<int,int>> cluster_connections;
+
+    FindClusterConnections(cluster_connections);
+
+
+    int num_vertices = cluster_centroids_.size();
+
+    DepthFirstSearch ConnectedMidLineGroupFinder(num_vertices);
+
+    for(auto it:cluster_connections){ ConnectedMidLineGroupFinder.addEdge(it.first, it.second); }
+
+    vector<vector<int>> connected_mid_line_groups = ConnectedMidLineGroupFinder.connectedComponents();
+
+   vector<Point> connected_cluster_centroids;
+
+
+
+   for(int i=0; i<connected_mid_line_groups.size(); ++i)
+   {
+       for(int j=0; j<connected_mid_line_groups[i].size(); ++j)
+       {
+           connected_cluster_centroids.push_back(cluster_centroids_[connected_mid_line_groups[i][j]]);
+       }
+
+       std::sort(begin(connected_cluster_centroids),
+                 end(connected_cluster_centroids),
+                 [&](const Point& lhs, const Point& rhs){ return Distance2d(kCarPosition_, lhs) < Distance2d(kCarPosition_, rhs); });
+
+
+       mid_line_cluster_groups_.push_back(connected_cluster_centroids);
+       connected_cluster_centroids.clear();
+   }
+
+    used_permutations_.clear();
+}
+
+
+
+void MidLineSearch::DrawClusters(Mat &rgb)
+{
+
+    for (int i=0; i<cluster_centroids_.size(); i++)
+    {
+        int x = cluster_centroids_[i].x;
+        int y = cluster_centroids_[i].y;
+
+        string text = to_string(i);
+         putText(rgb, text, Point(x,y),FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,255,0), 1, CV_AA);
+
+    }
+
+}
+
+void MidLineSearch::DrawConnectedClusters(Mat &rgb)
+{
+    std::vector<Vec3b> colors(mid_line_cluster_groups_.size());
+
+    for (int label = 0; label < mid_line_cluster_groups_.size(); ++label)
+    {
+        colors[label] = Vec3b((rand() & 255), (rand() & 255), (rand() & 255));
+    }
+
+    for ( int i=0; i<mid_line_cluster_groups_.size(); ++i)
+    {
+
+
+        for(int j=0; j<mid_line_cluster_groups_[i].size(); j++)
+        {
+
+
+            circle(rgb,mid_line_cluster_groups_[i][j], 10, colors[i],CV_FILLED);
+
+            string text = to_string(i) + " " + to_string(j);
+            putText(rgb, text, Point(mid_line_cluster_groups_[i][j].x + 30,mid_line_cluster_groups_[i][j].y),FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,0,255), 1, CV_AA);
+
+        }
+    }
+}
+
+
+
+
+
+
+void MidLineSearch::DrawGroupedMidLineClustersDirections(Mat &rgb)
+{
+
+    std::vector<Vec3b> colors(grouped_clusters_length_and_direction_.size());
+
+    for (int label = 0; label < grouped_clusters_length_and_direction_.size(); ++label)
+    {
+        colors[label] = Vec3b((rand() & 255), (rand() & 255), (rand() & 255));
+    }
+
+    for(int i=0;i<grouped_clusters_length_and_direction_.size();i++ )
+    {
+        for (int j=0;j<grouped_clusters_length_and_direction_[i].size();j++ ) {
+
+            int x_start = grouped_clusters_length_and_direction_[i][j].x;
+            int y_start = grouped_clusters_length_and_direction_[i][j].y;
+
+            int length = grouped_clusters_length_and_direction_[i][j].length;
+            float angle  = grouped_clusters_length_and_direction_[i][j].angle * PI/180;
+
+            int x_offset = cos(angle) * length;
+            int y_offset = sin(angle) * length;
+
+            int x_end = x_start + x_offset;
+            int y_end = y_start - y_offset;
+
+            line( rgb,Point(x_start,y_start), Point(x_end,y_end), colors[i], 3, CV_AA);
+
+            circle(rgb, Point(x_start,y_start), 7, Scalar(0,255,0),CV_FILLED);
+            circle(rgb, Point(x_end,y_end), 10, Scalar(0,0,255),2);
+        }
+    }
+
+
+
+}
+
+/* TODO: Sorting is not neccessary
+ *
+ *
+ *
+ *
+ * void MidLineSearch::DrawGroupedMidLineClusters(Mat &rgb)
+{
+    std::vector<Vec3b> colors(grouped_mid_line_clusters_.size());
+
+    for (int label = 0; label < grouped_mid_line_clusters_.size(); ++label)
+    {
+        colors[label] = Vec3b((rand() & 255), (rand() & 255), (rand() & 255));
+    }
+
+
+    for (int i=0;i<grouped_mid_line_clusters_.size();i++)
+    {
+        for (int j=0;j<grouped_mid_line_clusters_[i].size();j++)
+        {
+
+            int x = cluster_centroids_[grouped_mid_line_clusters_[i][j]].x;
+            int y = cluster_centroids_[grouped_mid_line_clusters_[i][j]].y;
+
+
+            circle(rgb, Point(x,y), 7, colors[i],CV_FILLED);
+        }
+    }
+
+}
+void MidLineSearch::SortClusters()
+{
+
+
+  for (auto const& hash : midline_clusters_coordinates_)
+  {
+    for (int i=0;i<(midline_clusters_coordinates_.at(hash.first)).size();i++)
+    {
+
+      int y = ((midline_clusters_coordinates_.at(hash.first)).at(i)).first;
+      int x = ((midline_clusters_coordinates_.at(hash.first)).at(i)).second;
+
+      cout << x << " " << y << endl;
+
+    }
+  }
+
+ for (auto const& hash : midline_clusters_coordinates_)
+  {
+      //sort(hash.second.begin(),hash.second.end());
+
+   vector<pair<int,int>> go(hash.second.begin(),hash.second.end());
+
+    cout << "before" << endl;
+   for (auto const& k : go) cout << k.first << " " << k.second << endl;
+
+    sort(go.begin(),go.end());
+
+    cout << "after" << endl;
+    for (auto const& k : go) cout << k.first << " " << k.second << endl;
+
+  }
+
+cout << "after" << endl;
+
+for (auto const& hash : midline_clusters_coordinates_)
+{
+  for (int i=0;i<(midline_clusters_coordinates_.at(hash.first)).size();i++)
+  {
+
+    int y = ((midline_clusters_coordinates_.at(hash.first)).at(i)).first;
+    int x = ((midline_clusters_coordinates_.at(hash.first)).at(i)).second;
+
+    cout << x << " " << y << endl;
+
+  }
+}
+
+}
+
+void MidLineSearch::ComputeClustersCentroid()
+{
+    for (auto const& it : midline_clusters_size_)
+    {
+
+      cout << it.first.first << " , " << it.first.second << endl;
+
+      int x = midline_clusters_xweight_.at(it.first) / it.second;
+      int y = midline_clusters_yweight_.at(it.first) / it.second;
+
+      centers_of_gravity[it.first].push_back(make_pair(x,y));
+
+
+    }
+}
+
+
+ void MidLineSearch::ComputeLengthAndDirectionOfConnectedClustersNearest()
+ {
+     for (auto& it: grouped_cluster_bin_keys_)
+     {
+         if(it.size() > 1)
+         {
+             //vector<double> x;
+             //vector<double> y;
+
+             for(int i=0; i<it.size()-1; i++)
+             {
+                 //cout << it[i].x_cluster_bin_key << " " << it[i].y_cluster_bin_key<< endl;
+
+                 Point current_cluster_center_of_gravity = GetCenterOfGravityPointFromClusterBinKey(it[i]);
+                 Point next_cluster_center_of_gravity    = GetCenterOfGravityPointFromClusterBinKey(it[i+1]);
+
+                 int opposite =  current_cluster_center_of_gravity.y - next_cluster_center_of_gravity.y;
+                 int adjacent =  next_cluster_center_of_gravity.x - current_cluster_center_of_gravity.x;
+
+                 int length = sqrt(pow(adjacent,2)+pow(opposite,2));
+
+                 float angle = CalculateAngle4Quadrants(opposite, adjacent);
+
+                 connected_clusters_length_and_direction_.push_back(LengthAndDirectionFromConnectedClusters{current_cluster_center_of_gravity.x,
+                                                                                                           current_cluster_center_of_gravity.y,
+                                                                                                           length,
+                                                                                                           angle});
+                     }
+             grouped_clusters_length_and_direction_.push_back(connected_clusters_length_and_direction_);
+             connected_clusters_length_and_direction_.clear();
+         }
+     }
  }
-*/
+
+
+ void MidLineSearch::ComputeLengthAndDirectionOfConnectedClusters()
+ {
+     for (auto& it: grouped_mid_line_clusters_)
+     {
+         if(it.size() > 1)
+         {
+             //vector<double> x;
+             //vector<double> y;
+
+             for(int i=0; i<it.size()-1; i++)
+             {
+                 //cout << it[i].x_cluster_bin_key << " " << it[i].y_cluster_bin_key<< endl;
+
+                 Point current_cluster_center_of_gravity = cluster_centroids_[it[i]];
+                 Point next_cluster_center_of_gravity    = cluster_centroids_[it[i+1]];
+
+                 int opposite =  current_cluster_center_of_gravity.y - next_cluster_center_of_gravity.y;
+                 int adjacent =  next_cluster_center_of_gravity.x - current_cluster_center_of_gravity.x;
+
+                 int length = sqrt(pow(adjacent,2)+pow(opposite,2));
+
+                 float angle = CalculateAngle4Quadrants(opposite, adjacent);
+
+                 connected_clusters_length_and_direction_.push_back(LengthAndDirectionFromConnectedClusters{current_cluster_center_of_gravity.x,
+                                                                                                           current_cluster_center_of_gravity.y,
+                                                                                                           length,
+                                                                                                           angle});
+                     }
+             grouped_clusters_length_and_direction_.push_back(connected_clusters_length_and_direction_);
+             connected_clusters_length_and_direction_.clear();
+         }
+     }
+ }
+
+
+
+
 
 
  Point MidLineSearch::GetCenterOfGravityPointFromClusterBinKey(ClusterBinKey cluster_bin_key)
@@ -271,64 +676,91 @@ MidLineSearchReturnInfo MidLineSearch::GetReturnInfo()
     return Point(x,y);
  }
 
- void MidLineSearch::ComputeLengthAndDirectionOfConnectedClusters()
+
+ void MidLineSearch::SortClusterGroupCentroids()
  {
      for (auto& it: grouped_cluster_bin_keys_)
      {
-         if(it.size() > 1)
+         vector<int> x_centers_group;
+         vector<int> y_centers_group;
+
+         for(int i=0; i<it.size(); i++)
          {
-             //vector<double> x;
-             //vector<double> y;
+            pair<int,int> key = make_pair(it[i].x_cluster_bin_key,it[i].y_cluster_bin_key);
 
-             for(int i=0; i<it.size()-1; i++)
-             {
-                 Point current_cluster_center_of_gravity = GetCenterOfGravityPointFromClusterBinKey(it[i]);
-                 Point next_cluster_center_of_gravity    = GetCenterOfGravityPointFromClusterBinKey(it[i+1]);
+            int x = centers_of_gravity[key].begin()->first;
+            int y = centers_of_gravity[key].begin()->second;
 
-                 int opposite =  current_cluster_center_of_gravity.y - next_cluster_center_of_gravity.y;
-                 int adjacent =  next_cluster_center_of_gravity.x - current_cluster_center_of_gravity.x;
+            x_centers_group.push_back(x);
+            y_centers_group.push_back(y);
 
-                 int length = sqrt(pow(adjacent,2)+pow(opposite,2));
-
-                 float angle = CalculateAngle4Quadrants(opposite, adjacent) * PI/180;
-
-                 connected_clusters_length_and_direction.push_back(LengthAndDirectionFromConnectedClusters{current_cluster_center_of_gravity.x,
-                                                                                                           current_cluster_center_of_gravity.y,
-                                                                                                           length,
-                                                                                                           angle});
-                /*
-                 x.push_back(double(centers_of_gravity[it[i]].begin()->first));
-                 y.push_back(double(centers_of_gravity[it[i]].begin()->second));
-
-                 x.push_back(double(centers_of_gravity[it[i+1]].begin()->first));
-                 y.push_back(double(centers_of_gravity[it[i+1]].begin()->second));
-
-                 cout << "slope: " << atan(slope(x,y)) * 180/PI << endl;
-                 */
-                 //cout <<  "op: " <<  opposite  << " adj: " << adjacent << " xb " << x_bottom << " yb " << y_bottom << " xt " << x_top << " yt " << y_top << " angle: " << angle << endl;
-             }
-             grouped_clusters_length_and_direction.push_back(connected_clusters_length_and_direction);
-             connected_clusters_length_and_direction.clear();
          }
-     }
+
+         int group_size = y_centers_group.size();
+
+         Mat y_centers_group_mat = Mat(1, group_size, CV_32SC1);
+         Mat x_centers_group_mat = Mat(1, group_size, CV_32SC1);
+
+         memcpy(y_centers_group_mat.data, y_centers_group.data(), group_size*sizeof(int));
+         memcpy(x_centers_group_mat.data, x_centers_group.data(), group_size*sizeof(int));
+
+         Mat sorted_y_center_group_ids;
+         sortIdx(y_centers_group_mat, sorted_y_center_group_ids, CV_SORT_EVERY_ROW + CV_SORT_DESCENDING);
+
+         vector<Point> sorted_centroids_group;
+
+         for (int i=0;i<group_size;i++)
+         {
+             int id = sorted_y_center_group_ids.at<int>(i);
+             int x = x_centers_group_mat.at<int>(id);
+             int y = y_centers_group_mat.at<int>(id);
+             Point centroid = Point(x,y);
+
+             sorted_centroids_group.push_back(centroid);
+
+
+         }
+
+         sorted_centroid_groups_.push_back(sorted_centroids_group);
+       }
+
+
+
  }
 
- void MidLineSearch::CoutLengthAndDirectionOfConnectedClusters()
+ void MidLineSearch::ComputeLengthAndDirectionOfConnectedClustersBottomToTop()
  {
-         cout << "___MidLineSearch LengthAndDirectionOfConnectedClusters___" << endl;
-     for(int i=0; i<grouped_clusters_length_and_direction.size(); i++)
-     {
-         for(int j=0; j<grouped_clusters_length_and_direction[i].size(); j++)
-         {
-             cout << "Cluster " << i << ": \tPoint(" << grouped_clusters_length_and_direction[i][j].x
-                                             << ","  << grouped_clusters_length_and_direction[i][j].y
-                                             << ") \t Direction: "  <<grouped_clusters_length_and_direction[i][j].angle * 180/PI
-                                             << "° \tLength: "  << grouped_clusters_length_and_direction[i][j].length <<"px" <<  endl;
-         }
-     }
-     cout << "#######################################" << endl;
- }
 
+     SortClusterGroupCentroids();
+
+     for (int i=0; i<sorted_centroid_groups_.size(); i++)
+     {
+         if(sorted_centroid_groups_[i].size() > 1)
+         {
+             for(int j=0; j<sorted_centroid_groups_[i].size()-1; j++)
+             {
+
+                     Point current_cluster_center_of_gravity = sorted_centroid_groups_[i][j];
+                     Point next_cluster_center_of_gravity    = sorted_centroid_groups_[i][j+1];
+
+                     int opposite =  current_cluster_center_of_gravity.y - next_cluster_center_of_gravity.y;
+                     int adjacent =  next_cluster_center_of_gravity.x - current_cluster_center_of_gravity.x;
+
+                     int length = sqrt(pow(adjacent,2)+pow(opposite,2));
+
+                     float angle = CalculateAngle4Quadrants(opposite, adjacent);
+
+                     connected_clusters_length_and_direction_.push_back(LengthAndDirectionFromConnectedClusters{current_cluster_center_of_gravity.x,
+                                                                                                               current_cluster_center_of_gravity.y,
+                                                                                                               length,
+                                                                                                               angle});
+              }
+              grouped_clusters_length_and_direction_.push_back(connected_clusters_length_and_direction_);
+              connected_clusters_length_and_direction_.clear();
+             }
+         }
+
+ }
 
 Point MidLineSearch::GetStartPointOfCurrentCluster(ReverseMidLineCoordinatesIterator it)
 {
@@ -349,6 +781,7 @@ Point MidLineSearch::GetEndPointOfNextCluster(ReverseMidLineCoordinatesIterator 
 
   return Point(x,y);
 }
+
 
 
 float MidLineSearch::GetCurrentStartToNextEndClusterDistance(Point start_point_of_current_cluster, Point end_point_of_next_cluster)
@@ -426,6 +859,99 @@ bool MidLineSearch::HasSingleCluster()
     return midline_clusters_size_.size() == 1;
 }
 
+
+vector<int> MidLineSearch::LinkConnectedClusters()
+{
+
+    vector<int> linked_clusters(cluster_centroids_.size());
+    fill(linked_clusters.begin(),linked_clusters.end(),-1);
+
+    for(int i=0; i<cluster_centroids_.size(); i++)
+    {
+        int clusters_ix = cluster_centroids_[i].x;
+        int clusters_iy = cluster_centroids_[i].y;
+
+        for(int j=0; j<cluster_centroids_.size(); j++)
+        {
+            if(IsPermuted(i,j,used_permutations_)) continue;
+
+            int clusters_jx = cluster_centroids_[j].x;
+            int clusters_jy = cluster_centroids_[j].y;
+
+            float cluster_distance = sqrt(pow(clusters_jx-clusters_ix,2) + pow(clusters_jy-clusters_iy,2));
+
+            if(cluster_distance > kMinMidLineClusterDistance_ && cluster_distance < kMaxMidLineClusterDistance_)
+            {
+                linked_clusters.at(i) = j;
+            }
+        }
+    }
+
+    for(int i=0; i<linked_clusters.size();i++)
+    {
+        cout << i << " " << linked_clusters.at(i) << "\t "<<  cluster_centroids_[i].x << " " << cluster_centroids_[i].y<< endl;
+    }
+
+    return linked_clusters;
+
+}
+
+
+bool MidLineSearch::IdAlreadyConnected(int id)
+{
+
+   for(auto it:grouped_mid_line_clusters_)
+   {
+       auto iter = find(it.begin(), it.end(), id);
+
+       if (iter != it.end()){ return true;}
+   }
+   return false;
+}
+
+
+void MidLineSearch::GroupMidLineClusters()
+{
+
+
+
+    vector<int> linked_clusters = LinkConnectedClusters();
+    vector<int> resolved_linkage_clusters;
+
+    for(int i=0; i<cluster_centroids_.size();i++)
+    {
+        int id = linked_clusters.at(i);
+
+        if(IdAlreadyConnected(id)) continue;
+
+        resolved_linkage_clusters.clear();
+
+
+        if(id!=kEndOfLinkageMarker_)
+        {
+            resolved_linkage_clusters.push_back(i);
+            resolved_linkage_clusters.push_back(id);
+        }
+
+        while(id!=kEndOfLinkageMarker_)
+        {
+            id = linked_clusters.at(id);
+
+            if(id!=kEndOfLinkageMarker_)
+            {
+                resolved_linkage_clusters.push_back(id);
+            }
+        }
+
+        if(!resolved_linkage_clusters.empty())
+        {
+            grouped_mid_line_clusters_.push_back(resolved_linkage_clusters);
+        }
+
+    }
+}
+
+/*
 void MidLineSearch::GroupClusters()
 {
     if (IsGroupAble())
@@ -507,91 +1033,6 @@ void MidLineSearch::GroupClusters()
         system("pause");
     }
 }
-
-void MidLineSearch::DrawClusters(Mat &rgb)
-{
-    for (auto const& cluster : centers_of_gravity)
-    {
-        int x = cluster.second.begin()->first;
-        int y = cluster.second.begin()->second;
-
-        circle(rgb, Point(x,y), 10, Scalar(255, 0, 255));
-
-    }
-}
-
-void MidLineSearch::DrawConnectedClusters(Mat &rgb)
-{
-    srand (time(NULL));
-
-    for (auto& it: grouped_cluster_bin_keys_)
-    {
-        int B = rand() % 255;
-        int G = rand() % 255;
-        int R = rand() % 255;
-
-        for(int i=0; i<it.size(); i++)
-        {
-            int x = centers_of_gravity[make_pair(it[i].x_cluster_bin_key,it[i].y_cluster_bin_key)].begin()->first;
-            int y = centers_of_gravity[make_pair(it[i].x_cluster_bin_key,it[i].y_cluster_bin_key)].begin()->second;
-
-            circle(rgb, Point(x,y), 10, Scalar(B, G, R));
-        }
-    }
-}
-
-
-
-
-/* TODO: Sorting is not neccessary
- *
-void MidLineSearch::SortClusters()
-{
-
-
-  for (auto const& hash : midline_clusters_coordinates_)
-  {
-    for (int i=0;i<(midline_clusters_coordinates_.at(hash.first)).size();i++)
-    {
-
-      int y = ((midline_clusters_coordinates_.at(hash.first)).at(i)).first;
-      int x = ((midline_clusters_coordinates_.at(hash.first)).at(i)).second;
-
-      cout << x << " " << y << endl;
-
-    }
-  }
-
- for (auto const& hash : midline_clusters_coordinates_)
-  {
-      //sort(hash.second.begin(),hash.second.end());
-
-   vector<pair<int,int>> go(hash.second.begin(),hash.second.end());
-
-    cout << "before" << endl;
-   for (auto const& k : go) cout << k.first << " " << k.second << endl;
-
-    sort(go.begin(),go.end());
-
-    cout << "after" << endl;
-    for (auto const& k : go) cout << k.first << " " << k.second << endl;
-
-  }
-
-cout << "after" << endl;
-
-for (auto const& hash : midline_clusters_coordinates_)
-{
-  for (int i=0;i<(midline_clusters_coordinates_.at(hash.first)).size();i++)
-  {
-
-    int y = ((midline_clusters_coordinates_.at(hash.first)).at(i)).first;
-    int x = ((midline_clusters_coordinates_.at(hash.first)).at(i)).second;
-
-    cout << x << " " << y << endl;
-
-  }
-}
-
-}
 */
+
+
