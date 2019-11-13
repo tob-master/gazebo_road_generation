@@ -221,7 +221,9 @@ void MidLineSearch::ComputeClustersCentroid()
     for (auto const& it : midline_clusters_size_)
     {
 
-      cout << it.first.first << " , " << it.first.second << endl;
+
+
+ //       cout << it.first.first << " , " << it.first.second << endl;
 
       int x = midline_clusters_xweight_.at(it.first) / it.second;
       int y = midline_clusters_yweight_.at(it.first) / it.second;
@@ -285,6 +287,12 @@ MidLineSearchReturnInfo MidLineSearch::GetReturnInfo()
          connected_clusters_length_and_direction_.clear();
 
      }
+ }
+
+
+ vector<vector<LengthAndDirectionFromConnectedClusters>> MidLineSearch::GetGroupedMidLineClustersLengthAndDirection()
+ {
+     return grouped_clusters_length_and_direction_;
  }
 
 
