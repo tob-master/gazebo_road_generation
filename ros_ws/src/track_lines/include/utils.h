@@ -10,7 +10,7 @@ using namespace std;
 
 
 
-inline float CalculateAngle4Quadrants(int opposite, int adjacent)
+inline float CalculateAngle4Quadrants(float opposite, float adjacent)
 {
     float angle = 0;
 

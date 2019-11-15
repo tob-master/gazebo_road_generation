@@ -19,6 +19,8 @@
 
 #include <stdlib.h>
 #include <time.h>
+#include <algorithm>
+#include <numeric>
 
 
 #include "datatypes.h"
@@ -85,11 +87,14 @@ class MidLineSearch
         //vector<vector<Point>> sorted_centroid_groups_;
         vector<Point> cluster_centroids_;
 
+        vector<SingleCluster> single_clusters_;
         vector<vector<LengthAndDirectionFromConnectedClusters>> grouped_clusters_length_and_direction_;
         vector<LengthAndDirectionFromConnectedClusters> connected_clusters_length_and_direction_;
 
 
        vector<vector<Point>> mid_line_cluster_groups_;
+
+
 
 
 
@@ -146,6 +151,8 @@ class MidLineSearch
         void GroupClusters();
         bool IsConnected(float cluster_distance);
         void FindClusterConnections(vector<pair<int,int>> &cluster_connections);
+        void FindOrientationForSingleClusters();
+
 
     public:
 
@@ -154,11 +161,13 @@ class MidLineSearch
       void CoutLengthAndDirectionOfConnectedClusters();
 
       vector<vector<LengthAndDirectionFromConnectedClusters>> GetGroupedMidLineClustersLengthAndDirection();
+      vector<SingleCluster> GetSingleClusters();
 
       void DrawClusters(Mat &rgb);
       void DrawConnectedClusters(Mat &rgb);
       void DrawGroupedMidLineClustersDirections(Mat &rgb);
       void DrawGroupedMidLineClusters(Mat &rgb);
+      void DrawSingleClusters(Mat &rgb);
 
       //float CalculateAngle(int opposite, int adjacent);
       //void SortClusters();

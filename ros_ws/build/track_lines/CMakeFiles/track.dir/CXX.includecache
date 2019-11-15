@@ -187,6 +187,10 @@ stdlib.h
 -
 time.h
 -
+algorithm
+-
+numeric
+-
 datatypes.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/datatypes.h
 utils.h

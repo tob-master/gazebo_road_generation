@@ -246,6 +246,21 @@ namespace vanishing_point_search
         int y_top;
         int angle;
     };
+
+    struct Intersections
+    {
+        int intersection_x;
+        int intersection_y;
+        int left_x_bottom;
+        int left_y_bottom;
+        int left_x_top;
+        int left_y_top;
+        int right_x_bottom;
+        int right_y_bottom;
+        int right_x_top;
+        int right_y_top;
+    };
+
 };
 
 
@@ -284,6 +299,14 @@ namespace mid_line_search
        int y;
        int length;
        float angle;
+    };
+
+
+    struct SingleCluster
+    {
+        int x_center;
+        int y_center;
+        int angle;
     };
 
 };

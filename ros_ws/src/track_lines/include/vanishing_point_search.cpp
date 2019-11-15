@@ -7,7 +7,7 @@ kCannyHighThreshold_(init.canny_high_threshold),
 kCannyKernelSize_(init.canny_kernel_size),
 kHoghLinesRho_(init.hough_lines_rho),
 kHoughLinesTheta_(init.hough_lines_theta),
-kHoughLinesMinIntersections_(init.hough_lines_min_intersections),
+kHoughLinesMinintersections_(init.hough_lines_min_intersections),
 kHoughLinesMinLineLength_(init.hough_lines_min_line_length),
 kHoughLinesMaxLineGap_(init.hough_lines_min_line_gap),
 kXROIStart_(init.x_roi_start),
@@ -69,7 +69,7 @@ void VanishingPointSearch::CheckFoundLeftAndRightHoughLines()
 
 void VanishingPointSearch::CheckFoundIntersections()
 {
-    intersections_count_ = intersections_.size();
+    intersections_count_ = intersecting_lines_.size();
 
     if(intersections_count_ > 0) has_found_intersections_ = true;
     else has_found_intersections_ = false;
@@ -145,9 +145,113 @@ VanishingPointSearchReturnInfo VanishingPointSearch::GetReturnInfo()
          }
      }
 
+
+     SetLineFollowerStartParameters();
+
     return GetReturnInfo();
  }
 
+
+ void VanishingPointSearch::SetLineFollowerStartParameters()
+ {
+    if(has_found_intersections_)
+    {
+        int left_x_bottom_mean=0;
+        int left_y_bottom_mean=0;
+        int left_x_top_mean=0;
+        int left_y_top_mean=0;
+        int right_x_bottom_mean=0;
+        int right_y_bottom_mean=0;
+        int right_x_top_mean=0;
+        int right_y_top_mean=0;
+
+        for(auto it : vanishing_point_intersections_)
+        {
+            left_x_bottom_mean += it.left_x_bottom;
+            left_y_bottom_mean += it.left_y_bottom;
+            left_x_top_mean += it.left_x_top;
+            left_y_top_mean += it.left_y_top;
+            right_x_bottom_mean += it.right_x_bottom;
+            right_y_bottom_mean += it.right_y_bottom;
+            right_x_top_mean += it.right_x_top;
+            right_y_top_mean += it.right_y_top;
+        }
+
+        left_x_bottom_mean /= vanishing_point_intersections_.size();
+        left_y_bottom_mean /= vanishing_point_intersections_.size();
+        left_x_top_mean /= vanishing_point_intersections_.size();
+        left_y_top_mean /= vanishing_point_intersections_.size();
+        right_x_bottom_mean /= vanishing_point_intersections_.size();
+        right_y_bottom_mean /= vanishing_point_intersections_.size();
+        right_x_top_mean /= vanishing_point_intersections_.size();
+        right_y_top_mean /= vanishing_point_intersections_.size();
+
+
+        cv::Point2f left_bottom = Point2f(float(left_x_bottom_mean), float(left_y_bottom_mean));
+        cv::Point2f left_top    = Point2f(float(left_x_top_mean), float(left_y_top_mean));
+        cv::Point2f right_bottom = Point2f(float(right_x_bottom_mean), float(right_y_bottom_mean));
+        cv::Point2f right_top    = Point2f(float(right_x_top_mean), float(right_y_top_mean));
+
+
+        vector<Point2f> src, dst;
+        src.push_back(left_bottom);
+        src.push_back(left_top);
+        src.push_back(right_bottom);
+        src.push_back(right_top);
+
+        cv::perspectiveTransform(src,dst,birdseye_transformation_matrix_.inv());
+
+        left_x_bottom_mean = int(dst[0].x);
+        left_y_bottom_mean = int(dst[0].y);
+
+        left_x_top_mean = int(dst[1].x);
+        left_y_top_mean = int(dst[1].y);
+
+        right_x_bottom_mean = int(dst[2].x);
+        right_y_bottom_mean = int(dst[2].y);
+
+        right_x_top_mean = int(dst[3].x);
+        right_y_top_mean = int(dst[3].y);
+
+
+
+        int left_adjacent  = left_x_top_mean  - left_x_bottom_mean;
+        int right_adjacent = right_x_top_mean - right_x_bottom_mean;
+
+        int left_opposite =  left_y_bottom_mean - left_y_top_mean;
+        int right_opposite = right_y_bottom_mean - right_y_top_mean;
+
+        float left_angle = CalculateAngle4Quadrants(left_opposite, left_adjacent);
+        float right_angle = CalculateAngle4Quadrants(right_opposite, right_adjacent);
+
+
+
+        line_follower_start_parameters_ = StartParameters{left_x_top_mean,
+                                                                  left_y_top_mean,
+                                                                  left_angle,
+                                                                  right_x_top_mean,
+                                                                  right_y_top_mean,
+                                                                  right_angle};
+
+    }
+    else
+    {
+        if(has_found_left_hough_line_)
+        {
+            cout << "TODO";
+        }
+
+        if(has_found_right_hough_line_)
+        {
+            cout << "TODO";
+        }
+    }
+ }
+
+StartParameters VanishingPointSearch::GetLineFollowerStartParameters()
+{
+    return line_follower_start_parameters_;
+}
 
 void VanishingPointSearch::DrawWarpedVanishingPointDirection(Mat &rgb)
 {
@@ -173,14 +277,14 @@ void VanishingPointSearch::DrawWarpedVanishingPointDirection(Mat &rgb)
          float x_sum = 0;
          float y_sum = 0;
 
-         for(auto it: intersections_)
+         for(auto it: intersecting_lines_)
          {
-             x_sum += it.x;
-             y_sum += it.y;
+             x_sum += it.intersection_x;
+             y_sum += it.intersection_y;
          }
 
-         float x_mean = x_sum / intersections_.size();
-         float y_mean = y_sum / intersections_.size();
+         float x_mean = x_sum / intersecting_lines_.size();
+         float y_mean = y_sum / intersecting_lines_.size();
 
          int valid_point_counter = 0;
          int std_add = 0;
@@ -188,11 +292,11 @@ void VanishingPointSearch::DrawWarpedVanishingPointDirection(Mat &rgb)
 
         /*
          float mean_std =  0;
-         for (auto it: intersections_)
+         for (auto it: intersecting_lines_)
          {
               mean_std += sqrt(pow(it.x-x_mean,2) + pow(abs(it.y)-y_mean,2));
          }
-         mean_std /= intersections_.size();
+         mean_std /= intersecting_lines_.size();
         */
 
          do{
@@ -200,14 +304,15 @@ void VanishingPointSearch::DrawWarpedVanishingPointDirection(Mat &rgb)
              y_sum = 0;
              valid_point_counter = 0;
 
-             for (auto it: intersections_)
+             for (auto it: intersecting_lines_)
              {
-                  standard_deviation= sqrt(pow(it.x-x_mean,2) + pow(abs(it.y)-y_mean,2));
+                  standard_deviation= sqrt(pow(it.intersection_x-x_mean,2) + pow(abs(it.intersection_y)-y_mean,2));
 
                  if(standard_deviation < kMaxStandardDeviationForValidVanishingPoint_+std_add)
                  {
-                     x_sum += it.x;
-                     y_sum += abs(it.y);
+                     x_sum += it.intersection_x;
+                     y_sum += abs(it.intersection_y);
+                     vanishing_point_intersections_.push_back(it);
                      ++valid_point_counter;
                  }
              }
@@ -265,7 +370,9 @@ void VanishingPointSearch::DrawWarpedVanishingPointDirection(Mat &rgb)
      left_hough_lines_warped_perspektive_.clear();
      right_hough_lines_warped_perspektive_.clear();
 
-     intersections_.clear();
+     intersecting_lines_.clear();
+     vanishing_point_intersections_.clear();
+
  }
 
 
@@ -282,7 +389,7 @@ void VanishingPointSearch::ShowCannyEdgeImage()
 
 void VanishingPointSearch::ApplyHoughLines()
 {
-    HoughLinesP(canny_image_, hough_lines_, kHoghLinesRho_, kHoughLinesTheta_, kHoughLinesMinIntersections_, kHoughLinesMinLineLength_, kHoughLinesMaxLineGap_ );
+    HoughLinesP(canny_image_, hough_lines_, kHoghLinesRho_, kHoughLinesTheta_, kHoughLinesMinintersections_, kHoughLinesMinLineLength_, kHoughLinesMaxLineGap_ );
 }
 
 
@@ -401,7 +508,16 @@ void VanishingPointSearch::ComputeLeftAndRightHoughLineIntersections()
 
             else
             {
-                intersections_.push_back(Point((int)intersection.first, (int)intersection.second));
+                intersecting_lines_.push_back(Intersections{(int)intersection.first,
+                                              (int)intersection.second,
+                                              (int)left_x_bottom,
+                                              (int)left_y_bottom,
+                                              (int)left_x_top,
+                                              (int)left_y_top,
+                                              (int)right_x_bottom,
+                                              (int)right_y_bottom,
+                                              (int)right_x_top,
+                                              (int)right_y_top});
             }
 
         }
@@ -620,21 +736,21 @@ pair<double, double> VanishingPointSearch::ComputeLineIntersection(pair<double, 
 
 void VanishingPointSearch::DrawLineIntersections(Mat &rgb)
 {
-    for(auto it: intersections_)
+    for(auto it: intersecting_lines_)
     {
 
-        int x = it.x;
-        int y = it.y;
+        int x = it.intersection_x;
+        int y = it.intersection_y;
 
         circle(rgb, Point(x,y), 7, Scalar(255, 0, 255));
     }
 }
-
+/*
 void VanishingPointSearch::ApplyDBScan()
 {
     vector<DBScanPoint> intersections_dbscan_;
 
-    for (auto it : intersections_) {
+    for (auto it : intersecting_lines_) {
 
 
     intersections_dbscan_.push_back(DBScanPoint{float(it.x),
@@ -669,3 +785,4 @@ void VanishingPointSearch::ApplyDBScan()
 
 
 }
+*/

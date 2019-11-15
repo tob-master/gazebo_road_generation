@@ -34,6 +34,8 @@ MidLineSearchReturnInfo MidLineSearch::FindMidLineClusters(Mat image)
            ComputeClustersCentroid();
            GroupClusters();
 
+           FindOrientationForSingleClusters();
+
            if(HasFoundGroup())
            {
               ComputeLengthAndDirectionOfConnectedClusters();
@@ -42,6 +44,200 @@ MidLineSearchReturnInfo MidLineSearch::FindMidLineClusters(Mat image)
 
        return GetReturnInfo();
 }
+
+
+
+
+
+
+void MidLineSearch::FindOrientationForSingleClusters()
+{
+
+    /* TODO Clean this */
+
+    for(auto group : mid_line_cluster_groups_)
+    {
+        if(group.size() == 1)
+        {
+            int x_center = group[0].x;
+            int y_center = group[0].y;
+
+            Mat roi = current_image_(Rect(x_center-20,y_center-20,40,40));
+
+
+            /*TODO: Check if CCL and Canny give better angle prediction */
+
+            Mat labeled_image_,components_stats_,components_centroids_;
+            int kConnectionCount_ = 8;
+
+            int components_count_ = connectedComponentsWithStats(roi, labeled_image_, components_stats_, components_centroids_, kConnectionCount_, CV_32S);
+
+         //  cout << "count: " << labeled_image_ << endl;
+
+           // cout << "stats: " << components_stats_ << endl;
+
+           // cout << "centroids: " << components_centroids_ << endl;
+
+            Mat unsorted = components_stats_.col(4);
+            Mat sorted;
+            cv::sort(unsorted, sorted, CV_SORT_EVERY_ROW + CV_SORT_ASCENDING);
+
+
+           // cout << unsorted << endl;
+           // cout << sorted << endl;
+
+            Mat true_map  = components_stats_.col(4) == sorted.at<int>(1);
+
+
+           // cout << true_map << endl;
+
+           cv::Point min_loc, max_loc;
+           double min, max;
+           cv::minMaxLoc(true_map, &min, &max, &min_loc, &max_loc);
+
+
+
+
+           int line_label = max_loc.y;
+           // cout <<"line label: "<< line_label << endl;
+
+           Mat line_mat_true = labeled_image_ == line_label;
+          // cout <<"true line mat: "<< line_mat_true << endl;
+
+
+
+            const int kCannyLowThreshold_ = 100;
+          const int kCannyHighThreshold_ = 200;
+            const int kCannyKernelSize_ = 3;
+
+     Canny(line_mat_true, line_mat_true, kCannyLowThreshold_, kCannyHighThreshold_, kCannyKernelSize_);
+
+
+     // cout << line_mat_true << endl;
+
+
+           vector<Vec4i> hough_lines_;
+
+           const int kHoghLinesRho_=1;
+           const float kHoughLinesTheta_=0.01745;
+           const int kHoughLinesMinIntersections_=10;
+           const int kHoughLinesMinLineLength_=10;
+           const int kHoughLinesMaxLineGap_=50;
+
+            HoughLinesP(line_mat_true, hough_lines_, kHoghLinesRho_, kHoughLinesTheta_, kHoughLinesMinIntersections_, kHoughLinesMinLineLength_, kHoughLinesMaxLineGap_ );
+
+            for( size_t i = 0; i < hough_lines_.size(); i++ )
+            {
+              int x1 = hough_lines_[i][0];
+              int y1 = hough_lines_[i][1];
+              int x2 = hough_lines_[i][2];
+              int y2 = hough_lines_[i][3];
+
+              if(y2 > y1)
+              {
+                  int tmp;
+                  tmp = x1;
+                  x1  = x2;
+                  x2  = tmp;
+                  tmp = y1;
+                  y1  = y2;
+                  y2 = tmp;
+              }
+
+              hough_lines_[i][0] = x1;
+              hough_lines_[i][1] = y1;
+              hough_lines_[i][2] = x2;
+              hough_lines_[i][3] = y2;
+            }
+
+            float angle = 0;
+
+            for(int i=0; i<hough_lines_.size();i++)
+            {
+                int xs = hough_lines_[i][0];
+                int ys = hough_lines_[i][1];
+                int xe = hough_lines_[i][2];
+                int ye = hough_lines_[i][3];
+
+                int adjacent = xe - xs;
+                int opposite = ys - ye;
+
+                 angle += CalculateAngle4Quadrants(opposite,adjacent);
+            }
+
+            //cout << "angle: " << angle/hough_lines_.size() << endl;
+
+
+            if(hough_lines_.size()>0)
+            {
+                int mean_angle = angle /= hough_lines_.size();
+                single_clusters_.push_back(SingleCluster{x_center,y_center,mean_angle});
+            }
+            else
+            {
+                continue;
+            }
+               // cout << "hs: " << hough_lines_.size() << endl;
+
+
+            //cout << endl << endl;
+
+
+            /*TODO: Check if CCL and Canny give better angle prediction */
+            /*
+            Mat labeled_image_,components_stats_,components_centroids_;
+            int kConnectionCount_ = 8;
+
+            int components_count_ = connectedComponentsWithStats(roi, labeled_image_, components_stats_, components_centroids_, kConnectionCount_, CV_32S);
+
+           cout << "count: " << labeled_image_ << endl;
+
+           // cout << "stats: " << components_stats_ << endl;
+
+           // cout << "centroids: " << components_centroids_ << endl;
+
+            Mat unsorted = components_stats_.col(4);
+            Mat sorted;
+            cv::sort(unsorted, sorted, CV_SORT_EVERY_ROW + CV_SORT_ASCENDING);
+
+
+           // cout << unsorted << endl;
+           // cout << sorted << endl;
+
+            Mat true_map  = components_stats_.col(4) == sorted.at<int>(1);
+
+
+           // cout << true_map << endl;
+
+           cv::Point min_loc, max_loc;
+           double min, max;
+           cv::minMaxLoc(true_map, &min, &max, &min_loc, &max_loc);
+
+
+
+
+           int line_label = max_loc.y;
+           // cout <<"line label: "<< line_label << endl;
+
+           Mat line_mat_true = labeled_image_ == line_label;
+          // cout <<"true line mat: "<< line_mat_true << endl;
+
+*/
+
+            //const int kCannyLowThreshold_ = 100;
+          //const int kCannyHighThreshold_ = 200;
+            //const int kCannyKernelSize_ = 3;
+
+    // Canny(line_mat_true, line_mat_true, kCannyLowThreshold_, kCannyHighThreshold_, kCannyKernelSize_);
+
+
+     // cout << line_mat_true << endl;
+
+        }
+    }
+
+}
+
 
 void MidLineSearch::InitRadialScanners()
 {
@@ -93,7 +289,7 @@ void MidLineSearch::ClearMemory()
     //grouped_cluster_bin_keys_.clear();
 
     //sorted_centroid_groups_.clear();
-
+    single_clusters_.clear();
     cluster_centroids_.clear();
     used_permutations_.clear();
     //grouped_mid_line_clusters_.clear();
@@ -436,6 +632,38 @@ void MidLineSearch::DrawClusters(Mat &rgb)
 
 }
 
+
+void MidLineSearch::DrawSingleClusters(Mat &rgb)
+{
+    std::vector<Vec3b> colors(single_clusters_.size());
+
+    for (int label = 0; label < single_clusters_.size(); ++label)
+    {
+        colors[label] = Vec3b((rand() & 255), (rand() & 255), (rand() & 255));
+    }
+
+
+        int length = 100;
+
+    for (int i=0; i<single_clusters_.size(); i++)
+    {
+        int x = single_clusters_[i].x_center;
+        int y = single_clusters_[i].y_center;
+        float angle = single_clusters_[i].angle *PI/180;
+
+        int x_offset = cos(angle) * length;
+        int y_offset = sin(angle) * length;
+
+        circle(rgb,Point(x,y), 10, colors[i],CV_FILLED);
+        line( rgb,Point(x,y), Point(x + x_offset, y - y_offset), colors[i], 3, CV_AA);
+
+    }
+
+
+
+
+}
+
 void MidLineSearch::DrawConnectedClusters(Mat &rgb)
 {
     std::vector<Vec3b> colors(mid_line_cluster_groups_.size());
@@ -503,6 +731,13 @@ void MidLineSearch::DrawGroupedMidLineClustersDirections(Mat &rgb)
 
 
 }
+
+
+vector<SingleCluster> MidLineSearch::GetSingleClusters()
+{
+    return single_clusters_;
+}
+
 
 /* TODO: Sorting is not neccessary
  *

@@ -46,6 +46,8 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         {
            VanishingPointSearcher_->DrawHoughLines(image_rgb_, LEFT_LINE);
            VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
+
+           //VanishingPointSearcher_->GetWarpedPerspektiveHoughLin
         }
 
         if(vanishing_point_search_return_info.has_found_right_hough_line)
@@ -68,13 +70,16 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
 
-        auto start_of_lines_search_return_info = StartOfLinesSearcher_->FindStartParameters(image_mono_bird_otsu_);
 
-        if(start_of_lines_search_return_info.has_found_start_parameters)
+        //auto start_of_lines_search_return_info = StartOfLinesSearcher_->FindStartParameters(image_mono_bird_otsu_);
+
+        //if(start_of_lines_search_return_info.has_found_start_parameters)
+        if(vanishing_point_search_return_info.has_found_intersections)
         {
-            StartOfLinesSearcher_->DrawStartParameters(image_rgb_bird_);
+            //StartOfLinesSearcher_->DrawStartParameters(image_rgb_bird_);
 
-            LineFollowerReturnInfo line_follower_return_info = LineFollower_->FollowLines(image_mono_bird_,StartOfLinesSearcher_->GetStartParameters());
+            //LineFollowerReturnInfo line_follower_return_info = LineFollower_->FollowLines(image_mono_bird_,StartOfLinesSearcher_->GetStartParameters());
+            LineFollowerReturnInfo line_follower_return_info = LineFollower_->FollowLines(image_mono_bird_,VanishingPointSearcher_->GetLineFollowerStartParameters());
             //LineFollower_->CoutReturnInfo();
 
             vector<PointAndDirection> left_line, right_line;
@@ -123,7 +128,78 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         if(mid_line_search_return_info.has_found_mid_line_clusters)
         {
-            //MidLineSearcher_->DrawGroupedMidLineComponents(image_rgb_bird_);
+            //MidLineSearcher_->DrawClusters(image_rgb_bird_);
+            MidLineSearcher_->DrawSingleClusters(image_rgb_bird_);
+            auto single_mid_line_clusters = MidLineSearcher_->GetSingleClusters();
+
+            int min_track_width =  60;
+            int max_track_width = 70;
+
+            for(int i=0; i<single_mid_line_clusters.size(); i++)
+            {
+                int x       = single_mid_line_clusters[i].x_center;
+                int y       = single_mid_line_clusters[i].y_center;
+                float angle = single_mid_line_clusters[i].angle;
+
+                cout << x << " " << y << " " <<  angle << endl;
+
+                               int angle_1 = (angle + 90);
+                               //float angle_1 = (angle - 90);
+
+
+                               if(angle_1 > 359)
+                               {
+                                   angle_1 = angle_1 % 360;
+                               }
+
+                               if(angle_1 < 0)
+                               {
+                                   angle_1 =  360 - abs(angle_1);
+
+                               }
+
+                               float angle_1_rad = angle_1 * PI/180;
+
+                               for(int ii=min_track_width; ii<max_track_width; ii++)
+                               {
+                                   int radius = ii;
+                                   int x_ = x + radius * cos(angle_1_rad) + 0.5;
+                                   int y_  = y - radius * sin(angle_1_rad) + 0.5;
+
+
+                                   circle(image_rgb_bird_,Point(x_,y_), 2, Scalar(0,255,0),CV_FILLED);
+                               }
+
+
+                               int angle_2 = (angle - 90);
+
+
+                               if(angle_2 > 359)
+                               {
+                                   angle_2 = angle_2 % 360;
+                               }
+
+                               if(angle_2 < 0)
+                               {
+                                   angle_2 =  360 - abs(angle_2);
+
+                               }
+
+                               float angle_2_rad = angle_2 * PI/180;
+
+                               for(int ii=min_track_width; ii<max_track_width; ii++)
+                               {
+                                   int radius = ii;
+                                   int x_ = x + radius * cos(angle_2_rad) + 0.5;
+                                   int y_ = y - radius * sin(angle_2_rad) + 0.5;
+
+                                   circle(image_rgb_bird_,Point(x_,y_), 2, Scalar(0,0,255),CV_FILLED);
+                               }
+            }
+
+
+
+
 
             if(mid_line_search_return_info.has_found_group)
             {
@@ -136,8 +212,6 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                     auto grouped_mid_lines = MidLineSearcher_->GetGroupedMidLineClustersLengthAndDirection();
 
 
-                    int min_track_width =  60;
-                    int max_track_width = 70;
 
 
 
@@ -145,9 +219,27 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                     {
                         for(int j=0; j<grouped_mid_lines[i].size(); j++)
                         {
+
                             int x       = grouped_mid_lines[i][j].x;
                             int y       = grouped_mid_lines[i][j].y;
                             float angle = grouped_mid_lines[i][j].angle;
+
+                            int length = grouped_mid_lines[i][j].length;
+
+                            //cout << x << " " << y << " " << angle << " " << length << endl;
+
+                            for(int radius_ = 0; radius_ < length; radius_++)
+                            {
+
+
+
+
+
+                             int xs = x + radius_ * cos(angle*PI/180);
+                             int ys = y - radius_ * sin(angle*PI/180);
+
+
+
 
 
 
@@ -174,8 +266,8 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                                     for(int ii=min_track_width; ii<max_track_width; ii++)
                                     {
                                         int radius = ii;
-                                        int x_ = x + radius * cos(angle_1_rad) + 0.5;
-                                        int y_  = y - radius * sin(angle_1_rad) + 0.5;
+                                        int x_ = xs + radius * cos(angle_1_rad) + 0.5;
+                                        int y_  = ys - radius * sin(angle_1_rad) + 0.5;
 
 
                                         circle(image_rgb_bird_,Point(x_,y_), 2, Scalar(0,255,0),CV_FILLED);
@@ -201,16 +293,18 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                                     for(int ii=min_track_width; ii<max_track_width; ii++)
                                     {
                                         int radius = ii;
-                                        int x_ = x + radius * cos(angle_2_rad) + 0.5;
-                                        int y_ = y - radius * sin(angle_2_rad) + 0.5;
+                                        int x_ = xs + radius * cos(angle_2_rad) + 0.5;
+                                        int y_ = ys - radius * sin(angle_2_rad) + 0.5;
 
                                         circle(image_rgb_bird_,Point(x_,y_), 2, Scalar(0,0,255),CV_FILLED);
                                     }
 
-
+                            }
                         }
                     }
-                /*}
+            }
+        }
+               /*}
                     catch(...)
                     {
                         cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
@@ -291,11 +385,13 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                     } catch(...)  {
                                     cout << "kkkkkkkkkkkk"  << endl;
                     }
-*/
+
 
             }
         }
 
+
+*/
 
 
 /*
@@ -310,9 +406,10 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
             if(connected_component_search_return_info.has_found_mid_line_group)
             {
                 //ConnectedComponentsSearcher_->DrawGroupedMidLineComponents(image_rgb_bird_);
-                ConnectedComponentsSearcher_->DrawGroupedMidLineComponentsDirections(image_rgb_bird_);
+                //ConnectedComponentsSearcher_->DrawGroupedMidLineComponentsDirections(image_rgb_bird_);
             }
         }
+
 */
 
 

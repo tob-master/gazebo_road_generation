@@ -31,21 +31,21 @@ class LineFollower
 
 
         Mat image_;
-        const int kImageWidth_ = 1280;
-        const int kImageHeight_ = 417;
+        const int kImageWidth_;
+        const int kImageHeight_;
 
-        const int kMaxIterations_ =  150;
-        const int kSearchRadius_ = 10;
-        const int kMaxWeightDirectionScaler_ = 6;
+        const int kMaxIterations_;
+        const int kSearchRadius_;
+        const int kMaxWeightDirectionScaler_;
 
-        const int kFieldOfView_ = 144;
-        const float kStartAngleFieldOfView_ = (kFieldOfView_/2 ) * (PI/180);
-        const float kEndAngleFieldOfView_   = (kFieldOfView_/2 ) * (PI/180) - 0.001;
-        const float kStepFieldOfView_      = (kFieldOfView_/ 4) * (PI/180);
+        const int kFieldOfView_;
+        const float kStartAngleFieldOfView_;
+        const float kEndAngleFieldOfView_;
+        const float kStepFieldOfView_;
 
-        const int kMaxConsecutiveBackSteps_ = 5;
-        const int kMinTravelDistanceToNotGotStuck_ = 3;
-        const int kMaxGotStuckCounts_ = 6;
+        const int kMaxConsecutiveBackSteps_;
+        const int kMinTravelDistanceToNotGotStuck_;
+        const int kMaxGotStuckCounts_;
 
         float start_of_search_;
         float end_of_search_;

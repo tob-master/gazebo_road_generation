@@ -40,7 +40,7 @@ class VanishingPointSearch
 
         const int kHoghLinesRho_;
         const float kHoughLinesTheta_;
-        const int kHoughLinesMinIntersections_;
+        const int kHoughLinesMinintersections_;
         const int kHoughLinesMinLineLength_;
         const int kHoughLinesMaxLineGap_;
 
@@ -77,7 +77,9 @@ class VanishingPointSearch
         vector<HoughLinesPointsAndAngle> left_hough_lines_points_and_angle_;
         vector<HoughLinesPointsAndAngle> right_hough_lines_points_and_angle_;
 
-        vector<Point> intersections_;
+        vector<Intersections> intersecting_lines_;
+        vector<Intersections> vanishing_point_intersections_;
+        StartParameters line_follower_start_parameters_;
         Point vanishing_point_;
         Point warped_vanishing_point_;
         Point warped_car_mid_point_;
@@ -112,7 +114,7 @@ class VanishingPointSearch
                                                      pair<double, double> C, pair<double, double> D);
 
         void ComputeLeftAndRightHoughLineIntersections();
-        void ApplyDBScan();
+        //void ApplyDBScan();
         void FilterVanishingPoint();
 
         void CheckFoundLeftAndRightHoughLines();
@@ -125,12 +127,15 @@ class VanishingPointSearch
         VanishingPointSearchReturnInfo GetReturnInfo();
 
 
+        void SetLineFollowerStartParameters();
 
 
     public:
         VanishingPointSearch(Mat birdseye_transformation_matrix, VanishingPointSearchInitializationParameters init);
 
         VanishingPointSearchReturnInfo FindVanishingPoint(Mat image);
+
+        StartParameters GetLineFollowerStartParameters();
 
         void ShowCannyEdgeImage();
         void DrawHoughLines(Mat &image, int _line);
