@@ -32,7 +32,7 @@ class VanishingPointSearch
 {
     private:
 
-        const cv::Matx33f birdseye_transformation_matrix_;
+        const Mat frontalview_to_birdseye_transformation_matrix_;
 
         const int kCannyLowThreshold_;
         const int kCannyHighThreshold_;
@@ -122,7 +122,7 @@ class VanishingPointSearch
 
         void ComputeCarMidPointToVanishingPointAngle();
 
-        void WarpPerspektiveOfHoughLines();
+        void TransformHoughLinesToBirdseye();
 
         VanishingPointSearchReturnInfo GetReturnInfo();
 

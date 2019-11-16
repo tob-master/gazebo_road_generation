@@ -1,7 +1,7 @@
 #include "vanishing_point_search.h"
 
 VanishingPointSearch::VanishingPointSearch(Mat birdseye_transformation_matrix, VanishingPointSearchInitializationParameters init):
-birdseye_transformation_matrix_(birdseye_transformation_matrix),
+frontalview_to_birdseye_transformation_matrix_(birdseye_transformation_matrix.inv()),
 kCannyLowThreshold_(init.canny_low_threshold),
 kCannyHighThreshold_(init.canny_high_threshold),
 kCannyKernelSize_(init.canny_kernel_size),
@@ -25,21 +25,19 @@ kXMaxRightLine_(init.x_max_right_line),
 kCarMidPoint_(Point(init.car_mid_position_x,init.car_mid_position_y)),
 kMaxStandardDeviationForValidVanishingPoint_(init.max_standard_deviation_for_valid_vanishing_point)
 {
+
     WarpCarMidPointToBirdsview();
 }
 
 void VanishingPointSearch::WarpCarMidPointToBirdsview()
 {
-    cv::Point2f cp = Point2f(float(kCarMidPoint_.x), float(kCarMidPoint_.y));
 
-    vector<Point2f> src, dst;
-    src.push_back(cp);
-    cv::perspectiveTransform(src,dst,birdseye_transformation_matrix_.inv());
+    int x = kCarMidPoint_.x;
+    int y = kCarMidPoint_.y;
 
-    int x1 = int(dst[0].x);
-    int y1 = int(dst[0].y);
+    TransformPoint(x, y, frontalview_to_birdseye_transformation_matrix_);
 
-    warped_car_mid_point_ = Point(x1,y1);
+    warped_car_mid_point_ = Point(x,y);
 }
 
 void VanishingPointSearch::SetImage(Mat image)
@@ -128,7 +126,7 @@ VanishingPointSearchReturnInfo VanishingPointSearch::GetReturnInfo()
 
      CheckFoundLeftAndRightHoughLines();
 
-     WarpPerspektiveOfHoughLines();
+
 
      if(has_found_left_hough_line_ && has_found_right_hough_line_)
      {
@@ -145,7 +143,7 @@ VanishingPointSearchReturnInfo VanishingPointSearch::GetReturnInfo()
          }
      }
 
-
+     //TransformHoughLinesToBirdseye();
      SetLineFollowerStartParameters();
 
     return GetReturnInfo();
@@ -187,33 +185,17 @@ VanishingPointSearchReturnInfo VanishingPointSearch::GetReturnInfo()
         right_y_top_mean /= vanishing_point_intersections_.size();
 
 
-        cv::Point2f left_bottom = Point2f(float(left_x_bottom_mean), float(left_y_bottom_mean));
-        cv::Point2f left_top    = Point2f(float(left_x_top_mean), float(left_y_top_mean));
-        cv::Point2f right_bottom = Point2f(float(right_x_bottom_mean), float(right_y_bottom_mean));
-        cv::Point2f right_top    = Point2f(float(right_x_top_mean), float(right_y_top_mean));
+        TransformPoint(left_x_bottom_mean, left_y_bottom_mean, frontalview_to_birdseye_transformation_matrix_);
+        TransformPoint(left_x_top_mean, left_y_top_mean, frontalview_to_birdseye_transformation_matrix_);
+        TransformPoint(right_x_bottom_mean, right_y_bottom_mean, frontalview_to_birdseye_transformation_matrix_);
+        TransformPoint(right_x_top_mean, right_y_top_mean, frontalview_to_birdseye_transformation_matrix_);
 
 
-        vector<Point2f> src, dst;
-        src.push_back(left_bottom);
-        src.push_back(left_top);
-        src.push_back(right_bottom);
-        src.push_back(right_top);
+        left_hough_lines_warped_perspektive_.push_back({left_x_bottom_mean,left_y_bottom_mean,
+                                                        left_x_top_mean,left_y_top_mean});
 
-        cv::perspectiveTransform(src,dst,birdseye_transformation_matrix_.inv());
-
-        left_x_bottom_mean = int(dst[0].x);
-        left_y_bottom_mean = int(dst[0].y);
-
-        left_x_top_mean = int(dst[1].x);
-        left_y_top_mean = int(dst[1].y);
-
-        right_x_bottom_mean = int(dst[2].x);
-        right_y_bottom_mean = int(dst[2].y);
-
-        right_x_top_mean = int(dst[3].x);
-        right_y_top_mean = int(dst[3].y);
-
-
+        right_hough_lines_warped_perspektive_.push_back({right_x_bottom_mean,right_y_bottom_mean,
+                                                         right_x_top_mean,right_y_top_mean});
 
         int left_adjacent  = left_x_top_mean  - left_x_bottom_mean;
         int right_adjacent = right_x_top_mean - right_x_bottom_mean;
@@ -229,21 +211,131 @@ VanishingPointSearchReturnInfo VanishingPointSearch::GetReturnInfo()
         line_follower_start_parameters_ = StartParameters{left_x_top_mean,
                                                                   left_y_top_mean,
                                                                   left_angle,
+                                                                  true,
                                                                   right_x_top_mean,
                                                                   right_y_top_mean,
-                                                                  right_angle};
+                                                                  right_angle,
+                                                                  true};
 
     }
     else
     {
         if(has_found_left_hough_line_)
         {
-            cout << "TODO";
+          //cout << " ";// left_hough_lines_warped_perspektive_
+
+          int x_bottom_mean=0;
+          int y_bottom_mean=0;
+          int x_top_mean=0;
+          int y_top_mean=0;
+
+
+          for(auto it : left_hough_lines_points_and_angle_)
+          {
+              x_bottom_mean += it.x_bottom;
+              y_bottom_mean += it.y_bottom;
+              x_top_mean += it.x_top;
+              y_top_mean += it.y_top;
+          }
+
+          x_bottom_mean /= left_hough_lines_points_and_angle_.size();
+          y_bottom_mean /= left_hough_lines_points_and_angle_.size();
+          x_top_mean /= left_hough_lines_points_and_angle_.size();
+          y_top_mean /= left_hough_lines_points_and_angle_.size();
+
+
+          TransformPoint(x_bottom_mean, y_bottom_mean, frontalview_to_birdseye_transformation_matrix_);
+          TransformPoint(x_top_mean, y_top_mean, frontalview_to_birdseye_transformation_matrix_);
+
+
+          left_hough_lines_warped_perspektive_.push_back({x_bottom_mean,y_bottom_mean,
+                                                          x_top_mean,y_top_mean});
+
+          int adjacent  = x_top_mean  - x_bottom_mean;
+          int opposite =  y_bottom_mean - y_top_mean;
+
+          float angle = CalculateAngle4Quadrants(opposite, adjacent);
+
+          line_follower_start_parameters_ = StartParameters{x_top_mean,
+                                                                    y_top_mean,
+                                                                    angle,
+                                                                    true,
+                                                                    0,
+                                                                    0,
+                                                                    0,
+                                                                    false};
+
+
+/*
+          for (auto it: left_hough_lines_points_and_angle_)
+          {
+
+              int x1 = it.x_bottom;
+              int y1 = it.y_bottom;
+
+              int x2 = it.x_top;
+              int y2 = it.y_top;
+
+
+
+              TransformPoint(x1, y1, frontalview_to_birdseye_transformation_matrix_);
+              TransformPoint(x2, y2, frontalview_to_birdseye_transformation_matrix_);
+
+
+              left_hough_lines_warped_perspektive_.push_back({x1,y1,x2,y2});
+
+          }
+*/
+
+
         }
 
         if(has_found_right_hough_line_)
         {
-            cout << "TODO";
+            int x_bottom_mean=0;
+            int y_bottom_mean=0;
+            int x_top_mean=0;
+            int y_top_mean=0;
+
+
+            for(auto it : right_hough_lines_points_and_angle_)
+            {
+                x_bottom_mean += it.x_bottom;
+                y_bottom_mean += it.y_bottom;
+                x_top_mean += it.x_top;
+                y_top_mean += it.y_top;
+            }
+
+            x_bottom_mean /= right_hough_lines_points_and_angle_.size();
+            y_bottom_mean /= right_hough_lines_points_and_angle_.size();
+            x_top_mean /= right_hough_lines_points_and_angle_.size();
+            y_top_mean /= right_hough_lines_points_and_angle_.size();
+
+
+
+            TransformPoint(x_bottom_mean, y_bottom_mean, frontalview_to_birdseye_transformation_matrix_);
+            TransformPoint(x_top_mean, y_top_mean, frontalview_to_birdseye_transformation_matrix_);
+
+            right_hough_lines_warped_perspektive_.push_back({x_bottom_mean,y_bottom_mean,
+                                                            x_top_mean,y_top_mean});
+
+
+
+
+            int adjacent  = x_top_mean  - x_bottom_mean;
+            int opposite =  y_bottom_mean - y_top_mean;
+
+            float angle = CalculateAngle4Quadrants(opposite, adjacent);
+
+            line_follower_start_parameters_ = StartParameters{0,
+                                                                      0,
+                                                                      0,
+                                                                      false,
+                                                                      x_top_mean,
+                                                                      y_top_mean,
+                                                                      angle,
+                                                                      true};
+
         }
     }
  }
@@ -524,7 +616,7 @@ void VanishingPointSearch::ComputeLeftAndRightHoughLineIntersections()
     }
 }
 
-void VanishingPointSearch::WarpPerspektiveOfHoughLines()
+void VanishingPointSearch::TransformHoughLinesToBirdseye()
 {
     if(has_found_left_hough_line_)
     {
@@ -540,20 +632,11 @@ void VanishingPointSearch::WarpPerspektiveOfHoughLines()
             int x2 = it.x_top;
             int y2 = it.y_top;
 
-            cv::Point2f bottom = Point2f(float(x1), float(y1));
-            cv::Point2f top    = Point2f(float(x2), float(y2));
 
-            vector<Point2f> src, dst;
-            src.push_back(bottom);
-            src.push_back(top);
 
-            cv::perspectiveTransform(src,dst,birdseye_transformation_matrix_.inv());
+            TransformPoint(x1, y1, frontalview_to_birdseye_transformation_matrix_);
+            TransformPoint(x2, y2, frontalview_to_birdseye_transformation_matrix_);
 
-            x1 = int(dst[0].x);
-            y1 = int(dst[0].y);
-
-            x2 = int(dst[1].x);
-            y2 = int(dst[1].y);
 
             left_hough_lines_warped_perspektive_.push_back({x1,y1,x2,y2});
 
@@ -573,20 +656,8 @@ void VanishingPointSearch::WarpPerspektiveOfHoughLines()
             int x2 = it.x_top;
             int y2 = it.y_top;
 
-            cv::Point2f bottom = Point2f(float(x1), float(y1));
-            cv::Point2f top    = Point2f(float(x2), float(y2));
-
-            vector<Point2f> src, dst;
-            src.push_back(bottom);
-            src.push_back(top);
-
-            cv::perspectiveTransform(src,dst,birdseye_transformation_matrix_.inv());
-
-            x1 = int(dst[0].x);
-            y1 = int(dst[0].y);
-
-            x2 = int(dst[1].x);
-            y2 = int(dst[1].y);
+            TransformPoint(x1, y1, frontalview_to_birdseye_transformation_matrix_);
+            TransformPoint(x2, y2, frontalview_to_birdseye_transformation_matrix_);
 
             right_hough_lines_warped_perspektive_.push_back({x1,y1,x2,y2});
 

@@ -195,7 +195,7 @@ void LinePointsReducer::GetReducedLinePoints(vector<ReducedPoints> &line_points_
     }
 }
 
-void LinePointsReducer::GetLengthAndDirectionFromConsecutiveReducedLinePoints(vector<LengthAndDirectionFromConsecutiveReducedLinePoints> &line_points_reduced_length_direction, int line)
+void LinePointsReducer::GetLengthAndDirectionFromConsecutiveReducedLinePoints(vector<ReducedPointDirection> &line_points_reduced_length_direction, int line)
 {
     if(line == LEFT_LINE)
     {
@@ -232,9 +232,9 @@ void LinePointsReducer::ComputeLengthAndDirectionFromConsecutiveReducedLinePoint
 
             int length = sqrt(pow(adjacent,2)+pow(opposite,2));
 
-            float angle =  CalculateAngle4Quadrants(opposite, adjacent) * (PI/180);
+            float angle =  CalculateAngle4Quadrants(opposite, adjacent) ;
 
-            left_line_points_reduced_length_direction_.push_back(LengthAndDirectionFromConsecutiveReducedLinePoints{x,y,length, angle});
+            left_line_points_reduced_length_direction_.push_back(ReducedPointDirection{x,y,length, angle});
         }
     }
 
@@ -253,9 +253,9 @@ void LinePointsReducer::ComputeLengthAndDirectionFromConsecutiveReducedLinePoint
 
             int length = sqrt(pow(adjacent,2)+pow(opposite,2));
 
-            float angle =  CalculateAngle4Quadrants(opposite, adjacent) * (PI/180);
+            float angle =  CalculateAngle4Quadrants(opposite, adjacent) ;
 
-            right_line_points_reduced_length_direction_.push_back(LengthAndDirectionFromConsecutiveReducedLinePoints{x,y,length, angle});
+            right_line_points_reduced_length_direction_.push_back(ReducedPointDirection{x,y,length, angle});
         }
     }
 }
@@ -266,13 +266,13 @@ void LinePointsReducer::CoutLengthAndDirectionFromConsecutiveReducedLinePoints()
     cout << "___LinePointsReducer LengthAndDirectionFromConsecutiveReducedLinePoints___" << endl;
     for (auto &it : left_line_points_reduced_length_direction_)
     {
-        cout <<"left: \tPoint("<< it.x << "," << it.y << ") \tDirection: " << it.angle * (180/PI) << "° \tLength: " << it.length <<"px" << endl;
+        cout <<"left: \tPoint("<< it.x << "," << it.y << ") \tDirection: " << it.angle << "° \tLength: " << it.length <<"px" << endl;
     }
 
 
     for (auto &it : right_line_points_reduced_length_direction_)
     {
-        cout <<"right: \tPoint("<< it.x << "," << it.y << ") \tDirection: " << it.angle * (180/PI) << "° \tLength: " << it.length <<"px" << endl;
+        cout <<"right: \tPoint("<< it.x << "," << it.y << ") \tDirection: " << it.angle  << "° \tLength: " << it.length <<"px" << endl;
     }
     cout << "#######################################" << endl;
 }

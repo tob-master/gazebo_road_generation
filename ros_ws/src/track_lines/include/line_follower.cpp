@@ -29,10 +29,12 @@ void LineFollower::SetStartParameters(StartParameters start_parameters)
     start_left_x_ = start_parameters.left_x;
     start_left_y_ = start_parameters.left_y;
     start_angle_left_ = start_parameters.left_angle  * (PI/180);
+    found_left_line_ = start_parameters.found_left_line;
 
     start_right_x_ = start_parameters.right_x;
     start_right_y_ = start_parameters.right_y;
     start_angle_right_ = start_parameters.right_angle  * (PI/180);
+    found_right_line_ = start_parameters.found_right_line;
 }
 
 
@@ -56,6 +58,10 @@ void LineFollower::ClearMemory()
 
     left_line_points_and_directions_.clear();
     right_line_points_and_directions_.clear();
+
+    found_left_line_ = false;
+    found_right_line_ = false;
+
 }
 
 
@@ -492,16 +498,25 @@ LineFollowerReturnInfo LineFollower::FollowLines(Mat image, StartParameters star
 {
 
     SetImage(image);
+    ClearMemory();
     SetStartParameters(start_parameters);
 
-    ClearMemory();
+
 
     ResetCounters();
-    FollowLine(start_left_x_, start_left_y_, start_angle_left_, LEFT_LINE);
+
+    if(found_left_line_)
+    {
+        FollowLine(start_left_x_, start_left_y_, start_angle_left_, LEFT_LINE);
+    }
     SaveCounterValuesToReturnInfo(LEFT_LINE);
 
     ResetCounters();
-    FollowLine(start_right_x_, start_right_y_, start_angle_right_, RIGHT_LINE);
+
+    if(found_right_line_)
+    {
+        FollowLine(start_right_x_, start_right_y_, start_angle_right_, RIGHT_LINE);
+    }
     SaveCounterValuesToReturnInfo(RIGHT_LINE);
 
 

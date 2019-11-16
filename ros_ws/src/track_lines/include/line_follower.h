@@ -53,10 +53,12 @@ class LineFollower
         int start_left_x_;
         int start_left_y_;
         float start_angle_left_;
+        bool found_left_line_;
 
         int start_right_x_;
         int start_right_y_;
         float start_angle_right_;
+        bool found_right_line_;
 
         int iterations_counter_;
         int got_stuck_counter_;

@@ -74,12 +74,19 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         //auto start_of_lines_search_return_info = StartOfLinesSearcher_->FindStartParameters(image_mono_bird_otsu_);
 
         //if(start_of_lines_search_return_info.has_found_start_parameters)
-        if(vanishing_point_search_return_info.has_found_intersections)
+        if(vanishing_point_search_return_info.has_found_left_hough_line || vanishing_point_search_return_info.has_found_right_hough_line )
         {
+
+            StartParameters start_parameters_for_line_follower = VanishingPointSearcher_->GetLineFollowerStartParameters();
+
             //StartOfLinesSearcher_->DrawStartParameters(image_rgb_bird_);
 
             //LineFollowerReturnInfo line_follower_return_info = LineFollower_->FollowLines(image_mono_bird_,StartOfLinesSearcher_->GetStartParameters());
-            LineFollowerReturnInfo line_follower_return_info = LineFollower_->FollowLines(image_mono_bird_,VanishingPointSearcher_->GetLineFollowerStartParameters());
+            LineFollowerReturnInfo line_follower_return_info = LineFollower_->FollowLines(image_mono_bird_,start_parameters_for_line_follower);
+
+
+            //cout << start_parameters_for_line_follower.right_x << " " << start_parameters_for_line_follower.right_y << " " << start_parameters_for_line_follower.right_angle << endl;
+
             //LineFollower_->CoutReturnInfo();
 
             vector<PointAndDirection> left_line, right_line;
@@ -87,21 +94,21 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
             if(line_follower_return_info.left_line_iterations_counter >= 2)
             {
                 LineFollower_->GetLine(left_line, LEFT_LINE);
-                LineFollower_->DrawLinePoints(image_rgb_bird_,LEFT_LINE);
+                //LineFollower_->DrawLinePoints(image_rgb_bird_,LEFT_LINE);
             }
 
             if(line_follower_return_info.right_line_iterations_counter >= 2)
             {
                 LineFollower_->GetLine(right_line, RIGHT_LINE);
-                LineFollower_->DrawLinePoints(image_rgb_bird_,RIGHT_LINE);
+                //LineFollower_->DrawLinePoints(image_rgb_bird_,RIGHT_LINE);
             }
 
-            double max_distance = 1;
+            double max_distance = 5;
 
             auto line_points_reducer_return_info = LinePointsReducer_->ReduceLinePoints(left_line,right_line,max_distance);
 
             vector<ReducedPoints> left_line_points_reduced, right_line_points_reduced;
-            vector<LengthAndDirectionFromConsecutiveReducedLinePoints> left_line_points_reduced_length_direction,
+            vector<ReducedPointDirection> left_line_points_reduced_length_direction,
                                                                        right_line_points_reduced_length_direction;
 
             if(line_points_reducer_return_info.left_line_is_reduced)
@@ -109,6 +116,14 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                 LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,LEFT_LINE);
                 LinePointsReducer_->GetReducedLinePoints(left_line_points_reduced,LEFT_LINE);
                 LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(left_line_points_reduced_length_direction, LEFT_LINE);
+
+
+                ValidLinePointSearcher_.FindValidPointsFromLeftLineFollow(image_mono_bird_,left_line_points_reduced_length_direction);
+
+
+
+                ValidLinePointSearcher_.DrawMidLinePoints(image_rgb_bird_);
+
             }
 
             if(line_points_reducer_return_info.right_line_is_reduced)
@@ -116,13 +131,163 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                 LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,RIGHT_LINE);
                 LinePointsReducer_->GetReducedLinePoints(right_line_points_reduced,RIGHT_LINE);
                 LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(right_line_points_reduced_length_direction,RIGHT_LINE);
+
+
+
+
+
+
             }
 
-            //LinePointsReducer_->CoutLengthAndDirectionFromConsecutiveReducedLinePoints();
+            LinePointsReducer_->CoutLengthAndDirectionFromConsecutiveReducedLinePoints();
+
+
+
+
+
+
 
         }
 
 
+/*
+
+                //ValidLinePointSearcher
+
+
+                int min_mid_line_distance =  45;
+                int max_mid_line_distance =  70;
+
+                int min_left_line_distance = 120;
+                int max_left_line_distance = 140;
+
+
+                        for(int i=0; i<right_line_points_reduced_length_direction.size(); i++)
+                        {
+
+
+                                int x       = right_line_points_reduced_length_direction[i].x;
+                                int y       = right_line_points_reduced_length_direction[i].y;
+                                float angle = right_line_points_reduced_length_direction[i].angle;
+
+                                int length = right_line_points_reduced_length_direction[i].length;
+
+                                //cout << x << " " << y << " " << angle * 180/PI << " " << length << endl;
+
+                                angle = angle * 180/PI;
+
+                                for(int radius_ = 0; radius_ < length; radius_++)
+                                {
+
+
+
+
+
+                                 int xs = x + radius_ * cos(angle*PI/180);
+                                 int ys = y - radius_ * sin(angle*PI/180);
+
+
+
+
+
+
+
+
+
+                                        int angle_1 = (angle + 90);
+                                        //float angle_1 = (angle - 90);
+
+
+                                        if(angle_1 > 359)
+                                        {
+                                            angle_1 = angle_1 % 360;
+                                        }
+
+                                        if(angle_1 < 0)
+                                        {
+                                            angle_1 =  360 - abs(angle_1);
+
+                                        }
+
+                                        float angle_1_rad = angle_1 * PI/180;
+
+
+                                        vector<int> orthogonal_track_line_intensities;
+                                        vector<Point> orthogonal_track_line_points;
+
+
+
+                                        for(int ii=min_mid_line_distance; ii<max_mid_line_distance; ii++)
+                                        {
+                                            int radius = ii;
+                                            int x_  = xs + radius * cos(angle_1_rad) + 0.5;
+                                            int y_  = ys - radius * sin(angle_1_rad) + 0.5;
+
+                                            if(x_ < image_width_ && x_ >= 0 && y_ < image_height_ && y >= 0)
+                                            {
+
+                                                int px = image_mono_bird_.at<uchar>(Point(x_,y_));
+
+                                                if(px>99)
+                                                {
+                                                    orthogonal_track_line_intensities.push_back(px);
+                                                    orthogonal_track_line_points.push_back(Point(x_,y_));
+                                                    circle(image_rgb_bird_,Point(x_,y_), 1, Scalar(0,255,0),CV_FILLED);
+                                                }
+                                                else {
+                                                    orthogonal_track_line_intensities.push_back(0);
+                                                    orthogonal_track_line_points.push_back(Point(x_,y_));
+                                                     circle(image_rgb_bird_,Point(x_,y_), 1, Scalar(255,0,0),CV_FILLED);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                orthogonal_track_line_intensities.push_back(0);
+                                                orthogonal_track_line_points.push_back(Point(x_,y_));
+                                            }
+
+
+
+
+                                        }
+
+
+                                        for(int ii=0; ii<max_track_width; ii++)
+                                        {
+                                            int radius = ii;
+                                            int x_ = xs + radius * cos(angle_1_rad) + 0.5;
+                                            int y_  = ys - radius * sin(angle_1_rad) + 0.5;
+
+                                            if(x_ < image_width_ && x_ >= 0 && y_ < image_height_ && y >= 0)
+                                            {
+
+                                                int px = image_mono_bird_.at<uchar>(Point(x_,y_));
+
+                                                if(px>170)
+                                                {
+                                                    orthogonal_track_line_intensities.push_back(px);
+                                                    orthogonal_track_line_points.push_back(Point(x_,y_));
+                                                }
+                                                else {
+                                                    orthogonal_track_line_intensities.push_back(0);
+                                                    orthogonal_track_line_points.push_back(Point(x_,y_));
+                                                }
+                                            }
+                                            else
+                                            {
+                                                orthogonal_track_line_intensities.push_back(0);
+                                                orthogonal_track_line_points.push_back(Point(x_,y_));
+                                            }
+
+
+
+                                            circle(image_rgb_bird_,Point(x_,y_), 2, Scalar(0,255,0),CV_FILLED);
+                                        }
+
+
+*/
+
+/*
 
         auto mid_line_search_return_info = MidLineSearcher_->FindMidLineClusters(image_mono_bird_);
 
@@ -304,7 +469,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                     }
             }
         }
-               /*}
+            */   /*}
                     catch(...)
                     {
                         cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
@@ -392,8 +557,6 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
 */
-
-
 /*
 
         ConnectedComponentsSearchReturnInfo connected_component_search_return_info =
@@ -416,7 +579,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         clock_t end = clock();
         double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-        cout << "fps: " << 1/elapsed_secs << endl;
+        //cout << "fps: " << 1/elapsed_secs << endl;
 
         //warpPerspective(image_rgb_bird_, image_rgb_warped_back_, birdseye_transformation_matrix_.inv(), Size(image_width_,image_height_), INTER_CUBIC | WARP_INVERSE_MAP);
 

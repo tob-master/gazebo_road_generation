@@ -318,9 +318,11 @@ void StartOfLinesSearch::SetStartParameters()
         start_parameters_ = StartParameters{mid_row_left_id,
                                             kMidRow_,
                                             left_angle,
+                                            true,
                                             mid_row_right_id,
                                             kMidRow_,
-                                            right_angle};
+                                            right_angle,
+                                            true};
     }
     else {
 

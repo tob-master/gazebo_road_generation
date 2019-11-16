@@ -9,6 +9,7 @@
 #include "line_points_reducer.h"
 #include "vanishing_point_search.h"
 #include "connected_components.h"
+#include "valid_line_point_search.h"
 
 
 #include "datatypes.h"
@@ -55,6 +56,8 @@ private:
     MidLineSearch *MidLineSearcher_;
     VanishingPointSearch *VanishingPointSearcher_;
     ConnectedComponentsSearch *ConnectedComponentsSearcher_;
+
+    ValidLinePointSearch ValidLinePointSearcher_;
 
     Point pt = Point(-1,-1);
     bool newCoords = false;

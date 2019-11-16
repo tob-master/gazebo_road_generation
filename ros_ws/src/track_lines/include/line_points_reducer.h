@@ -38,8 +38,8 @@ class LinePointsReducer
         vector<RamerDouglasPeuckerTypePoint> left_line_points_reduced_;
         vector<RamerDouglasPeuckerTypePoint> right_line_points_reduced_;
 
-        vector<LengthAndDirectionFromConsecutiveReducedLinePoints> left_line_points_reduced_length_direction_;
-        vector<LengthAndDirectionFromConsecutiveReducedLinePoints> right_line_points_reduced_length_direction_;
+        vector<ReducedPointDirection> left_line_points_reduced_length_direction_;
+        vector<ReducedPointDirection> right_line_points_reduced_length_direction_;
 
 
         double max_distance_;
@@ -58,7 +58,7 @@ class LinePointsReducer
     public:
         LinePointsReducer();
         LinePointsReducerReturnInfo ReduceLinePoints(vector<line_follower::PointAndDirection> left_line, vector<line_follower::PointAndDirection> right_line, double max_distance);
-        void GetLengthAndDirectionFromConsecutiveReducedLinePoints(vector<LengthAndDirectionFromConsecutiveReducedLinePoints> &line_points_reduced_length_direction,int line);
+        void GetLengthAndDirectionFromConsecutiveReducedLinePoints(vector<ReducedPointDirection> &line_points_reduced_length_direction,int line);
         void GetReducedLinePoints(vector<ReducedPoints> &line_points_reduced, int line);
         void DrawReducedLinePoints(Mat &rgb, int line);
 

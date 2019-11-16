@@ -398,6 +398,33 @@ include/start_of_lines_search.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/start_of_lines_search.cpp.s
 .PHONY : include/start_of_lines_search.cpp.s
 
+include/valid_line_point_search.o: include/valid_line_point_search.cpp.o
+
+.PHONY : include/valid_line_point_search.o
+
+# target to build an object file
+include/valid_line_point_search.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/valid_line_point_search.cpp.o
+.PHONY : include/valid_line_point_search.cpp.o
+
+include/valid_line_point_search.i: include/valid_line_point_search.cpp.i
+
+.PHONY : include/valid_line_point_search.i
+
+# target to preprocess a source file
+include/valid_line_point_search.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/valid_line_point_search.cpp.i
+.PHONY : include/valid_line_point_search.cpp.i
+
+include/valid_line_point_search.s: include/valid_line_point_search.cpp.s
+
+.PHONY : include/valid_line_point_search.s
+
+# target to generate assembly for a file
+include/valid_line_point_search.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/valid_line_point_search.cpp.s
+.PHONY : include/valid_line_point_search.cpp.s
+
 include/vanishing_point_search.o: include/vanishing_point_search.cpp.o
 
 .PHONY : include/vanishing_point_search.o
@@ -490,6 +517,9 @@ help:
 	@echo "... include/start_of_lines_search.o"
 	@echo "... include/start_of_lines_search.i"
 	@echo "... include/start_of_lines_search.s"
+	@echo "... include/valid_line_point_search.o"
+	@echo "... include/valid_line_point_search.i"
+	@echo "... include/valid_line_point_search.s"
 	@echo "... include/vanishing_point_search.o"
 	@echo "... include/vanishing_point_search.i"
 	@echo "... include/vanishing_point_search.s"

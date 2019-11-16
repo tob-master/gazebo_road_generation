@@ -189,10 +189,13 @@ struct StartParameters
     int left_x;
     int left_y;
     float left_angle;
+    bool found_left_line;
 
     int right_x;
     int right_y;
     float right_angle;
+    bool found_right_line;
+
 };
 
 
@@ -323,7 +326,7 @@ namespace line_points_reducer
         int y;
     };
 
-    struct LengthAndDirectionFromConsecutiveReducedLinePoints
+    struct ReducedPointDirection
     {
        int x;
        int y;

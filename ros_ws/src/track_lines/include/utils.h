@@ -4,10 +4,30 @@
 #include <iostream>
 #include <stdlib.h>
 #include "defines.h"
+
+
+
+#include <opencv2/core/mat.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgcodecs.hpp>
+
+
 using namespace std;
+using namespace cv;
 
+inline void TransformPoint(int& x, int& y, Mat transformation_matrix)
+{
 
+    vector<Point2f> src = {Point2f(float(x), float(y))};
+    vector<Point2f> dst;
 
+    perspectiveTransform(src,dst,transformation_matrix);
+
+    x = int(dst[0].x);
+    y = int(dst[0].y);
+
+}
 
 
 inline float CalculateAngle4Quadrants(float opposite, float adjacent)
