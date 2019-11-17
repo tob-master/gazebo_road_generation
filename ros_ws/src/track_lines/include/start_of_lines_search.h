@@ -76,7 +76,7 @@ class StartOfLinesSearch
 
         map<int,vector<int>> row_filter_activations_;
 
-        multimap<int,StartAndWidth> row_segments_raw_;
+        multimap<int,SegmentStartIDAndWidth> row_segments_raw_;
         multimap<int,TrueLineWidthRowId> row_segments_true_line_width_;
         multimap<int,TrueTrackWidthRowPairIds> row_segments_true_track_width_;
         vector<TrueAdjacentTrackWidthRowPairIds> row_segments_true_adjacent_track_width_;

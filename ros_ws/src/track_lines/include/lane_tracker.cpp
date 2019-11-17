@@ -108,8 +108,11 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
             auto line_points_reducer_return_info = LinePointsReducer_->ReduceLinePoints(left_line,right_line,max_distance);
 
             vector<ReducedPoints> left_line_points_reduced, right_line_points_reduced;
-            vector<ReducedPointDirection> left_line_points_reduced_length_direction,
-                                                                       right_line_points_reduced_length_direction;
+            vector<PointInDirection> left_line_points_reduced_length_direction,
+                                          right_line_points_reduced_length_direction;
+
+
+            ValidLinePointSearcher_.SetImage(image_mono_bird_);
 
             if(line_points_reducer_return_info.left_line_is_reduced)
             {
@@ -118,11 +121,14 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                 LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(left_line_points_reduced_length_direction, LEFT_LINE);
 
 
-                ValidLinePointSearcher_.FindValidPointsFromLeftLineFollow(image_mono_bird_,left_line_points_reduced_length_direction);
 
+                ValidLinePointSearcher_.SetLine(left_line_points_reduced_length_direction, LEFT_LINE);
 
+                ValidLinePointSearcher_.FindValidPointsFromLineFollow(LEFT_TO_RIGHT);
+                ValidLinePointSearcher_.FindValidPointsFromLineFollow(LEFT_TO_MID);
+                ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, LEFT_TO_RIGHT);
+                ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, LEFT_TO_MID);
 
-                ValidLinePointSearcher_.DrawMidLinePoints(image_rgb_bird_);
 
             }
 
@@ -132,14 +138,19 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                 LinePointsReducer_->GetReducedLinePoints(right_line_points_reduced,RIGHT_LINE);
                 LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(right_line_points_reduced_length_direction,RIGHT_LINE);
 
+                ValidLinePointSearcher_.SetLine(right_line_points_reduced_length_direction, RIGHT_LINE);
 
+                ValidLinePointSearcher_.FindValidPointsFromLineFollow(RIGHT_TO_LEFT);
+                ValidLinePointSearcher_.FindValidPointsFromLineFollow(RIGHT_TO_MID);
+                ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_LEFT);
+                ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_MID);
 
 
 
 
             }
 
-            LinePointsReducer_->CoutLengthAndDirectionFromConsecutiveReducedLinePoints();
+            //LinePointsReducer_->CoutLengthAndDirectionFromConsecutiveReducedLinePoints();
 
 
 
@@ -287,7 +298,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 */
 
-/*
+
 
         auto mid_line_search_return_info = MidLineSearcher_->FindMidLineClusters(image_mono_bird_);
 
@@ -469,7 +480,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                     }
             }
         }
-            */   /*}
+               /*}
                     catch(...)
                     {
                         cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
@@ -579,7 +590,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         clock_t end = clock();
         double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-        //cout << "fps: " << 1/elapsed_secs << endl;
+        cout << "fps: " << 1/elapsed_secs << endl;
 
         //warpPerspective(image_rgb_bird_, image_rgb_warped_back_, birdseye_transformation_matrix_.inv(), Size(image_width_,image_height_), INTER_CUBIC | WARP_INVERSE_MAP);
 
@@ -590,7 +601,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         imshow("bird_rgb", image_rgb_bird_);
         //imshow("bird2",bird2);
         //imshow("warped_back",image_rgb_warped_back_);
-        waitKey(0);
+        waitKey(1);
 
     }
     catch (cv_bridge::Exception& e)

@@ -88,8 +88,8 @@ class MidLineSearch
         vector<Point> cluster_centroids_;
 
         vector<SingleCluster> single_clusters_;
-        vector<vector<LengthAndDirectionFromConnectedClusters>> grouped_clusters_length_and_direction_;
-        vector<LengthAndDirectionFromConnectedClusters> connected_clusters_length_and_direction_;
+        vector<vector<PointInDirection>> grouped_clusters_length_and_direction_;
+        vector<PointInDirection> connected_clusters_length_and_direction_;
 
 
        vector<vector<Point>> mid_line_cluster_groups_;
@@ -160,7 +160,7 @@ class MidLineSearch
       MidLineSearchReturnInfo  FindMidLineClusters(Mat image);
       void CoutLengthAndDirectionOfConnectedClusters();
 
-      vector<vector<LengthAndDirectionFromConnectedClusters>> GetGroupedMidLineClustersLengthAndDirection();
+      vector<vector<PointInDirection>> GetGroupedMidLineClustersLengthAndDirection();
       vector<SingleCluster> GetSingleClusters();
 
       void DrawClusters(Mat &rgb);

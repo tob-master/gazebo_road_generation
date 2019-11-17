@@ -6,6 +6,15 @@ using namespace std;
 
 
 enum {LEFT_LINE, RIGHT_LINE};
+enum {LEFT_TO_MID, RIGHT_TO_MID, LEFT_TO_RIGHT, RIGHT_TO_LEFT};
+
+struct PointInDirection
+{
+   int x;
+   int y;
+   int length;
+   float angle;
+};
 
 struct BirdseyeInitializationParameters
 {
@@ -296,13 +305,7 @@ namespace mid_line_search
 
     };
 
-    struct LengthAndDirectionFromConnectedClusters
-    {
-       int x;
-       int y;
-       int length;
-       float angle;
-    };
+
 
 
     struct SingleCluster
@@ -326,13 +329,7 @@ namespace line_points_reducer
         int y;
     };
 
-    struct ReducedPointDirection
-    {
-       int x;
-       int y;
-       int length;
-       float angle;
-    };
+
 }
 
 
@@ -366,17 +363,38 @@ namespace line_follower
     };
 }
 
+
+struct SegmentStartIDAndWidth
+{
+    int start_id;
+    int width;
+};
+
+
+namespace valid_line_point_search
+{
+    struct SearchLineDistanceThresholds
+    {
+        int min;
+        int max;
+    };
+
+
+    struct SearchLineWidthThresholds
+    {
+        int min;
+        int max;
+    };
+}
+
+
 namespace start_of_lines_search
 {
 
 
 
 
-    struct StartAndWidth
-    {
-        int start_id;
-        int width;
-    };
+
 
     struct TrueLineWidthRowId
     {

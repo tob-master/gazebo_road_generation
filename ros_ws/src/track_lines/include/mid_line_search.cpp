@@ -474,7 +474,7 @@ MidLineSearchReturnInfo MidLineSearch::GetReturnInfo()
 
              float angle = CalculateAngle4Quadrants(opposite, adjacent);
 
-             connected_clusters_length_and_direction_.push_back(LengthAndDirectionFromConnectedClusters{current_cluster_center_of_gravity.x,
+             connected_clusters_length_and_direction_.push_back(PointInDirection{current_cluster_center_of_gravity.x,
                                                                                                        current_cluster_center_of_gravity.y,
                                                                                                        length,
                                                                                                        angle});
@@ -486,7 +486,7 @@ MidLineSearchReturnInfo MidLineSearch::GetReturnInfo()
  }
 
 
- vector<vector<LengthAndDirectionFromConnectedClusters>> MidLineSearch::GetGroupedMidLineClustersLengthAndDirection()
+ vector<vector<PointInDirection>> MidLineSearch::GetGroupedMidLineClustersLengthAndDirection()
  {
      return grouped_clusters_length_and_direction_;
  }
@@ -858,7 +858,7 @@ void MidLineSearch::ComputeClustersCentroid()
 
                  float angle = CalculateAngle4Quadrants(opposite, adjacent);
 
-                 connected_clusters_length_and_direction_.push_back(LengthAndDirectionFromConnectedClusters{current_cluster_center_of_gravity.x,
+                 connected_clusters_length_and_direction_.push_back(PointInDirection{current_cluster_center_of_gravity.x,
                                                                                                            current_cluster_center_of_gravity.y,
                                                                                                            length,
                                                                                                            angle});
@@ -893,7 +893,7 @@ void MidLineSearch::ComputeClustersCentroid()
 
                  float angle = CalculateAngle4Quadrants(opposite, adjacent);
 
-                 connected_clusters_length_and_direction_.push_back(LengthAndDirectionFromConnectedClusters{current_cluster_center_of_gravity.x,
+                 connected_clusters_length_and_direction_.push_back(PointInDirection{current_cluster_center_of_gravity.x,
                                                                                                            current_cluster_center_of_gravity.y,
                                                                                                            length,
                                                                                                            angle});
@@ -993,7 +993,7 @@ void MidLineSearch::ComputeClustersCentroid()
 
                      float angle = CalculateAngle4Quadrants(opposite, adjacent);
 
-                     connected_clusters_length_and_direction_.push_back(LengthAndDirectionFromConnectedClusters{current_cluster_center_of_gravity.x,
+                     connected_clusters_length_and_direction_.push_back(PointInDirection{current_cluster_center_of_gravity.x,
                                                                                                                current_cluster_center_of_gravity.y,
                                                                                                                length,
                                                                                                                angle});

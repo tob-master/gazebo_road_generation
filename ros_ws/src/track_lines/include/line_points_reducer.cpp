@@ -195,7 +195,7 @@ void LinePointsReducer::GetReducedLinePoints(vector<ReducedPoints> &line_points_
     }
 }
 
-void LinePointsReducer::GetLengthAndDirectionFromConsecutiveReducedLinePoints(vector<ReducedPointDirection> &line_points_reduced_length_direction, int line)
+void LinePointsReducer::GetLengthAndDirectionFromConsecutiveReducedLinePoints(vector<PointInDirection> &line_points_reduced_length_direction, int line)
 {
     if(line == LEFT_LINE)
     {
@@ -234,7 +234,7 @@ void LinePointsReducer::ComputeLengthAndDirectionFromConsecutiveReducedLinePoint
 
             float angle =  CalculateAngle4Quadrants(opposite, adjacent) ;
 
-            left_line_points_reduced_length_direction_.push_back(ReducedPointDirection{x,y,length, angle});
+            left_line_points_reduced_length_direction_.push_back(PointInDirection{x,y,length, angle});
         }
     }
 
@@ -255,7 +255,7 @@ void LinePointsReducer::ComputeLengthAndDirectionFromConsecutiveReducedLinePoint
 
             float angle =  CalculateAngle4Quadrants(opposite, adjacent) ;
 
-            right_line_points_reduced_length_direction_.push_back(ReducedPointDirection{x,y,length, angle});
+            right_line_points_reduced_length_direction_.push_back(PointInDirection{x,y,length, angle});
         }
     }
 }

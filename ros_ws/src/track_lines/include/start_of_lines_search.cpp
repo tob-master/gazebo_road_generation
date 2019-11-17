@@ -134,7 +134,7 @@ void StartOfLinesSearch::FindStartAndWidthOfRowSegments()
 
             MeasureSegment(row,i,start_id,width);
 
-            row_segments_raw_.insert(pair<int,StartAndWidth>(row, StartAndWidth{start_id,width}));
+            row_segments_raw_.insert(pair<int,SegmentStartIDAndWidth>(row, SegmentStartIDAndWidth{start_id,width}));
 
           }
         }
@@ -157,7 +157,7 @@ void StartOfLinesSearch::RejectFalseLineWidth()
 
     for ( auto &row : rows_to_search_for_lines_ )
     {
-        //pair<multimap<int,StartAndWidth>::iterator,multimap<int,StartAndWidth>::iterator> ret;
+        //pair<multimap<int,SegmentStartIDAndWidth>::iterator,multimap<int,SegmentStartIDAndWidth>::iterator> ret;
         auto ret = row_segments_raw_.equal_range(row);
 
         for (auto it=ret.first; it!=ret.second; ++it)
