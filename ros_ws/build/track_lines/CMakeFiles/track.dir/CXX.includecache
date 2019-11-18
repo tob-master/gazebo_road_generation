@@ -43,6 +43,14 @@ datatypes.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/datatypes.h
 iostream
 -
+opencv2/core/mat.hpp
+-
+opencv2/core/core.hpp
+-
+opencv2/highgui/highgui.hpp
+-
+opencv2/imgcodecs.hpp
+-
 
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/dbscan.cpp
 dbscan.h

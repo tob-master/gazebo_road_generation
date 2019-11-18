@@ -41,32 +41,33 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         //cout << info.vanishing_point << endl;
         //cout << info.car_mid_point_to_vanishing_point_angle << endl;
-
+        /*
         if(vanishing_point_search_return_info.has_found_left_hough_line)
         {
-           VanishingPointSearcher_->DrawHoughLines(image_rgb_, LEFT_LINE);
-           VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
+           //VanishingPointSearcher_->DrawHoughLines(image_rgb_, LEFT_LINE);
+           //VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
 
            //VanishingPointSearcher_->GetWarpedPerspektiveHoughLin
         }
 
         if(vanishing_point_search_return_info.has_found_right_hough_line)
         {
-            VanishingPointSearcher_->DrawHoughLines(image_rgb_, RIGHT_LINE);
-            VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, RIGHT_LINE);
+            //VanishingPointSearcher_->DrawHoughLines(image_rgb_, RIGHT_LINE);
+            //VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, RIGHT_LINE);
         }
 
         if(vanishing_point_search_return_info.has_found_intersections)
         {
-          VanishingPointSearcher_->DrawLineIntersections(image_rgb_);
+
+            //VanishingPointSearcher_->DrawLineIntersections(image_rgb_);
         }
 
         if(vanishing_point_search_return_info.has_found_vanishing_point)
         {
-            VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
-            VanishingPointSearcher_->DrawWarpedVanishingPointDirection(image_rgb_bird_);
+            //VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
+            //VanishingPointSearcher_->DrawWarpedVanishingPointDirection(image_rgb_bird_);
         }
-
+*/
 
 
 
@@ -116,34 +117,34 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
             if(line_points_reducer_return_info.left_line_is_reduced)
             {
-                LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,LEFT_LINE);
+                //LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,LEFT_LINE);
                 LinePointsReducer_->GetReducedLinePoints(left_line_points_reduced,LEFT_LINE);
                 LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(left_line_points_reduced_length_direction, LEFT_LINE);
 
 
 
-                ValidLinePointSearcher_.SetLine(left_line_points_reduced_length_direction, LEFT_LINE);
 
-                ValidLinePointSearcher_.FindValidPointsFromLineFollow(LEFT_TO_RIGHT);
-                ValidLinePointSearcher_.FindValidPointsFromLineFollow(LEFT_TO_MID);
-                ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, LEFT_TO_RIGHT);
-                ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, LEFT_TO_MID);
+
+                ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_points_reduced_length_direction, LEFT_TO_RIGHT);
+                ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_points_reduced_length_direction, LEFT_TO_MID);
+                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, LEFT_TO_RIGHT);
+                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, LEFT_TO_MID);
 
 
             }
 
             if(line_points_reducer_return_info.right_line_is_reduced)
             {
-                LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,RIGHT_LINE);
+                //LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,RIGHT_LINE);
                 LinePointsReducer_->GetReducedLinePoints(right_line_points_reduced,RIGHT_LINE);
                 LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(right_line_points_reduced_length_direction,RIGHT_LINE);
 
-                ValidLinePointSearcher_.SetLine(right_line_points_reduced_length_direction, RIGHT_LINE);
 
-                ValidLinePointSearcher_.FindValidPointsFromLineFollow(RIGHT_TO_LEFT);
-                ValidLinePointSearcher_.FindValidPointsFromLineFollow(RIGHT_TO_MID);
-                ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_LEFT);
-                ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_MID);
+
+                ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_points_reduced_length_direction,RIGHT_TO_LEFT);
+                ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_points_reduced_length_direction,RIGHT_TO_MID);
+                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_LEFT);
+                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_MID);
 
 
 
@@ -161,413 +162,43 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         }
 
 
-/*
-
-                //ValidLinePointSearcher
-
-
-                int min_mid_line_distance =  45;
-                int max_mid_line_distance =  70;
-
-                int min_left_line_distance = 120;
-                int max_left_line_distance = 140;
-
-
-                        for(int i=0; i<right_line_points_reduced_length_direction.size(); i++)
-                        {
-
-
-                                int x       = right_line_points_reduced_length_direction[i].x;
-                                int y       = right_line_points_reduced_length_direction[i].y;
-                                float angle = right_line_points_reduced_length_direction[i].angle;
-
-                                int length = right_line_points_reduced_length_direction[i].length;
-
-                                //cout << x << " " << y << " " << angle * 180/PI << " " << length << endl;
-
-                                angle = angle * 180/PI;
-
-                                for(int radius_ = 0; radius_ < length; radius_++)
-                                {
-
-
-
-
-
-                                 int xs = x + radius_ * cos(angle*PI/180);
-                                 int ys = y - radius_ * sin(angle*PI/180);
-
-
-
-
-
-
-
-
-
-                                        int angle_1 = (angle + 90);
-                                        //float angle_1 = (angle - 90);
-
-
-                                        if(angle_1 > 359)
-                                        {
-                                            angle_1 = angle_1 % 360;
-                                        }
-
-                                        if(angle_1 < 0)
-                                        {
-                                            angle_1 =  360 - abs(angle_1);
-
-                                        }
-
-                                        float angle_1_rad = angle_1 * PI/180;
-
-
-                                        vector<int> orthogonal_track_line_intensities;
-                                        vector<Point> orthogonal_track_line_points;
-
-
-
-                                        for(int ii=min_mid_line_distance; ii<max_mid_line_distance; ii++)
-                                        {
-                                            int radius = ii;
-                                            int x_  = xs + radius * cos(angle_1_rad) + 0.5;
-                                            int y_  = ys - radius * sin(angle_1_rad) + 0.5;
-
-                                            if(x_ < image_width_ && x_ >= 0 && y_ < image_height_ && y >= 0)
-                                            {
-
-                                                int px = image_mono_bird_.at<uchar>(Point(x_,y_));
-
-                                                if(px>99)
-                                                {
-                                                    orthogonal_track_line_intensities.push_back(px);
-                                                    orthogonal_track_line_points.push_back(Point(x_,y_));
-                                                    circle(image_rgb_bird_,Point(x_,y_), 1, Scalar(0,255,0),CV_FILLED);
-                                                }
-                                                else {
-                                                    orthogonal_track_line_intensities.push_back(0);
-                                                    orthogonal_track_line_points.push_back(Point(x_,y_));
-                                                     circle(image_rgb_bird_,Point(x_,y_), 1, Scalar(255,0,0),CV_FILLED);
-                                                }
-                                            }
-                                            else
-                                            {
-                                                orthogonal_track_line_intensities.push_back(0);
-                                                orthogonal_track_line_points.push_back(Point(x_,y_));
-                                            }
-
-
-
-
-                                        }
-
-
-                                        for(int ii=0; ii<max_track_width; ii++)
-                                        {
-                                            int radius = ii;
-                                            int x_ = xs + radius * cos(angle_1_rad) + 0.5;
-                                            int y_  = ys - radius * sin(angle_1_rad) + 0.5;
-
-                                            if(x_ < image_width_ && x_ >= 0 && y_ < image_height_ && y >= 0)
-                                            {
-
-                                                int px = image_mono_bird_.at<uchar>(Point(x_,y_));
-
-                                                if(px>170)
-                                                {
-                                                    orthogonal_track_line_intensities.push_back(px);
-                                                    orthogonal_track_line_points.push_back(Point(x_,y_));
-                                                }
-                                                else {
-                                                    orthogonal_track_line_intensities.push_back(0);
-                                                    orthogonal_track_line_points.push_back(Point(x_,y_));
-                                                }
-                                            }
-                                            else
-                                            {
-                                                orthogonal_track_line_intensities.push_back(0);
-                                                orthogonal_track_line_points.push_back(Point(x_,y_));
-                                            }
-
-
-
-                                            circle(image_rgb_bird_,Point(x_,y_), 2, Scalar(0,255,0),CV_FILLED);
-                                        }
-
-
-*/
-
-
 
         auto mid_line_search_return_info = MidLineSearcher_->FindMidLineClusters(image_mono_bird_);
 
         if(mid_line_search_return_info.has_found_mid_line_clusters)
         {
             //MidLineSearcher_->DrawClusters(image_rgb_bird_);
-            MidLineSearcher_->DrawSingleClusters(image_rgb_bird_);
+            //MidLineSearcher_->DrawSingleClusters(image_rgb_bird_);
             auto single_mid_line_clusters = MidLineSearcher_->GetSingleClusters();
-
-            int min_track_width =  60;
-            int max_track_width = 70;
-
-            for(int i=0; i<single_mid_line_clusters.size(); i++)
-            {
-                int x       = single_mid_line_clusters[i].x_center;
-                int y       = single_mid_line_clusters[i].y_center;
-                float angle = single_mid_line_clusters[i].angle;
-
-                cout << x << " " << y << " " <<  angle << endl;
-
-                               int angle_1 = (angle + 90);
-                               //float angle_1 = (angle - 90);
-
-
-                               if(angle_1 > 359)
-                               {
-                                   angle_1 = angle_1 % 360;
-                               }
-
-                               if(angle_1 < 0)
-                               {
-                                   angle_1 =  360 - abs(angle_1);
-
-                               }
-
-                               float angle_1_rad = angle_1 * PI/180;
-
-                               for(int ii=min_track_width; ii<max_track_width; ii++)
-                               {
-                                   int radius = ii;
-                                   int x_ = x + radius * cos(angle_1_rad) + 0.5;
-                                   int y_  = y - radius * sin(angle_1_rad) + 0.5;
-
-
-                                   circle(image_rgb_bird_,Point(x_,y_), 2, Scalar(0,255,0),CV_FILLED);
-                               }
-
-
-                               int angle_2 = (angle - 90);
-
-
-                               if(angle_2 > 359)
-                               {
-                                   angle_2 = angle_2 % 360;
-                               }
-
-                               if(angle_2 < 0)
-                               {
-                                   angle_2 =  360 - abs(angle_2);
-
-                               }
-
-                               float angle_2_rad = angle_2 * PI/180;
-
-                               for(int ii=min_track_width; ii<max_track_width; ii++)
-                               {
-                                   int radius = ii;
-                                   int x_ = x + radius * cos(angle_2_rad) + 0.5;
-                                   int y_ = y - radius * sin(angle_2_rad) + 0.5;
-
-                                   circle(image_rgb_bird_,Point(x_,y_), 2, Scalar(0,0,255),CV_FILLED);
-                               }
-            }
-
-
-
-
 
             if(mid_line_search_return_info.has_found_group)
             {
-
-
-                MidLineSearcher_->DrawGroupedMidLineClustersDirections(image_rgb_bird_);
+                //MidLineSearcher_->DrawGroupedMidLineClustersDirections(image_rgb_bird_);
                 //MidLineSearcher_->CoutLengthAndDirectionOfConnectedClusters();
 
+                auto grouped_mid_lines = MidLineSearcher_->GetGroupedMidLineClustersLengthAndDirection();
 
-                    auto grouped_mid_lines = MidLineSearcher_->GetGroupedMidLineClustersLengthAndDirection();
-
-
-
-
-
-                    for(int i=0; i<grouped_mid_lines.size(); i++)
-                    {
-                        for(int j=0; j<grouped_mid_lines[i].size(); j++)
-                        {
-
-                            int x       = grouped_mid_lines[i][j].x;
-                            int y       = grouped_mid_lines[i][j].y;
-                            float angle = grouped_mid_lines[i][j].angle;
-
-                            int length = grouped_mid_lines[i][j].length;
-
-                            //cout << x << " " << y << " " << angle << " " << length << endl;
-
-                            for(int radius_ = 0; radius_ < length; radius_++)
-                            {
-
-
-
-
-
-                             int xs = x + radius_ * cos(angle*PI/180);
-                             int ys = y - radius_ * sin(angle*PI/180);
-
-
-
-
-
-
-
-
-
-                                    int angle_1 = (angle + 90);
-                                    //float angle_1 = (angle - 90);
-
-
-                                    if(angle_1 > 359)
-                                    {
-                                        angle_1 = angle_1 % 360;
-                                    }
-
-                                    if(angle_1 < 0)
-                                    {
-                                        angle_1 =  360 - abs(angle_1);
-
-                                    }
-
-                                    float angle_1_rad = angle_1 * PI/180;
-
-                                    for(int ii=min_track_width; ii<max_track_width; ii++)
-                                    {
-                                        int radius = ii;
-                                        int x_ = xs + radius * cos(angle_1_rad) + 0.5;
-                                        int y_  = ys - radius * sin(angle_1_rad) + 0.5;
-
-
-                                        circle(image_rgb_bird_,Point(x_,y_), 2, Scalar(0,255,0),CV_FILLED);
-                                    }
-
-
-                                    int angle_2 = (angle - 90);
-
-
-                                    if(angle_2 > 359)
-                                    {
-                                        angle_2 = angle_2 % 360;
-                                    }
-
-                                    if(angle_2 < 0)
-                                    {
-                                        angle_2 =  360 - abs(angle_2);
-
-                                    }
-
-                                    float angle_2_rad = angle_2 * PI/180;
-
-                                    for(int ii=min_track_width; ii<max_track_width; ii++)
-                                    {
-                                        int radius = ii;
-                                        int x_ = xs + radius * cos(angle_2_rad) + 0.5;
-                                        int y_ = ys - radius * sin(angle_2_rad) + 0.5;
-
-                                        circle(image_rgb_bird_,Point(x_,y_), 2, Scalar(0,0,255),CV_FILLED);
-                                    }
-
-                            }
-                        }
-                    }
+                ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(grouped_mid_lines, MID_TO_LEFT);
+                ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(grouped_mid_lines, MID_TO_RIGHT);
+                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, MID_TO_LEFT);
+                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, MID_TO_RIGHT);
             }
-        }
-               /*}
-                    catch(...)
-                    {
-                        cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
-                    }
-                                try {
-
-
-                    for(int i=0; i<grouped_mid_lines.size(); i++)
-                    {
-                            int j = grouped_mid_lines[i].size()-1;
-
-                            int x       = grouped_mid_lines[i][j].x;
-                            int y       = grouped_mid_lines[i][j].y;
-                            float angle = grouped_mid_lines[i][j].angle;
-                            int length  = grouped_mid_lines[i][j].length;
-
-                            x = x + length * cos(angle*PI/180) + 0.5;
-                            y = y - length * sin(angle*PI/180) + 0.5;
+         }
 
 
 
-                            int angle_1 = (angle + 90);
-                            //float angle_1 = (angle - 90);
+        ValidLinePointSearcher_.CreateValidationTables();
 
 
-                            if(angle_1 > 359)
-                            {
-                                angle_1 = angle_1 % 360;
-                            }
+        ValidLinePointSearcher_.SearchValidPoints();
 
-                            if(angle_1 < 0)
-                            {
-                                angle_1 =  360 - abs(angle_1);
-
-                            }
-
-                            float angle_1_rad = angle_1 * PI/180;
-
-                            for(int ii=min_track_width; ii<max_track_width; ii++)
-                            {
-                                int radius = ii;
-                                int x_ = x + radius * cos(angle_1_rad) + 0.5;
-                                int y_  = y - radius * sin(angle_1_rad) + 0.5;
+        ValidLinePointSearcher_.ComputePointScores();
+        ValidLinePointSearcher_.DrawValidScorePoints(image_rgb_bird_);
 
 
-                                circle(image_rgb_bird_,Point(x_,y_), 2, Scalar(0,255,0),CV_FILLED);
-                            }
 
+        ValidLinePointSearcher_.ClearValidationTables();
 
-                            int angle_2 = (angle - 90);
-
-
-                            if(angle_2 > 359)
-                            {
-                                angle_2 = angle_2 % 360;
-                            }
-
-                            if(angle_2 < 0)
-                            {
-                                angle_2 =  360 - abs(angle_2);
-
-                            }
-
-                            float angle_2_rad = angle_2 * PI/180;
-
-                            for(int ii=min_track_width; ii<max_track_width; ii++)
-                            {
-                                int radius = ii;
-                                int x_ = x + radius * cos(angle_2_rad) + 0.5;
-                                int y_ = y - radius * sin(angle_2_rad) + 0.5;
-
-                                circle(image_rgb_bird_,Point(x_,y_), 2, Scalar(0,0,255),CV_FILLED);
-                            }
-
-
-                    }
-
-                    } catch(...)  {
-                                    cout << "kkkkkkkkkkkk"  << endl;
-                    }
-
-
-            }
-        }
-
-
-*/
 /*
 
         ConnectedComponentsSearchReturnInfo connected_component_search_return_info =

@@ -2,11 +2,15 @@
 #define DATATYPES_H
 
 #include <iostream>
+#include <opencv2/core/mat.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgcodecs.hpp>
 using namespace std;
+using namespace cv;
 
-
-enum {LEFT_LINE, RIGHT_LINE};
-enum {LEFT_TO_MID, RIGHT_TO_MID, LEFT_TO_RIGHT, RIGHT_TO_LEFT};
+enum {LEFT_LINE, RIGHT_LINE, MID_LINE};
+enum {LEFT_TO_MID, RIGHT_TO_MID, LEFT_TO_RIGHT, RIGHT_TO_LEFT, MID_TO_LEFT, MID_TO_RIGHT};
 
 struct PointInDirection
 {
@@ -385,6 +389,100 @@ namespace valid_line_point_search
         int min;
         int max;
     };
+
+
+
+    struct RightValidationTable
+    {
+        Point origin;
+        float search_direction;
+        int next_direction_distance;
+
+        Point left;
+        Point mid;
+
+
+        bool left_near_left_origin;
+        bool mid_near_mid_origin;
+
+        bool left_origin_equal_direction;
+        bool mid_origin_equal_direction;
+
+        bool origin_near_left_to_right;
+        bool origin_near_mid_to_right;
+
+        bool found_left;
+        bool found_mid;
+        int score;
+
+    };
+
+
+    struct MidValidationTable
+    {
+        Point origin;
+        float   search_direction;
+        int next_direction_distance;
+
+        Point left;
+        Point right;
+
+
+        bool left_near_left_origin;
+        bool right_near_right_origin;
+
+        bool left_origin_equal_direction;
+        bool right_origin_equal_direction;
+
+        bool origin_near_left_to_mid;
+        bool origin_near_right_to_mid;
+
+        bool found_left;
+        bool found_right;
+
+        int score;
+        int label;
+
+    };
+
+
+    struct LeftValidationTable
+    {
+        Point origin;
+        float   search_direction;
+        int next_direction_distance;
+
+        Point mid;
+        Point right;
+
+
+        bool mid_near_mid_origin;
+        bool right_near_right_origin;
+
+        bool mid_origin_equal_direction;
+        bool right_origin_equal_direction;
+
+        bool origin_near_mid_to_left;
+        bool origin_near_right_to_left;
+
+        bool found_mid;
+        bool found_right;
+
+
+        int score;
+
+    };
+
+
+    struct ValidLinePointSearchInfo
+    {
+        Point origin;
+        float search_direction;
+        int next_direction_distance;
+        Point adjacent_line_point;
+    };
+
+
 }
 
 

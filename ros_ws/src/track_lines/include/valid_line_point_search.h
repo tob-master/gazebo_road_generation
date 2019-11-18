@@ -36,20 +36,27 @@ private:
 
 
 
-    const int kMinLeftToRightLineDistance_ =  120;
-    const int kMaxLeftToRightLineDistance_ =  140;
+    const int kMinLeftToRightLineDistance_ =  100;
+    const int kMaxLeftToRightLineDistance_ =  130;
     const int kMinLeftToMidLineDistance_ =  45;
     const int kMaxLeftToMidLineDistance_ =  70;
 
-    const int kMinRightToLeftLineDistance_ =  120;
-    const int kMaxRightToLeftLineDistance_ =  140;
+    const int kMinRightToLeftLineDistance_ =  100;
+    const int kMaxRightToLeftLineDistance_ =  130;
     const int kMinRightToMidLineDistance_ =  45;
     const int kMaxRightToMidLineDistance_ =  70;
+
+    const int kMinMidToLeftLineDistance_ = 45;
+    const int kMaxMidToLeftLineDistance_ = 70;
+    const int kMinMidToRightLineDistance_ = 45;
+    const int kMaxMidToRightLineDistance_ = 70;
 
     const int kMinLeftToRightPixelIntensity_ = 99;
     const int kMinLeftToMidPixelIntensity_ = 99;
     const int kMinRightToLeftPixelIntensity_ = 99;
     const int kMinRightToMidPixelIntensity_ = 99;
+    const int kMinMidToLeftPixelIntensity_ = 99;
+    const int kMinMidToRightPixelIntensity_ = 99;
 
 
     const int kMinLeftToRightLineWidth_ =  2;
@@ -62,17 +69,35 @@ private:
     const int kMinRightToMidLineWidth_ =  2;
     const int kMaxRightToMidLineWidth_ =  5;
 
+    const int kMinMidToLeftLineWidth_ = 2;
+    const int kMaxMidToLeftLineWidth_ = 5;
+    const int kMinMidToRightLineWidth_ = 2;
+    const int kMaxMidToRightLineWidth_ = 5;
+
     const int kImageWidth_ = 1280;
     const int kImageHeight_ = 417;
 
     vector<PointInDirection> left_line_directions_;
     vector<PointInDirection> right_line_directions_;
+    vector<vector<PointInDirection>> mid_line_directions_clusters_;
 
-    vector<Point> left_line_follow_mid_line_points_;
-    vector<Point> left_line_follow_right_line_points_;
+    vector<ValidLinePointSearchInfo> left_to_mid_search_info_;
+    vector<ValidLinePointSearchInfo> left_to_right_search_info_;
 
-    vector<Point> right_line_follow_mid_line_points_;
-    vector<Point> right_line_follow_left_line_points_;
+    vector<ValidLinePointSearchInfo> right_to_mid_search_info_;
+    vector<ValidLinePointSearchInfo> right_to_left_search_info_;
+
+
+    vector<ValidLinePointSearchInfo> mid_to_right_search_info_;
+    vector<ValidLinePointSearchInfo> mid_to_left_search_info_;
+
+
+    vector<vector<ValidLinePointSearchInfo>> mid_to_right_search_info_clusters_;
+    vector<vector<ValidLinePointSearchInfo>> mid_to_left_search_info_clusters_;
+
+    vector<RightValidationTable> right_points_validation_table_;
+    vector<MidValidationTable> mid_points_validation_table_;
+    vector<LeftValidationTable> left_points_validation_table_;
 
 
     void ClearMemory(int SEARCH_LINE_CODE);
@@ -88,7 +113,9 @@ private:
     int GetPixelValue(Point point);
 
     bool CheckLineMatch(vector<int> orthogonal_line_activations,SegmentStartIDAndWidth& line_match, int SEARCH_LINE_CODE);
-    void SafeLinePoint(SegmentStartIDAndWidth mid_line_match, vector<Point> orthogonal_line_points, int SEARCH_LINE_CODE);
+    void SafeLinePoint(SegmentStartIDAndWidth line_match, vector<Point> orthogonal_line_points, bool is_matched,
+                       int point_in_search_direction_x,int point_in_search_direction_y, int current_to_next_point_distance,
+                       float angle_to_next_point,int SEARCH_LINE_CODE);
 
       SearchLineDistanceThresholds GetSearchLineDistanceThresholds(int SEARCH_LINE_CODE);
     int GetMinPixelIntensityThreshold(int SEARCH_LINE_CODE);
@@ -97,14 +124,26 @@ private:
 
      vector<PointInDirection> GetLineDirections(int SEARCH_LINE_CODE);
 
+     void FindValidPoints(vector<PointInDirection> line_directions, int SEARCH_LINE_CODE);
+
+     void SetOuterLineDirections(vector<PointInDirection> line_directions, int SEARCH_LINE_CODE);
+
+
+
 
 
 public:
     ValidLinePointSearch();
     void SetImage(Mat image);
-    void SetLine(vector<PointInDirection> line_directions, int START_LINE_CODE);
-    void FindValidPointsFromLineFollow(int SEARCH_LINE_CODE);
+    void FindValidPointsFromMidLineSearch(vector<vector<PointInDirection>> mid_line_directions_clusters, int SEARCH_LINE_CODE);
+    void FindValidPointsFromLineFollow(vector<PointInDirection> line_directions, int SEARCH_LINE_CODE);
     void DrawLinePoints(Mat &rgb, int SEARCH_LINE_CODE);
+    void CreateValidationTables();
+    void ClearValidationTables();
+    void SearchValidPoints();
+    void ComputePointScores();
+    void DrawValidScorePoints(Mat &rgb);
+
 };
 
 #endif // VALID_LINE_POINT_SEARCH_H

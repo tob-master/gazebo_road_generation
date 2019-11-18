@@ -11,32 +11,15 @@ float ValidLinePointSearch::GetOrthogonalAngle(float angle, int SEARCH_LINE_CODE
 {
     int  angle_ = 0;
 
-    if(SEARCH_LINE_CODE == LEFT_TO_MID || SEARCH_LINE_CODE == LEFT_TO_RIGHT)
-    {
-        angle_ = (angle - 90);
+    if(SEARCH_LINE_CODE == LEFT_TO_MID || SEARCH_LINE_CODE == LEFT_TO_RIGHT || SEARCH_LINE_CODE == MID_TO_RIGHT) angle_ = (angle - 90);
 
-    }
+    if(SEARCH_LINE_CODE == RIGHT_TO_MID || SEARCH_LINE_CODE == RIGHT_TO_LEFT || SEARCH_LINE_CODE == MID_TO_LEFT) angle_ = (angle + 90);
 
-    if(SEARCH_LINE_CODE == RIGHT_TO_MID || SEARCH_LINE_CODE == RIGHT_TO_LEFT)
-    {
-        angle_ = (angle + 90);
+    if(angle_ > 359) angle_ = angle_ % 360;
 
-    }
-
-
-    if(angle_ > 359)
-    {
-        angle_ = angle_ % 360;
-    }
-
-    if(angle_ < 0)
-    {
-        angle_ =  360 - abs(angle_);
-
-    }
+    if(angle_ < 0) angle_ =  360 - abs(angle_);
 
     return float(angle_);
-
 }
 
 
@@ -53,54 +36,34 @@ int ValidLinePointSearch::GetPixelValue(Point point)
 
 SearchLineDistanceThresholds ValidLinePointSearch::GetSearchLineDistanceThresholds(int SEARCH_LINE_CODE)
 {
+    if(SEARCH_LINE_CODE == LEFT_TO_MID) return SearchLineDistanceThresholds{kMinLeftToMidLineDistance_,kMaxLeftToMidLineDistance_};
 
+    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT) return SearchLineDistanceThresholds{kMinLeftToRightLineDistance_,kMaxLeftToRightLineDistance_};
 
-    if(SEARCH_LINE_CODE == LEFT_TO_MID)
-    {
-        return SearchLineDistanceThresholds{kMinLeftToMidLineDistance_,kMaxLeftToMidLineDistance_};
-    }
+    if(SEARCH_LINE_CODE == RIGHT_TO_MID) return SearchLineDistanceThresholds{kMinRightToMidLineDistance_,kMaxRightToMidLineDistance_};
 
-    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT)
-    {
-        return SearchLineDistanceThresholds{kMinLeftToRightLineDistance_,kMaxLeftToRightLineDistance_};
-    }
+    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT) return SearchLineDistanceThresholds{kMinRightToLeftLineDistance_,kMaxRightToLeftLineDistance_};
 
+    if(SEARCH_LINE_CODE == MID_TO_LEFT) return SearchLineDistanceThresholds{kMinMidToLeftLineDistance_,kMaxMidToLeftLineDistance_};
 
-    if(SEARCH_LINE_CODE == RIGHT_TO_MID)
-    {
-        return SearchLineDistanceThresholds{kMinRightToMidLineDistance_,kMaxRightToMidLineDistance_};
-    }
-
-    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT)
-    {
-        return SearchLineDistanceThresholds{kMinRightToLeftLineDistance_,kMaxRightToLeftLineDistance_};
-    }
-
+    if(SEARCH_LINE_CODE == MID_TO_RIGHT)return SearchLineDistanceThresholds{kMinMidToRightLineDistance_,kMaxMidToRightLineDistance_};
 }
 
 
 
 int ValidLinePointSearch::GetMinPixelIntensityThreshold(int SEARCH_LINE_CODE)
 {
-    if(SEARCH_LINE_CODE == LEFT_TO_MID)
-    {
-        return kMinLeftToMidPixelIntensity_;
-    }
+    if(SEARCH_LINE_CODE == LEFT_TO_MID) return kMinLeftToMidPixelIntensity_;
 
-    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT)
-    {
-        return kMinLeftToRightPixelIntensity_;
-    }
+    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT)return kMinLeftToRightPixelIntensity_;
 
-    if(SEARCH_LINE_CODE == RIGHT_TO_MID)
-    {
-        return kMinRightToMidPixelIntensity_;
-    }
+    if(SEARCH_LINE_CODE == RIGHT_TO_MID) return kMinRightToMidPixelIntensity_;
 
-    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT)
-    {
-        return kMinRightToLeftPixelIntensity_;
-    }
+    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT) return kMinRightToLeftPixelIntensity_;
+
+    if(SEARCH_LINE_CODE == MID_TO_RIGHT) return kMinMidToRightPixelIntensity_;
+
+    if(SEARCH_LINE_CODE == MID_TO_LEFT)return kMinMidToLeftPixelIntensity_;
 }
 
 void ValidLinePointSearch::SearchOrthogonalValues(int point_in_search_direction_x,
@@ -114,23 +77,17 @@ void ValidLinePointSearch::SearchOrthogonalValues(int point_in_search_direction_
      SearchLineDistanceThresholds search_line_distance_thresholds = GetSearchLineDistanceThresholds(SEARCH_LINE_CODE);
      int min_pixel_intensity_threshold = GetMinPixelIntensityThreshold(SEARCH_LINE_CODE);
 
-
      for(int current_distance=search_line_distance_thresholds.min; current_distance<search_line_distance_thresholds.max; current_distance++)
      {
          int orthogonal_point_in_search_direction_x  = point_in_search_direction_x + current_distance * cos(orthogonal_angle*PI/180);
          int orthogonal_point_in_search_direction_y  = point_in_search_direction_y - current_distance * sin(orthogonal_angle*PI/180);
 
-
-
          Point current_point = Point(orthogonal_point_in_search_direction_x,
                                      orthogonal_point_in_search_direction_y);
-
 
          if(orthogonal_point_in_search_direction_x < kImageWidth_ && orthogonal_point_in_search_direction_x >= 0 &&
             orthogonal_point_in_search_direction_y < kImageHeight_ && orthogonal_point_in_search_direction_y >= 0)
          {
-
-
              int pixel_value = GetPixelValue(current_point);
 
              if(pixel_value > min_pixel_intensity_threshold)
@@ -150,38 +107,27 @@ void ValidLinePointSearch::SearchOrthogonalValues(int point_in_search_direction_
              orthogonal_line_points.push_back(current_point);
          }
      }
-
 }
 
 SearchLineWidthThresholds ValidLinePointSearch::GetSearchLineWidthThresholds(int SEARCH_LINE_CODE)
 {
-    if(SEARCH_LINE_CODE == LEFT_TO_MID)
-    {
-        return SearchLineWidthThresholds{kMinLeftToMidLineWidth_,kMaxLeftToMidLineWidth_};
-    }
+    if(SEARCH_LINE_CODE == LEFT_TO_MID) return SearchLineWidthThresholds{kMinLeftToMidLineWidth_,kMaxLeftToMidLineWidth_};
 
-    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT)
-    {
-        return SearchLineWidthThresholds{kMinLeftToRightLineWidth_,kMaxLeftToRightLineWidth_};
-    }
+    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT)return SearchLineWidthThresholds{kMinLeftToRightLineWidth_,kMaxLeftToRightLineWidth_};
 
+    if(SEARCH_LINE_CODE == RIGHT_TO_MID) return SearchLineWidthThresholds{kMinRightToMidLineWidth_,kMaxRightToMidLineWidth_};
 
-    if(SEARCH_LINE_CODE == RIGHT_TO_MID)
-    {
-        return SearchLineWidthThresholds{kMinRightToMidLineWidth_,kMaxRightToMidLineWidth_};
-    }
+    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT) return SearchLineWidthThresholds{kMinRightToLeftLineWidth_,kMaxRightToLeftLineWidth_};
 
-    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT)
-    {
-        return SearchLineWidthThresholds{kMinRightToLeftLineWidth_,kMaxRightToLeftLineWidth_};
-    }
+    if(SEARCH_LINE_CODE == MID_TO_RIGHT) return SearchLineWidthThresholds{kMinMidToRightLineWidth_,kMaxMidToRightLineWidth_};
+
+    if(SEARCH_LINE_CODE == MID_TO_LEFT) return SearchLineWidthThresholds{kMinMidToLeftLineWidth_,kMaxMidToLeftLineWidth_};
 }
 
 
 
 bool ValidLinePointSearch::CheckLineMatch(vector<int> orthogonal_line_activations, SegmentStartIDAndWidth& line_match, int SEARCH_LINE_CODE)
 {
-
     vector<SegmentStartIDAndWidth> segments;
     int segment_width = 0;
 
@@ -199,14 +145,10 @@ bool ValidLinePointSearch::CheckLineMatch(vector<int> orthogonal_line_activation
                 segment_width++;
                 i++;
             }
-
             segments.push_back(SegmentStartIDAndWidth{start_id,segment_width});
         }
     }
-
-
     // Check if there are no other segments and if width of midline is correct
-
     SearchLineWidthThresholds search_line_width_thresholds = GetSearchLineWidthThresholds(SEARCH_LINE_CODE);
 
     if(segments.size() == 1)
@@ -218,72 +160,629 @@ bool ValidLinePointSearch::CheckLineMatch(vector<int> orthogonal_line_activation
            line_match = segments[0];
            return true;
         }
-
     }
-
     return false;
-
 }
 
-void ValidLinePointSearch::SetLine(vector<PointInDirection> line_directions, int START_LINE_CODE)
+
+void ValidLinePointSearch::SetOuterLineDirections(vector<PointInDirection> line_directions, int SEARCH_LINE_CODE)
 {
+    if(SEARCH_LINE_CODE == LEFT_TO_MID || SEARCH_LINE_CODE == LEFT_TO_RIGHT) left_line_directions_ = line_directions;
 
-    if(START_LINE_CODE == LEFT_LINE)
-    {
-        left_line_directions_ = line_directions;
-    }
+    else if(SEARCH_LINE_CODE == RIGHT_TO_MID || SEARCH_LINE_CODE == RIGHT_TO_LEFT) right_line_directions_ = line_directions;
 
-    if(START_LINE_CODE == RIGHT_LINE)
-    {
-        right_line_directions_ = line_directions;
-    }
-
-    if(START_LINE_CODE != LEFT_LINE && START_LINE_CODE != RIGHT_LINE)
-    {
-        cout << "Wrong Line!" << endl;
-    }
+    else cout << "False Search Line Code (SetOuterLineDirections)!" << endl;
 }
 
 
 
-vector<PointInDirection> ValidLinePointSearch::GetLineDirections(int SEARCH_LINE_CODE)
+void ValidLinePointSearch::FindValidPointsFromMidLineSearch(vector<vector<PointInDirection>> mid_line_directions_clusters, int SEARCH_LINE_CODE)
+{
+   //ClearMemory(SEARCH_LINE_CODE);
+
+   mid_line_directions_clusters_ = mid_line_directions_clusters;
+
+   for(auto &line_directions: mid_line_directions_clusters_)
+   {
+       FindValidPoints(line_directions, SEARCH_LINE_CODE);
+
+       if(SEARCH_LINE_CODE == MID_TO_RIGHT)
+       {
+           mid_to_right_search_info_clusters_.push_back(mid_to_right_search_info_);
+           mid_to_right_search_info_.clear();
+       }
+
+       if(SEARCH_LINE_CODE == MID_TO_LEFT)
+       {
+           mid_to_left_search_info_clusters_.push_back(mid_to_left_search_info_);
+           mid_to_left_search_info_.clear();
+       }
+   }
+
+}
+
+
+double Distance2d(const Point& p, const RightValidationTable& rhs)
+{
+    return sqrt(pow(p.x-rhs.origin.x,2) + pow(p.y-rhs.origin.y,2));
+}
+
+
+double Distance2d(const Point& p, const LeftValidationTable& rhs)
+{
+    return sqrt(pow(p.x-rhs.origin.x,2) + pow(p.y-rhs.origin.y,2));
+}
+
+double Distance2d(const Point& p, const MidValidationTable& rhs)
+{
+    return sqrt(pow(p.x-rhs.origin.x,2) + pow(p.y-rhs.origin.y,2));
+}
+
+double Distance2d(const Point p1, const Point p2)
+{
+    return sqrt(pow(p1.x-p2.x,2) + pow(p1.y-p2.y,2));
+}
+
+
+void ValidLinePointSearch::SearchValidPoints()
 {
 
-    if(SEARCH_LINE_CODE == LEFT_TO_MID || SEARCH_LINE_CODE == LEFT_TO_RIGHT)
+    cout << "rs: " << right_points_validation_table_.size() << endl;
+    cout << "ls: " << left_points_validation_table_.size() << endl;
+    cout << "ms: " << mid_points_validation_table_.size() << endl;
+
+
+    const int kMaxPointDistance = 10;
+    const int kMaxDirectionDifference = 15;
+
+    // right to left point validation
+    for(int i=0; i<right_points_validation_table_.size(); i++)
     {
-        return left_line_directions_;
+            Point left  = right_points_validation_table_[i].left;
+
+            if(left == Point(-1,-1)){ continue; }
+            else { right_points_validation_table_[i].found_left = true; }
+
+
+            if(left_points_validation_table_.empty()){ continue; }
+
+            auto left_min_distance_it = std::min_element(begin(left_points_validation_table_),end(left_points_validation_table_),
+                                                     [&](const LeftValidationTable& lhs, const LeftValidationTable& rhs)
+                                                     { return Distance2d(left, lhs) < Distance2d(left, rhs); });
+
+            int left_min_distance_id = std::distance(left_points_validation_table_.begin(), left_min_distance_it);
+            Point left_origin = left_points_validation_table_[left_min_distance_id].origin;
+
+
+            double point_distance = Distance2d(left,left_origin);
+
+            if(point_distance < kMaxPointDistance){ right_points_validation_table_[i].left_near_left_origin = true; }
+            else { continue; }
+
+
+            int left_search_direction  = left_points_validation_table_[left_min_distance_id].search_direction;
+            int right_search_direction = right_points_validation_table_[i].search_direction;
+
+
+
+            int direction_difference = abs(left_search_direction - right_search_direction);
+
+            if(direction_difference < kMaxDirectionDifference || (360 - kMaxDirectionDifference) < direction_difference)
+            {
+                right_points_validation_table_[i].left_origin_equal_direction = true;
+            }
+
+
+            Point left_to_right = left_points_validation_table_[left_min_distance_id].right;
+
+            if(left_to_right == Point(-1,-1)){ continue; }
+
+            Point origin  = right_points_validation_table_[i].origin;
+
+            point_distance = Distance2d(origin,left_to_right);
+            if(point_distance < kMaxPointDistance) right_points_validation_table_[i].origin_near_left_to_right = true;
+
     }
-    else if(SEARCH_LINE_CODE == RIGHT_TO_MID || SEARCH_LINE_CODE == RIGHT_TO_LEFT)
+
+
+    // right to mid point validation
+    for(int i=0; i<right_points_validation_table_.size(); i++)
     {
-        return right_line_directions_;
+
+
+        Point mid  = right_points_validation_table_[i].mid;
+
+        if(mid == Point(-1,-1)){ continue; }
+        else { right_points_validation_table_[i].found_mid = true; }
+
+
+        if(mid_points_validation_table_.empty()){ continue; }
+
+        auto mid_min_distance_it = std::min_element(begin(mid_points_validation_table_),end(mid_points_validation_table_),
+                                                 [&](const MidValidationTable& lhs, const MidValidationTable& rhs)
+                                                 { return Distance2d(mid, lhs) < Distance2d(mid, rhs); });
+
+        int mid_min_distance_id = std::distance(mid_points_validation_table_.begin(), mid_min_distance_it);
+        Point mid_origin = mid_points_validation_table_[mid_min_distance_id].origin;
+
+
+        double point_distance = Distance2d(mid,mid_origin);
+
+        if(point_distance < kMaxPointDistance){ right_points_validation_table_[i].mid_near_mid_origin = true; }
+        else { continue; }
+
+
+        int mid_search_direction  = mid_points_validation_table_[mid_min_distance_id].search_direction;
+        int right_search_direction = right_points_validation_table_[i].search_direction;
+
+
+
+        int direction_difference = abs(mid_search_direction - right_search_direction);
+
+        if(direction_difference < kMaxDirectionDifference || (360 - kMaxDirectionDifference) < direction_difference)
+        {
+            right_points_validation_table_[i].mid_origin_equal_direction = true;
+        }
+
+
+        Point mid_to_right = mid_points_validation_table_[mid_min_distance_id].right;
+
+        if(mid_to_right == Point(-1,-1)){ continue; }
+
+        Point origin  = right_points_validation_table_[i].origin;
+
+        point_distance = Distance2d(origin,mid_to_right);
+        if(point_distance < kMaxPointDistance) right_points_validation_table_[i].origin_near_mid_to_right = true;
+
     }
-    else
+
+
+    // mid to left point validation
+    for(int i=0; i<mid_points_validation_table_.size(); i++)
     {
-       cout << "False Search Line Code!" << endl;
+
+
+        Point left  = mid_points_validation_table_[i].left;
+
+        if(left == Point(-1,-1)){ continue; }
+        else { mid_points_validation_table_[i].found_left = true; }
+
+
+        if(left_points_validation_table_.empty()){ continue; }
+
+        auto left_min_distance_it = std::min_element(begin(left_points_validation_table_),end(left_points_validation_table_),
+                                                 [&](const LeftValidationTable& lhs, const LeftValidationTable& rhs)
+                                                 { return Distance2d(left, lhs) < Distance2d(left, rhs); });
+
+        int left_min_distance_id = std::distance(left_points_validation_table_.begin(), left_min_distance_it);
+        Point left_origin =  left_points_validation_table_[left_min_distance_id].origin;
+
+
+        double point_distance = Distance2d(left,left_origin);
+
+        if(point_distance < kMaxPointDistance){ mid_points_validation_table_[i].left_near_left_origin = true; }
+        else { continue; }
+
+
+        int left_search_direction  = left_points_validation_table_[left_min_distance_id].search_direction;
+        int mid_search_direction = mid_points_validation_table_[i].search_direction;
+
+
+
+        int direction_difference = abs(left_search_direction - mid_search_direction);
+
+        if(direction_difference < kMaxDirectionDifference || (360 - kMaxDirectionDifference) < direction_difference)
+        {
+            mid_points_validation_table_[i].left_origin_equal_direction = true;
+        }
+
+
+        Point left_to_mid = left_points_validation_table_[left_min_distance_id].mid;
+
+        if(left_to_mid == Point(-1,-1)){ continue; }
+
+        Point origin  = mid_points_validation_table_[i].origin;
+
+        point_distance = Distance2d(origin,left_to_mid);
+        if(point_distance < kMaxPointDistance) mid_points_validation_table_[i].origin_near_left_to_mid = true;
+
     }
+
+    // mid to right point validation
+    for(int i=0; i<mid_points_validation_table_.size(); i++)
+    {
+
+
+        Point right  = mid_points_validation_table_[i].right;
+
+        if(right == Point(-1,-1)){ continue; }
+        else { mid_points_validation_table_[i].found_right = true; }
+
+
+        if(right_points_validation_table_.empty()){ continue; }
+
+        auto right_min_distance_it = std::min_element(begin(right_points_validation_table_),end(right_points_validation_table_),
+                                                 [&](const RightValidationTable& lhs, const RightValidationTable& rhs)
+                                                 { return Distance2d(right, lhs) < Distance2d(right, rhs); });
+
+        int right_min_distance_id = std::distance(right_points_validation_table_.begin(), right_min_distance_it);
+        Point right_origin =  right_points_validation_table_[right_min_distance_id].origin;
+
+
+        double point_distance = Distance2d(right,right_origin);
+
+        if(point_distance < kMaxPointDistance){ mid_points_validation_table_[i].right_near_right_origin = true; }
+        else { continue; }
+
+
+        int right_search_direction  = right_points_validation_table_[right_min_distance_id].search_direction;
+        int mid_search_direction = mid_points_validation_table_[i].search_direction;
+
+
+
+        int direction_difference = abs(right_search_direction - mid_search_direction);
+
+        if(direction_difference < kMaxDirectionDifference || (360 - kMaxDirectionDifference) < direction_difference)
+        {
+            mid_points_validation_table_[i].right_origin_equal_direction = true;
+        }
+
+
+        Point right_to_mid = right_points_validation_table_[right_min_distance_id].mid;
+
+        if(right_to_mid == Point(-1,-1)){ continue; }
+
+        Point origin  = mid_points_validation_table_[i].origin;
+
+        point_distance = Distance2d(origin,right_to_mid);
+        if(point_distance < kMaxPointDistance) mid_points_validation_table_[i].origin_near_right_to_mid = true;
+
+    }
+
+
+    // left to right point validation
+    for(int i=0; i<left_points_validation_table_.size(); i++)
+    {
+
+
+        Point right  = left_points_validation_table_[i].right;
+
+        if(right == Point(-1,-1)){ continue; }
+        else { left_points_validation_table_[i].found_right = true; }
+
+
+        if(right_points_validation_table_.empty()){ continue; }
+
+        auto right_min_distance_it = std::min_element(begin(right_points_validation_table_),end(right_points_validation_table_),
+                                                 [&](const RightValidationTable& lhs, const RightValidationTable& rhs)
+                                                 { return Distance2d(right, lhs) < Distance2d(right, rhs); });
+
+        int right_min_distance_id = std::distance(right_points_validation_table_.begin(), right_min_distance_it);
+        Point right_origin =  right_points_validation_table_[right_min_distance_id].origin;
+
+
+        double point_distance = Distance2d(right,right_origin);
+
+        if(point_distance < kMaxPointDistance){ left_points_validation_table_[i].right_near_right_origin = true; }
+        else { continue; }
+
+
+        int right_search_direction  = right_points_validation_table_[right_min_distance_id].search_direction;
+        int left_search_direction = left_points_validation_table_[i].search_direction;
+
+
+
+        int direction_difference = abs(right_search_direction - left_search_direction);
+
+        if(direction_difference < kMaxDirectionDifference || (360 - kMaxDirectionDifference) < direction_difference)
+        {
+            left_points_validation_table_[i].right_origin_equal_direction = true;
+        }
+
+
+        Point right_to_left = right_points_validation_table_[right_min_distance_id].left;
+
+        if(right_to_left == Point(-1,-1)){ continue; }
+
+        Point origin  = left_points_validation_table_[i].origin;
+
+        point_distance = Distance2d(origin,right_to_left);
+        if(point_distance < kMaxPointDistance) left_points_validation_table_[i].origin_near_right_to_left = true;
+
+    }
+
+
+
+    // left to mid point validation
+    for(int i=0; i<left_points_validation_table_.size(); i++)
+    {
+
+
+        Point mid  = left_points_validation_table_[i].mid;
+
+        if(mid == Point(-1,-1)){ continue; }
+        else { left_points_validation_table_[i].found_mid = true; }
+
+
+        if(mid_points_validation_table_.empty()){ continue; }
+
+        auto mid_min_distance_it = std::min_element(begin(mid_points_validation_table_),end(mid_points_validation_table_),
+                                                 [&](const MidValidationTable& lhs, const MidValidationTable& rhs)
+                                                 { return Distance2d(mid, lhs) < Distance2d(mid, rhs); });
+
+        int mid_min_distance_id = std::distance(mid_points_validation_table_.begin(), mid_min_distance_it);
+        Point mid_origin = mid_points_validation_table_[mid_min_distance_id].origin;
+
+
+        double point_distance = Distance2d(mid,mid_origin);
+
+        if(point_distance < kMaxPointDistance){ left_points_validation_table_[i].mid_near_mid_origin = true; }
+        else { continue; }
+
+
+        int mid_search_direction  = mid_points_validation_table_[mid_min_distance_id].search_direction;
+        int left_search_direction = left_points_validation_table_[i].search_direction;
+
+
+
+        int direction_difference = abs(mid_search_direction - left_search_direction);
+
+        if(direction_difference < kMaxDirectionDifference || (360 - kMaxDirectionDifference) < direction_difference)
+        {
+            left_points_validation_table_[i].mid_origin_equal_direction = true;
+        }
+
+
+        Point mid_to_left = mid_points_validation_table_[mid_min_distance_id].left;
+
+        if(mid_to_left == Point(-1,-1)){ continue; }
+
+        Point origin  = left_points_validation_table_[i].origin;
+
+        point_distance = Distance2d(origin,mid_to_left);
+        if(point_distance < kMaxPointDistance) left_points_validation_table_[i].origin_near_mid_to_left = true;
+
+    }
+
+cout << "" ;
+
+}
+
+
+void ValidLinePointSearch::ComputePointScores()
+{
+
+    for(int i=0; i<right_points_validation_table_.size(); i++)
+    {
+       int score = 0;
+       if(right_points_validation_table_[i].found_left) score++;
+       if(right_points_validation_table_[i].found_mid) score++;
+       if(right_points_validation_table_[i].left_near_left_origin) score++;
+       if(right_points_validation_table_[i].mid_near_mid_origin) score++;
+       if(right_points_validation_table_[i].left_origin_equal_direction) score++;
+       if(right_points_validation_table_[i].mid_origin_equal_direction) score++;
+       if(right_points_validation_table_[i].origin_near_left_to_right) score++;
+       if(right_points_validation_table_[i].origin_near_mid_to_right) score++;
+
+       right_points_validation_table_[i].score = score;
+    }
+
+
+
+    for(int i=0; i<mid_points_validation_table_.size(); i++)
+    {
+       int score = 0;
+       if(mid_points_validation_table_[i].found_left) score++;
+       if(mid_points_validation_table_[i].found_right) score++;
+       if(mid_points_validation_table_[i].left_near_left_origin) score++;
+       if(mid_points_validation_table_[i].right_near_right_origin) score++;
+       if(mid_points_validation_table_[i].left_origin_equal_direction) score++;
+       if(mid_points_validation_table_[i].right_origin_equal_direction) score++;
+       if(mid_points_validation_table_[i].origin_near_left_to_mid) score++;
+       if(mid_points_validation_table_[i].origin_near_right_to_mid) score++;
+
+       mid_points_validation_table_[i].score = score;
+    }
+
+    for(int i=0; i<left_points_validation_table_.size(); i++)
+    {
+       int score = 0;
+       if(left_points_validation_table_[i].found_mid) score++;
+       if(left_points_validation_table_[i].found_right) score++;
+       if(left_points_validation_table_[i].mid_near_mid_origin) score++;
+       if(left_points_validation_table_[i].right_near_right_origin) score++;
+       if(left_points_validation_table_[i].mid_origin_equal_direction) score++;
+       if(left_points_validation_table_[i].right_origin_equal_direction) score++;
+       if(left_points_validation_table_[i].origin_near_mid_to_left) score++;
+       if(left_points_validation_table_[i].origin_near_right_to_left) score++;
+
+       left_points_validation_table_[i].score = score;
+    }
+
+}
+
+void ValidLinePointSearch::DrawValidScorePoints(Mat &rgb)
+{
+
+    const int kMinScore = 4;
+
+    for(int i=0; i<right_points_validation_table_.size(); i++)
+    {
+        if(right_points_validation_table_[i].score > kMinScore)
+        {
+            circle(rgb, right_points_validation_table_[i].origin, 4, Scalar(0, 0, 255),CV_FILLED );
+            //circle(rgb, right_points_validation_table_[i].left, 4, Scalar(0, 0, 255),CV_FILLED );
+            //circle(rgb, right_points_validation_table_[i].mid, 4, Scalar(0, 0, 255),CV_FILLED );
+        }
+    }
+
+    for(int i=0; i<mid_points_validation_table_.size(); i++)
+    {
+        if(mid_points_validation_table_[i].score > kMinScore)
+        {
+            circle(rgb, mid_points_validation_table_[i].origin, 4, Scalar(0, 255, 0),CV_FILLED );
+            //circle(rgb, mid_points_validation_table_[i].left, 4, Scalar(0, 255, 0),CV_FILLED );
+            //circle(rgb, mid_points_validation_table_[i].right, 4, Scalar(0, 255, 0),CV_FILLED );
+        }
+    }
+
+
+    for(int i=0; i<left_points_validation_table_.size(); i++)
+    {
+        if(left_points_validation_table_[i].score > kMinScore)
+        {
+            circle(rgb, left_points_validation_table_[i].origin, 4, Scalar(255, 0, 0),CV_FILLED );
+            //circle(rgb, left_points_validation_table_[i].mid, 4, Scalar(255, 0, 0),CV_FILLED );
+            //circle(rgb, left_points_validation_table_[i].right, 4, Scalar(255, 0, 0),CV_FILLED );
+        }
+    }
+
+}
+
+
+void ValidLinePointSearch::CreateValidationTables()
+{
+
+
+
+    for(int i=0; i<right_to_left_search_info_.size(); i++)
+    {
+
+        Point origin = right_to_left_search_info_[i].origin;
+
+        int search_direction = right_to_left_search_info_[i].search_direction;
+
+        int next_direction_distance = right_to_left_search_info_[i].next_direction_distance;
+
+        Point left = right_to_left_search_info_[i].adjacent_line_point;
+        Point mid  = right_to_mid_search_info_[i].adjacent_line_point;
+
+
+        right_points_validation_table_.push_back(RightValidationTable{origin,
+                                                                      search_direction,
+                                                                      next_direction_distance,
+                                                                      left,
+                                                                      mid,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      0
+                                                                      });
+
+    }
+
+
+    for(int i=0; i<mid_to_left_search_info_clusters_.size(); i++)
+    {
+        for(int j=0; j<mid_to_left_search_info_clusters_[i].size(); j++)
+        {
+            Point origin = mid_to_left_search_info_clusters_[i][j].origin;
+
+            int search_direction = mid_to_left_search_info_clusters_[i][j].search_direction;
+
+            int next_direction_distance = mid_to_left_search_info_clusters_[i][j].next_direction_distance;
+
+
+            Point left  = mid_to_left_search_info_clusters_[i][j].adjacent_line_point;
+            Point right = mid_to_right_search_info_clusters_[i][j].adjacent_line_point;
+
+            mid_points_validation_table_.push_back(MidValidationTable{origin,
+                                                                      search_direction,
+                                                                      next_direction_distance,
+                                                                      left,
+                                                                      right,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      0,
+                                                                      i
+                                                                      });
+        }
+    }
+
+    for(int i=0; i<left_to_mid_search_info_.size(); i++)
+    {
+
+        Point origin = left_to_mid_search_info_[i].origin;
+
+        int search_direction = left_to_mid_search_info_[i].search_direction;
+
+        int next_direction_distance = left_to_mid_search_info_[i].next_direction_distance;
+
+        Point mid = left_to_mid_search_info_[i].adjacent_line_point;
+        Point right  = left_to_right_search_info_[i].adjacent_line_point;
+
+
+
+        left_points_validation_table_.push_back(LeftValidationTable{origin,
+                                                                    search_direction,
+                                                                    next_direction_distance,
+                                                                    mid,
+                                                                      right,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      false,
+                                                                      0
+                                                                      });
+
+    }
+}
+
+
+void ValidLinePointSearch::ClearValidationTables()
+{
+    right_points_validation_table_.clear();
+    mid_points_validation_table_.clear();
+    left_points_validation_table_.clear();
+
+    left_line_directions_.clear();
+    right_line_directions_.clear();
+    mid_line_directions_clusters_.clear();
+
+    left_to_mid_search_info_.clear();
+    left_to_right_search_info_.clear();
+
+    right_to_mid_search_info_.clear();
+    right_to_left_search_info_.clear();
+
+    mid_to_right_search_info_.clear();
+    mid_to_left_search_info_.clear();
+
+    mid_to_right_search_info_clusters_.clear();
+    mid_to_left_search_info_clusters_.clear();
+
+
+}
+void ValidLinePointSearch::FindValidPointsFromLineFollow(vector<PointInDirection> line_directions, int SEARCH_LINE_CODE)
+{
+    //ClearMemory(SEARCH_LINE_CODE);
+
+    SetOuterLineDirections(line_directions,SEARCH_LINE_CODE);
+
+    FindValidPoints(line_directions, SEARCH_LINE_CODE);
+
 
 
 }
 
 
-
-void ValidLinePointSearch::FindValidPointsFromMidLineSearch()
+void ValidLinePointSearch::FindValidPoints(vector<PointInDirection> line_directions, int SEARCH_LINE_CODE)
 {
-   ClearMemory(SEARCH_LINE_CODE);
-
-   vector<vector<PointInDirection>>
-
-}
-
-
-
-void ValidLinePointSearch::FindValidPointsFromLineFollow(int SEARCH_LINE_CODE)
-{
-    ClearMemory(SEARCH_LINE_CODE);
-
-
-    vector<PointInDirection> line_directions = GetLineDirections(SEARCH_LINE_CODE);
-
     for(int i=0; i<line_directions.size(); i++)
     {
         int   current_point_x       = line_directions[i].x;
@@ -297,6 +796,7 @@ void ValidLinePointSearch::FindValidPointsFromLineFollow(int SEARCH_LINE_CODE)
         {
              int point_in_search_direction_x = current_point_x + current_length * cos(angle_to_next_point*PI/180);
              int point_in_search_direction_y = current_point_y - current_length * sin(angle_to_next_point*PI/180);
+             int current_to_next_point_distance = length_to_next_point - current_length;
 
             vector<int> orthogonal_line_activations;
             vector<Point> orthogonal_line_points;
@@ -312,89 +812,133 @@ void ValidLinePointSearch::FindValidPointsFromLineFollow(int SEARCH_LINE_CODE)
 
             bool is_matched = CheckLineMatch(orthogonal_line_activations,line_match,SEARCH_LINE_CODE);
 
-            if(is_matched)
-            {
-                SafeLinePoint(line_match, orthogonal_line_points,SEARCH_LINE_CODE);
-            }
+            SafeLinePoint(line_match, orthogonal_line_points,is_matched,point_in_search_direction_x,
+                          point_in_search_direction_y,current_to_next_point_distance,angle_to_next_point,SEARCH_LINE_CODE);
+
         }
     }
 }
 
 
-void ValidLinePointSearch::SafeLinePoint(SegmentStartIDAndWidth line_match, vector<Point> orthogonal_line_points, int SEARCH_LINE_CODE)
+void ValidLinePointSearch::SafeLinePoint(SegmentStartIDAndWidth line_match, vector<Point> orthogonal_line_points, bool is_matched,
+                                         int point_in_search_direction_x,int point_in_search_direction_y, int current_to_next_point_distance,
+                                         float angle_to_next_point,int SEARCH_LINE_CODE)
 {
-    int width = line_match.width;
-    int start_id = line_match.start_id;
+    Point origin(point_in_search_direction_x,point_in_search_direction_y);
+    float search_direction = angle_to_next_point;
+    int distance_to_next_direction = current_to_next_point_distance;
 
-    int end_id = start_id + width;
+    Point matched_point;
 
-    int x_mean = 0;
-    int y_mean = 0;
-
-    for(int i=start_id; i<end_id; i++)
+    if(is_matched)
     {
-        x_mean += orthogonal_line_points[i].x;
-        y_mean += orthogonal_line_points[i].y;
+        int width = line_match.width;
+        int start_id = line_match.start_id;
+
+        int end_id = start_id + width;
+
+
+        int x_mean = 0;
+        int y_mean = 0;
+
+
+        for(int i=start_id; i<end_id; i++)
+        {
+            x_mean += orthogonal_line_points[i].x;
+            y_mean += orthogonal_line_points[i].y;
+        }
+
+        x_mean /= width;
+        y_mean /= width;
+
+        matched_point = Point(x_mean,y_mean);
+
+    }
+    else {
+        matched_point = Point(-1,-1);
     }
 
-    x_mean /= width;
-    y_mean /= width;
+    if(SEARCH_LINE_CODE == LEFT_TO_MID) left_to_mid_search_info_.push_back(ValidLinePointSearchInfo{origin, search_direction, distance_to_next_direction, matched_point});
 
+    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT) left_to_right_search_info_.push_back(ValidLinePointSearchInfo{origin, search_direction, distance_to_next_direction, matched_point});
 
-    if(SEARCH_LINE_CODE == LEFT_TO_MID)
-    {
-        left_line_follow_mid_line_points_.push_back(Point(x_mean,y_mean));
-    }
+    if(SEARCH_LINE_CODE == RIGHT_TO_MID) right_to_mid_search_info_.push_back(ValidLinePointSearchInfo{origin, search_direction, distance_to_next_direction, matched_point});
 
-    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT)
-    {
-        left_line_follow_right_line_points_.push_back(Point(x_mean,y_mean));
-    }
+    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT) right_to_left_search_info_.push_back(ValidLinePointSearchInfo{origin, search_direction, distance_to_next_direction, matched_point});
 
+    if(SEARCH_LINE_CODE == MID_TO_RIGHT) mid_to_right_search_info_.push_back(ValidLinePointSearchInfo{origin, search_direction, distance_to_next_direction, matched_point});
 
-    if(SEARCH_LINE_CODE == RIGHT_TO_MID)
-    {
-        right_line_follow_mid_line_points_.push_back(Point(x_mean,y_mean));
-    }
-
-    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT)
-    {
-        right_line_follow_left_line_points_.push_back(Point(x_mean,y_mean));
-    }
-
-
-
+    if(SEARCH_LINE_CODE == MID_TO_LEFT) mid_to_left_search_info_.push_back(ValidLinePointSearchInfo{origin, search_direction, distance_to_next_direction, matched_point});
 }
 
 void ValidLinePointSearch::DrawLinePoints(Mat &rgb, int SEARCH_LINE_CODE)
 { 
     if(SEARCH_LINE_CODE == LEFT_TO_MID)
     {
-        for(auto it: left_line_follow_mid_line_points_)
-            circle(rgb, it, 4, Scalar(0, 0, 255),CV_FILLED );
+        for(auto it: left_to_mid_search_info_)
+            circle(rgb, it.adjacent_line_point, 4, Scalar(0, 0, 255),CV_FILLED );
     }
 
     if(SEARCH_LINE_CODE == LEFT_TO_RIGHT)
     {
-        for(auto it: left_line_follow_right_line_points_)
-            circle(rgb, it, 4, Scalar(0, 0, 255),CV_FILLED );
+        for(auto it: left_to_right_search_info_)
+            circle(rgb, it.adjacent_line_point, 4, Scalar(0, 0, 255),CV_FILLED );
     }
 
 
     if(SEARCH_LINE_CODE == RIGHT_TO_MID)
     {
-        for(auto it: right_line_follow_mid_line_points_)
-            circle(rgb, it, 2, Scalar(0, 255, 0),CV_FILLED );
+        for(auto it: right_to_mid_search_info_)
+            circle(rgb, it.adjacent_line_point, 2, Scalar(0, 255, 0),CV_FILLED );
     }
 
     if(SEARCH_LINE_CODE == RIGHT_TO_LEFT)
     {
-        for(auto it: right_line_follow_left_line_points_)
-            circle(rgb, it, 4, Scalar(0, 255, 0),CV_FILLED );
+        for(auto it: right_to_left_search_info_)
+            circle(rgb, it.adjacent_line_point, 4, Scalar(0, 255, 0),CV_FILLED );
     }
 
-}
+    if(SEARCH_LINE_CODE == MID_TO_LEFT)
+    {
+        /*std::vector<Vec3b> colors(mid_to_left_search_info_clusters_.size());
 
+        for (int label = 0; label < mid_to_left_search_info_clusters_.size(); ++label)
+        {
+            colors[label] = Vec3b((rand() & 255), (rand() & 255), (rand() & 255));
+        }
+        */
+        //int color_id = 0;
+        for(auto i: mid_to_left_search_info_clusters_)
+        {
+            for(auto ii: i)
+            {
+                circle(rgb, ii.adjacent_line_point, 2,  Scalar(255, 0, 0)/*colors[color_id]*/,CV_FILLED );
+            }
+            //color_id++;
+        }
+    }
+
+    if(SEARCH_LINE_CODE == MID_TO_RIGHT)
+    {
+
+       /* std::vector<Vec3b> colors(mid_to_right_search_info_clusters_.size());
+
+        for (int label = 0; label < mid_to_right_search_info_clusters_.size(); ++label)
+        {
+            colors[label] = Vec3b((rand() & 255), (rand() & 255), (rand() & 255));
+        }
+        */
+        //int color_id = 0;
+        for(auto i: mid_to_right_search_info_clusters_)
+        {
+            for(auto ii: i)
+            {
+                circle(rgb, ii.adjacent_line_point, 2, Scalar(255, 0, 0)/*colors[color_id]*/,CV_FILLED );
+            }
+            //color_id++;
+        }
+    }
+}
 
 void ValidLinePointSearch::SetImage(Mat image)
 {
@@ -404,25 +948,24 @@ void ValidLinePointSearch::SetImage(Mat image)
 
 void ValidLinePointSearch::ClearMemory(int SEARCH_LINE_CODE)
 {
-    if(SEARCH_LINE_CODE == LEFT_TO_MID)
+    if(SEARCH_LINE_CODE == LEFT_TO_MID) left_to_mid_search_info_.clear();
+
+    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT) left_to_right_search_info_.clear();
+
+    if(SEARCH_LINE_CODE == RIGHT_TO_MID) right_to_mid_search_info_.clear();
+
+    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT) right_to_left_search_info_.clear();
+
+    if(SEARCH_LINE_CODE == MID_TO_RIGHT)
     {
-        left_line_follow_mid_line_points_.clear();
+        mid_to_right_search_info_clusters_.clear();
+        mid_to_right_search_info_.clear();
     }
 
-    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT)
+    if(SEARCH_LINE_CODE == MID_TO_LEFT)
     {
-        left_line_follow_right_line_points_.clear();
-    }
-
-
-    if(SEARCH_LINE_CODE == RIGHT_TO_MID)
-    {
-        right_line_follow_mid_line_points_.clear();
-    }
-
-    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT)
-    {
-        right_line_follow_left_line_points_.clear();
+        mid_to_left_search_info_clusters_.clear();
+        mid_to_left_search_info_.clear();
     }
 
 }
