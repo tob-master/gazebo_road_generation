@@ -12,6 +12,10 @@ using namespace cv;
 enum {LEFT_LINE, RIGHT_LINE, MID_LINE};
 enum {LEFT_TO_MID, RIGHT_TO_MID, LEFT_TO_RIGHT, RIGHT_TO_LEFT, MID_TO_LEFT, MID_TO_RIGHT};
 
+
+
+
+
 struct PointInDirection
 {
    int x;
@@ -377,6 +381,30 @@ struct SegmentStartIDAndWidth
 
 namespace valid_line_point_search
 {
+
+    struct ValidPoints
+    {
+        int line_code;
+        Point origin;
+
+        bool left;
+        bool mid;
+        bool right;
+
+        int next_directions_distance;
+        int search_direction;
+
+    };
+
+    struct MinMaxLineElements
+    {
+        Point x_min;
+        Point x_max;
+        Point y_min;
+        Point y_max;
+    };
+
+
     struct SearchLineDistanceThresholds
     {
         int min;

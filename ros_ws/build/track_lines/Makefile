@@ -344,6 +344,33 @@ include/line_points_reducer.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_points_reducer.cpp.s
 .PHONY : include/line_points_reducer.cpp.s
 
+include/line_validation_table.o: include/line_validation_table.cpp.o
+
+.PHONY : include/line_validation_table.o
+
+# target to build an object file
+include/line_validation_table.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_validation_table.cpp.o
+.PHONY : include/line_validation_table.cpp.o
+
+include/line_validation_table.i: include/line_validation_table.cpp.i
+
+.PHONY : include/line_validation_table.i
+
+# target to preprocess a source file
+include/line_validation_table.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_validation_table.cpp.i
+.PHONY : include/line_validation_table.cpp.i
+
+include/line_validation_table.s: include/line_validation_table.cpp.s
+
+.PHONY : include/line_validation_table.s
+
+# target to generate assembly for a file
+include/line_validation_table.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_validation_table.cpp.s
+.PHONY : include/line_validation_table.cpp.s
+
 include/mid_line_search.o: include/mid_line_search.cpp.o
 
 .PHONY : include/mid_line_search.o
@@ -511,6 +538,9 @@ help:
 	@echo "... include/line_points_reducer.o"
 	@echo "... include/line_points_reducer.i"
 	@echo "... include/line_points_reducer.s"
+	@echo "... include/line_validation_table.o"
+	@echo "... include/line_validation_table.i"
+	@echo "... include/line_validation_table.s"
 	@echo "... include/mid_line_search.o"
 	@echo "... include/mid_line_search.i"
 	@echo "... include/mid_line_search.s"

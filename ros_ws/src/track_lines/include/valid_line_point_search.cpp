@@ -7,6 +7,7 @@ ValidLinePointSearch::ValidLinePointSearch()
 
 
 
+
 float ValidLinePointSearch::GetOrthogonalAngle(float angle, int SEARCH_LINE_CODE)
 {
     int  angle_ = 0;
@@ -218,24 +219,170 @@ double Distance2d(const Point& p, const MidValidationTable& rhs)
     return sqrt(pow(p.x-rhs.origin.x,2) + pow(p.y-rhs.origin.y,2));
 }
 
+double Distance2d(const Point& p, LineValidationTable* & rhs)
+{
+    return sqrt(pow(p.x-rhs->GetOriginPoint().x,2) + pow(p.y-rhs->GetOriginPoint().y,2));
+}
+
 double Distance2d(const Point p1, const Point p2)
 {
     return sqrt(pow(p1.x-p2.x,2) + pow(p1.y-p2.y,2));
 }
 
 
+
+
+bool ValidLinePointSearch::AdjacentValidationTableIsEmpty(int SEARCH_LINE_CODE)
+{
+    if(SEARCH_LINE_CODE == LEFT_TO_MID) return mid_line_validation_table_.empty();
+
+    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT) return right_line_validation_table_.empty();
+
+    if(SEARCH_LINE_CODE == MID_TO_LEFT) return left_line_validation_table_.empty();
+
+    if(SEARCH_LINE_CODE == MID_TO_RIGHT) return right_line_validation_table_.empty();
+
+    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT) return left_line_validation_table_.empty();
+
+    if(SEARCH_LINE_CODE == RIGHT_TO_MID) return mid_line_validation_table_.empty();
+}
+
+void ValidLinePointSearch::FindMinDistanceFromPredictionToAdjacentPoint(int SEARCH_LINE_CODE,
+                                                                        Point adjacent_point_prediction,
+                                                                        Point &min_distance_adjacent_point,
+                                                                        int &min_distance_adjacent_point_id,
+                                                                        int &min_distance)
+{
+     vector<LineValidationTable*> table;
+
+    if(SEARCH_LINE_CODE == LEFT_TO_MID) table = mid_line_validation_table_;
+
+    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT) table = right_line_validation_table_;
+
+    if(SEARCH_LINE_CODE == MID_TO_LEFT) table = left_line_validation_table_;
+
+    if(SEARCH_LINE_CODE == MID_TO_RIGHT) table = right_line_validation_table_;
+
+    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT) table = left_line_validation_table_;
+
+    if(SEARCH_LINE_CODE == RIGHT_TO_MID) table = mid_line_validation_table_;
+
+
+    auto min_distance_it = std::min_element(begin(table),end(table),
+                                             [&](LineValidationTable* & lhs, LineValidationTable* & rhs)
+                                             { return Distance2d(adjacent_point_prediction, lhs) < Distance2d(adjacent_point_prediction, rhs); });
+
+    int min_distance_id = std::distance(table.begin(), min_distance_it);
+    Point origin = table[min_distance_id]->GetOriginPoint();
+
+    min_distance = Distance2d(origin,adjacent_point_prediction);
+    min_distance_adjacent_point = origin;
+    min_distance_adjacent_point_id = min_distance_id;
+
+}
+
+
+int ValidLinePointSearch::GetAdjacentPointDirection(int SEARCH_LINE_CODE, int min_distance_adjacent_point_id)
+{
+    if(SEARCH_LINE_CODE == LEFT_TO_MID) return mid_line_validation_table_[min_distance_adjacent_point_id]->GetDirection();
+
+    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT) return right_line_validation_table_[min_distance_adjacent_point_id]->GetDirection();
+
+    if(SEARCH_LINE_CODE == MID_TO_LEFT) return left_line_validation_table_[min_distance_adjacent_point_id]->GetDirection();
+
+    if(SEARCH_LINE_CODE == MID_TO_RIGHT) return right_line_validation_table_[min_distance_adjacent_point_id]->GetDirection();
+
+    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT) return left_line_validation_table_[min_distance_adjacent_point_id]->GetDirection();
+
+    if(SEARCH_LINE_CODE == RIGHT_TO_MID) return mid_line_validation_table_[min_distance_adjacent_point_id]->GetDirection();
+}
+
+
+
+
+
+Point ValidLinePointSearch::GetAdjacentPointOriginPrediction(int SEARCH_LINE_CODE, int min_distance_adjacent_point_id)
+{
+    if(SEARCH_LINE_CODE == LEFT_TO_MID) return mid_line_validation_table_[min_distance_adjacent_point_id]->GetLeftLinePointPrediction();
+
+    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT) return right_line_validation_table_[min_distance_adjacent_point_id]->GetLeftLinePointPrediction();
+
+    if(SEARCH_LINE_CODE == MID_TO_LEFT) return left_line_validation_table_[min_distance_adjacent_point_id]->GetMidLinePointPrediction();
+
+    if(SEARCH_LINE_CODE == MID_TO_RIGHT) return right_line_validation_table_[min_distance_adjacent_point_id]->GetMidLinePointPrediction();
+
+    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT) return left_line_validation_table_[min_distance_adjacent_point_id]->GetRightLinePointPrediction();
+
+    if(SEARCH_LINE_CODE == RIGHT_TO_MID) return mid_line_validation_table_[min_distance_adjacent_point_id]->GetRightLinePointPrediction();
+}
+
+
+void ValidLinePointSearch::ExamineValidationTable(int SEARCH_LINE_CODE, vector<LineValidationTable*>&table)
+{
+    for(int i=0; i<table.size(); i++)
+    {
+        Point adjacent_point_prediction = table[i]->GetAdjacentPointPrediction(SEARCH_LINE_CODE);
+
+        if(adjacent_point_prediction == EMPTY_POINT_){ continue;}
+        else{table[i]->SetAdjacentPointPredictionFound(SEARCH_LINE_CODE,true);}
+
+        if(AdjacentValidationTableIsEmpty(SEARCH_LINE_CODE)){continue;}
+
+        Point min_distance_adjacent_point;
+        int min_distance_adjacent_point_id;
+        int min_distance;
+
+        FindMinDistanceFromPredictionToAdjacentPoint(SEARCH_LINE_CODE,adjacent_point_prediction,min_distance_adjacent_point,min_distance_adjacent_point_id,min_distance);
+
+        if(min_distance < kMaxPointDistance_)
+        {
+            table[i]->SetAdjacentPointPrediction(SEARCH_LINE_CODE,true);
+            table[i]->SetAdjacentPointId(SEARCH_LINE_CODE,min_distance_adjacent_point_id);
+        }
+        else {continue;}
+
+        int adjacent_point_direction = GetAdjacentPointDirection(SEARCH_LINE_CODE,min_distance_adjacent_point_id);
+        int origin_point_direction   = table[i]->GetDirection();
+
+        int direction_difference = abs(adjacent_point_direction - origin_point_direction);
+
+        if(direction_difference < kMaxDirectionDifference_ || (360 - kMaxDirectionDifference_) < direction_difference)
+        {
+            table[i]->SetAdjacentPointDirectionInRange(SEARCH_LINE_CODE,true);
+        }
+
+        Point origin_prediction = GetAdjacentPointOriginPrediction(SEARCH_LINE_CODE,min_distance_adjacent_point_id);
+
+        if(origin_prediction == EMPTY_POINT_){ continue; }
+
+        Point origin  = table[i]->GetOriginPoint();
+        double point_distance = Distance2d(origin,origin_prediction);
+
+        if(point_distance < kMaxPointDistance_)
+        {
+            table[i]->SetAdjacentPointOriginPrediction(SEARCH_LINE_CODE,true);
+        }
+
+
+    }
+}
+
+
 void ValidLinePointSearch::SearchValidPoints()
 {
-
+/*
     cout << "rs: " << right_points_validation_table_.size() << endl;
     cout << "ls: " << left_points_validation_table_.size() << endl;
-    cout << "ms: " << mid_points_validation_table_.size() << endl;
+   cout << "ms: " << mid_points_validation_table_.size() << endl;
+*/
 
-
-    const int kMaxPointDistance = 10;
-    const int kMaxDirectionDifference = 15;
 
     // right to left point validation
+
+
+    ExamineValidationTable(LEFT_TO_MID, left_line_validation_table_);
+
+/*
     for(int i=0; i<right_points_validation_table_.size(); i++)
     {
             Point left  = right_points_validation_table_[i].left;
@@ -544,9 +691,291 @@ void ValidLinePointSearch::SearchValidPoints()
 
     }
 
-cout << "" ;
+*/
 
 }
+
+MinMaxLineElements ValidLinePointSearch::GetLinesMinMaxElements(vector<Point> line)
+{
+
+
+    auto x_it = minmax_element(begin(line),end(line),
+                                        [&](const Point& p1, const Point& p2)
+                                        { return p1.x < p2.x; });
+
+    auto y_it = minmax_element(begin(line),end(line),
+                                        [&](const Point& p1, const Point& p2)
+                                        { return p1.y < p2.y; });
+
+
+    int x_min_id = std::distance(line.begin(), x_it.first);
+    int x_max_id = std::distance(line.begin(), x_it.second);
+    int y_min_id = std::distance(line.begin(), y_it.first);
+    int y_max_id = std::distance(line.begin(), y_it.second);
+
+
+
+    return MinMaxLineElements{line[x_min_id],
+                                    line[x_max_id],
+                                    line[y_min_id],
+                                    line[y_max_id]};
+
+}
+
+
+
+
+
+
+void ValidLinePointSearch::SearchMinMax()
+{
+/*
+    vector<pair<int,int>> line_point_connections;
+    cout << "r size: " << r.size() << endl;
+
+    if(r.size() > 2)
+    {
+         FindLinePointConnections(r,line_point_connections);
+
+
+         int num_vertices = r.size();
+
+         DepthFirstSearch ConnectedMidLineGroupFinder(num_vertices);
+
+         for(auto it:line_point_connections){ ConnectedMidLineGroupFinder.addEdge(it.first, it.second); }
+
+         vector<vector<int>> connected_mid_line_groups = ConnectedMidLineGroupFinder.connectedComponents();
+
+
+         cout << "num_groups: " << connected_mid_line_groups.size() << endl;
+    }
+*/
+
+    cout << "r: " << r.size() << endl;
+    cout << "l: " << l.size() << endl;
+    cout << "m: " << m.size() << endl;
+
+
+
+    MinMaxLineElements rminmax = GetLinesMinMaxElements(r);
+    MinMaxLineElements mminmax = GetLinesMinMaxElements(m);
+    MinMaxLineElements lminmax = GetLinesMinMaxElements(l);
+
+
+
+    //cout << "r_x_min: " << rminmax.x_min << endl;
+    //cout << "r_x_max: " << rminmax.x_max << endl;
+    //cout << "r_y_min: " << rminmax.y_min << endl;
+    //cout << "r_y_max: " << rminmax.y_max << endl;
+}
+
+
+
+void ValidLinePointSearch::MergePoints()
+{
+
+
+
+    for(int i=0; i<right_points_validation_table_.size(); i++)
+    {
+
+        Point origin_point = right_points_validation_table_[i].origin;
+        Point left_point   = right_points_validation_table_[i].left;
+        Point mid_point    = right_points_validation_table_[i].mid;
+
+        bool left      = right_points_validation_table_[i].found_left;
+        bool mid       = right_points_validation_table_[i].found_mid;
+        bool left_near = right_points_validation_table_[i].left_near_left_origin;
+        bool mid_near  = right_points_validation_table_[i].mid_near_mid_origin;
+
+        int  next_direction_distance = right_points_validation_table_[i].next_direction_distance;
+        int  search_direction = right_points_validation_table_[i].search_direction;
+
+
+       if(left && mid && left_near && mid_near)
+       {
+           r_info.push_back(ValidPoints{RIGHT_LINE, origin_point, true, true, false, next_direction_distance, search_direction});
+
+            //l.push_back(left_point);
+           // m.push_back(mid_point);
+          r.push_back(origin_point);
+       }
+       /*else if(left && mid && !left_near && mid_near)
+       {
+           l.push_back(left_point);
+           //m.push_back(mid_point);
+           r.push_back(origin_point);
+       }*/
+       else if(left && left_near)
+       {
+           r_info.push_back(ValidPoints{RIGHT_LINE, origin_point, true, false, false, next_direction_distance, search_direction});
+
+           //l.push_back(left_point);
+           r.push_back(origin_point);
+
+       }
+       else if(mid && mid_near)
+       {
+           r_info.push_back(ValidPoints{RIGHT_LINE, origin_point, false, true, false, next_direction_distance, search_direction});
+
+           //m.push_back(mid_point);
+           r.push_back(origin_point);
+       }
+
+    }
+
+    for(int i=0; i<left_points_validation_table_.size(); i++)
+    {
+
+        Point origin_point = left_points_validation_table_[i].origin;
+        Point right_point   = left_points_validation_table_[i].right;
+        Point mid_point    = left_points_validation_table_[i].mid;
+
+        bool right      = left_points_validation_table_[i].found_right;
+        bool mid       = left_points_validation_table_[i].found_mid;
+        bool right_near = left_points_validation_table_[i].right_near_right_origin;
+        bool mid_near  = left_points_validation_table_[i].mid_near_mid_origin;
+
+        int  next_direction_distance = left_points_validation_table_[i].next_direction_distance;
+        int  search_direction = left_points_validation_table_[i].search_direction;
+
+
+       if(mid && right && right_near && mid_near)
+       {
+            l_info.push_back(ValidPoints{LEFT_LINE, origin_point, false, true, true, next_direction_distance, search_direction});
+            l.push_back(origin_point);
+            //m.push_back(mid_point);
+            //r.push_back(right_point);
+       }
+       else if(right && right_near)
+       {
+           l_info.push_back(ValidPoints{LEFT_LINE, origin_point, false, false, true, next_direction_distance, search_direction});
+           l.push_back(origin_point);
+           //r.push_back(right_point);
+       }
+       else if(mid && mid_near)
+       {
+           l_info.push_back(ValidPoints{LEFT_LINE, origin_point, false, true, false, next_direction_distance, search_direction});
+           l.push_back(origin_point);
+           //m.push_back(mid_point);
+       }
+
+    }
+
+    for(int i=0; i<mid_points_validation_table_.size(); i++)
+    {
+
+        Point origin_point = mid_points_validation_table_[i].origin;
+        Point right_point   = mid_points_validation_table_[i].right;
+        Point left_point    = mid_points_validation_table_[i].left;
+
+        bool right      = mid_points_validation_table_[i].found_right;
+        bool left       = mid_points_validation_table_[i].found_left;
+        bool right_near = mid_points_validation_table_[i].right_near_right_origin;
+        bool left_near  = mid_points_validation_table_[i].left_near_left_origin;
+
+        int  next_direction_distance = mid_points_validation_table_[i].next_direction_distance;
+        int  search_direction = mid_points_validation_table_[i].search_direction;
+
+
+       if(left && right && right_near && left_near)
+       {
+           m_info.push_back(ValidPoints{MID_LINE, origin_point, true, false, true, next_direction_distance, search_direction});
+            //l.push_back(left_point);
+            m.push_back(origin_point);
+            //r.push_back(right_point);
+       }
+       else if(right && right_near)
+       {
+           m_info.push_back(ValidPoints{MID_LINE, origin_point, false, false, true, next_direction_distance, search_direction});
+           m.push_back(origin_point);
+           //r.push_back(right_point);
+
+       }
+       else if(left && left_near)
+       {
+            m_info.push_back(ValidPoints{MID_LINE, origin_point, true, false, false, next_direction_distance, search_direction});
+           //l.push_back(left_point);
+           m.push_back(origin_point);
+
+       }
+
+    }
+
+
+
+}
+
+
+void ValidLinePointSearch::JJ()
+{
+
+    int tmp_direction = m_info[0].search_direction;
+    for(int i=0; i<m_info.size(); i++)
+    {
+
+        int direction =  m_info[i].search_direction;
+
+        if(abs(tmp_direction - direction) > 40)
+        {
+            cout << tmp_direction << " " << direction << endl;
+            cout <<"mid: " << m_info[i].origin<< "\t" << m_info[i].next_directions_distance<< "\t" << m_info[i].search_direction << "\t" << m_info[i].left << "\t" << m_info[i].right << endl;
+
+        }
+
+        tmp_direction = direction;
+
+    }
+
+
+    tmp_direction = l_info[0].search_direction;
+
+    for(int i=0; i<l_info.size(); i++)
+    {
+
+        int direction =  l_info[i].search_direction;
+
+        if(abs(tmp_direction - direction) > 40)
+        {
+                        cout << tmp_direction << " " << direction << endl;
+            cout <<"left: " <<l_info[i].origin<< "\t" << l_info[i].next_directions_distance<< "\t" << l_info[i].search_direction << "\t" << l_info[i].left << "\t" << l_info[i].right << endl;
+
+        }
+
+        tmp_direction = direction;
+
+    }
+
+
+
+    tmp_direction = r_info[0].search_direction;
+
+    for(int i=0; i<r_info.size(); i++)
+    {
+
+        int direction =  r_info[i].search_direction;
+
+        int direction_difference = abs(tmp_direction - direction);
+
+
+
+        if(direction_difference > 40 || (360 - 40) > direction_difference)
+        {
+                        cout << tmp_direction << " " << direction << endl;
+            cout <<"right: "<< r_info[i].origin<< "\t" << r_info[i].next_directions_distance<< "\t" << r_info[i].search_direction << "\t" << r_info[i].left << "\t" << r_info[i].right << endl;
+
+        }
+
+        tmp_direction = direction;
+
+    }
+
+
+
+
+
+}
+
 
 
 void ValidLinePointSearch::ComputePointScores()
@@ -601,16 +1030,28 @@ void ValidLinePointSearch::ComputePointScores()
 
 }
 
+
+void ValidLinePointSearch::DrawTables(Mat &rgb)
+{
+    for(int i=0; i<left_line_validation_table_.size(); i++)
+    {
+        if(left_line_validation_table_[i]->GetMidPrediction())// && left_line_validation_table_[i]->GetRightPrediction())
+        {
+            circle(rgb, left_line_validation_table_[i]->GetOriginPoint(), 1, Scalar(0, 0, 255),CV_FILLED );
+        }
+    }
+}
+
 void ValidLinePointSearch::DrawValidScorePoints(Mat &rgb)
 {
 
-    const int kMinScore = 4;
+    const int kMinScore = 0;
 
     for(int i=0; i<right_points_validation_table_.size(); i++)
     {
-        if(right_points_validation_table_[i].score > kMinScore)
+        if(right_points_validation_table_[i].score >= kMinScore && right_points_validation_table_[i].found_mid == true && right_points_validation_table_[i].found_left == true)
         {
-            circle(rgb, right_points_validation_table_[i].origin, 4, Scalar(0, 0, 255),CV_FILLED );
+            circle(rgb, right_points_validation_table_[i].origin, 1, Scalar(0, 0, 255),CV_FILLED );
             //circle(rgb, right_points_validation_table_[i].left, 4, Scalar(0, 0, 255),CV_FILLED );
             //circle(rgb, right_points_validation_table_[i].mid, 4, Scalar(0, 0, 255),CV_FILLED );
         }
@@ -618,9 +1059,9 @@ void ValidLinePointSearch::DrawValidScorePoints(Mat &rgb)
 
     for(int i=0; i<mid_points_validation_table_.size(); i++)
     {
-        if(mid_points_validation_table_[i].score > kMinScore)
+        if(mid_points_validation_table_[i].score >= kMinScore && mid_points_validation_table_[i].found_right == true && mid_points_validation_table_[i].found_left == true)
         {
-            circle(rgb, mid_points_validation_table_[i].origin, 4, Scalar(0, 255, 0),CV_FILLED );
+            circle(rgb, mid_points_validation_table_[i].origin, 1, Scalar(0, 255, 0),CV_FILLED );
             //circle(rgb, mid_points_validation_table_[i].left, 4, Scalar(0, 255, 0),CV_FILLED );
             //circle(rgb, mid_points_validation_table_[i].right, 4, Scalar(0, 255, 0),CV_FILLED );
         }
@@ -629,9 +1070,9 @@ void ValidLinePointSearch::DrawValidScorePoints(Mat &rgb)
 
     for(int i=0; i<left_points_validation_table_.size(); i++)
     {
-        if(left_points_validation_table_[i].score > kMinScore)
+        if(left_points_validation_table_[i].score >= kMinScore && left_points_validation_table_[i].found_right == true && left_points_validation_table_[i].found_mid == true)
         {
-            circle(rgb, left_points_validation_table_[i].origin, 4, Scalar(255, 0, 0),CV_FILLED );
+            circle(rgb, left_points_validation_table_[i].origin, 1, Scalar(255, 0, 0),CV_FILLED );
             //circle(rgb, left_points_validation_table_[i].mid, 4, Scalar(255, 0, 0),CV_FILLED );
             //circle(rgb, left_points_validation_table_[i].right, 4, Scalar(255, 0, 0),CV_FILLED );
         }
@@ -639,108 +1080,77 @@ void ValidLinePointSearch::DrawValidScorePoints(Mat &rgb)
 
 }
 
+void ValidLinePointSearch::DrawMergedPoints(Mat &rgb)
+{
+    for(int i=0; i<l.size(); i++)
+    {
+
+        circle(rgb, l[i], 1, Scalar(255, 0, 0),CV_FILLED );
+
+    }
+
+    for(int i=0; i<m.size(); i++)
+    {
+
+        circle(rgb, m[i], 1, Scalar(0, 255, 0),CV_FILLED );
+
+    }
+
+    for(int i=0; i<r.size(); i++)
+    {
+
+        circle(rgb, r[i], 1, Scalar(0, 0, 255),CV_FILLED );
+
+    }
+}
+
+
+
+
 
 void ValidLinePointSearch::CreateValidationTables()
 {
 
 
-
-    for(int i=0; i<right_to_left_search_info_.size(); i++)
+    for(int i=0; i<left_to_mid_search_info_.size(); i++)
     {
-
-        Point origin = right_to_left_search_info_[i].origin;
-
-        int search_direction = right_to_left_search_info_[i].search_direction;
-
-        int next_direction_distance = right_to_left_search_info_[i].next_direction_distance;
-
-        Point left = right_to_left_search_info_[i].adjacent_line_point;
-        Point mid  = right_to_mid_search_info_[i].adjacent_line_point;
-
-
-        right_points_validation_table_.push_back(RightValidationTable{origin,
-                                                                      search_direction,
-                                                                      next_direction_distance,
-                                                                      left,
-                                                                      mid,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      0
-                                                                      });
-
+        left_line_validation_table_.push_back(new LineValidationTable(LEFT_LINE,
+                                                                  left_to_mid_search_info_[i].origin,
+                                                                  left_to_mid_search_info_[i].search_direction,
+                                                                  left_to_mid_search_info_[i].next_direction_distance,
+                                                                  left_to_mid_search_info_[i].adjacent_line_point,
+                                                                  left_to_right_search_info_[i].adjacent_line_point,
+                                                                  0));
     }
-
 
     for(int i=0; i<mid_to_left_search_info_clusters_.size(); i++)
     {
         for(int j=0; j<mid_to_left_search_info_clusters_[i].size(); j++)
         {
-            Point origin = mid_to_left_search_info_clusters_[i][j].origin;
-
-            int search_direction = mid_to_left_search_info_clusters_[i][j].search_direction;
-
-            int next_direction_distance = mid_to_left_search_info_clusters_[i][j].next_direction_distance;
-
-
-            Point left  = mid_to_left_search_info_clusters_[i][j].adjacent_line_point;
-            Point right = mid_to_right_search_info_clusters_[i][j].adjacent_line_point;
-
-            mid_points_validation_table_.push_back(MidValidationTable{origin,
-                                                                      search_direction,
-                                                                      next_direction_distance,
-                                                                      left,
-                                                                      right,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      0,
-                                                                      i
-                                                                      });
+            mid_line_validation_table_.push_back(new LineValidationTable(MID_LINE,
+                                                                      mid_to_left_search_info_clusters_[i][j].origin,
+                                                                      mid_to_left_search_info_clusters_[i][j].search_direction,
+                                                                      mid_to_left_search_info_clusters_[i][j].next_direction_distance,
+                                                                      mid_to_left_search_info_clusters_[i][j].adjacent_line_point,
+                                                                      mid_to_right_search_info_clusters_[i][j].adjacent_line_point,
+                                                                      i));
         }
     }
 
-    for(int i=0; i<left_to_mid_search_info_.size(); i++)
+
+
+
+    for(int i=0; i<right_to_left_search_info_.size(); i++)
     {
-
-        Point origin = left_to_mid_search_info_[i].origin;
-
-        int search_direction = left_to_mid_search_info_[i].search_direction;
-
-        int next_direction_distance = left_to_mid_search_info_[i].next_direction_distance;
-
-        Point mid = left_to_mid_search_info_[i].adjacent_line_point;
-        Point right  = left_to_right_search_info_[i].adjacent_line_point;
-
-
-
-        left_points_validation_table_.push_back(LeftValidationTable{origin,
-                                                                    search_direction,
-                                                                    next_direction_distance,
-                                                                    mid,
-                                                                      right,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      false,
-                                                                      0
-                                                                      });
-
+        right_line_validation_table_.push_back(new LineValidationTable(RIGHT_LINE,
+                                                                  right_to_left_search_info_[i].origin,
+                                                                  right_to_left_search_info_[i].search_direction,
+                                                                  right_to_left_search_info_[i].next_direction_distance,
+                                                                  right_to_left_search_info_[i].adjacent_line_point,
+                                                                  right_to_mid_search_info_[i].adjacent_line_point,
+                                                                  0));
     }
+
 }
 
 
@@ -766,6 +1176,19 @@ void ValidLinePointSearch::ClearValidationTables()
     mid_to_right_search_info_clusters_.clear();
     mid_to_left_search_info_clusters_.clear();
 
+
+    left_line_validation_table_.clear();
+      mid_line_validation_table_.clear();
+          right_line_validation_table_.clear();
+
+    l.clear();
+    m.clear();
+    r.clear();
+
+
+    l_info.clear();
+   m_info.clear();
+    r_info.clear();
 
 }
 void ValidLinePointSearch::FindValidPointsFromLineFollow(vector<PointInDirection> line_directions, int SEARCH_LINE_CODE)
@@ -872,7 +1295,7 @@ void ValidLinePointSearch::SafeLinePoint(SegmentStartIDAndWidth line_match, vect
 }
 
 void ValidLinePointSearch::DrawLinePoints(Mat &rgb, int SEARCH_LINE_CODE)
-{ 
+{
     if(SEARCH_LINE_CODE == LEFT_TO_MID)
     {
         for(auto it: left_to_mid_search_info_)

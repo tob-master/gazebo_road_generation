@@ -147,6 +147,7 @@ add_executable(track include/start_of_lines_search.cpp
                      include/connected_components.cpp
                      include/depth_first_search.cpp
                      include/valid_line_point_search.cpp
+                     include/line_validation_table.cpp
                      src/line_tracker_node.cpp )
 
 #add_executable(track_mid_line_node src/nodes/track_mid_line_node.cpp)

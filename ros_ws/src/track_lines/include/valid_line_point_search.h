@@ -15,6 +15,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 
+#include "line_validation_table.h"
+#include "depth_first_search.h"
 #include "datatypes.h"
 #include "utils.h"
 
@@ -77,6 +79,12 @@ private:
     const int kImageWidth_ = 1280;
     const int kImageHeight_ = 417;
 
+
+    const int kMaxPointDistance_ = 10;
+    const int kMaxDirectionDifference_ = 15;
+
+        const Point EMPTY_POINT_ = Point(-1,-1);
+
     vector<PointInDirection> left_line_directions_;
     vector<PointInDirection> right_line_directions_;
     vector<vector<PointInDirection>> mid_line_directions_clusters_;
@@ -98,6 +106,26 @@ private:
     vector<RightValidationTable> right_points_validation_table_;
     vector<MidValidationTable> mid_points_validation_table_;
     vector<LeftValidationTable> left_points_validation_table_;
+
+
+
+
+
+    vector<LineValidationTable*> left_line_validation_table_;
+    vector<LineValidationTable*> mid_line_validation_table_;
+    vector<LineValidationTable*> right_line_validation_table_;
+
+
+
+    vector<Point> l;
+    vector<Point> m;
+    vector<Point> r;
+
+
+    vector<ValidPoints> l_info;
+    vector<ValidPoints> m_info;
+    vector<ValidPoints> r_info;
+
 
 
     void ClearMemory(int SEARCH_LINE_CODE);
@@ -129,8 +157,26 @@ private:
      void SetOuterLineDirections(vector<PointInDirection> line_directions, int SEARCH_LINE_CODE);
 
 
+        MinMaxLineElements GetLinesMinMaxElements(vector<Point> line);
 
 
+        void FindLinePointConnections(vector<Point> line, vector<pair<int,int>> &line_point_connections);
+        bool IsPermuted(int i, int j, vector<string> &used_permutations);
+
+        void FindMinDistanceFromPredictionToAdjacentPoint(int SEARCH_LINE_CODE,
+                                                        Point adjacent_point_prediction,
+                                                        Point &min_distance_adjacent_point,
+                                                        int &min_distance_adjacent_point_id,
+                                                        int &min_distance);
+
+
+        bool AdjacentValidationTableIsEmpty(int SEARCH_LINE_CODE);
+
+        void ExamineValidationTable(int SEARCH_LINE_CODE, vector<LineValidationTable*>&table);
+
+        int GetAdjacentPointDirection(int SEARCH_LINE_CODE, int min_distance_adjacent_point_id);
+
+        Point GetAdjacentPointOriginPrediction(int SEARCH_LINE_CODE, int min_distance_adjacent_point_id);
 
 public:
     ValidLinePointSearch();
@@ -143,6 +189,13 @@ public:
     void SearchValidPoints();
     void ComputePointScores();
     void DrawValidScorePoints(Mat &rgb);
+     void DrawMergedPoints(Mat &rgb);
+    void MergePoints();
+    void SearchMinMax();
+    void DrawTables(Mat &rgb);
+
+
+    void JJ();
 
 };
 

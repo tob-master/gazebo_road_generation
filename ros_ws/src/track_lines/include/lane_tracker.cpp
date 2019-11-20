@@ -192,10 +192,23 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         ValidLinePointSearcher_.SearchValidPoints();
 
-        ValidLinePointSearcher_.ComputePointScores();
-        ValidLinePointSearcher_.DrawValidScorePoints(image_rgb_bird_);
+        //ValidLinePointSearcher_.MergePoints();
+        //ValidLinePointSearcher_.JJ();
+
+        //ValidLinePointSearcher_.SearchMinMax();
+
+        //ValidLinePointSearcher_.DrawMergedPoints(image_rgb_bird_);
 
 
+        //ValidLinePointSearcher_.ComputePointScores();
+
+
+
+        //ValidLinePointSearcher_.DrawValidScorePoints(image_rgb_bird_);
+
+
+
+        ValidLinePointSearcher_.DrawTables(image_rgb_bird_);
 
         ValidLinePointSearcher_.ClearValidationTables();
 
