@@ -382,6 +382,24 @@ struct SegmentStartIDAndWidth
 namespace valid_line_point_search
 {
 
+    struct LastAdjacentPointMatch
+    {
+
+        Point last_left_point;
+        Point last_mid_point;
+        Point last_right_point;
+
+        int last_left_id;
+        int last_mid_id;
+        int last_right_id;
+
+        bool left_set;
+        bool mid_set;
+        bool right_set;
+
+    };
+
+
     struct ValidPoints
     {
         int line_code;
@@ -402,6 +420,7 @@ namespace valid_line_point_search
         Point x_max;
         Point y_min;
         Point y_max;
+        bool initialized;
     };
 
 

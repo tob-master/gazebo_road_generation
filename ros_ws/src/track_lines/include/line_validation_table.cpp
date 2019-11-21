@@ -161,6 +161,37 @@ void LineValidationTable::SetAdjacentPointDirectionInRange(int SEARCH_LINE_CODE,
     if(SEARCH_LINE_CODE == RIGHT_TO_MID) right_mid_directions_in_range_ = flag;
 }
 
+
+int LineValidationTable::GetAdjacent1Id(int LINE_CODE)
+{
+    if(LINE_CODE == LEFT_LINE) return mid_id_;
+    if(LINE_CODE == MID_LINE) return left_id_;
+    if(LINE_CODE == RIGHT_LINE) return left_id_;
+}
+
+
+
+int LineValidationTable::GetAdjacent2Id(int LINE_CODE)
+{
+    if(LINE_CODE == LEFT_LINE) return right_id_;
+    if(LINE_CODE == MID_LINE) return right_id_;
+    if(LINE_CODE == RIGHT_LINE) return mid_id_;
+}
+
+int LineValidationTable::GetAdjacent1Prediction(int LINE_CODE)
+{
+    if(LINE_CODE == LEFT_LINE) return mid_prediction_;
+    if(LINE_CODE == MID_LINE) return left_prediction_;
+    if(LINE_CODE == RIGHT_LINE) return left_prediction_;
+}
+
+int LineValidationTable::GetAdjacent2Prediction(int LINE_CODE)
+{
+    if(LINE_CODE == LEFT_LINE) return right_prediction_;
+    if(LINE_CODE == MID_LINE) return right_prediction_;
+    if(LINE_CODE == RIGHT_LINE) return mid_prediction_;
+}
+
 void LineValidationTable::SetAdjacentPointOriginPrediction(int SEARCH_LINE_CODE, bool flag)
 {
 

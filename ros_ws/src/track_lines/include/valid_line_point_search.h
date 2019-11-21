@@ -85,6 +85,14 @@ private:
 
         const Point EMPTY_POINT_ = Point(-1,-1);
 
+
+    const int kMaxDirectionDifferenceOnSameLine_ = 30;
+
+
+    const int kMinStartDirectionOnSameLine_ =  30;
+    const int kMaxStartDirectionOnSameLine_ = 150;
+
+
     vector<PointInDirection> left_line_directions_;
     vector<PointInDirection> right_line_directions_;
     vector<vector<PointInDirection>> mid_line_directions_clusters_;
@@ -109,11 +117,28 @@ private:
 
 
 
+    //vector<LineValidationTable*> mid_line_validation_table_;
+    //vector<LineValidationTable*> right_line_validation_table_;
+
+    vector<LineValidationTable> left_line_validation_table_;
+    vector<LineValidationTable> mid_line_validation_table_;
+    vector<LineValidationTable> right_line_validation_table_;
 
 
-    vector<LineValidationTable*> left_line_validation_table_;
-    vector<LineValidationTable*> mid_line_validation_table_;
-    vector<LineValidationTable*> right_line_validation_table_;
+    vector<LineValidationTable> left_line_direction_in_range_;
+    vector<LineValidationTable> mid_line_direction_in_range_;
+    vector<LineValidationTable> right_line_direction_in_range_;
+
+
+    LastAdjacentPointMatch left_line_last_adjacent_point_match_;
+    LastAdjacentPointMatch mid_line_last_adjacent_point_match_;
+    LastAdjacentPointMatch right_line_last_adjacent_point_match_;
+
+
+
+    MinMaxLineElements left_line_minmax_elements_;
+    MinMaxLineElements mid_line_minmax_elements_;
+    MinMaxLineElements right_line_minmax_elements_;
 
 
 
@@ -172,11 +197,24 @@ private:
 
         bool AdjacentValidationTableIsEmpty(int SEARCH_LINE_CODE);
 
-        void ExamineValidationTable(int SEARCH_LINE_CODE, vector<LineValidationTable*>&table);
+        void ExamineValidationTable(int SEARCH_LINE_CODE, vector<LineValidationTable>&table);
 
         int GetAdjacentPointDirection(int SEARCH_LINE_CODE, int min_distance_adjacent_point_id);
 
         Point GetAdjacentPointOriginPrediction(int SEARCH_LINE_CODE, int min_distance_adjacent_point_id);
+
+
+        void ExtractDirectionsInRange(vector<LineValidationTable>& line_validation_table, vector<LineValidationTable>& line_direction_in_range );
+
+        void ExtractMinMaxLineElements( vector<LineValidationTable>  line_direction_in_range,  MinMaxLineElements& line_minmax_elements );
+
+        void ExtractLastMatchingPoints(vector<LineValidationTable> line_validation_table_,
+                                                             vector<LineValidationTable> line_direction_in_range_,
+                                                             int LINE_CODE);
+
+
+        void CombineLines();
+
 
 public:
     ValidLinePointSearch();
@@ -193,7 +231,10 @@ public:
     void MergePoints();
     void SearchMinMax();
     void DrawTables(Mat &rgb);
+    void DrawDirectionInRangeTable(Mat &rgb);
 
+            void ExtractValidPoints();
+void DrawMinMaxFromDirectionInRange(Mat &rgb);
 
     void JJ();
 

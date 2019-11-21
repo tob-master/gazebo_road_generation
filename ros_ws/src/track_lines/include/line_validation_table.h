@@ -83,6 +83,15 @@ class LineValidationTable
         bool GetMidPrediction(){return mid_prediction_;};
         bool GetRightPrediction(){return right_prediction_;};
 
+        int GetLeftPointId(){ return left_id_;};
+        int GetMidPointId(){ return mid_id_;};
+        int GetRightPointId(){ return right_id_;};
+
+        int GetAdjacent1Id(int LINE_CODE);
+        int GetAdjacent2Id(int LINE_CODE);
+
+        int GetAdjacent1Prediction(int LINE_CODE);
+        int GetAdjacent2Prediction(int LINE_CODE);
 };
 
 #endif // LINE_VALIDATION_TABLE_H

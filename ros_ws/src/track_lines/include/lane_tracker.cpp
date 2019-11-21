@@ -41,10 +41,10 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         //cout << info.vanishing_point << endl;
         //cout << info.car_mid_point_to_vanishing_point_angle << endl;
-        /*
+
         if(vanishing_point_search_return_info.has_found_left_hough_line)
         {
-           //VanishingPointSearcher_->DrawHoughLines(image_rgb_, LEFT_LINE);
+           VanishingPointSearcher_->DrawHoughLines(image_rgb_, LEFT_LINE);
            //VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
 
            //VanishingPointSearcher_->GetWarpedPerspektiveHoughLin
@@ -52,22 +52,22 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         if(vanishing_point_search_return_info.has_found_right_hough_line)
         {
-            //VanishingPointSearcher_->DrawHoughLines(image_rgb_, RIGHT_LINE);
+            VanishingPointSearcher_->DrawHoughLines(image_rgb_, RIGHT_LINE);
             //VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, RIGHT_LINE);
         }
 
         if(vanishing_point_search_return_info.has_found_intersections)
         {
 
-            //VanishingPointSearcher_->DrawLineIntersections(image_rgb_);
+            VanishingPointSearcher_->DrawLineIntersections(image_rgb_);
         }
 
         if(vanishing_point_search_return_info.has_found_vanishing_point)
         {
-            //VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
+            VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
             //VanishingPointSearcher_->DrawWarpedVanishingPointDirection(image_rgb_bird_);
         }
-*/
+
 
 
 
@@ -167,7 +167,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         if(mid_line_search_return_info.has_found_mid_line_clusters)
         {
-            //MidLineSearcher_->DrawClusters(image_rgb_bird_);
+           // MidLineSearcher_->DrawClusters(image_rgb_bird_);
             //MidLineSearcher_->DrawSingleClusters(image_rgb_bird_);
             auto single_mid_line_clusters = MidLineSearcher_->GetSingleClusters();
 
@@ -190,7 +190,17 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         ValidLinePointSearcher_.CreateValidationTables();
 
 
-        ValidLinePointSearcher_.SearchValidPoints();
+       ValidLinePointSearcher_.SearchValidPoints();
+
+       ValidLinePointSearcher_.ExtractValidPoints();
+
+
+        ValidLinePointSearcher_.DrawDirectionInRangeTable(image_rgb_bird_);
+        ValidLinePointSearcher_.DrawMinMaxFromDirectionInRange(image_rgb_bird_);
+
+
+        ValidLinePointSearcher_.ClearValidationTables();
+
 
         //ValidLinePointSearcher_.MergePoints();
         //ValidLinePointSearcher_.JJ();
@@ -208,9 +218,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
 
-        ValidLinePointSearcher_.DrawTables(image_rgb_bird_);
 
-        ValidLinePointSearcher_.ClearValidationTables();
 
 /*
 
@@ -219,12 +227,12 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         if(connected_component_search_return_info.has_found_mid_line_components)
         {
-            ConnectedComponentsSearcher_->DrawMidLineComponentsRect(image_rgb_bird_);
+            //ConnectedComponentsSearcher_->DrawMidLineComponentsRect(image_rgb_bird_);
 
             if(connected_component_search_return_info.has_found_mid_line_group)
             {
                 //ConnectedComponentsSearcher_->DrawGroupedMidLineComponents(image_rgb_bird_);
-                //ConnectedComponentsSearcher_->DrawGroupedMidLineComponentsDirections(image_rgb_bird_);
+                ConnectedComponentsSearcher_->DrawGroupedMidLineComponentsDirections(image_rgb_bird_);
             }
         }
 
