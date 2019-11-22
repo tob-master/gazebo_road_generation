@@ -44,7 +44,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         if(vanishing_point_search_return_info.has_found_left_hough_line)
         {
-           VanishingPointSearcher_->DrawHoughLines(image_rgb_, LEFT_LINE);
+           //VanishingPointSearcher_->DrawHoughLines(image_rgb_, LEFT_LINE);
            //VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
 
            //VanishingPointSearcher_->GetWarpedPerspektiveHoughLin
@@ -52,7 +52,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         if(vanishing_point_search_return_info.has_found_right_hough_line)
         {
-            VanishingPointSearcher_->DrawHoughLines(image_rgb_, RIGHT_LINE);
+            //VanishingPointSearcher_->DrawHoughLines(image_rgb_, RIGHT_LINE);
             //VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, RIGHT_LINE);
         }
 
@@ -64,7 +64,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         if(vanishing_point_search_return_info.has_found_vanishing_point)
         {
-            VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
+            //VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
             //VanishingPointSearcher_->DrawWarpedVanishingPointDirection(image_rgb_bird_);
         }
 
@@ -195,8 +195,14 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
        ValidLinePointSearcher_.ExtractValidPoints();
 
 
-        ValidLinePointSearcher_.DrawDirectionInRangeTable(image_rgb_bird_);
-        ValidLinePointSearcher_.DrawMinMaxFromDirectionInRange(image_rgb_bird_);
+       ValidLinePointSearcher_.DrawRect(image_rgb_bird_);
+
+
+       ValidLinePointSearcher_.DrawPointsInRect(image_rgb_bird_);
+
+        //ValidLinePointSearcher_.DrawDirectionInRangeTable(image_rgb_bird_);
+        //ValidLinePointSearcher_.DrawMinMaxFromDirectionInRange(image_rgb_bird_);
+        //ValidLinePointSearcher_.DrawLastAdjacentPointMatch(image_rgb_bird_);
 
 
         ValidLinePointSearcher_.ClearValidationTables();
@@ -239,7 +245,6 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 */
 
 
-
         clock_t end = clock();
         double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
         cout << "fps: " << 1/elapsed_secs << endl;
@@ -253,7 +258,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         imshow("bird_rgb", image_rgb_bird_);
         //imshow("bird2",bird2);
         //imshow("warped_back",image_rgb_warped_back_);
-        waitKey(1);
+        waitKey(0);
 
     }
     catch (cv_bridge::Exception& e)

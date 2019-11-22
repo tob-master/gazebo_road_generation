@@ -80,7 +80,7 @@ private:
     const int kImageHeight_ = 417;
 
 
-    const int kMaxPointDistance_ = 10;
+    const int kMaxPointDistance_ = 5;
     const int kMaxDirectionDifference_ = 15;
 
         const Point EMPTY_POINT_ = Point(-1,-1);
@@ -139,6 +139,10 @@ private:
     MinMaxLineElements left_line_minmax_elements_;
     MinMaxLineElements mid_line_minmax_elements_;
     MinMaxLineElements right_line_minmax_elements_;
+
+    vector<int> left_line_points_in_rect_id_;
+    vector<int> mid_line_points_in_rect_id_;
+    vector<int> right_line_points_in_rect_id_;
 
 
 
@@ -214,6 +218,13 @@ private:
 
 
         void CombineLines();
+void GetLinesPointsInRectIds( vector<LineValidationTable> line_direction_in_range_, vector<vector<Point>> contours, vector<int>& line_points_in_rect_id);
+
+void CheckLinePointsInRect();
+
+
+void FillPriorityTable(int i, bool found_point1,bool found_point2,bool prediction1,bool prediction2,
+                                             bool directions_in_range1, bool directions_in_range2, vector<vector<int>>& priority_ids);
 
 
 public:
@@ -235,6 +246,13 @@ public:
 
             void ExtractValidPoints();
 void DrawMinMaxFromDirectionInRange(Mat &rgb);
+
+void DrawLastAdjacentPointMatch(Mat &rgb);
+
+void DrawRect(Mat &rgb);
+
+void DrawPointsInRect(Mat &rgb);
+
 
     void JJ();
 

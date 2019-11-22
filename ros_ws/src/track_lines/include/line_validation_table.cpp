@@ -35,12 +35,12 @@ LineValidationTable::LineValidationTable(int line_code,Point origin,float search
     mid_prediction_ = false;
     right_prediction_ = false;
 
-    left_mid_directions_in_range_ = false;
-    left_right_directions_in_range_ = false;
-    mid_left_directions_in_range_ = false;
-    mid_right_directions_in_range_ = false;
-    right_left_directions_in_range_ = false;
-    right_mid_directions_in_range_ = false;
+    left_to_mid_directions_in_range_ = false;
+    left_to_right_directions_in_range_ = false;
+    mid_to_left_directions_in_range_ = false;
+    mid_to_right_directions_in_range_ = false;
+    right_to_left_directions_in_range_ = false;
+    right_to_mid_directions_in_range_ = false;
 
 
     left_to_origin_prediction_ = false;
@@ -148,17 +148,17 @@ int LineValidationTable::GetDirection()
 void LineValidationTable::SetAdjacentPointDirectionInRange(int SEARCH_LINE_CODE, bool flag)
 {
 
-    if(SEARCH_LINE_CODE == LEFT_TO_MID) left_mid_directions_in_range_ = flag;
+    if(SEARCH_LINE_CODE == LEFT_TO_MID) left_to_mid_directions_in_range_ = flag;
 
-    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT) left_right_directions_in_range_ = flag;
+    if(SEARCH_LINE_CODE == LEFT_TO_RIGHT) left_to_right_directions_in_range_ = flag;
 
-    if(SEARCH_LINE_CODE == MID_TO_LEFT) mid_left_directions_in_range_ = flag;
+    if(SEARCH_LINE_CODE == MID_TO_LEFT) mid_to_left_directions_in_range_ = flag;
 
-    if(SEARCH_LINE_CODE == MID_TO_RIGHT) mid_right_directions_in_range_ = flag;
+    if(SEARCH_LINE_CODE == MID_TO_RIGHT) mid_to_right_directions_in_range_ = flag;
 
-    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT) right_left_directions_in_range_ = flag;
+    if(SEARCH_LINE_CODE == RIGHT_TO_LEFT) right_to_left_directions_in_range_ = flag;
 
-    if(SEARCH_LINE_CODE == RIGHT_TO_MID) right_mid_directions_in_range_ = flag;
+    if(SEARCH_LINE_CODE == RIGHT_TO_MID) right_to_mid_directions_in_range_ = flag;
 }
 
 

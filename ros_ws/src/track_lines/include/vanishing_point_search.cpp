@@ -208,14 +208,18 @@ VanishingPointSearchReturnInfo VanishingPointSearch::GetReturnInfo()
 
 
 
-        line_follower_start_parameters_ = StartParameters{left_x_top_mean,
-                                                                  left_y_top_mean,
+        line_follower_start_parameters_ = StartParameters{left_x_bottom_mean,
+                                                                  left_y_bottom_mean,
                                                                   left_angle,
                                                                   true,
-                                                                  right_x_top_mean,
-                                                                  right_y_top_mean,
+                                                                  right_x_bottom_mean,
+                                                                  right_y_bottom_mean,
                                                                   right_angle,
                                                                   true};
+
+
+
+        cout << left_y_bottom_mean << " " << right_y_bottom_mean << endl;
 
     }
     else
@@ -256,8 +260,8 @@ VanishingPointSearchReturnInfo VanishingPointSearch::GetReturnInfo()
 
           float angle = CalculateAngle4Quadrants(opposite, adjacent);
 
-          line_follower_start_parameters_ = StartParameters{x_top_mean,
-                                                                    y_top_mean,
+          line_follower_start_parameters_ = StartParameters{x_bottom_mean,
+                                                                    y_bottom_mean,
                                                                     angle,
                                                                     true,
                                                                     0,
@@ -331,8 +335,8 @@ VanishingPointSearchReturnInfo VanishingPointSearch::GetReturnInfo()
                                                                       0,
                                                                       0,
                                                                       false,
-                                                                      x_top_mean,
-                                                                      y_top_mean,
+                                                                      x_bottom_mean,
+                                                                      y_bottom_mean,
                                                                       angle,
                                                                       true};
 

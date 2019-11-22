@@ -45,12 +45,12 @@ class LineValidationTable
         bool mid_prediction_;
         bool right_prediction_;
 
-        bool left_mid_directions_in_range_;
-        bool left_right_directions_in_range_;
-        bool mid_left_directions_in_range_;
-        bool mid_right_directions_in_range_;
-        bool right_left_directions_in_range_;
-        bool right_mid_directions_in_range_;
+        bool left_to_mid_directions_in_range_;
+        bool left_to_right_directions_in_range_;
+        bool mid_to_left_directions_in_range_;
+        bool mid_to_right_directions_in_range_;
+        bool right_to_left_directions_in_range_;
+        bool right_to_mid_directions_in_range_;
 
         bool left_to_origin_prediction_;
         bool mid_to_origin_prediction_;
@@ -82,6 +82,22 @@ class LineValidationTable
         bool GetLeftPrediction(){return left_prediction_;};
         bool GetMidPrediction(){return mid_prediction_;};
         bool GetRightPrediction(){return right_prediction_;};
+
+        bool GetFoundLeftPoint(){return found_left_point_;};
+        bool GetFoundMidPoint(){return found_mid_point_;};
+        bool GetFoundRightPoint(){return found_right_point_;};
+
+        Point GetLeftPoint(){return left_point_;};
+        Point GetMidPoint(){return mid_point_;};
+        Point GetRightPoint(){return right_point_;};
+
+
+        bool GetLeftToMidDirectionsInRange(){return left_to_mid_directions_in_range_;};
+        bool GetLeftToRightDirectionsInRange(){return left_to_right_directions_in_range_;};
+        bool GetMidToLeftDirectionsInRange(){return mid_to_left_directions_in_range_;};
+        bool GetMidToRightDirectionsInRange(){return mid_to_right_directions_in_range_;};
+        bool GetRightToLeftDirectionsInRange(){return right_to_left_directions_in_range_;};
+        bool GetRightToMidDirectionsInRange(){return right_to_mid_directions_in_range_;};
 
         int GetLeftPointId(){ return left_id_;};
         int GetMidPointId(){ return mid_id_;};
