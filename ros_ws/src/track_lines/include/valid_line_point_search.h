@@ -140,11 +140,19 @@ private:
     MinMaxLineElements mid_line_minmax_elements_;
     MinMaxLineElements right_line_minmax_elements_;
 
-    vector<int> left_line_points_in_rect_id_;
-    vector<int> mid_line_points_in_rect_id_;
-    vector<int> right_line_points_in_rect_id_;
+    vector<int> left_line_points_in_rect_ids_;
+    vector<int> mid_line_points_in_rect_ids_;
+    vector<int> right_line_points_in_rect_ids_;
+
+    vector<vector<int>> left_priority_ids_{14};
+    vector<vector<int>> mid_priority_ids_{14};
+    vector<vector<int>> right_priority_ids_{14};
 
 
+    vector<vector<vector<Point>>> examined_regions_;
+
+    float rect_length_ = 300;
+    float rect_height_ = 40;
 
     vector<Point> l;
     vector<Point> m;
@@ -227,6 +235,15 @@ void FillPriorityTable(int i, bool found_point1,bool found_point2,bool predictio
                                              bool directions_in_range1, bool directions_in_range2, vector<vector<int>>& priority_ids);
 
 
+void  ExaminePriorityTables(float& mean_direction, Point& mean_point);
+
+
+vector<vector<Point>> GetSearchRect(Point rect_mid, float search_direction);
+
+void FollowTrack(float search_direction, Point rect_mid_point, Mat &rgb);
+
+vector<float> GetUniqueDirectionsInRect(vector<LineValidationTable> table, vector<int> rect_ids, vector<vector<int>> priority_ids, int priority);
+
 public:
     ValidLinePointSearch();
     void SetImage(Mat image);
@@ -249,9 +266,11 @@ void DrawMinMaxFromDirectionInRange(Mat &rgb);
 
 void DrawLastAdjacentPointMatch(Mat &rgb);
 
-void DrawRect(Mat &rgb);
+void ValidateTrack(Mat &rgb);
 
 void DrawPointsInRect(Mat &rgb);
+
+void DrawSearchRect(Mat &rgb);
 
 
     void JJ();

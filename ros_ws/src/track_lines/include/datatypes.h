@@ -12,6 +12,22 @@ using namespace cv;
 enum {LEFT_LINE, RIGHT_LINE, MID_LINE};
 enum {LEFT_TO_MID, RIGHT_TO_MID, LEFT_TO_RIGHT, RIGHT_TO_LEFT, MID_TO_LEFT, MID_TO_RIGHT};
 
+// priorities from valid points
+enum {PRIO_0_P1_AND_P2_AND_D1_AND_D2,
+      PRIO_1_P1_AND_P2_AND_D1_OR_D2,
+      PRIO_2_P1_AND_P2,
+      PRIO_3_P1_AND_FP2_AND_D1_AND_D2,
+      PRIO_4_P2_AND_FP1_AND_D1_AND_D2,
+      PRIO_5_P1_AND_FP2_D1_OR_D2,
+      PRIO_6_P2_AND_FP1_D1_OR_D2,
+      PRIO_7_P1_AND_FP2,
+      PRIO_8_P2_AND_FP1,
+      PRIO_9_P1,
+      PRIO_10_P2,
+      PRIO_11_FP1_AND_FP2,
+      PRIO_12_FP1,
+      PRIO_13_FP2
+     };
 
 
 

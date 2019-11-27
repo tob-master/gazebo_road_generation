@@ -219,7 +219,7 @@ VanishingPointSearchReturnInfo VanishingPointSearch::GetReturnInfo()
 
 
 
-        cout << left_y_bottom_mean << " " << right_y_bottom_mean << endl;
+        //cout << left_y_bottom_mean << " " << right_y_bottom_mean << endl;
 
     }
     else

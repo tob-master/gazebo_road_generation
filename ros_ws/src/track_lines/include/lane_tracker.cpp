@@ -117,7 +117,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
             if(line_points_reducer_return_info.left_line_is_reduced)
             {
-                //LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,LEFT_LINE);
+                LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,LEFT_LINE);
                 LinePointsReducer_->GetReducedLinePoints(left_line_points_reduced,LEFT_LINE);
                 LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(left_line_points_reduced_length_direction, LEFT_LINE);
 
@@ -135,7 +135,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
             if(line_points_reducer_return_info.right_line_is_reduced)
             {
-                //LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,RIGHT_LINE);
+                LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,RIGHT_LINE);
                 LinePointsReducer_->GetReducedLinePoints(right_line_points_reduced,RIGHT_LINE);
                 LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(right_line_points_reduced_length_direction,RIGHT_LINE);
 
@@ -194,13 +194,13 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
        ValidLinePointSearcher_.ExtractValidPoints();
 
+ValidLinePointSearcher_.DrawDirectionInRangeTable(image_rgb_bird_);
+       ValidLinePointSearcher_.ValidateTrack(image_rgb_bird_);
 
-       ValidLinePointSearcher_.DrawRect(image_rgb_bird_);
+
+       //ValidLinePointSearcher_.DrawPointsInRect(image_rgb_bird_);
 
 
-       ValidLinePointSearcher_.DrawPointsInRect(image_rgb_bird_);
-
-        //ValidLinePointSearcher_.DrawDirectionInRangeTable(image_rgb_bird_);
         //ValidLinePointSearcher_.DrawMinMaxFromDirectionInRange(image_rgb_bird_);
         //ValidLinePointSearcher_.DrawLastAdjacentPointMatch(image_rgb_bird_);
 
@@ -247,7 +247,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         clock_t end = clock();
         double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-        cout << "fps: " << 1/elapsed_secs << endl;
+        //cout << "fps: " << 1/elapsed_secs << endl;
 
         //warpPerspective(image_rgb_bird_, image_rgb_warped_back_, birdseye_transformation_matrix_.inv(), Size(image_width_,image_height_), INTER_CUBIC | WARP_INVERSE_MAP);
 
@@ -258,7 +258,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         imshow("bird_rgb", image_rgb_bird_);
         //imshow("bird2",bird2);
         //imshow("warped_back",image_rgb_warped_back_);
-        waitKey(0);
+        waitKey(1);
 
     }
     catch (cv_bridge::Exception& e)
@@ -288,7 +288,7 @@ void LaneTracker::LoadStartOfLinesSearchInitializationParameters()
     n.getParam("/start_of_lines_search_init/mid_line_threshold", start_of_lines_search_init.mid_line_threshold);
     n.getParam("/start_of_lines_search_init/window_size_for_mid_line_search", start_of_lines_search_init.window_size_for_mid_line_search);
     n.getParam("/start_of_lines_search_init/max_distance_between_adjacent_row_pairs", start_of_lines_search_init.max_distance_between_adjacent_row_pairs);
-    n.getParam("/start_of_lines_search_init/car_position_in_frame", start_of_lines_search_init.car_position_in_frame);
+    n.getParam("/start_of_lines_search_init/car_poCreateValidationTablessition_in_frame", start_of_lines_search_init.car_position_in_frame);
     n.getParam("/start_of_lines_search_init/road_model_left_line", start_of_lines_search_init.road_model_left_line);
     n.getParam("/start_of_lines_search_init/road_model_right_line", start_of_lines_search_init.road_model_right_line);
     n.getParam("/start_of_lines_search_init/line_to_car_distance_threshold", start_of_lines_search_init.line_to_car_distance_threshold);
@@ -334,7 +334,7 @@ void LaneTracker::LoadVanishingPointSearchInitializationParameters()
     n.getParam("/vanishing_point_search_init/min_left_line_angle",vanishing_point_search_init.min_left_line_angle);
     n.getParam("/vanishing_point_search_init/max_left_line_angle",vanishing_point_search_init.max_left_line_angle);
     n.getParam("/vanishing_point_search_init/min_right_line_angle",vanishing_point_search_init.min_right_line_angle);
-    n.getParam("/vanishing_point_search_init/max_right_line_angle",vanishing_point_search_init.max_right_line_angle);
+    n.getParam("/vanishing_point_search_init/max_riCreateValidationTablesght_line_angle",vanishing_point_search_init.max_right_line_angle);
     n.getParam("/vanishing_point_search_init/x_min_left_line",vanishing_point_search_init.x_min_left_line);
     n.getParam("/vanishing_point_search_init/x_max_left_line",vanishing_point_search_init.x_max_left_line);
     n.getParam("/vanishing_point_search_init/x_min_right_line",vanishing_point_search_init.x_min_right_line);

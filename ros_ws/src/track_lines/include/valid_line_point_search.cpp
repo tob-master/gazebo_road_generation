@@ -715,15 +715,11 @@ void ValidLinePointSearch::GetLinesPointsInRectIds( vector<LineValidationTable> 
     }
 }
 
-void ValidLinePointSearch::DrawRect(Mat &rgb)
+vector<vector<Point>> ValidLinePointSearch::GetSearchRect(Point rect_mid, float search_direction)
 {
-    Point rect_mid = Point(612,360);
-    float rect_length = 210;
-    float rect_height = 60;
-    float search_direction = 90;
 
-    float rect_length_radius = rect_length / 2;
-    float rect_height_radius = rect_height / 2;
+    float rect_length_radius = rect_length_ / 2;
+    float rect_height_radius = rect_height_ / 2;
 
     int length_to_corner = sqrt(pow(rect_length_radius,2)+pow(rect_height_radius,2));
     int corner_angle = 90 - atan(rect_height_radius/rect_length_radius) * 180/PI;
@@ -775,19 +771,142 @@ void ValidLinePointSearch::DrawRect(Mat &rgb)
     contours[0].push_back(rect_bottom_left);
     contours[0].push_back(rect_bottom_right);
 
-    drawContours(rgb, contours, -1, Scalar(0,255,0), 2, LINE_8);
 
-    circle(rgb, rect_top_left, 7, Scalar(0, 0, 255),CV_FILLED );
-    circle(rgb, rect_top_right, 7, Scalar(0, 255, 255),CV_FILLED );
-    circle(rgb, rect_bottom_left, 7, Scalar(255, 0, 255),CV_FILLED );
-    circle(rgb, rect_bottom_right, 7, Scalar(255, 0, 0),CV_FILLED );
 
-    GetLinesPointsInRectIds(left_line_direction_in_range_,contours,left_line_points_in_rect_id_);
-    GetLinesPointsInRectIds(mid_line_direction_in_range_,contours,mid_line_points_in_rect_id_);
-    GetLinesPointsInRectIds(right_line_direction_in_range_,contours,right_line_points_in_rect_id_);
+    return contours;
+}
 
-    CheckLinePointsInRect();
+void ValidLinePointSearch::DrawSearchRect(Mat &rgb)
+{
 
+    for(auto search_rect: examined_regions_)
+    {
+
+        drawContours(rgb, search_rect, -1, Scalar(0,255,0), 2, LINE_8);
+
+        circle(rgb, search_rect[0][0]/*rect_top_left*/, 7, Scalar(0, 0, 255),CV_FILLED );
+        circle(rgb, search_rect[0][1]/*rect_top_right*/, 7, Scalar(0, 255, 255),CV_FILLED );
+        circle(rgb, search_rect[0][2]/*rect_bottom_left*/, 7, Scalar(255, 0, 255),CV_FILLED );
+        circle(rgb, search_rect[0][3]/*rect_bottom_right*/, 7, Scalar(255, 0, 0),CV_FILLED );
+
+    }
+}
+
+int counterr = 0;
+
+void ValidLinePointSearch::FollowTrack(float search_direction, Point rect_mid_point, Mat &rgb)
+{
+            cout << search_direction <<" " << rect_mid_point<< " " << counterr << endl;
+
+
+
+            left_line_points_in_rect_ids_.clear();
+            mid_line_points_in_rect_ids_.clear();
+            right_line_points_in_rect_ids_.clear();
+
+            for(auto &it: left_priority_ids_) it.clear();
+            for(auto &it: mid_priority_ids_) it.clear();
+            for(auto &it: right_priority_ids_) it.clear();
+
+
+            vector<vector<Point>> search_rect = GetSearchRect(rect_mid_point,search_direction);
+
+
+
+
+            examined_regions_.push_back(search_rect);
+
+
+            GetLinesPointsInRectIds(left_line_direction_in_range_,search_rect,left_line_points_in_rect_ids_);
+            GetLinesPointsInRectIds(mid_line_direction_in_range_,search_rect,mid_line_points_in_rect_ids_);
+            GetLinesPointsInRectIds(right_line_direction_in_range_,search_rect,right_line_points_in_rect_ids_);
+
+            //cout << left_line_points_in_rect_ids_.size() << " " << mid_line_points_in_rect_ids_.size() << " " <<right_line_points_in_rect_ids_.size() << endl;
+
+            CheckLinePointsInRect();
+
+
+            float mean_direction;
+            Point mean_point;
+
+            ExaminePriorityTables(mean_direction,mean_point);
+
+            cout << "mean dir: " << mean_direction << endl;
+
+            if(mean_direction == -1 && mean_point.x == -1) return;
+
+
+            int step_length = 35;
+
+            int mean_direction_i = mean_direction;
+
+            if(mean_direction_i > 359) mean_direction_i %= 360;
+            if(mean_direction_i < 0)   mean_direction_i = 360 - abs(mean_direction_i);
+
+
+
+
+            float mean_direction_f    = mean_direction_i * (PI/180);
+            int x_offset = step_length * cos(mean_direction_f);
+            int y_offset = -step_length * sin(mean_direction_f);
+
+
+            //cout << x_offset <<" " << y_offset<< " " << mean_direction_i << " " << mean_point << endl;
+
+            //Point new_rect_mid_point(mean_point.x + x_offset, mean_point.y + y_offset);
+
+            Point new_rect_mid_point(rect_mid_point.x + x_offset, rect_mid_point.y + y_offset);
+
+
+            float new_search_direction = float(mean_direction_i);
+
+            //cout <<"new mid: " <<  new_rect_mid_point << endl;
+            //cout <<"new angle: " <<  new_search_direction << endl;
+
+            counterr++;
+
+/*
+            cout << "found left side:" << endl;
+            cout <<  mid_priority_ids_[PRIO_9_P1].size()
+                 << " " <<  right_priority_ids_[PRIO_9_P1].size() << endl;
+
+            cout << "found mid :" << endl;
+            cout << left_priority_ids_[PRIO_9_P1].size()
+                 << " " <<  right_priority_ids_[PRIO_10_P2].size() << endl;
+
+
+            cout << "found right side:" << endl;
+            cout << left_priority_ids_[PRIO_10_P2].size()
+                 << " " <<  mid_priority_ids_[PRIO_10_P2].size() << endl;
+
+
+            cout << "########\n\n";
+*/
+            drawContours(rgb, search_rect, -1, Scalar(0,255,0), 2, LINE_8);
+
+            imshow("im", rgb);
+
+            waitKey(0);
+
+
+            FollowTrack(new_search_direction, new_rect_mid_point, rgb);
+
+
+
+
+
+}
+void ValidLinePointSearch::ValidateTrack(Mat &rgb)
+{
+
+
+    Point rect_mid = Point(612,360);
+
+    float search_direction = 90;
+
+    FollowTrack(search_direction,rect_mid, rgb);
+
+    DrawSearchRect(rgb);
 
 }
 
@@ -833,7 +952,7 @@ void ValidLinePointSearch::CheckLinePointsInRect()
 
 
     // TODO Check if not always the same point
-
+    /*
     int mid_to_left_found_count = 0;
     int mid_to_left_true_prediction_count = 0;
     int mid_to_left_directions_in_range_count = 0;
@@ -857,17 +976,15 @@ void ValidLinePointSearch::CheckLinePointsInRect()
     int mid_to_right_found_count = 0;
     int mid_to_right_true_prediction_count = 0;
     int mid_to_right_directions_in_range_count = 0;
+    */
 
 
 
 
-    vector<vector<int>> left_priority_ids(14);
-    vector<vector<int>> mid_priority_ids(14);
-    vector<vector<int>> right_priority_ids(14);
 
-    for(int i=0; i<left_line_points_in_rect_id_.size(); i++)
+    for(int i=0; i<left_line_points_in_rect_ids_.size(); i++)
     {
-        LineValidationTable left_table = left_line_direction_in_range_[left_line_points_in_rect_id_[i]];
+        LineValidationTable left_table = left_line_direction_in_range_[left_line_points_in_rect_ids_[i]];
 
 
         bool found_mid_point = left_table.GetFoundMidPoint();
@@ -877,25 +994,23 @@ void ValidLinePointSearch::CheckLinePointsInRect()
         bool left_to_mid_directions_in_range = left_table.GetLeftToMidDirectionsInRange();
         bool left_to_right_directions_in_range = left_table.GetLeftToRightDirectionsInRange();
 
+        /*
         if(found_mid_point) left_to_mid_found_count++;
         if(mid_prediction) left_to_mid_true_prediction_count++;
         if(found_right_point) left_to_right_found_count++;
         if(right_prediction) left_to_right_true_prediction_count++;
         if(left_to_mid_directions_in_range) left_to_mid_directions_in_range_count++;
         if(left_to_right_directions_in_range) left_to_right_directions_in_range_count++;
+        */
 
-        FillPriorityTable(i,found_mid_point,found_right_point,mid_prediction,right_prediction,left_to_mid_directions_in_range,left_to_right_directions_in_range,left_priority_ids);
-
-
-
-
+        FillPriorityTable(i,found_mid_point,found_right_point,mid_prediction,right_prediction,left_to_mid_directions_in_range,left_to_right_directions_in_range,left_priority_ids_);
 
     }
 
-    for(int i=0; i<mid_line_points_in_rect_id_.size(); i++)
+    for(int i=0; i<mid_line_points_in_rect_ids_.size(); i++)
     {
 
-        LineValidationTable mid_table = mid_line_direction_in_range_[mid_line_points_in_rect_id_[i]];
+        LineValidationTable mid_table = mid_line_direction_in_range_[mid_line_points_in_rect_ids_[i]];
 
         bool found_left_point = mid_table.GetFoundLeftPoint();
         bool left_prediction  = mid_table.GetLeftPrediction();
@@ -903,21 +1018,21 @@ void ValidLinePointSearch::CheckLinePointsInRect()
         bool right_prediction = mid_table.GetRightPrediction();
         bool mid_to_left_directions_in_range = mid_table.GetMidToLeftDirectionsInRange();
         bool mid_to_right_directions_in_range = mid_table.GetMidToRightDirectionsInRange();
-
+        /*
         if(found_left_point) mid_to_left_found_count++;
         if(left_prediction) mid_to_left_true_prediction_count++;
         if(found_right_point) mid_to_right_found_count++;
         if(right_prediction) mid_to_right_true_prediction_count++;
         if(mid_to_left_directions_in_range) mid_to_left_directions_in_range_count++;
         if(mid_to_right_directions_in_range) mid_to_right_directions_in_range_count++;
+        */
 
-
-        FillPriorityTable(i,found_left_point,found_right_point,left_prediction,right_prediction,mid_to_left_directions_in_range,mid_to_right_directions_in_range,mid_priority_ids);
+        FillPriorityTable(i,found_left_point,found_right_point,left_prediction,right_prediction,mid_to_left_directions_in_range,mid_to_right_directions_in_range,mid_priority_ids_);
     }
 
-    for(int i=0; i<right_line_points_in_rect_id_.size(); i++)
+    for(int i=0; i<right_line_points_in_rect_ids_.size(); i++)
     {
-       LineValidationTable right_table =  right_line_direction_in_range_[right_line_points_in_rect_id_[i]];
+       LineValidationTable right_table =  right_line_direction_in_range_[right_line_points_in_rect_ids_[i]];
 
        bool found_left_point = right_table.GetFoundLeftPoint();
        bool left_prediction  = right_table.GetLeftPrediction();
@@ -926,20 +1041,21 @@ void ValidLinePointSearch::CheckLinePointsInRect()
        bool right_to_left_directions_in_range = right_table.GetRightToLeftDirectionsInRange();
        bool right_to_mid_directions_in_range = right_table.GetRightToMidDirectionsInRange();
 
+       /*
        if(found_left_point) right_to_left_found_count++;
        if(left_prediction) right_to_left_true_prediction_count++;
        if(found_mid_point) right_to_mid_found_count++;
        if(mid_prediction) right_to_mid_true_prediction_count++;
        if(right_to_left_directions_in_range) right_to_left_directions_in_range_count++;
        if(right_to_mid_directions_in_range) right_to_mid_directions_in_range++;
-
-       FillPriorityTable(i,found_left_point,found_mid_point,left_prediction,mid_prediction,right_to_left_directions_in_range,right_to_mid_directions_in_range,right_priority_ids);
+        */
+       FillPriorityTable(i,found_left_point,found_mid_point,left_prediction,mid_prediction,right_to_left_directions_in_range,right_to_mid_directions_in_range,right_priority_ids_);
 
     }
 
 
 
-    cout << "";
+    //cout << "";
 
     //Find right line
 
@@ -953,109 +1069,963 @@ void ValidLinePointSearch::FillPriorityTable(int i, bool found_point1,bool found
                                              bool directions_in_range1, bool directions_in_range2, vector<vector<int>>& priority_ids)
 {
 
+
+
+
     if(prediction1 && prediction2 && directions_in_range1 && directions_in_range2)
     {
         priority_ids[0].push_back(i);
-        return;
+        //return;
     }
 
     if(prediction1 && prediction2 && (directions_in_range1 ||  directions_in_range2))
     {
         priority_ids[1].push_back(i);
-        return;
+        //return;
     }
 
     if(prediction1 && prediction2)
     {
         priority_ids[2].push_back(i);
-        return;
-    }
+        //return;
+    }   
 
     if(prediction1 & found_point2 & directions_in_range1 && directions_in_range2)
     {
         priority_ids[3].push_back(i);
-        return;
+        //return;
     }
 
     if(prediction2 && found_point1 && directions_in_range1 && directions_in_range2)
     {
         priority_ids[4].push_back(i);
-        return;
+        //return;
     }
 
     if(prediction1 && found_point2 && (directions_in_range1 || directions_in_range2))
     {
         priority_ids[5].push_back(i);
-        return;
+        //return;
     }
 
     if(prediction2 && found_point1 && (directions_in_range1 || directions_in_range2))
     {
         priority_ids[6].push_back(i);
-        return;
+        //return;
     }
 
     if(prediction1 && found_point2)
     {
         priority_ids[7].push_back(i);
-        return;
+        //return;
     }
 
     if(prediction2 && found_point1)
     {
         priority_ids[8].push_back(i);
-        return;
+        //return;
     }
-
 
     if(prediction1)
     {
         priority_ids[9].push_back(i);
-        return;
+        //return;
     }
 
 
     if(prediction2)
     {
         priority_ids[10].push_back(i);
-        return;
+        //return;
     }
 
 
     if(found_point1 && found_point2)
     {
         priority_ids[11].push_back(i);
-        return;
+        //return;
     }
 
     if(found_point1)
     {
         priority_ids[12].push_back(i);
-        return;
+        //return;
     }
 
     if(found_point2)
     {
         priority_ids[13].push_back(i);
+        //return;
+    }
+
+    return;
+}
+
+
+vector<float> ValidLinePointSearch::GetUniqueDirectionsInRect(vector<LineValidationTable> table, vector<int> rect_ids, vector<vector<int>> priority_ids, int priority)
+{
+    vector<float> unique_directions;
+
+    float tmp_direction = -1;
+
+    for(int i=0; i<priority_ids[priority].size(); i++)
+    {
+        float direction = table[rect_ids[priority_ids[priority][i]]].GetDirection();
+
+        if(tmp_direction != direction)
+        {
+            unique_directions.push_back(direction);
+        }
+
+        tmp_direction = direction;
+    }
+
+    return unique_directions;
+}
+
+
+void  ValidLinePointSearch::ExaminePriorityTables(float& mean_direction, Point& mean_point)
+{
+
+
+
+    //int p_both_score = p_left_mid_right_count + p_mid_left_right_count + p_right_left_mid_count;
+    //int p_left_score =  p_left_mid_count + p_left_right_count;
+    //int p_mid_score =   p_mid_left_count + p_mid_right_count;
+    //int p_right_score = p_right_left_count + p_right_mid_count;
+
+
+    //int kMinAllLinesFoundScore_ = 10;
+    //int kMinLineFoundScore_ = 10;
+
+
+    //bool all_lines_found = p_both_score > kMinAllLinesFoundScore_;
+
+    //bool left_line_found  = p_left_score > kMindLineFoundScore_;
+    //bool mid_line_found   = p_mid_score > kMindLineFoundScore_;
+    //bool right_line_found = p_right_score > kMindLineFoundScore_;
+
+    //cout << "Predi b: " << p_both_score << " l: " << p_left_score << " m: " << p_mid_score << " r: " << p_right_score << endl;
+
+
+
+
+    //int f_both_score = f_left_mid_right_count + f_mid_left_right_count + f_right_left_mid_count;
+    //int f_left_score =f_left_mid_count + f_left_right_count;
+    //int f_mid_score =  f_mid_left_count + f_mid_right_count;
+    //int f_right_score = f_right_left_count + f_right_mid_count;
+
+    //cout << "Found b: " << f_both_score << " l: " << f_left_score << " m: " << f_mid_score << " r: " << f_right_score << endl;
+/*
+
+    int left_in_rect_size = left_line_points_in_rect_ids_.size();
+    int mid_in_rect_size = mid_line_points_in_rect_ids_.size();
+    int right_in_rect_size = right_line_points_in_rect_ids_.size();
+
+    cout << "Size in rect l: " << left_in_rect_size << " m: " << mid_in_rect_size << " r: " << right_in_rect_size << endl;
+
+    int left_line_size = left_line_direction_in_range_.size();
+    int mid_line_size = mid_line_direction_in_range_.size();
+    int right_line_size = right_line_direction_in_range_.size();
+
+    cout << "Size in range l: " << left_line_size << " m: " << mid_line_size << " r: " << right_line_size << endl;
+
+
+   Point last_mid_left =     left_line_last_adjacent_point_match_.last_mid_point;
+   Point last_right_left =       left_line_last_adjacent_point_match_.last_right_point;
+
+    Point last_left_mid =       mid_line_last_adjacent_point_match_.last_left_point;
+     Point last_right_mid =      mid_line_last_adjacent_point_match_.last_right_point;
+
+     Point last_left_right =      right_line_last_adjacent_point_match_.last_left_point;
+      Point last_mid_right =     right_line_last_adjacent_point_match_.last_mid_point;
+
+
+      cout << "Last match ml: " << last_mid_left << " rl: " << last_right_left << endl;
+      cout << "Last match lm: " << last_left_mid << " rm: " << last_right_mid << endl;
+      cout << "Last match lr: " << last_left_right << " mr: " << last_mid_right << endl;
+
+
+      Point lx_min = left_line_minmax_elements_.x_min;
+      Point lx_max = left_line_minmax_elements_.x_max;
+      Point ly_min = left_line_minmax_elements_.y_min;
+      Point ly_max = left_line_minmax_elements_.y_max;
+
+      Point mx_min = mid_line_minmax_elements_.x_min;
+      Point mx_max = mid_line_minmax_elements_.x_max;
+      Point my_min = mid_line_minmax_elements_.y_min;
+      Point my_max = mid_line_minmax_elements_.y_max;
+
+      Point rx_min = right_line_minmax_elements_.x_min;
+      Point rx_max = right_line_minmax_elements_.x_max;
+      Point ry_min = right_line_minmax_elements_.y_min;
+      Point ry_max = right_line_minmax_elements_.y_max;
+
+      cout << "MinMax l: " << lx_min << " " << lx_max << " " <<  ly_min << " " << ly_max << endl;
+      cout << "MinMax m: " << mx_min << " " << mx_max << " " <<  my_min << " " << my_max << endl;
+      cout << "MinMax r: " << rx_min << " " << rx_max << " " <<  ry_min << " " << ry_max << endl;
+
+
+
+
+
+
+    //cout << "h";
+   // mid_priority_ids_[PRIO_0_P1_AND_P2_AND_D1_AND_D2];
+   // right_priority_ids_[PRIO_0_P1_AND_P2_AND_D1_AND_D2];
+
+    float left_mean_direction = 0;
+    float mid_mean_direction = 0;
+    float right_mean_direction = 0;
+
+    float left_mean_x = 0;
+    float left_mean_y = 0;
+
+    float mid_mean_x = 0;
+    float mid_mean_y = 0;
+
+    float right_mean_x = 0;
+    float right_mean_y = 0;
+
+
+    int PRIO = PRIO_2_P1_AND_P2;
+*/
+    /*
+    vector<float> left_directions;
+    vector<float> mid_directions;
+    vector<float> right_directions;
+
+    vector<float> p_left_mid_right_directions;
+
+    vector<float> p_mid_left_right_directions;
+    vector<float> p_mid_left_right_unique_directions;
+    vector<float> p_right_left_mid_directions;
+    vector<float> p_right_left_mid_unique_directions;
+
+    vector<float> p_left_mid_directions;
+    vector<float> p_left_mid_unique_directions;
+
+    vector<float> p_mid_left_directions;
+    vector<float> p_mid_left_unique_directions;
+
+    vector<float> p_right_left_directions;
+    vector<float> p_right_left_unique_directions;
+
+
+    vector<float> p_left_right_directions;
+    vector<float> p_left_right_unique_directions;
+
+    vector<float> p_mid_right_directions;
+    vector<float> p_mid_right_unique_directions;
+
+    vector<float> p_right_mid_directions;
+    vector<float> p_right_mid_unique_directions;
+
+
+    vector<float> f_left_mid_right_directions;
+    vector<float> f_left_mid_right_unique_directions;
+    vector<float> f_mid_left_right_directions;
+    vector<float> f_mid_left_right_unique_directions;
+    vector<float> f_right_left_mid_directions;
+    vector<float> f_right_left_mid_unique_directions;
+
+    vector<float> f_left_mid_directions;
+    vector<float> f_left_mid_unique_directions;
+
+    vector<float> f_mid_left_directions;
+    vector<float> f_mid_left_unique_directions;
+
+    vector<float> f_right_left_directions;
+    vector<float> f_right_left_unique_directions;
+
+
+    vector<float> f_left_right_directions;
+    vector<float> f_left_right_unique_directions;
+
+    vector<float> f_mid_right_directions;
+    vector<float> f_mid_right_unique_directions;
+
+    vector<float> f_right_mid_directions;
+    vector<float> f_right_mid_unique_directions;
+
+
+*/
+
+
+
+
+    vector<float> p_left_mid_right_unique_directions = GetUniqueDirectionsInRect(left_line_direction_in_range_, left_line_points_in_rect_ids_, left_priority_ids_, PRIO_2_P1_AND_P2);
+    vector<float> p_left_mid_unique_directions       = GetUniqueDirectionsInRect(left_line_direction_in_range_, left_line_points_in_rect_ids_, left_priority_ids_, PRIO_9_P1);
+    vector<float> p_left_right_unique_directions     = GetUniqueDirectionsInRect(left_line_direction_in_range_, left_line_points_in_rect_ids_, left_priority_ids_, PRIO_10_P2);
+
+    vector<float> p_mid_left_right_unique_directions = GetUniqueDirectionsInRect(mid_line_direction_in_range_, mid_line_points_in_rect_ids_, mid_priority_ids_, PRIO_2_P1_AND_P2);
+    vector<float> p_mid_left_unique_directions       = GetUniqueDirectionsInRect(mid_line_direction_in_range_, mid_line_points_in_rect_ids_, mid_priority_ids_, PRIO_9_P1);
+    vector<float> p_mid_right_unique_directions      = GetUniqueDirectionsInRect(mid_line_direction_in_range_, mid_line_points_in_rect_ids_, mid_priority_ids_, PRIO_10_P2);
+
+    vector<float> p_right_left_mid_unique_directions = GetUniqueDirectionsInRect(right_line_direction_in_range_, right_line_points_in_rect_ids_, right_priority_ids_, PRIO_2_P1_AND_P2);
+    vector<float> p_right_left_unique_directions     = GetUniqueDirectionsInRect(right_line_direction_in_range_, right_line_points_in_rect_ids_, right_priority_ids_, PRIO_9_P1);
+    vector<float> p_right_mid_unique_directions      = GetUniqueDirectionsInRect(right_line_direction_in_range_, right_line_points_in_rect_ids_, right_priority_ids_, PRIO_10_P2);
+
+    vector<float> f_left_mid_right_unique_directions = GetUniqueDirectionsInRect(left_line_direction_in_range_, left_line_points_in_rect_ids_, left_priority_ids_, PRIO_11_FP1_AND_FP2);
+    vector<float> f_left_mid_unique_directions       = GetUniqueDirectionsInRect(left_line_direction_in_range_, left_line_points_in_rect_ids_, left_priority_ids_, PRIO_12_FP1);
+    vector<float> f_left_right_unique_directions     = GetUniqueDirectionsInRect(left_line_direction_in_range_, left_line_points_in_rect_ids_, left_priority_ids_, PRIO_13_FP2);
+
+    vector<float> f_mid_left_right_unique_directions = GetUniqueDirectionsInRect(mid_line_direction_in_range_, mid_line_points_in_rect_ids_, mid_priority_ids_, PRIO_11_FP1_AND_FP2);
+    vector<float> f_mid_left_unique_directions       = GetUniqueDirectionsInRect(mid_line_direction_in_range_, mid_line_points_in_rect_ids_, mid_priority_ids_, PRIO_12_FP1);
+    vector<float> f_mid_right_unique_directions      = GetUniqueDirectionsInRect(mid_line_direction_in_range_, mid_line_points_in_rect_ids_, mid_priority_ids_, PRIO_13_FP2);
+
+    vector<float> f_right_left_mid_unique_directions = GetUniqueDirectionsInRect(right_line_direction_in_range_, right_line_points_in_rect_ids_, right_priority_ids_, PRIO_11_FP1_AND_FP2);
+    vector<float> f_right_left_unique_directions     = GetUniqueDirectionsInRect(right_line_direction_in_range_, right_line_points_in_rect_ids_, right_priority_ids_, PRIO_12_FP1);
+    vector<float> f_right_mid_unique_directions      = GetUniqueDirectionsInRect(right_line_direction_in_range_, right_line_points_in_rect_ids_, right_priority_ids_, PRIO_13_FP2);
+
+
+    int p_left_mid_right_count = p_left_mid_right_unique_directions.size();
+    int p_left_mid_count   = p_left_mid_unique_directions.size();
+    int p_left_right_count = p_left_right_unique_directions.size();
+
+    int p_mid_left_right_count = p_mid_left_right_unique_directions.size();
+    int p_mid_left_count   = p_mid_left_unique_directions.size();
+    int p_mid_right_count  = p_mid_right_unique_directions.size();
+
+    int p_right_left_mid_count = p_right_left_mid_unique_directions.size();
+    int p_right_left_count = p_right_left_unique_directions.size();
+    int p_right_mid_count  = p_right_mid_unique_directions.size();
+
+
+    int f_left_mid_right_count = f_left_mid_right_unique_directions.size();
+    int f_left_mid_count       = f_left_mid_unique_directions.size();
+    int f_left_right_count     = f_left_right_unique_directions.size();
+
+    int f_mid_left_right_count = f_mid_left_right_unique_directions.size();
+    int f_mid_left_count       = f_mid_left_unique_directions.size();
+    int f_mid_right_count      = f_mid_right_unique_directions.size();
+
+    int f_right_left_mid_count = f_right_left_mid_unique_directions.size();
+    int f_right_left_count     = f_right_left_unique_directions.size();
+    int f_right_mid_count      = f_right_mid_unique_directions.size();
+
+
+
+    if(p_left_mid_right_count>0 && p_mid_left_right_count>0 && p_right_left_mid_count>0)
+    {
+        cout<<"0"<<endl;
+
+        float left_direction   = p_left_mid_right_unique_directions[p_left_mid_right_count-1];
+        float right_direction = p_right_left_mid_unique_directions[p_right_left_mid_count-1];
+        float mid_direction   = p_mid_left_right_unique_directions[p_mid_left_right_count-1];
+
+        mean_direction = (left_direction + mid_direction + right_direction) / 3;
+
+    }
+    else if(p_left_mid_right_count>0 && p_mid_left_right_count>0)
+    {
+        cout<<"1"<<endl;
+
+        float left_direction  = p_left_mid_right_unique_directions[p_left_mid_right_count-1];
+        float mid_direction   = p_mid_left_right_unique_directions[p_mid_left_right_count-1];
+
+        mean_direction = (left_direction + mid_direction) / 2;
+    }
+    else if(p_right_left_mid_count>0 && p_left_mid_right_count>0)
+    {
+        cout<<"2"<<endl;
+
+        float left_direction    = p_left_mid_right_unique_directions[p_left_mid_right_count-1];
+        float right_direction   = p_right_left_mid_unique_directions[p_right_left_mid_count-1];
+
+        mean_direction = (left_direction + right_direction) / 2;
+    }
+    else if(p_mid_left_right_count>0 && p_right_left_mid_count>0)
+    {
+        cout<<"3"<<endl;
+
+        float mid_direction    = p_mid_left_right_unique_directions[p_mid_left_right_count-1];
+        float right_direction   = p_right_left_mid_unique_directions[p_right_left_mid_count-1];
+
+        mean_direction = (mid_direction + right_direction) / 2;
+    }
+    else if(p_left_mid_right_count>0)
+    {
+        cout<<"4"<<endl;
+         float left_direction    = p_left_mid_right_unique_directions[p_left_mid_right_count-1];
+         mean_direction = left_direction;
+
+    }
+    else if(p_mid_left_right_count>0)
+    {
+        cout<<"5"<<endl;
+        float mid_direction    = p_mid_left_right_unique_directions[p_mid_left_right_count-1];
+        mean_direction = mid_direction;
+    }
+    else if(p_right_left_mid_count>0)
+    {
+        cout<<"6"<<endl;
+        float right_direction    = p_right_left_mid_unique_directions[p_right_left_mid_count-1];
+        mean_direction = right_direction;
+    }
+    else if(p_left_mid_count>0 && p_mid_left_count>0 && f_left_right_count>0 && f_mid_right_count>0)
+    {
+        cout<<"7"<<endl;
+        float left_direction    = p_left_mid_unique_directions[p_left_mid_count-1];
+        float mid_direction    =  p_mid_left_unique_directions[p_mid_left_count-1];
+        mean_direction = (left_direction + mid_direction) / 2;
+
+    }
+    else if(p_right_mid_count>0 && p_mid_right_count>0 && f_right_left_count>0 && f_mid_left_count>0)
+    {
+        cout<<"8"<<endl;
+        float right_direction    = p_right_mid_unique_directions[p_right_mid_count-1];
+        float mid_direction    =  p_mid_right_unique_directions[p_mid_right_count-1];
+        mean_direction = (right_direction + mid_direction) / 2;
+
+    }
+    else if(p_left_right_count>0 && p_right_left_count>0 && f_left_mid_count>0 && f_right_mid_count>0)
+    {
+        cout<<"9"<<endl;
+        float left_direction    = p_left_right_unique_directions[p_left_right_count-1];
+        float right_direction    =  p_right_left_unique_directions[p_right_left_count-1];
+        mean_direction = (left_direction + right_direction) / 2;
+
+    }
+    else if(p_left_mid_count>0 && p_mid_left_count>0 && (f_left_right_count>0 || f_mid_right_count>0))
+    {
+        cout<<"10"<<endl;
+        float left_direction     =  p_left_mid_unique_directions[p_left_mid_count-1];
+        float mid_direction    =  p_mid_left_unique_directions[p_mid_left_count-1];
+        mean_direction = (left_direction + mid_direction) / 2;
+
+    }
+    else if(p_right_mid_count>0 && p_mid_right_count>0 && (f_right_left_count>0 || f_mid_left_count>0))
+    {
+        cout<<"11"<<endl;
+        float right_direction    = p_right_mid_unique_directions[p_right_mid_count-1];
+        float mid_direction    =  p_mid_right_unique_directions[p_mid_right_count-1];
+        mean_direction = (right_direction + mid_direction) / 2;
+    }
+    else if(p_left_right_count>0 && p_right_left_count>0 && (f_left_mid_count>0 || f_right_mid_count>0))
+    {
+        cout<<"12"<<endl;
+        float left_direction    = p_left_right_unique_directions[p_left_right_count-1];
+        float right_direction    =  p_right_left_unique_directions[p_right_left_count-1];
+        mean_direction = (left_direction + right_direction) / 2;
+    }
+    else if(p_left_mid_count>0 && p_mid_left_count>0)
+    {
+        cout<<"13"<<endl;
+        float left_direction     =  p_left_mid_unique_directions[p_left_mid_count-1];
+        float mid_direction    =  p_mid_left_unique_directions[p_mid_left_count-1];
+        mean_direction = (left_direction + mid_direction) / 2;
+    }
+    else if(p_right_mid_count>0 && p_mid_right_count>0)
+    {
+        cout<<"14"<<endl;
+        float right_direction    = p_right_mid_unique_directions[p_right_mid_count-1];
+        float mid_direction    =  p_mid_right_unique_directions[p_mid_right_count-1];
+        mean_direction = (right_direction + mid_direction) / 2;
+    }
+    else if(p_left_right_count>0 && p_right_left_count>0)
+    {
+        cout<<"15"<<endl;
+        float left_direction    = p_left_right_unique_directions[p_left_right_count-1];
+        float right_direction    =  p_right_left_unique_directions[p_right_left_count-1];
+        mean_direction = (left_direction + right_direction) / 2;
+    }
+
+    else if(p_left_mid_count>0 && f_left_right_count>0)
+    {
+        cout<<"16"<<endl;
+        float left_direction     =  p_left_mid_unique_directions[p_left_mid_count-1];
+        mean_direction = left_direction;
+    }
+
+    else if(p_left_right_count>0 && f_left_mid_count>0)
+    {
+        cout<<"17"<<endl;
+        float left_direction    = p_left_right_unique_directions[p_left_right_count-1];
+        mean_direction = left_direction;
+    }
+    else if(p_mid_left_count>0 && f_mid_right_count>0)
+    {
+        cout<<"18"<<endl;
+        float mid_direction    =  p_mid_left_unique_directions[p_mid_left_count-1];
+        mean_direction = mid_direction;
+    }
+    else if(p_mid_right_count>0 && f_mid_left_count>0)
+    {
+        cout<<"19"<<endl;
+        float mid_direction    =  p_mid_right_unique_directions[p_mid_right_count-1];
+        mean_direction = mid_direction;
+    }
+    else if(p_right_left_count>0 && f_right_mid_count>0)
+    {
+        cout<<"20"<<endl;
+        float right_direction    =  p_right_left_unique_directions[p_right_left_count-1];
+        mean_direction = right_direction;
+    }
+    else if(p_right_mid_count>0 && f_right_left_count>0)
+    {
+        cout<<"21"<<endl;
+        float right_direction    = p_right_mid_unique_directions[p_right_mid_count-1];
+        mean_direction = right_direction;
+    }
+    else if(p_left_mid_count>0)
+    {
+        cout<<"22"<<endl;
+        float left_direction     =  p_left_mid_unique_directions[p_left_mid_count-1];
+        mean_direction = left_direction;
+    }
+    else if(p_left_right_count>0)
+    {
+        cout<<"23"<<endl;
+        float left_direction    = p_left_right_unique_directions[p_left_right_count-1];
+        mean_direction = left_direction;
+    }
+    else if(p_mid_left_count>0)
+    {
+        cout<<"24"<<endl;
+        float mid_direction    =  p_mid_left_unique_directions[p_mid_left_count-1];
+        mean_direction = mid_direction;
+    }
+    else if(p_mid_right_count>0)
+    {
+        cout<<"25"<<endl;
+        float mid_direction    =  p_mid_right_unique_directions[p_mid_right_count-1];
+        mean_direction = mid_direction;
+    }
+    else if(p_right_left_count>0)
+    {
+        cout<<"26"<<endl;
+        float right_direction    =  p_right_left_unique_directions[p_right_left_count-1];
+        mean_direction = right_direction;
+    }
+    else if(p_right_mid_count>0)
+    {
+        cout<<"27"<<endl;
+        float right_direction    = p_right_mid_unique_directions[p_right_mid_count-1];
+        mean_direction = right_direction;
+    }
+    else if(f_left_mid_count>0 && f_left_right_count>0 && f_mid_left_count>0 &&
+            f_mid_right_count>0 && f_right_left_count>0 && f_right_mid_count>0)
+    {
+        cout<<"28"<<endl;
+        float left_mid_direction   = f_left_mid_unique_directions[f_left_mid_count-1];
+        float left_right_direction =  f_left_right_unique_directions[f_left_right_count-1];
+        float mid_left_direction   =  f_mid_left_unique_directions[f_mid_left_count-1];
+        float mid_right_direction   =  f_mid_right_unique_directions[f_mid_right_count-1];
+        float right_left_direction   =  f_right_left_unique_directions[f_right_left_count-1];
+        float right_mid_direction   =  f_right_mid_unique_directions[f_right_mid_count-1];
+
+        mean_direction = (left_mid_direction + left_right_direction +mid_left_direction+mid_right_direction+right_left_direction+right_mid_direction)/6;
+
+    }
+
+    else if(f_left_mid_count>0 && f_left_right_count>0)
+    {
+        cout<<"29"<<endl;
+        float left_mid_direction   = f_left_mid_unique_directions[f_left_mid_count-1];
+        float left_right_direction =  f_left_right_unique_directions[f_left_right_count-1];
+        mean_direction = (left_mid_direction + left_right_direction)/2;
+    }
+    else if(f_mid_left_count>0 && f_mid_right_count>0)
+    {
+        cout<<"30"<<endl;
+        float mid_left_direction   =  f_mid_left_unique_directions[f_mid_left_count-1];
+        float mid_right_direction   =  f_mid_right_unique_directions[f_mid_right_count-1];
+         mean_direction = (mid_left_direction+mid_right_direction)/2;
+    }
+    else if(f_right_left_count>0 && f_right_mid_count>0)
+    {
+        cout<<"31"<<endl;
+        float right_left_direction   =  f_right_left_unique_directions[f_right_left_count-1];
+        float right_mid_direction   =  f_right_mid_unique_directions[f_right_mid_count-1];
+        mean_direction = (right_left_direction+right_mid_direction)/2;
+    }
+
+    else if(f_left_mid_count>0 && f_mid_left_count>0)
+    {
+        cout<<"32"<<endl;
+        float left_mid_direction   = f_left_mid_unique_directions[f_left_mid_count-1];
+        float mid_left_direction   =  f_mid_left_unique_directions[f_mid_left_count-1];
+        mean_direction = (left_mid_direction+mid_left_direction)/2;
+    }
+
+    else if(f_right_left_count>0 && f_left_right_count>0)
+    {
+        cout<<"33"<<endl;
+        float left_right_direction =  f_left_right_unique_directions[f_left_right_count-1];
+        float right_left_direction   =  f_right_left_unique_directions[f_right_left_count-1];
+        mean_direction = (left_right_direction+right_left_direction)/2;
+
+    }
+    else if(f_mid_right_count>0 && f_right_mid_count>0)
+    {
+        cout<<"34"<<endl;
+        float mid_right_direction   =  f_mid_right_unique_directions[f_mid_right_count-1];
+        float right_mid_direction   =  f_right_mid_unique_directions[f_right_mid_count-1];
+        mean_direction = (mid_right_direction+right_mid_direction)/2;
+
+    }
+
+    else if(f_left_mid_count>0)
+    {
+        cout<<"35"<<endl;
+        float left_mid_direction   = f_left_mid_unique_directions[f_left_mid_count-1];
+        mean_direction = left_mid_direction;
+    }
+    else if(f_left_right_count>0)
+    {
+        cout<<"36"<<endl;
+        float left_right_direction =  f_left_right_unique_directions[f_left_right_count-1];
+        mean_direction = left_right_direction;
+    }
+
+    else if(f_mid_left_count>0)
+    {
+        cout<<"37"<<endl;
+        float mid_left_direction   =  f_mid_left_unique_directions[f_mid_left_count-1];
+        mean_direction = mid_left_direction;
+    }
+
+    else if(f_mid_right_count>0)
+    {
+        cout<<"38"<<endl;
+        float mid_right_direction   =  f_mid_right_unique_directions[f_mid_right_count-1];
+        mean_direction = mid_right_direction;
+    }
+    else if(f_right_left_count>0)
+    {
+        cout<<"39"<<endl;
+        float right_left_direction   =  f_right_left_unique_directions[f_right_left_count-1];
+        mean_direction = right_left_direction;
+    }
+    else if(f_right_mid_count>0)
+    {
+        cout<<"40"<<endl;
+        float right_mid_direction   =  f_right_mid_unique_directions[f_right_mid_count-1];
+        mean_direction = f_right_mid_count;
+    }
+
+    else if(left_line_points_in_rect_ids_.size()>0)
+    {
+        cout<<"41"<<endl;
+        float left_direction   = left_line_direction_in_range_[left_line_points_in_rect_ids_[(left_line_points_in_rect_ids_.size()-1)]].GetDirection();
+        mean_direction = left_direction;
+    }
+    else if(mid_line_points_in_rect_ids_.size()>0)
+    {
+        cout<<"42"<<endl;
+        float mid_direction   = mid_line_direction_in_range_[mid_line_points_in_rect_ids_[(mid_line_points_in_rect_ids_.size()-1)]].GetDirection();
+        mean_direction = mid_direction;
+    }
+    else if(right_line_points_in_rect_ids_.size()>0)
+    {
+        cout<<"43"<<endl;
+        float right_direction   = right_line_direction_in_range_[right_line_points_in_rect_ids_[(right_line_points_in_rect_ids_.size()-1)]].GetDirection();
+        mean_direction = right_direction;
+    }
+    else{
+
+        cout<<"nothing"<<endl;
+        mean_direction = -1;
+        mean_point = Point(-1,-1);
         return;
     }
+
+
+/*
+    if(p_left_mid_right_count>0 && p_mid_left_right_count>0 && p_right_left_mid_count>0)
+    {
+        float left_direction   = p_left_mid_right_unique_directions[(p_left_mid_right_unique_directions.size()-1)];
+        float right_direction = p_right_left_mid_unique_directions[(p_right_left_mid_unique_directions.size()-1)];
+        float mid_direction   = p_mid_left_right_unique_directions[(p_mid_left_right_unique_directions.size()-1)];
+
+
+        mean_direction = (left_direction + mid_direction + right_direction) / 3;
+    }
+    else if(p_left_mid_right_count>0 && p_mid_left_right_count>0)
+    {
+        float left_direction   = p_left_mid_right_unique_directions[(p_left_mid_right_unique_directions.size()-1)];
+        float mid_direction   = p_mid_left_right_unique_directions[(p_mid_left_right_unique_directions.size()-1)];
+        mean_direction = (left_direction + mid_direction)/2;
+    }
+    else if(p_left_mid_right_count>0 && p_right_left_mid_count>0)
+    {
+        float left_direction   = p_left_mid_right_unique_directions[(p_left_mid_right_unique_directions.size()-1)];
+        float right_direction = p_right_left_mid_unique_directions[(p_right_left_mid_unique_directions.size()-1)];
+
+        mean_direction = (left_direction + right_direction)/2;
+    }
+    else if(p_mid_left_right_count>0 && p_right_left_mid_count>0)
+    {
+        float mid_direction   = p_mid_left_right_unique_directions[(p_mid_left_right_unique_directions.size()-1)];
+        float right_direction = p_right_left_mid_unique_directions[(p_right_left_mid_unique_directions.size()-1)];
+
+        mean_direction = (mid_direction + right_direction)/2;
+    }
+    else if(p_left_mid_count>0 && p_mid_left_count>0)
+    {
+        float left_direction   = p_left_mid_unique_directions[(p_left_mid_unique_directions.size()-1)];
+        float mid_direction = p_mid_left_unique_directions[(p_mid_left_unique_directions.size()-1)];
+
+        mean_direction = (left_direction + mid_direction)/2;
+    }
+
+
+
+
+
+
+    else if(right_line_points_in_rect_ids_.size()>0)
+    {
+        float right_direction   = right_line_direction_in_range_[right_line_points_in_rect_ids_[(right_line_points_in_rect_ids_.size()-1)]].GetDirection();
+        mean_direction = right_direction;
+    }
+    else {
+
+            mean_direction = -1;
+            mean_point = Point(-1,-1);
+            return;
+
+    }
+
+*/
+    mean_point = Point(1,1);
+
+
+//cout << "";
+/*
+ *
+ *
+ *    if(p_left_mid_right_count>0 && p_mid_left_right_count>0 && p_right_left_mid_count>0)cout<<"0"<<endl;
+
+    else if(p_left_mid_right_count>0 && p_mid_left_right_count>0)cout<<"1"<<endl;
+
+    else if(p_right_left_mid_count>0 && p_left_mid_right_count>0)cout<<"2"<<endl;
+
+    else if(p_mid_left_right_count>0 && p_right_left_mid_count>0)cout<<"3"<<endl;
+
+    else if(p_left_mid_right_count>0)cout<<"4"<<endl;
+
+    else if(p_mid_left_right_count>0)cout<<"5"<<endl;
+
+    else if(p_right_left_mid_count>0)cout<<"6"<<endl;
+
+    else if(p_left_mid_count>0 && p_mid_left_count>0 && f_left_right_count>0 && f_mid_right_count>0)cout<<"7"<<endl;
+
+    else if(p_right_mid_count>0 && p_mid_right_count>0 && f_right_left_count>0 && f_mid_left_count>0)cout<<"8"<<endl;
+
+    else if(p_left_right_count>0 && p_right_left_count>0 && f_left_mid_count>0 && f_right_mid_count>0)cout<<"9"<<endl;
+
+    else if(p_left_mid_count>0 && p_mid_left_count>0 && (f_left_right_count>0 || f_mid_right_count>0))cout<<"10"<<endl;
+
+    else if(p_right_mid_count>0 && p_mid_right_count>0 && (f_right_left_count>0 || f_mid_left_count>0))cout<<"11"<<endl;
+
+    else if(p_left_right_count>0 && p_right_left_count>0 && (f_left_mid_count>0 || f_right_mid_count>0))cout<<"12"<<endl;
+
+    else if(p_left_mid_count>0 && p_mid_left_count>0)cout<<"13"<<endl;
+
+    else if(p_right_mid_count>0 && p_mid_right_count>0)cout<<"14"<<endl;
+
+    else if(p_left_right_count>0 && p_right_left_count>0)cout<<"15"<<endl;
+
+    else if(p_left_mid_count>0 && f_left_right_count>0)cout<<"16"<<endl;
+
+    else if(p_left_right_count>0 && f_left_mid_count>0)cout<<"17"<<endl;
+
+    else if(p_mid_left_count>0 && f_mid_right_count>0)cout<<"18"<<endl;
+
+    else if(p_mid_right_count>0 && f_mid_left_count>0)cout<<"19"<<endl;
+
+    else if(p_right_left_count>0 && f_right_mid_count>0)cout<<"20"<<endl;
+
+    else if(p_right_mid_count>0 && f_right_left_count>0)cout<<"21"<<endl;
+
+    else if(p_left_mid_count>0)cout<<"22"<<endl;
+
+    else if(p_left_right_count>0)cout<<"23"<<endl;
+
+    else if(p_mid_left_count>0)cout<<"24"<<endl;
+
+    else if(p_mid_right_count>0)cout<<"25"<<endl;
+
+    else if(p_right_left_count>0)cout<<"26"<<endl;
+
+    else if(p_right_mid_count>0)cout<<"27"<<endl;
+
+    else if(f_left_mid_count>0 && f_left_right_count>0 && f_mid_left_count>0 &&
+            f_mid_right_count>0 && f_right_left_count>0 && f_right_mid_count>0)cout<<"28"<<endl;
+
+    else if(f_left_mid_count>0 && f_left_right_count>0)cout<<"29"<<endl;
+
+    else if(f_mid_left_count>0 && f_mid_right_count>0)cout<<"30"<<endl;
+
+    else if(f_right_left_count>0 && f_right_mid_count>0)cout<<"31"<<endl;
+
+    else if(f_left_mid_count>0 && f_mid_left_count>0)cout<<"32"<<endl;
+
+    else if(f_right_left_count>0 && f_left_right_count>0)cout<<"33"<<endl;
+
+    else if(f_mid_right_count>0 && f_right_mid_count>0)cout<<"34"<<endl;
+
+    else if(f_left_mid_count>0)cout<<"35"<<endl;
+
+    else if(f_left_right_count>0)cout<<"36"<<endl;
+
+    else if(f_mid_left_count>0)cout<<"37"<<endl;
+
+    else if(f_mid_right_count>0)    cout<<"38"<<endl;
+
+    else if(f_right_left_count>0)  cout<<"39"<<endl;
+
+    else if(f_right_mid_count>0) cout<<"40"<<endl;
+
+    else if(left_line_points_in_rect_ids_.size()>0)    cout<<"41"<<endl;
+
+    else if(mid_line_points_in_rect_ids_.size()>0) cout<<"42"<<endl;
+
+    else if(right_line_points_in_rect_ids_.size()>0)  cout<<"43"<<endl;
+
+    else cout<<"nothing"<<endl;
+ *
+ *
+    for(int i=0; i<left_priority_ids_[PRIO].size(); i++)
+    {
+        float direction = left_line_direction_in_range_[left_priority_ids_[PRIO][i]].GetDirection();
+        //Point origin = left_line_direction_in_range_[left_priority_ids_[PRIO][i]].GetOriginPoint();
+
+        //left_mean_x += origin.x;
+        //left_mean_y += origin.y;
+
+        //left_mean_direction += direction;
+
+        left_directions.push_back(direction);
+
+       //cout << "left: " << direction << endl;
+    }
+
+
+    for(int i=0; i<mid_priority_ids_[PRIO].size(); i++)
+    {
+        float direction = mid_line_direction_in_range_[mid_priority_ids_[PRIO][i]].GetDirection();
+        //Point origin = mid_line_direction_in_range_[mid_priority_ids_[PRIO][i]].GetOriginPoint();
+
+        //mid_mean_x += origin.x;
+        //mid_mean_y += origin.y;
+
+        //mid_mean_direction += direction;
+
+        mid_directions.push_back(direction);
+
+       //cout << "mid: " << direction << endl;
+    }
+
+    for(int i=0; i<right_priority_ids_[PRIO].size(); i++)
+    {
+        float direction = right_line_direction_in_range_[right_priority_ids_[PRIO][i]].GetDirection();
+        //Point origin = right_line_direction_in_range_[right_priority_ids_[PRIO][i]].GetOriginPoint();
+
+        //right_mean_x += origin.x;
+        //right_mean_y += origin.y;
+
+
+        //right_mean_direction += direction;
+
+        right_directions.push_back(direction);
+
+
+       //cout << "right: " << direction << endl;
+    }
+
+
+
+
+
+
+
+    if(left_priority_ids_[PRIO].size() > 0 &&
+       mid_priority_ids_[PRIO].size() > 0 &&
+       right_priority_ids_[PRIO].size() > 0     )
+    {
+
+        std::sort(left_directions.begin(), left_directions.end());
+        auto last_left = std::unique(left_directions.begin(), left_directions.end());
+        left_directions.erase(last_left, left_directions.end());
+
+        //cout << "left: " << endl;
+        for(auto it: left_directions) cout << it << " ";
+        cout << endl;
+
+
+        std::sort(mid_directions.begin(), mid_directions.end());
+        auto last_mid = std::unique(mid_directions.begin(), mid_directions.end());
+        mid_directions.erase(last_mid, mid_directions.end());
+
+        //cout << "mid: " << endl;
+        for(auto it: mid_directions) cout << it << " ";
+        cout << endl;
+
+
+        std::sort(right_directions.begin(), right_directions.end());
+        auto last_right = std::unique(right_directions.begin(), right_directions.end());
+        right_directions.erase(last_right, right_directions.end());
+
+        //cout << "right: " << endl;
+        for(auto it: right_directions) cout << it << " ";
+        cout << endl;
+
+
+
+        left_mean_direction /= left_priority_ids_[PRIO].size();
+        mid_mean_direction /= mid_priority_ids_[PRIO].size();
+        right_mean_direction /= right_priority_ids_[PRIO].size();
+
+        left_mean_x /= left_priority_ids_[PRIO].size();
+        left_mean_y /= left_priority_ids_[PRIO].size();
+
+        mid_mean_x /= mid_priority_ids_[PRIO].size();
+        mid_mean_y /= mid_priority_ids_[PRIO].size();
+
+        right_mean_x /= right_priority_ids_[PRIO].size();
+        right_mean_y /= right_priority_ids_[PRIO].size();
+
+        //cout << "all directions" << endl;
+//cout << left_mean_direction << " "<< mid_mean_direction<<" "<< right_mean_direction << endl;
+
+
+        float mean_x =  (left_mean_x + mid_mean_x + right_mean_x) / 3;
+        float mean_y =  (left_mean_y + mid_mean_y + right_mean_y) / 3;
+
+        mean_point = Point(1, 1);
+
+        //mean_direction =  (left_mean_direction + mid_mean_direction + right_mean_direction) / 3;
+
+        mean_direction =  *max_element(left_directions.begin(), left_directions.end());;
+
+
+
+    }else{
+        mean_point = Point(-1,-1);
+        mean_direction = -1;
+    }
+
+*/
 }
 
 
 void ValidLinePointSearch::DrawPointsInRect(Mat &rgb)
 {
-    for(auto it:left_line_points_in_rect_id_)
+    for(auto it:left_line_points_in_rect_ids_)
     {
          circle(rgb, left_line_validation_table_[it].GetOriginPoint(), 1, Scalar(0, 0, 255),CV_FILLED );
     }
 
-    for(auto it:mid_line_points_in_rect_id_)
+    for(auto it:mid_line_points_in_rect_ids_)
     {
          circle(rgb, mid_line_validation_table_[it].GetOriginPoint(), 1, Scalar(0, 255, 0),CV_FILLED );
     }
 
 
-    for(auto it:right_line_points_in_rect_id_)
+    for(auto it:right_line_points_in_rect_ids_)
     {
          circle(rgb, right_line_validation_table_[it].GetOriginPoint(), 1, Scalar(255, 0, 0),CV_FILLED );
     }
@@ -1070,7 +2040,6 @@ void ValidLinePointSearch::SearchValidPoints()
     cout << "ls: " << left_points_validation_table_.size() << endl;
    cout << "ms: " << mid_points_validation_table_.size() << endl;
 */
-
 
     // right to left point validation
 
@@ -1434,6 +2403,7 @@ void ValidLinePointSearch::DrawMergedPoints(Mat &rgb)
 void ValidLinePointSearch::CreateValidationTables()
 {
 
+
     for(int i=0; i<left_to_mid_search_info_.size(); i++)
     {
         left_line_validation_table_.emplace_back(LineValidationTable(LEFT_LINE,
@@ -1522,10 +2492,16 @@ void ValidLinePointSearch::ClearValidationTables()
     right_line_last_adjacent_point_match_.right_set =  false;
 
 
-    left_line_points_in_rect_id_.clear();
-    mid_line_points_in_rect_id_.clear();
-    right_line_points_in_rect_id_.clear();
+    left_line_points_in_rect_ids_.clear();
+    mid_line_points_in_rect_ids_.clear();
+    right_line_points_in_rect_ids_.clear();
 
+
+    for(auto &it: left_priority_ids_) it.clear();
+    for(auto &it: mid_priority_ids_) it.clear();
+    for(auto &it: right_priority_ids_) it.clear();
+
+    examined_regions_.clear();
 
     l.clear();
     m.clear();
