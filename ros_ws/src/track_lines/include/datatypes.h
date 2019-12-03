@@ -6,6 +6,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
+
 using namespace std;
 using namespace cv;
 
@@ -397,6 +398,42 @@ struct SegmentStartIDAndWidth
 
 namespace valid_line_point_search
 {
+
+
+
+
+    struct RectSafetyTable
+    {
+        float percent_points_with_priority_0;
+        float percent_points_with_priority_1;
+        float percent_points_with_priority_2;
+        float percent_points_with_priority_3;
+        float percent_points_with_priority_4;
+        float percent_points_with_priority_5;
+        float percent_points_with_priority_6;
+        float percent_points_with_priority_7;
+        float percent_points_with_priority_8;
+        float percent_points_with_priority_9;
+        float percent_points_with_priority_10;
+        float percent_points_with_priority_11;
+        float percent_points_with_priority_12;
+        float percent_points_with_priority_13;
+
+        float percent_points_in_rect;
+
+        bool too_few_points_in_rect;
+        bool rect_straight;
+        bool rect_left_curve;
+        bool rect_right_curve;
+        bool y_min_in_rect_border_range;
+        bool y_max_in_rect_border_range;
+
+
+
+    };
+
+
+
 
     struct LastAdjacentPointMatch
     {

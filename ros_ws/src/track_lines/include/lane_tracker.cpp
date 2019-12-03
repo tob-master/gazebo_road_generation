@@ -24,7 +24,9 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         threshold(image_mono_bird_, image_mono_bird_otsu_, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
 
          Mat bird2;
+         Mat rgb_spline;
         cv::cvtColor(image_mono_bird_, image_rgb_bird_, CV_GRAY2BGR);
+        cv::cvtColor(image_mono_bird_, rgb_spline, CV_GRAY2BGR);
         cv::cvtColor(image_mono_bird_, bird2, CV_GRAY2BGR);
 
 
@@ -44,16 +46,16 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         if(vanishing_point_search_return_info.has_found_left_hough_line)
         {
-           //VanishingPointSearcher_->DrawHoughLines(image_rgb_, LEFT_LINE);
-           //VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
+           VanishingPointSearcher_->DrawHoughLines(image_rgb_, LEFT_LINE);
+           VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
 
            //VanishingPointSearcher_->GetWarpedPerspektiveHoughLin
         }
 
         if(vanishing_point_search_return_info.has_found_right_hough_line)
         {
-            //VanishingPointSearcher_->DrawHoughLines(image_rgb_, RIGHT_LINE);
-            //VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, RIGHT_LINE);
+            VanishingPointSearcher_->DrawHoughLines(image_rgb_, RIGHT_LINE);
+            VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, RIGHT_LINE);
         }
 
         if(vanishing_point_search_return_info.has_found_intersections)
@@ -64,8 +66,8 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         if(vanishing_point_search_return_info.has_found_vanishing_point)
         {
-            //VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
-            //VanishingPointSearcher_->DrawWarpedVanishingPointDirection(image_rgb_bird_);
+            VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
+            VanishingPointSearcher_->DrawWarpedVanishingPointDirection(image_rgb_bird_);
         }
 
 
@@ -117,7 +119,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
             if(line_points_reducer_return_info.left_line_is_reduced)
             {
-                LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,LEFT_LINE);
+                //LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,LEFT_LINE);
                 LinePointsReducer_->GetReducedLinePoints(left_line_points_reduced,LEFT_LINE);
                 LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(left_line_points_reduced_length_direction, LEFT_LINE);
 
@@ -135,7 +137,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
             if(line_points_reducer_return_info.right_line_is_reduced)
             {
-                LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,RIGHT_LINE);
+               //LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,RIGHT_LINE);
                 LinePointsReducer_->GetReducedLinePoints(right_line_points_reduced,RIGHT_LINE);
                 LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(right_line_points_reduced_length_direction,RIGHT_LINE);
 
@@ -190,13 +192,15 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         ValidLinePointSearcher_.CreateValidationTables();
 
 
-       ValidLinePointSearcher_.SearchValidPoints();
+        ValidLinePointSearcher_.SearchValidPoints();
 
-       ValidLinePointSearcher_.ExtractValidPoints();
+        ValidLinePointSearcher_.ExtractValidPoints();
 
-ValidLinePointSearcher_.DrawDirectionInRangeTable(image_rgb_bird_);
-       ValidLinePointSearcher_.ValidateTrack(image_rgb_bird_);
+        ValidLinePointSearcher_.DrawDirectionInRangeTable(image_rgb_bird_);
+        ValidLinePointSearcher_.ValidateTrack(image_rgb_bird_);
 
+
+        ValidLinePointSearcher_.DrawSpline(rgb_spline);
 
        //ValidLinePointSearcher_.DrawPointsInRect(image_rgb_bird_);
 
@@ -255,10 +259,12 @@ ValidLinePointSearcher_.DrawDirectionInRangeTable(image_rgb_bird_);
         //imshow("bird",image_mono_bird_);
         //imshow("ostu bird",image_mono_bird_otsu_);
         imshow("normal",image_rgb_);
+
+        imshow("spline",rgb_spline);
         imshow("bird_rgb", image_rgb_bird_);
         //imshow("bird2",bird2);
         //imshow("warped_back",image_rgb_warped_back_);
-        waitKey(1);
+        waitKey(0);
 
     }
     catch (cv_bridge::Exception& e)
@@ -334,7 +340,7 @@ void LaneTracker::LoadVanishingPointSearchInitializationParameters()
     n.getParam("/vanishing_point_search_init/min_left_line_angle",vanishing_point_search_init.min_left_line_angle);
     n.getParam("/vanishing_point_search_init/max_left_line_angle",vanishing_point_search_init.max_left_line_angle);
     n.getParam("/vanishing_point_search_init/min_right_line_angle",vanishing_point_search_init.min_right_line_angle);
-    n.getParam("/vanishing_point_search_init/max_riCreateValidationTablesght_line_angle",vanishing_point_search_init.max_right_line_angle);
+    n.getParam("/vanishing_point_search_init/max_right_line_angle",vanishing_point_search_init.max_right_line_angle);
     n.getParam("/vanishing_point_search_init/x_min_left_line",vanishing_point_search_init.x_min_left_line);
     n.getParam("/vanishing_point_search_init/x_max_left_line",vanishing_point_search_init.x_max_left_line);
     n.getParam("/vanishing_point_search_init/x_min_right_line",vanishing_point_search_init.x_min_right_line);
@@ -469,18 +475,6 @@ void LaneTracker::InitializeBirdseyeTransformationMatrix()
 
 
 
-}
-
-void mouse_callback(int  event, int  x, int  y, int  flag, void *param)
-{
-    if (event == EVENT_LBUTTONDOWN)
-    {
-        std::cout << x << " " << y << std::endl;
-    }
-      /*if (event == EVENT_MOUSEMOVE)
-      {
-          std::cout << x << " " << y << std::endl;
-      }*/
 }
 
 

@@ -16,6 +16,18 @@
 using namespace std;
 using namespace cv;
 
+inline void mouse_callback(int  event, int  x, int  y, int  flag, void *param)
+{
+    if (event == EVENT_LBUTTONDOWN)
+    {
+        std::cout << x << " " << y << std::endl;
+    }
+      /*if (event == EVENT_MOUSEMOVE)
+      {
+          std::cout << x << " " << y << std::endl;
+      }*/
+}
+
 inline void TransformPoint(int& x, int& y, Mat transformation_matrix)
 {
 

@@ -99,6 +99,7 @@ track_lines/CMakeFiles/track.dir/include/lane_tracker.cpp.o: /home/tb/gazebo_roa
 track_lines/CMakeFiles/track.dir/include/lane_tracker.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_points_reducer.h
 track_lines/CMakeFiles/track.dir/include/lane_tracker.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_validation_table.h
 track_lines/CMakeFiles/track.dir/include/lane_tracker.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/mid_line_search.h
+track_lines/CMakeFiles/track.dir/include/lane_tracker.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/spline.h
 track_lines/CMakeFiles/track.dir/include/lane_tracker.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/start_of_lines_search.h
 track_lines/CMakeFiles/track.dir/include/lane_tracker.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/utils.h
 track_lines/CMakeFiles/track.dir/include/lane_tracker.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/valid_line_point_search.h
@@ -583,6 +584,7 @@ track_lines/CMakeFiles/track.dir/include/valid_line_point_search.cpp.o: /home/tb
 track_lines/CMakeFiles/track.dir/include/valid_line_point_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/defines.h
 track_lines/CMakeFiles/track.dir/include/valid_line_point_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/depth_first_search.h
 track_lines/CMakeFiles/track.dir/include/valid_line_point_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_validation_table.h
+track_lines/CMakeFiles/track.dir/include/valid_line_point_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/spline.h
 track_lines/CMakeFiles/track.dir/include/valid_line_point_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/utils.h
 track_lines/CMakeFiles/track.dir/include/valid_line_point_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/valid_line_point_search.cpp
 track_lines/CMakeFiles/track.dir/include/valid_line_point_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/valid_line_point_search.h
@@ -752,6 +754,7 @@ track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /home/tb/gazebo_ro
 track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_points_reducer.h
 track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_validation_table.h
 track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/mid_line_search.h
+track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/spline.h
 track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/start_of_lines_search.h
 track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/utils.h
 track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/valid_line_point_search.h

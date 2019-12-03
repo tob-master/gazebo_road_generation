@@ -19,6 +19,11 @@
 #include "depth_first_search.h"
 #include "datatypes.h"
 #include "utils.h"
+#include "spline.h"
+
+
+
+
 
 using namespace std;
 using namespace cv;
@@ -92,6 +97,11 @@ private:
     const int kMinStartDirectionOnSameLine_ =  30;
     const int kMaxStartDirectionOnSameLine_ = 150;
 
+    const int kRectBorderDistanceThreshold_ = 10;
+    const int kMinYDistanceInRect_ = 15;
+    const int kMinStraightDifferenceForStraightLineInRect_ = 15;
+    const int kRectStepLength_ = 35;
+
 
     vector<PointInDirection> left_line_directions_;
     vector<PointInDirection> right_line_directions_;
@@ -144,10 +154,26 @@ private:
     vector<int> mid_line_points_in_rect_ids_;
     vector<int> right_line_points_in_rect_ids_;
 
+    vector<LineValidationTable> left_line_points_in_rect_;
+    vector<LineValidationTable> mid_line_points_in_rect_;
+    vector<LineValidationTable> right_line_points_in_rect_;
+
+
     vector<vector<int>> left_priority_ids_{14};
     vector<vector<int>> mid_priority_ids_{14};
     vector<vector<int>> right_priority_ids_{14};
 
+    vector<vector<LineValidationTable>> left_priority_table_{14};
+    vector<vector<LineValidationTable>> mid_priority_table_{14};
+    vector<vector<LineValidationTable>> right_priority_table_{14};
+
+     //vector<int> left_line_rect_safety_{14};
+     //vector<int> mid_line_rect_safety_{14};
+     //vector<int> right_line_rect_safety_{14};
+
+     RectSafetyTable left_line_rect_safety_;
+     RectSafetyTable mid_line_rect_safety_;
+     RectSafetyTable right_line_rect_safety_;
 
     vector<vector<vector<Point>>> examined_regions_;
 
@@ -163,7 +189,31 @@ private:
     vector<ValidPoints> m_info;
     vector<ValidPoints> r_info;
 
+    vector<Point> rect_mid_points_;
 
+
+
+
+    struct RectInfo
+    {
+        vector<LineValidationTable> left_line_points_in_rect;
+        vector<LineValidationTable> mid_line_points_in_rect;
+        vector<LineValidationTable> right_line_points_in_rect;
+
+        vector<vector<LineValidationTable>> left_priority_table;
+        vector<vector<LineValidationTable>> mid_priority_table;
+        vector<vector<LineValidationTable>> right_priority_table;
+
+        RectSafetyTable left_line_rect_safety;
+        RectSafetyTable mid_line_rect_safety;
+        RectSafetyTable right_line_rect_safety;
+
+        Point rect_mid_point;
+        float search_direction;
+
+    };
+
+    vector<RectInfo> rect_info_;
 
     void ClearMemory(int SEARCH_LINE_CODE);
     void SearchOrthogonalValues(int point_in_search_direction_x,
@@ -218,7 +268,7 @@ private:
 
         void ExtractDirectionsInRange(vector<LineValidationTable>& line_validation_table, vector<LineValidationTable>& line_direction_in_range );
 
-        void ExtractMinMaxLineElements( vector<LineValidationTable>  line_direction_in_range,  MinMaxLineElements& line_minmax_elements );
+        void ExtractMinMaxLineElements( vector<LineValidationTable>  line,  MinMaxLineElements& line_minmax_elements );
 
         void ExtractLastMatchingPoints(vector<LineValidationTable> line_validation_table_,
                                                              vector<LineValidationTable> line_direction_in_range_,
@@ -226,16 +276,17 @@ private:
 
 
         void CombineLines();
-void GetLinesPointsInRectIds( vector<LineValidationTable> line_direction_in_range_, vector<vector<Point>> contours, vector<int>& line_points_in_rect_id);
+void GetLinesPointsInRect( vector<LineValidationTable> line_direction_in_range_, vector<vector<Point>> contours, vector<int>& line_points_in_rect_id,
+                              vector<LineValidationTable>& line_points_in_rect_);
 
-void CheckLinePointsInRect();
-
-
-void FillPriorityTable(int i, bool found_point1,bool found_point2,bool prediction1,bool prediction2,
-                                             bool directions_in_range1, bool directions_in_range2, vector<vector<int>>& priority_ids);
+void FillPriorityTables();
 
 
-void  ExaminePriorityTables(float& mean_direction, Point& mean_point);
+void FillPriorityTable(LineValidationTable table,int i, bool found_point1,bool found_point2,bool prediction1,bool prediction2,
+                                             bool directions_in_range1, bool directions_in_range2, vector<vector<int>>& priority_ids,vector<vector<LineValidationTable>>& priority_table);
+
+
+void  ExaminePriorityTables(float& mean_direction);
 
 
 vector<vector<Point>> GetSearchRect(Point rect_mid, float search_direction);
@@ -243,6 +294,23 @@ vector<vector<Point>> GetSearchRect(Point rect_mid, float search_direction);
 void FollowTrack(float search_direction, Point rect_mid_point, Mat &rgb);
 
 vector<float> GetUniqueDirectionsInRect(vector<LineValidationTable> table, vector<int> rect_ids, vector<vector<int>> priority_ids, int priority);
+
+
+
+void CheckRectSafety(vector<vector<Point>> search_rect,vector<LineValidationTable>line_points_in_rect_,vector<vector<LineValidationTable>> priority_table_,RectSafetyTable& rect_safety);
+
+void EmtpySafetyTable(RectSafetyTable& rect_safety);
+
+
+void CoutRectSafetyTables();
+
+            void FindNewSearchDirection();
+
+
+        void GetSafeDirection( vector<vector<LineValidationTable>> priority_table_, float& safe_direction_, int& priority_);
+
+
+        void FindNewSearchDirection(float& mean_direction_);
 
 public:
     ValidLinePointSearch();
@@ -271,6 +339,11 @@ void ValidateTrack(Mat &rgb);
 void DrawPointsInRect(Mat &rgb);
 
 void DrawSearchRect(Mat &rgb);
+
+
+void DrawSpline(Mat &rgb);
+
+
 
 
     void JJ();

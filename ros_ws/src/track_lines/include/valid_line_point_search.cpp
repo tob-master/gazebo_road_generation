@@ -1,5 +1,6 @@
 #include "valid_line_point_search.h"
 
+
 ValidLinePointSearch::ValidLinePointSearch()
 {
     left_line_minmax_elements_.initialized = false;
@@ -28,6 +29,9 @@ ValidLinePointSearch::ValidLinePointSearch()
     right_line_last_adjacent_point_match_.left_set =  false;
     right_line_last_adjacent_point_match_.mid_set =  false;
     right_line_last_adjacent_point_match_.right_set =  false;
+
+    namedWindow("im", WINDOW_NORMAL);
+    setMouseCallback("im", mouse_callback);
 
 }
 
@@ -407,63 +411,67 @@ void ValidLinePointSearch::ExamineValidationTable(int SEARCH_LINE_CODE, vector<L
 void ValidLinePointSearch::ExtractDirectionsInRange(vector<LineValidationTable>& line_validation_table, vector<LineValidationTable>& line_direction_in_range )
 {
 
-    int cut_off_id = 0;
-    bool cut_off = false;
 
-    int tmp_direction = line_validation_table[0].GetDirection();
-
-    if(tmp_direction > kMinStartDirectionOnSameLine_ && tmp_direction < kMaxStartDirectionOnSameLine_)
+    if(line_validation_table.size()>0)
     {
-        for(int i=0; i<line_validation_table.size(); i++)
-        {
-            int current_direction =  line_validation_table[i].GetDirection();
-            int direction_difference = abs(current_direction - tmp_direction);
+        int cut_off_id = 0;
+        bool cut_off = false;
 
-            if(direction_difference > kMaxDirectionDifferenceOnSameLine_ || (360 - kMaxDirectionDifferenceOnSameLine_) < direction_difference)
+        int tmp_direction = line_validation_table[0].GetDirection();
+
+        if(tmp_direction > kMinStartDirectionOnSameLine_ && tmp_direction < kMaxStartDirectionOnSameLine_)
+        {
+            for(int i=0; i<line_validation_table.size(); i++)
             {
-                cut_off_id =  i;
-                cut_off = true;
-                break;
-            }
-            tmp_direction = current_direction;
-        }
+                int current_direction =  line_validation_table[i].GetDirection();
+                int direction_difference = abs(current_direction - tmp_direction);
 
-        if(cut_off)
-        {
-            for(int i=0; i<cut_off_id; i++) line_direction_in_range.emplace_back(line_validation_table[i]);
-        }
-        else{
-                copy(line_validation_table.begin(), line_validation_table.end(), back_inserter(line_direction_in_range));
+                if(direction_difference > kMaxDirectionDifferenceOnSameLine_ || (360 - kMaxDirectionDifferenceOnSameLine_) < direction_difference)
+                {
+                    cut_off_id =  i;
+                    cut_off = true;
+                    break;
+                }
+                tmp_direction = current_direction;
+            }
+
+            if(cut_off)
+            {
+                for(int i=0; i<cut_off_id; i++) line_direction_in_range.emplace_back(line_validation_table[i]);
+            }
+            else{
+                    copy(line_validation_table.begin(), line_validation_table.end(), back_inserter(line_direction_in_range));
+            }
         }
     }
 }
 
-void ValidLinePointSearch::ExtractMinMaxLineElements( vector<LineValidationTable>  line_direction_in_range,  MinMaxLineElements& line_minmax_elements )
+void ValidLinePointSearch::ExtractMinMaxLineElements( vector<LineValidationTable>  line,  MinMaxLineElements& line_minmax_elements )
 {
 
-    if(line_direction_in_range.size() > 0)
+    if(line.size() > 0)
     {
-        auto x_it = minmax_element(begin(line_direction_in_range),end(line_direction_in_range),
+        auto x_it = minmax_element(begin(line),end(line),
                                             [&](LineValidationTable& line_point1, LineValidationTable& line_point2)
                                             {
                                                 return line_point1.GetOriginPoint().x < line_point2.GetOriginPoint().x;
                                             });
 
-        auto y_it = minmax_element(begin(line_direction_in_range),end(line_direction_in_range),
+        auto y_it = minmax_element(begin(line),end(line),
                                            [&](LineValidationTable& line_point1, LineValidationTable& line_point2)
                                            {
                                                return line_point1.GetOriginPoint().y < line_point2.GetOriginPoint().y;
                                            });
 
-        int x_min_id = std::distance(line_direction_in_range.begin(), x_it.first);
-        int x_max_id = std::distance(line_direction_in_range.begin(), x_it.second);
-        int y_min_id = std::distance(line_direction_in_range.begin(), y_it.first);
-        int y_max_id = std::distance(line_direction_in_range.begin(), y_it.second);
+        int x_min_id = std::distance(line.begin(), x_it.first);
+        int x_max_id = std::distance(line.begin(), x_it.second);
+        int y_min_id = std::distance(line.begin(), y_it.first);
+        int y_max_id = std::distance(line.begin(), y_it.second);
 
-        line_minmax_elements = MinMaxLineElements{line_direction_in_range[x_min_id].GetOriginPoint(),
-                                                  line_direction_in_range[x_max_id].GetOriginPoint(),
-                                                  line_direction_in_range[y_min_id].GetOriginPoint(),
-                                                  line_direction_in_range[y_max_id].GetOriginPoint(),
+        line_minmax_elements = MinMaxLineElements{line[x_min_id].GetOriginPoint(),
+                                                  line[x_max_id].GetOriginPoint(),
+                                                  line[y_min_id].GetOriginPoint(),
+                                                  line[y_max_id].GetOriginPoint(),
                                                   true};
     }
 }
@@ -702,15 +710,20 @@ ExtractLastMatchingPoints(right_line_direction_in_range_,right_line_direction_in
 }
 
 
-void ValidLinePointSearch::GetLinesPointsInRectIds( vector<LineValidationTable> line_direction_in_range_, vector<vector<Point>> contours, vector<int>& line_points_in_rect_id)
+void ValidLinePointSearch::GetLinesPointsInRect( vector<LineValidationTable> line_direction_in_range_, vector<vector<Point>> contours, vector<int>& line_points_in_rect_id,
+                                                    vector<LineValidationTable>& line_points_in_rect_)
 {
     for(int i=0; i<line_direction_in_range_.size(); i++)
     {
         Point origin = line_direction_in_range_[i].GetOriginPoint();
         double res = pointPolygonTest(contours[0], origin, false);
-        if(res>0)
+        if(res>=0)
         {
             line_points_in_rect_id.push_back(i);
+
+
+            line_points_in_rect_.push_back(line_direction_in_range_[i]);
+
         }
     }
 }
@@ -794,6 +807,225 @@ void ValidLinePointSearch::DrawSearchRect(Mat &rgb)
 
 int counterr = 0;
 
+void ValidLinePointSearch::CheckRectSafety(vector<vector<Point>> search_rect,vector<LineValidationTable>line_points_in_rect_,vector<vector<LineValidationTable>> priority_table_,
+                                           RectSafetyTable& rect_safety)
+{
+
+
+    if(line_points_in_rect_.size()>0)
+    {
+
+
+        float all_percent_found = (line_points_in_rect_.size() / rect_height_) * 100;
+
+        float prio_0_percent_found = (priority_table_[0].size() / rect_height_) * 100;
+        float prio_1_percent_found = (priority_table_[1].size() / rect_height_) * 100;
+        float prio_2_percent_found = (priority_table_[2].size() / rect_height_) * 100;
+        float prio_3_percent_found = (priority_table_[3].size() / rect_height_) * 100;
+        float prio_4_percent_found = (priority_table_[4].size() / rect_height_) * 100;
+        float prio_5_percent_found = (priority_table_[5].size() / rect_height_) * 100;
+        float prio_6_percent_found = (priority_table_[6].size() / rect_height_) * 100;
+        float prio_7_percent_found = (priority_table_[7].size() / rect_height_) * 100;
+        float prio_8_percent_found = (priority_table_[8].size() / rect_height_) * 100;
+        float prio_9_percent_found = (priority_table_[9].size() / rect_height_) * 100;
+        float prio_10_percent_found = (priority_table_[10].size() / rect_height_) * 100;
+        float prio_11_percent_found = (priority_table_[11].size() / rect_height_) * 100;
+        float prio_12_percent_found = (priority_table_[12].size() / rect_height_) * 100;
+        float prio_13_percent_found = (priority_table_[13].size() / rect_height_) * 100;
+
+
+
+
+        MinMaxLineElements rect_min_max;
+
+
+        ExtractMinMaxLineElements(line_points_in_rect_, rect_min_max );
+
+
+        Point x_min = rect_min_max.x_min;
+        Point y_min = rect_min_max.y_min;
+        Point x_max = rect_min_max.x_max;
+        Point y_max = rect_min_max.y_max;
+
+
+
+        //cout << all_percent_found<< "%" <<    endl;
+
+
+
+
+
+        bool too_few_points_in_rect_ = false;
+        bool rect_straight_ = false;
+        bool rect_left_curve_ = false;
+        bool rect_right_curve_ = false;
+
+        int yDistance = sqrt(pow(y_max.x-y_min.x,2) + pow(y_max.y -y_min.y,2));
+
+
+
+        if(x_min.x == x_max.x)
+        {
+            if(yDistance > kMinYDistanceInRect_)
+            {
+                //cout << "rect_straight_" << endl;
+                rect_straight_ = true;
+            }
+            else {
+                too_few_points_in_rect_ = true;
+            }
+        }
+        else if( (x_max.y - x_min.y) > 0)
+        {
+            if(yDistance >kMinYDistanceInRect_)
+            {
+                if((x_max.y - x_min.y) > kMinStraightDifferenceForStraightLineInRect_)
+                {
+                    rect_left_curve_ = true;
+                    //cout << "left curve" << endl;
+                }
+                else {
+                    rect_straight_ = true;
+                    //cout << "rect_straight_" << endl;
+                }
+            }
+            else {
+               too_few_points_in_rect_ = true;
+            }
+        }
+        else if((x_min.y - x_max.y) > 0)
+        {
+            if(yDistance >kMinYDistanceInRect_)
+            {
+                if((x_min.y - x_max.y) > kMinStraightDifferenceForStraightLineInRect_)
+                {
+                    rect_right_curve_ = true;
+                    //cout << "right curve" << endl;
+                }
+                else{
+                    rect_straight_ = true;
+                     //cout << "rect_straight_" << endl;
+                }
+            }
+            else {
+                too_few_points_in_rect_ = true;
+            }
+        }
+        else {
+            cout << "wrong4" << endl;
+        }
+
+
+        double res = 0;
+
+        bool y_min_in_rect_border_range_ = false;
+        bool y_max_in_rect_border_range_ = false;
+
+
+       /* double res = pointPolygonTest(search_rect[0], x_min, true);
+        if(res>=0)
+        {
+            cout << res << "px  xmin: "<< x_min<< endl;
+        }
+*/
+        res = pointPolygonTest(search_rect[0], y_min, true);
+        if(res>=0 && res < kRectBorderDistanceThreshold_)
+        {
+            y_min_in_rect_border_range_ = true;
+            //cout << res << "px  ymin: "<< y_min<< endl;
+        }
+/*
+        res = pointPolygonTest(search_rect[0], x_max, true);
+        if(res>=0)
+        {
+            cout << res << "px  xmax: "<< x_max<< endl;
+        }
+*/
+        res = pointPolygonTest(search_rect[0], y_max, true);
+        if(res>=0 && res < kRectBorderDistanceThreshold_)
+        {
+            y_max_in_rect_border_range_ = true;
+            //cout << res << "px  ymax: "<< y_max<< endl;
+        }
+
+
+        /*
+        cout << prio_0_percent_found << "%"<< endl;
+        cout << prio_1_percent_found << "%"<< endl;
+        cout << prio_2_percent_found << "%"<< endl;
+        cout << prio_3_percent_found << "%"<< endl;
+        cout << prio_4_percent_found << "%"<< endl;
+        cout << prio_5_percent_found << "%"<< endl;
+        cout << prio_6_percent_found << "%"<< endl;
+        cout << prio_7_percent_found << "%"<< endl;
+        cout << prio_8_percent_found << "%"<< endl;
+        cout << prio_9_percent_found << "%"<< endl;
+        cout << prio_10_percent_found << "%"<< endl;
+        cout << prio_11_percent_found << "%"<< endl;
+        cout << prio_12_percent_found << "%"<< endl;
+        cout << prio_13_percent_found << "%"<< endl;*/
+
+
+        rect_safety.percent_points_with_priority_0 = prio_0_percent_found;
+        rect_safety.percent_points_with_priority_1 = prio_1_percent_found;
+        rect_safety.percent_points_with_priority_2 = prio_2_percent_found;
+        rect_safety.percent_points_with_priority_3 = prio_3_percent_found;
+        rect_safety.percent_points_with_priority_4 = prio_4_percent_found;
+        rect_safety.percent_points_with_priority_5 = prio_5_percent_found;
+        rect_safety.percent_points_with_priority_6 = prio_6_percent_found;
+        rect_safety.percent_points_with_priority_7 = prio_7_percent_found;
+        rect_safety.percent_points_with_priority_8 = prio_8_percent_found;
+        rect_safety.percent_points_with_priority_9 = prio_9_percent_found;
+        rect_safety.percent_points_with_priority_10 = prio_10_percent_found;
+        rect_safety.percent_points_with_priority_11 = prio_11_percent_found;
+        rect_safety.percent_points_with_priority_12 = prio_12_percent_found;
+        rect_safety.percent_points_with_priority_13 = prio_13_percent_found;
+        rect_safety.percent_points_in_rect = all_percent_found;
+
+        rect_safety.too_few_points_in_rect = too_few_points_in_rect_;
+        rect_safety.rect_straight = rect_straight_;
+        rect_safety.rect_left_curve = rect_left_curve_;
+        rect_safety.rect_right_curve = rect_right_curve_;
+
+        rect_safety.y_min_in_rect_border_range = y_min_in_rect_border_range_;
+        rect_safety.y_max_in_rect_border_range = y_max_in_rect_border_range_;
+
+
+
+    }
+    else{
+        EmtpySafetyTable(rect_safety);
+    }
+
+}
+
+void ValidLinePointSearch::EmtpySafetyTable(RectSafetyTable& rect_safety)
+{
+    rect_safety.percent_points_with_priority_0 = 0;
+    rect_safety.percent_points_with_priority_1 = 0;
+    rect_safety.percent_points_with_priority_2 = 0;
+    rect_safety.percent_points_with_priority_3 = 0;
+    rect_safety.percent_points_with_priority_4 = 0;
+    rect_safety.percent_points_with_priority_5 = 0;
+    rect_safety.percent_points_with_priority_6 = 0;
+    rect_safety.percent_points_with_priority_7 = 0;
+    rect_safety.percent_points_with_priority_8 = 0;
+    rect_safety.percent_points_with_priority_9 = 0;
+    rect_safety.percent_points_with_priority_10 = 0;
+    rect_safety.percent_points_with_priority_11 = 0;
+    rect_safety.percent_points_with_priority_12 = 0;
+    rect_safety.percent_points_with_priority_13 = 0;
+    rect_safety.percent_points_in_rect = 0;
+
+    rect_safety.too_few_points_in_rect = false;
+    rect_safety.rect_straight = false;
+    rect_safety.rect_left_curve = false;
+    rect_safety.rect_right_curve = false;
+
+    rect_safety.y_min_in_rect_border_range = false;
+    rect_safety.y_max_in_rect_border_range = false;
+}
+
 void ValidLinePointSearch::FollowTrack(float search_direction, Point rect_mid_point, Mat &rgb)
 {
             cout << search_direction <<" " << rect_mid_point<< " " << counterr << endl;
@@ -804,10 +1036,28 @@ void ValidLinePointSearch::FollowTrack(float search_direction, Point rect_mid_po
             mid_line_points_in_rect_ids_.clear();
             right_line_points_in_rect_ids_.clear();
 
+            left_line_points_in_rect_.clear();
+            mid_line_points_in_rect_.clear();
+            right_line_points_in_rect_.clear();
+
+
             for(auto &it: left_priority_ids_) it.clear();
             for(auto &it: mid_priority_ids_) it.clear();
             for(auto &it: right_priority_ids_) it.clear();
 
+
+            for(auto &it: left_priority_table_) it.clear();
+            for(auto &it: mid_priority_table_) it.clear();
+            for(auto &it: right_priority_table_) it.clear();
+
+            EmtpySafetyTable(left_line_rect_safety_);
+            EmtpySafetyTable(mid_line_rect_safety_);
+            EmtpySafetyTable(right_line_rect_safety_);
+
+
+            //for(auto &it: left_line_rect_safety_) it = 0;
+            //for(auto &it: mid_line_rect_safety_) it = 0;
+            //for(auto &it: right_line_rect_safety_) it = 0;
 
             vector<vector<Point>> search_rect = GetSearchRect(rect_mid_point,search_direction);
 
@@ -817,26 +1067,46 @@ void ValidLinePointSearch::FollowTrack(float search_direction, Point rect_mid_po
             examined_regions_.push_back(search_rect);
 
 
-            GetLinesPointsInRectIds(left_line_direction_in_range_,search_rect,left_line_points_in_rect_ids_);
-            GetLinesPointsInRectIds(mid_line_direction_in_range_,search_rect,mid_line_points_in_rect_ids_);
-            GetLinesPointsInRectIds(right_line_direction_in_range_,search_rect,right_line_points_in_rect_ids_);
+            GetLinesPointsInRect(left_line_direction_in_range_,search_rect,left_line_points_in_rect_ids_,left_line_points_in_rect_);
+            GetLinesPointsInRect(mid_line_direction_in_range_,search_rect,mid_line_points_in_rect_ids_,mid_line_points_in_rect_);
+            GetLinesPointsInRect(right_line_direction_in_range_,search_rect,right_line_points_in_rect_ids_,right_line_points_in_rect_);
 
             //cout << left_line_points_in_rect_ids_.size() << " " << mid_line_points_in_rect_ids_.size() << " " <<right_line_points_in_rect_ids_.size() << endl;
 
-            CheckLinePointsInRect();
+            FillPriorityTables();
+
+            //CheckRectSafety(search_rect,left_line_points_in_rect_,left_priority_table_,left_line_rect_safety_);
+
+
+
+            CheckRectSafety(search_rect,left_line_points_in_rect_,left_priority_table_, left_line_rect_safety_);
+            CheckRectSafety(search_rect,mid_line_points_in_rect_,mid_priority_table_, mid_line_rect_safety_);
+            CheckRectSafety(search_rect,right_line_points_in_rect_,right_priority_table_, right_line_rect_safety_);
+
+
+            CoutRectSafetyTables();
 
 
             float mean_direction;
-            Point mean_point;
+            int priority;
 
-            ExaminePriorityTables(mean_direction,mean_point);
+
+
+            FindNewSearchDirection(mean_direction);
+
+
+
+
+
+
+            if(mean_direction == -1) ExaminePriorityTables(mean_direction);
 
             cout << "mean dir: " << mean_direction << endl;
 
-            if(mean_direction == -1 && mean_point.x == -1) return;
+            if(mean_direction == -1) return;
 
 
-            int step_length = 35;
+
 
             int mean_direction_i = mean_direction;
 
@@ -847,8 +1117,8 @@ void ValidLinePointSearch::FollowTrack(float search_direction, Point rect_mid_po
 
 
             float mean_direction_f    = mean_direction_i * (PI/180);
-            int x_offset = step_length * cos(mean_direction_f);
-            int y_offset = -step_length * sin(mean_direction_f);
+            int x_offset = kRectStepLength_ * cos(mean_direction_f);
+            int y_offset = -kRectStepLength_ * sin(mean_direction_f);
 
 
             //cout << x_offset <<" " << y_offset<< " " << mean_direction_i << " " << mean_point << endl;
@@ -858,12 +1128,40 @@ void ValidLinePointSearch::FollowTrack(float search_direction, Point rect_mid_po
             Point new_rect_mid_point(rect_mid_point.x + x_offset, rect_mid_point.y + y_offset);
 
 
+
             float new_search_direction = float(mean_direction_i);
+
+
+
+
+
+
+
+            rect_info_.push_back(RectInfo{
+                                            left_line_points_in_rect_,
+                                            mid_line_points_in_rect_,
+                                            right_line_points_in_rect_,
+
+                                            left_priority_table_,
+                                            mid_priority_table_,
+                                            right_priority_table_,
+
+                                            left_line_rect_safety_,
+                                            mid_line_rect_safety_,
+                                            right_line_rect_safety_,
+
+                                            rect_mid_point,
+                                            search_direction
+                                        });
+
+
+
+            rect_mid_points_.push_back(new_rect_mid_point);
 
             //cout <<"new mid: " <<  new_rect_mid_point << endl;
             //cout <<"new angle: " <<  new_search_direction << endl;
 
-            counterr++;
+            //counterr++;
 
 /*
             cout << "found left side:" << endl;
@@ -881,14 +1179,14 @@ void ValidLinePointSearch::FollowTrack(float search_direction, Point rect_mid_po
 
 
             cout << "########\n\n";
-*/
+*//*
             drawContours(rgb, search_rect, -1, Scalar(0,255,0), 2, LINE_8);
 
             imshow("im", rgb);
 
             waitKey(0);
 
-
+*/
             FollowTrack(new_search_direction, new_rect_mid_point, rgb);
 
 
@@ -896,6 +1194,301 @@ void ValidLinePointSearch::FollowTrack(float search_direction, Point rect_mid_po
 
 
 }
+
+void ValidLinePointSearch::FindNewSearchDirection(float& mean_direction_)
+{
+
+  /*  float percent_points_with_priority_0;
+    float percent_points_with_priority_1;
+    float percent_points_with_priority_2;
+    float percent_points_with_priority_3;
+    float percent_points_with_priority_4;
+    float percent_points_with_priority_5;
+    float percent_points_with_priority_6;
+    float percent_points_with_priority_7;
+    float percent_points_with_priority_8;
+    float percent_points_with_priority_9;
+    float percent_points_with_priority_10;
+    float percent_points_with_priority_11;
+    float percent_points_with_priority_12;
+    float percent_points_with_priority_13;
+*/
+    int left_points_found_percentage = left_line_rect_safety_.percent_points_in_rect;
+    int mid_points_found_percentage = mid_line_rect_safety_.percent_points_in_rect;
+    int right_points_found_percentage = right_line_rect_safety_.percent_points_in_rect;
+
+    bool left_too_few_points_in_rect = left_line_rect_safety_.too_few_points_in_rect;
+    bool mid_too_few_points_in_rect = mid_line_rect_safety_.too_few_points_in_rect;
+    bool right_too_few_points_in_rect = right_line_rect_safety_.too_few_points_in_rect;
+
+    bool left_y_min_in_rect_border_range = left_line_rect_safety_.y_min_in_rect_border_range;
+    bool mid_y_min_in_rect_border_range = mid_line_rect_safety_.y_min_in_rect_border_range;
+    bool right_y_min_in_rect_border_range = right_line_rect_safety_.y_min_in_rect_border_range;
+
+    bool left_y_max_in_rect_border_range = left_line_rect_safety_.y_max_in_rect_border_range;
+    bool mid_y_max_in_rect_border_range = mid_line_rect_safety_.y_max_in_rect_border_range;
+    bool right_y_max_in_rect_border_range = right_line_rect_safety_.y_max_in_rect_border_range;
+
+    bool left_line_is_safe = false;
+    bool mid_line_is_safe = false;
+    bool right_line_is_safe = false;
+
+    int kMinFoundPercentage_ = 40;
+
+
+    if(left_points_found_percentage > kMinFoundPercentage_ && !left_too_few_points_in_rect && left_y_min_in_rect_border_range && left_y_max_in_rect_border_range) left_line_is_safe = true;
+    if(mid_points_found_percentage > kMinFoundPercentage_ && !mid_too_few_points_in_rect && mid_y_min_in_rect_border_range && mid_y_max_in_rect_border_range) mid_line_is_safe = true;
+    if(right_points_found_percentage > kMinFoundPercentage_ && !right_too_few_points_in_rect && right_y_min_in_rect_border_range && right_y_max_in_rect_border_range) right_line_is_safe = true;
+
+    float left_safe_direction = -1;
+    float mid_safe_direction = -1;
+    float right_safe_direction = -1;
+
+    int left_priority = -1;
+    int mid_priority = -1;
+    int right_priority = -1;
+
+    if(left_line_is_safe)  GetSafeDirection(left_priority_table_,left_safe_direction,left_priority);
+    if(mid_line_is_safe)   GetSafeDirection(mid_priority_table_,mid_safe_direction,mid_priority);
+    if(right_line_is_safe) GetSafeDirection(right_priority_table_,right_safe_direction,right_priority);
+
+    float mean_direction = -1;
+
+    if(!left_line_is_safe && !mid_line_is_safe && !right_line_is_safe)
+    {
+        mean_direction_ = mean_direction;
+        return;
+    }
+
+
+
+    if(left_line_is_safe && mid_line_is_safe && right_line_is_safe)
+    {
+        mean_direction =(left_safe_direction + mid_safe_direction + right_safe_direction) / 3;
+    }
+    else if(left_line_is_safe && mid_line_is_safe)
+    {
+        mean_direction =(left_safe_direction + mid_safe_direction) / 2;
+    }
+    else if(left_line_is_safe && right_line_is_safe)
+    {
+        mean_direction =(left_safe_direction + right_safe_direction) / 2;
+    }
+    else if(mid_line_is_safe && right_line_is_safe)
+    {
+        mean_direction =(mid_safe_direction + right_safe_direction) / 2;
+    }
+    else if(left_line_is_safe)
+    {
+         mean_direction =left_safe_direction;
+    }
+    else if(mid_line_is_safe)
+    {
+        mean_direction = mid_safe_direction;
+    }
+    else if(right_line_is_safe)
+    {
+         mean_direction =right_safe_direction;
+    }
+    else {
+        mean_direction = -1;
+    }
+
+    mean_direction_ =  mean_direction;
+
+}
+
+
+void ValidLinePointSearch::GetSafeDirection( vector<vector<LineValidationTable>> priority_table_, float& safe_direction_, int& priority_)
+{
+    int safe_direction = -1;
+    int priority = -1;
+
+    if(priority_table_[0].size() > 0)
+    {
+        safe_direction = priority_table_[0][priority_table_[0].size()-1].GetDirection();
+        priority = 0;
+    }
+    else if(priority_table_[1].size() > 0)
+    {
+        safe_direction = priority_table_[1][priority_table_[1].size()-1].GetDirection();
+                priority = 1;
+    }
+    else if(priority_table_[2].size() > 0)
+    {
+        safe_direction = priority_table_[2][priority_table_[2].size()-1].GetDirection();
+               priority = 2;
+    }
+    else if(priority_table_[3].size() > 0)
+    {
+       safe_direction = priority_table_[3][priority_table_[3].size()-1].GetDirection();
+               priority = 3;
+    }
+    else if(priority_table_[4].size() > 0)
+    {
+        safe_direction = priority_table_[4][priority_table_[4].size()-1].GetDirection();
+               priority = 4;
+    }
+    else if(priority_table_[5].size() > 0)
+    {
+        safe_direction = priority_table_[5][priority_table_[5].size()-1].GetDirection();
+               priority = 5;
+    }
+    else if(priority_table_[6].size() > 0)
+    {
+        safe_direction = priority_table_[6][priority_table_[6].size()-1].GetDirection();
+                priority = 6;
+    }
+    else if(priority_table_[7].size() > 0)
+    {
+        safe_direction = priority_table_[7][priority_table_[7].size()-1].GetDirection();
+                priority = 7;
+    }
+    else if(priority_table_[8].size() > 0)
+    {
+        safe_direction = priority_table_[8][priority_table_[8].size()-1].GetDirection();
+                priority = 8;
+    }
+    else if(priority_table_[9].size() > 0)
+    {
+        safe_direction = priority_table_[9][priority_table_[9].size()-1].GetDirection();
+                priority = 9;
+    }
+    else if(priority_table_[10].size() > 0)
+    {
+        safe_direction = priority_table_[10][priority_table_[10].size()-1].GetDirection();
+                priority = 10;
+    }
+    else if(priority_table_[11].size() > 0)
+    {
+        safe_direction = priority_table_[11][priority_table_[11].size()-1].GetDirection();
+               priority = 11;
+    }
+    else if(priority_table_[12].size() > 0)
+    {
+        safe_direction = priority_table_[12][priority_table_[12].size()-1].GetDirection();
+                priority = 12;
+    }
+    else if(priority_table_[13].size() > 0)
+    {
+        safe_direction = priority_table_[13][priority_table_[13].size()-1].GetDirection();
+                priority = 13;
+    }
+    else
+    {
+        safe_direction = -1;
+        priority = -1;
+    }
+
+    safe_direction_ =  safe_direction;
+    priority_ = priority;
+
+}
+
+
+
+void ValidLinePointSearch::DrawSpline(Mat &rgb)
+{
+
+    std::vector<double> X, Y;
+/*
+    X.push_back(92);
+        Y.push_back(400);
+    X.push_back(127);
+        Y.push_back(400);
+    X.push_back(162);
+        Y.push_back(400);
+    X.push_back(197);
+        Y.push_back(400);
+    X.push_back(232);
+        Y.push_back(400);
+    X.push_back(267);
+        Y.push_back(400);
+*/
+
+    int x_tmp = -1;
+
+
+    for(auto it: rect_mid_points_)
+    {
+
+        int x = 417 - double(it.y);
+        if(x <= x_tmp) break;
+        int y = double(it.x);
+
+        X.push_back(x);
+        Y.push_back(y);
+
+        cout << x << " " << y << endl;
+        x_tmp = x;
+    }
+
+    /*for(int i=0; i<mid_line_direction_in_range_.size(); i++)
+    {
+        Point p = mid_line_direction_in_range_[i].GetOriginPoint();
+        cout << p << endl;
+        X.push_back(double(417-p.y));
+        Y.push_back(double(p.x));
+    }
+*/
+    int start = 417 - rect_mid_points_[0].y;
+    int end = x_tmp;
+cout << "ss " << start << " " << end << endl;
+    //X[0]=0; X[1]=100; X[2]=200; X[3]=300; X[4]=400;
+    //Y[0]=0; Y[1]=100; Y[2]=200; Y[3]=300; Y[4]=400;
+    if(X.size() > 2 && Y.size()>2)
+    {
+        tk::spline s;
+        s.set_points(X,Y);    // currently it is required that X is already sorted
+
+        //double x=1.5;
+
+        //printf("spline at %f is %f\n", x, s(x));
+
+
+        Vec3b color;
+            color.val[0] = 0;
+            color.val[1] = 255;
+            color.val[2] = 255;
+
+
+        for(int i=start; i<=end; i++)
+        {
+                rgb.at<Vec3b>(Point(int(s(i)),rgb.rows -i)) = color;
+        }
+    }
+}
+
+void ValidLinePointSearch::CoutRectSafetyTables()
+{
+
+
+    cout << "P0:  " << left_line_rect_safety_.percent_points_with_priority_0 << "\t"<<  mid_line_rect_safety_.percent_points_with_priority_0 << "\t"<<  right_line_rect_safety_.percent_points_with_priority_0 << endl;
+    cout << "P1:  " << left_line_rect_safety_.percent_points_with_priority_1 << "\t"<<  mid_line_rect_safety_.percent_points_with_priority_1 << "\t"<<  right_line_rect_safety_.percent_points_with_priority_1 <<endl;
+    cout << "P2:  " << left_line_rect_safety_.percent_points_with_priority_2 << "\t"<<  mid_line_rect_safety_.percent_points_with_priority_2 << "\t"<< right_line_rect_safety_.percent_points_with_priority_2 <<endl;
+    cout << "P3:  " << left_line_rect_safety_.percent_points_with_priority_3 << "\t"<<  mid_line_rect_safety_.percent_points_with_priority_3 << "\t"<< right_line_rect_safety_.percent_points_with_priority_3 <<endl;
+    cout << "P4:  " << left_line_rect_safety_.percent_points_with_priority_4 << "\t"<<  mid_line_rect_safety_.percent_points_with_priority_4 << "\t"<< right_line_rect_safety_.percent_points_with_priority_4 <<endl;
+    cout << "P5:  " << left_line_rect_safety_.percent_points_with_priority_5 << "\t"<<  mid_line_rect_safety_.percent_points_with_priority_5 << "\t"<< right_line_rect_safety_.percent_points_with_priority_5 <<endl;
+    cout << "P6:  " << left_line_rect_safety_.percent_points_with_priority_6 << "\t"<<  mid_line_rect_safety_.percent_points_with_priority_6 << "\t"<< right_line_rect_safety_.percent_points_with_priority_6 <<endl;
+    cout << "P7:  " << left_line_rect_safety_.percent_points_with_priority_7 << "\t"<<  mid_line_rect_safety_.percent_points_with_priority_7 << "\t"<< right_line_rect_safety_.percent_points_with_priority_7 <<endl;
+    cout << "P8:  " << left_line_rect_safety_.percent_points_with_priority_8 << "\t"<<  mid_line_rect_safety_.percent_points_with_priority_8 << "\t"<< right_line_rect_safety_.percent_points_with_priority_8 <<endl;
+    cout << "P9:  " << left_line_rect_safety_.percent_points_with_priority_9 << "\t"<<  mid_line_rect_safety_.percent_points_with_priority_9 << "\t"<< right_line_rect_safety_.percent_points_with_priority_9 <<endl;
+    cout << "P10: " << left_line_rect_safety_.percent_points_with_priority_10 << "\t"<< mid_line_rect_safety_.percent_points_with_priority_10 << "\t"<< right_line_rect_safety_.percent_points_with_priority_10 <<endl;
+    cout << "P11: " << left_line_rect_safety_.percent_points_with_priority_11 << "\t"<< mid_line_rect_safety_.percent_points_with_priority_11 << "\t"<< right_line_rect_safety_.percent_points_with_priority_11 <<endl;
+    cout << "P12: " << left_line_rect_safety_.percent_points_with_priority_12 << "\t"<< mid_line_rect_safety_.percent_points_with_priority_12 << "\t"<< right_line_rect_safety_.percent_points_with_priority_12 <<endl;
+    cout << "P13: " << left_line_rect_safety_.percent_points_with_priority_13 << "\t"<< mid_line_rect_safety_.percent_points_with_priority_13 << "\t"<< right_line_rect_safety_.percent_points_with_priority_13 <<endl;
+    cout << "ALL: " << left_line_rect_safety_.percent_points_in_rect << "\t"<< mid_line_rect_safety_.percent_points_in_rect << "\t"<< right_line_rect_safety_.percent_points_in_rect <<endl;
+    cout << "TFW: " << left_line_rect_safety_.too_few_points_in_rect << "\t"<< mid_line_rect_safety_.too_few_points_in_rect << "\t"<< right_line_rect_safety_.too_few_points_in_rect <<endl;
+    cout << "STR: " << left_line_rect_safety_.rect_straight << "\t"<< mid_line_rect_safety_.rect_straight << "\t"<< right_line_rect_safety_.rect_straight <<endl;
+    cout << "LFT: " << left_line_rect_safety_.rect_left_curve << "\t"<< mid_line_rect_safety_.rect_left_curve << "\t"<< right_line_rect_safety_.rect_left_curve <<endl;
+    cout << "RIG: " << left_line_rect_safety_.rect_right_curve << "\t"<< mid_line_rect_safety_.rect_right_curve << "\t"<< right_line_rect_safety_.rect_right_curve <<endl;
+    cout << "YMN: " << left_line_rect_safety_.y_min_in_rect_border_range << "\t"<< mid_line_rect_safety_.y_min_in_rect_border_range << "\t"<< right_line_rect_safety_.y_min_in_rect_border_range <<endl;
+    cout << "YMX: " << left_line_rect_safety_.y_max_in_rect_border_range << "\t"<< mid_line_rect_safety_.y_max_in_rect_border_range << "\t"<< right_line_rect_safety_.y_max_in_rect_border_range <<endl;
+
+
+
+}
+
 void ValidLinePointSearch::ValidateTrack(Mat &rgb)
 {
 
@@ -906,13 +1499,15 @@ void ValidLinePointSearch::ValidateTrack(Mat &rgb)
 
     FollowTrack(search_direction,rect_mid, rgb);
 
-    DrawSearchRect(rgb);
+    cout << "ook" << endl;
+
+    //DrawSearchRect(rgb);
 
 }
 
 
 
-void ValidLinePointSearch::CheckLinePointsInRect()
+void ValidLinePointSearch::FillPriorityTables()
 {
     /*
     Point origin_;
@@ -980,8 +1575,6 @@ void ValidLinePointSearch::CheckLinePointsInRect()
 
 
 
-
-
     for(int i=0; i<left_line_points_in_rect_ids_.size(); i++)
     {
         LineValidationTable left_table = left_line_direction_in_range_[left_line_points_in_rect_ids_[i]];
@@ -1003,7 +1596,8 @@ void ValidLinePointSearch::CheckLinePointsInRect()
         if(left_to_right_directions_in_range) left_to_right_directions_in_range_count++;
         */
 
-        FillPriorityTable(i,found_mid_point,found_right_point,mid_prediction,right_prediction,left_to_mid_directions_in_range,left_to_right_directions_in_range,left_priority_ids_);
+        FillPriorityTable(left_table,i,found_mid_point,found_right_point,mid_prediction,right_prediction,
+                          left_to_mid_directions_in_range,left_to_right_directions_in_range,left_priority_ids_,left_priority_table_);
 
     }
 
@@ -1027,7 +1621,7 @@ void ValidLinePointSearch::CheckLinePointsInRect()
         if(mid_to_right_directions_in_range) mid_to_right_directions_in_range_count++;
         */
 
-        FillPriorityTable(i,found_left_point,found_right_point,left_prediction,right_prediction,mid_to_left_directions_in_range,mid_to_right_directions_in_range,mid_priority_ids_);
+        FillPriorityTable(mid_table,i,found_left_point,found_right_point,left_prediction,right_prediction,mid_to_left_directions_in_range,mid_to_right_directions_in_range,mid_priority_ids_,mid_priority_table_);
     }
 
     for(int i=0; i<right_line_points_in_rect_ids_.size(); i++)
@@ -1049,9 +1643,11 @@ void ValidLinePointSearch::CheckLinePointsInRect()
        if(right_to_left_directions_in_range) right_to_left_directions_in_range_count++;
        if(right_to_mid_directions_in_range) right_to_mid_directions_in_range++;
         */
-       FillPriorityTable(i,found_left_point,found_mid_point,left_prediction,mid_prediction,right_to_left_directions_in_range,right_to_mid_directions_in_range,right_priority_ids_);
+       FillPriorityTable(right_table,i,found_left_point,found_mid_point,left_prediction,mid_prediction,right_to_left_directions_in_range,right_to_mid_directions_in_range,right_priority_ids_,right_priority_table_);
 
     }
+
+
 
 
 
@@ -1065,8 +1661,8 @@ void ValidLinePointSearch::CheckLinePointsInRect()
 
 }
 
-void ValidLinePointSearch::FillPriorityTable(int i, bool found_point1,bool found_point2,bool prediction1,bool prediction2,
-                                             bool directions_in_range1, bool directions_in_range2, vector<vector<int>>& priority_ids)
+void ValidLinePointSearch::FillPriorityTable(LineValidationTable table, int i, bool found_point1,bool found_point2,bool prediction1,bool prediction2,
+                                             bool directions_in_range1, bool directions_in_range2, vector<vector<int>>& priority_ids,vector<vector<LineValidationTable>>& priority_table)
 {
 
 
@@ -1075,60 +1671,70 @@ void ValidLinePointSearch::FillPriorityTable(int i, bool found_point1,bool found
     if(prediction1 && prediction2 && directions_in_range1 && directions_in_range2)
     {
         priority_ids[0].push_back(i);
+        priority_table[0].push_back(table);
         //return;
     }
 
     if(prediction1 && prediction2 && (directions_in_range1 ||  directions_in_range2))
     {
         priority_ids[1].push_back(i);
+        priority_table[1].push_back(table);
         //return;
     }
 
     if(prediction1 && prediction2)
     {
         priority_ids[2].push_back(i);
+        priority_table[2].push_back(table);
         //return;
     }   
 
     if(prediction1 & found_point2 & directions_in_range1 && directions_in_range2)
     {
         priority_ids[3].push_back(i);
+        priority_table[3].push_back(table);
         //return;
     }
 
     if(prediction2 && found_point1 && directions_in_range1 && directions_in_range2)
     {
         priority_ids[4].push_back(i);
+        priority_table[4].push_back(table);
         //return;
     }
 
     if(prediction1 && found_point2 && (directions_in_range1 || directions_in_range2))
     {
         priority_ids[5].push_back(i);
+        priority_table[5].push_back(table);
         //return;
     }
 
     if(prediction2 && found_point1 && (directions_in_range1 || directions_in_range2))
     {
         priority_ids[6].push_back(i);
+        priority_table[6].push_back(table);
         //return;
     }
 
     if(prediction1 && found_point2)
     {
         priority_ids[7].push_back(i);
+        priority_table[7].push_back(table);
         //return;
     }
 
     if(prediction2 && found_point1)
     {
         priority_ids[8].push_back(i);
+        priority_table[8].push_back(table);
         //return;
     }
 
     if(prediction1)
     {
         priority_ids[9].push_back(i);
+        priority_table[9].push_back(table);
         //return;
     }
 
@@ -1136,6 +1742,7 @@ void ValidLinePointSearch::FillPriorityTable(int i, bool found_point1,bool found
     if(prediction2)
     {
         priority_ids[10].push_back(i);
+        priority_table[10].push_back(table);
         //return;
     }
 
@@ -1143,18 +1750,21 @@ void ValidLinePointSearch::FillPriorityTable(int i, bool found_point1,bool found
     if(found_point1 && found_point2)
     {
         priority_ids[11].push_back(i);
+        priority_table[11].push_back(table);
         //return;
     }
 
     if(found_point1)
     {
         priority_ids[12].push_back(i);
+        priority_table[12].push_back(table);
         //return;
     }
 
     if(found_point2)
     {
         priority_ids[13].push_back(i);
+        priority_table[13].push_back(table);
         //return;
     }
 
@@ -1184,7 +1794,7 @@ vector<float> ValidLinePointSearch::GetUniqueDirectionsInRect(vector<LineValidat
 }
 
 
-void  ValidLinePointSearch::ExaminePriorityTables(float& mean_direction, Point& mean_point)
+void  ValidLinePointSearch::ExaminePriorityTables(float& mean_direction)
 {
 
 
@@ -1403,6 +2013,7 @@ void  ValidLinePointSearch::ExaminePriorityTables(float& mean_direction, Point& 
     int f_right_left_mid_count = f_right_left_mid_unique_directions.size();
     int f_right_left_count     = f_right_left_unique_directions.size();
     int f_right_mid_count      = f_right_mid_unique_directions.size();
+
 
 
 
@@ -1727,7 +2338,7 @@ void  ValidLinePointSearch::ExaminePriorityTables(float& mean_direction, Point& 
 
         cout<<"nothing"<<endl;
         mean_direction = -1;
-        mean_point = Point(-1,-1);
+
         return;
     }
 
@@ -1789,7 +2400,7 @@ void  ValidLinePointSearch::ExaminePriorityTables(float& mean_direction, Point& 
     }
 
 */
-    mean_point = Point(1,1);
+
 
 
 //cout << "";
@@ -2445,6 +3056,9 @@ void ValidLinePointSearch::CreateValidationTables()
 
 void ValidLinePointSearch::ClearValidationTables()
 {
+
+    rect_info_.clear();
+
     right_points_validation_table_.clear();
     mid_points_validation_table_.clear();
     left_points_validation_table_.clear();
@@ -2511,6 +3125,9 @@ void ValidLinePointSearch::ClearValidationTables()
     l_info.clear();
    m_info.clear();
     r_info.clear();
+
+
+    rect_mid_points_.clear();
 
 }
 void ValidLinePointSearch::FindValidPointsFromLineFollow(vector<PointInDirection> line_directions, int SEARCH_LINE_CODE)
