@@ -103,6 +103,9 @@ private:
     const int kRectStepLength_ = 35;
 
 
+    const int kMinFoundPercentage_ = 40;
+
+
     vector<PointInDirection> left_line_directions_;
     vector<PointInDirection> right_line_directions_;
     vector<vector<PointInDirection>> mid_line_directions_clusters_;
@@ -191,8 +194,16 @@ private:
 
     vector<Point> rect_mid_points_;
 
+vector<Point> pj;
+
+vector<vector<int>> left_prios_vec;
+vector<vector<int>> mid_prios_vec;
+vector<vector<int>> right_prios_vec;
 
 
+vector<Point> left_line_safety_info_;
+vector<Point> mid_line_safety_info_;
+vector<Point> right_line_safety_info_;
 
     struct RectInfo
     {
@@ -286,7 +297,7 @@ void FillPriorityTable(LineValidationTable table,int i, bool found_point1,bool f
                                              bool directions_in_range1, bool directions_in_range2, vector<vector<int>>& priority_ids,vector<vector<LineValidationTable>>& priority_table);
 
 
-void  ExaminePriorityTables(float& mean_direction);
+void  ExaminePriorityTables(float& mean_direction, int& priority);
 
 
 vector<vector<Point>> GetSearchRect(Point rect_mid, float search_direction);
@@ -310,8 +321,19 @@ void CoutRectSafetyTables();
         void GetSafeDirection( vector<vector<LineValidationTable>> priority_table_, float& safe_direction_, int& priority_);
 
 
-        void FindNewSearchDirection(float& mean_direction_);
+        void FindNewSearchDirection(float& mean_direction_, int& left_line_priority_, int& mid_line_priority_, int& right_line_priority, int& track_priority_);
 
+        int CheckPriorityProbabilities(int LP, int MP, int RP);
+
+        void SearchPriority(RectSafetyTable left_line_rect_safety,
+                                                  RectSafetyTable mid_line_rect_safety,
+                                                  RectSafetyTable right_line_rect_safety,
+                                                  int& priority,
+                                                  int& probability,
+                                                   float& direction_);
+
+
+        void GetPriorityProbabilities(vector<int>line_priority_probabilities, int& probability, int& priority);
 public:
     ValidLinePointSearch();
     void SetImage(Mat image);
