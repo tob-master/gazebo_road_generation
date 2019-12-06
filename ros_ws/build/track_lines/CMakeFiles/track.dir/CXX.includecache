@@ -339,6 +339,8 @@ utils.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/utils.h
 spline.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/spline.h
+defines.h
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/defines.h
 
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/vanishing_point_search.cpp
 vanishing_point_search.h

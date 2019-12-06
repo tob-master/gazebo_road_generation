@@ -20,7 +20,7 @@
 #include "datatypes.h"
 #include "utils.h"
 #include "spline.h"
-
+#include "defines.h"
 
 
 
@@ -205,6 +205,10 @@ vector<Point> left_line_safety_info_;
 vector<Point> mid_line_safety_info_;
 vector<Point> right_line_safety_info_;
 
+
+
+
+
     struct RectInfo
     {
         vector<LineValidationTable> left_line_points_in_rect;
@@ -334,6 +338,8 @@ void CoutRectSafetyTables();
 
 
         void GetPriorityProbabilities(vector<int>line_priority_probabilities, int& probability, int& priority);
+
+        int CountDigits(unsigned long long int n);
 public:
     ValidLinePointSearch();
     void SetImage(Mat image);

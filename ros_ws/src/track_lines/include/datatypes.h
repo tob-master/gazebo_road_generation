@@ -10,7 +10,7 @@
 using namespace std;
 using namespace cv;
 
-enum {LEFT_LINE, RIGHT_LINE, MID_LINE};
+enum {LEFT_LINE, MID_LINE,RIGHT_LINE };
 enum {LEFT_TO_MID, RIGHT_TO_MID, LEFT_TO_RIGHT, RIGHT_TO_LEFT, MID_TO_LEFT, MID_TO_RIGHT};
 
 // priorities from valid points

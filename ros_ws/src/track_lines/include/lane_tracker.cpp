@@ -264,7 +264,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         imshow("bird_rgb", image_rgb_bird_);
         //imshow("bird2",bird2);
         //imshow("warped_back",image_rgb_warped_back_);
-        waitKey(0);
+        waitKey(1);
 
     }
     catch (cv_bridge::Exception& e)
