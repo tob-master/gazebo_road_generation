@@ -156,19 +156,21 @@ struct MidLineSearchReturnInfo
 {
     bool has_found_mid_line_clusters;
     bool has_found_group;
-
+    void reset() { *this = {}; }
 };
 
 struct ConnectedComponentsSearchReturnInfo
 {
     bool has_found_mid_line_components;
     bool has_found_mid_line_group;
+    void reset() { *this = {}; }
 };
 
 
 struct StartOfLinesSearchReturnInfo
 {
     bool has_found_start_parameters;
+        void reset() { *this = {}; }
 };
 
 struct LineFollowerReturnInfo
@@ -188,6 +190,7 @@ struct LineFollowerReturnInfo
     int right_line_iterations_counter;
     int right_line_got_stuck_counter;
     int right_line_walked_backwards_counter;
+        void reset() { *this = {}; }
 };
 
 struct LinePointsReducerReturnInfo
@@ -196,6 +199,7 @@ struct LinePointsReducerReturnInfo
     int left_line_reduced_size;
     bool right_line_is_reduced;
     int right_line_reduced_size;
+        void reset() { *this = {}; }
 };
 
 
@@ -215,6 +219,7 @@ struct VanishingPointSearchReturnInfo
     cv::Point vanishing_point;
 
     float car_mid_point_to_vanishing_point_angle;
+        void reset() { *this = {}; }
 
 };
 
@@ -229,6 +234,7 @@ struct StartParameters
     int right_y;
     float right_angle;
     bool found_right_line;
+        void reset() { *this = {}; }
 
 };
 
@@ -398,6 +404,7 @@ struct SegmentStartIDAndWidth
 
 namespace valid_line_point_search
 {
+
 
 
 

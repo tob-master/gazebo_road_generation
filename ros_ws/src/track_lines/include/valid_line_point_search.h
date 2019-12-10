@@ -105,6 +105,16 @@ private:
 
     const int kMinFoundPercentage_ = 40;
 
+    const int kLeftToRightDriveLaneOffset_ = 93;
+    const int kMidToRightDriveLaneOffset_ = 31;
+    const int kRightToRightDriveLaneOffset_ = 31;
+
+    const int kLeftToLeftDriveLaneOffset_ = 31;
+    const int kMidToLeftDriveLaneOffset_ = 31;
+    const int kRightToLeftDriveLaneOffset_ = 93;
+
+
+
 
     vector<PointInDirection> left_line_directions_;
     vector<PointInDirection> right_line_directions_;
@@ -207,6 +217,38 @@ vector<Point> right_line_safety_info_;
 
 
 
+vector<Point> right_lane_drive_points_;
+vector<Point> left_lane_drive_points_;
+
+
+struct TrackSafetyRect
+{
+    unsigned long long int LSCORE;
+    unsigned long long int MSCORE;
+    unsigned long long int RSCORE;
+    unsigned long long int TRACKSCORE;
+
+    int MAX_LINE;
+    int MAX_LINE_SCORE;
+
+    bool MAX_LINE_CONTINUOUS;
+    bool LEFT_CONTINUOUS;
+    bool MID_CONTINUOUS;
+    bool RIGHT_CONTINUOUS;
+
+    vector<LineValidationTable>left_safest_table1;
+    vector<LineValidationTable>left_safest_table2;
+    vector<LineValidationTable>mid_safest_table1;
+    vector<LineValidationTable>mid_safest_table2;
+    vector<LineValidationTable>right_safest_table1;
+    vector<LineValidationTable>right_safest_table2;
+
+    int search_direction;
+    Point rect_mid_point;
+};
+
+vector<TrackSafetyRect> track_safety_rects_info_;
+
 
 
     struct RectInfo
@@ -229,6 +271,9 @@ vector<Point> right_line_safety_info_;
     };
 
     vector<RectInfo> rect_info_;
+
+
+    void GatherRectSafetyInfo(vector<TrackSafetyRect>& track_safety_rects_info_ ,float search_direction, Point rect_mid_point );
 
     void ClearMemory(int SEARCH_LINE_CODE);
     void SearchOrthogonalValues(int point_in_search_direction_x,
@@ -294,7 +339,12 @@ vector<Point> right_line_safety_info_;
 void GetLinesPointsInRect( vector<LineValidationTable> line_direction_in_range_, vector<vector<Point>> contours, vector<int>& line_points_in_rect_id,
                               vector<LineValidationTable>& line_points_in_rect_);
 
-void FillPriorityTables();
+void FillPriorityTables(vector<LineValidationTable>& left_line_direction_in_range_,
+                        vector<int> left_line_points_in_rect_ids_,
+                        vector<LineValidationTable>& mid_line_direction_in_range_,
+                        vector<int> mid_line_points_in_rect_ids_,
+                        vector<LineValidationTable>& right_line_direction_in_range_,
+                        vector<int> right_line_points_in_rect_ids_);
 
 
 void FillPriorityTable(LineValidationTable table,int i, bool found_point1,bool found_point2,bool prediction1,bool prediction2,
@@ -319,13 +369,11 @@ void EmtpySafetyTable(RectSafetyTable& rect_safety);
 
 void CoutRectSafetyTables();
 
-            void FindNewSearchDirection();
+            void FindNewSearchDirection(vector<TrackSafetyRect> track_safety_rects_info_,float& search_direction);
 
 
         void GetSafeDirection( vector<vector<LineValidationTable>> priority_table_, float& safe_direction_, int& priority_);
 
-
-        void FindNewSearchDirection(float& mean_direction_, int& left_line_priority_, int& mid_line_priority_, int& right_line_priority, int& track_priority_);
 
         int CheckPriorityProbabilities(int LP, int MP, int RP);
 
@@ -340,6 +388,20 @@ void CoutRectSafetyTables();
         void GetPriorityProbabilities(vector<int>line_priority_probabilities, int& probability, int& priority);
 
         int CountDigits(unsigned long long int n);
+
+        void GetSafestTables(vector<LineValidationTable>& safest_table1 , vector<LineValidationTable>& safest_table2,
+                                                   vector<vector<LineValidationTable>> priority_table, unsigned long long int SCORE);
+
+        void GetSafestDirections(vector<LineValidationTable> safest_table1,vector<LineValidationTable> safest_table2,
+                            vector<pair<int,float>>& safest_line_directions1, vector<pair<int,float>>& safest_line_directions2);
+
+
+        void FindSafePointsForSpline();
+
+        void ClearAllFollowTrackTables();
+
+        void GetNewRectMidPoint(float new_search_direction,Point rect_mid_point, Point& new_rect_mid_point);
+
 public:
     ValidLinePointSearch();
     void SetImage(Mat image);

@@ -51,6 +51,8 @@ private:
 
 
     StartOfLinesSearch *StartOfLinesSearcher_;
+
+
     LineFollower *LineFollower_;
     LinePointsReducer *LinePointsReducer_;
     MidLineSearch *MidLineSearcher_;
@@ -59,8 +61,30 @@ private:
 
     ValidLinePointSearch ValidLinePointSearcher_;
 
+    VanishingPointSearchReturnInfo vanishing_point_search_return_info_;
+    StartParameters start_parameters_for_line_follower_;
+    LineFollowerReturnInfo line_follower_return_info_;
+    LinePointsReducerReturnInfo line_points_reducer_return_info_;
+    MidLineSearchReturnInfo mid_line_search_return_info_;
+    ConnectedComponentsSearchReturnInfo connected_component_search_return_info_;
+
+
+    vector<PointAndDirection> left_line_from_line_follower_,
+                              right_line_from_line_follower_;
+
+    vector<ReducedPoints> left_line_from_line_points_reducer_,
+                          right_line_from_line_points_reducer_;
+
+    vector<PointInDirection> left_line_lengths_and_directions_from_line_points_reducer_,
+                             right_line_lengths_and_directions_from_line_points_reducer_;
+
+
+    vector<vector<PointInDirection>> mid_line_groups_from_mid_line_searcher_;
+
     Point pt = Point(-1,-1);
     bool newCoords = false;
+
+    void ClearTrackingData();
 
 
     void LoadAllInitializationParameters();

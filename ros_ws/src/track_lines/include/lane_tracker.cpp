@@ -39,12 +39,12 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
 
-        auto vanishing_point_search_return_info = VanishingPointSearcher_->FindVanishingPoint(image_mono_);
+        vanishing_point_search_return_info_ = VanishingPointSearcher_->FindVanishingPoint(image_mono_);
 
         //cout << info.vanishing_point << endl;
         //cout << info.car_mid_point_to_vanishing_point_angle << endl;
 
-        if(vanishing_point_search_return_info.has_found_left_hough_line)
+        if(vanishing_point_search_return_info_.has_found_left_hough_line)
         {
            VanishingPointSearcher_->DrawHoughLines(image_rgb_, LEFT_LINE);
            VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
@@ -52,19 +52,19 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
            //VanishingPointSearcher_->GetWarpedPerspektiveHoughLin
         }
 
-        if(vanishing_point_search_return_info.has_found_right_hough_line)
+        if(vanishing_point_search_return_info_.has_found_right_hough_line)
         {
             VanishingPointSearcher_->DrawHoughLines(image_rgb_, RIGHT_LINE);
             VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, RIGHT_LINE);
         }
 
-        if(vanishing_point_search_return_info.has_found_intersections)
+        if(vanishing_point_search_return_info_.has_found_intersections)
         {
 
             VanishingPointSearcher_->DrawLineIntersections(image_rgb_);
         }
 
-        if(vanishing_point_search_return_info.has_found_vanishing_point)
+        if(vanishing_point_search_return_info_.has_found_vanishing_point)
         {
             VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
             VanishingPointSearcher_->DrawWarpedVanishingPointDirection(image_rgb_bird_);
@@ -77,74 +77,70 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         //auto start_of_lines_search_return_info = StartOfLinesSearcher_->FindStartParameters(image_mono_bird_otsu_);
 
         //if(start_of_lines_search_return_info.has_found_start_parameters)
-        if(vanishing_point_search_return_info.has_found_left_hough_line || vanishing_point_search_return_info.has_found_right_hough_line )
+        if(vanishing_point_search_return_info_.has_found_left_hough_line || vanishing_point_search_return_info_.has_found_right_hough_line )
         {
 
-            StartParameters start_parameters_for_line_follower = VanishingPointSearcher_->GetLineFollowerStartParameters();
+            start_parameters_for_line_follower_ = VanishingPointSearcher_->GetLineFollowerStartParameters();
 
             //StartOfLinesSearcher_->DrawStartParameters(image_rgb_bird_);
 
-            //LineFollowerReturnInfo line_follower_return_info = LineFollower_->FollowLines(image_mono_bird_,StartOfLinesSearcher_->GetStartParameters());
-            LineFollowerReturnInfo line_follower_return_info = LineFollower_->FollowLines(image_mono_bird_,start_parameters_for_line_follower);
+            //LineFollowerReturnInfo line_follower_return_info_ = LineFollower_->FollowLines(image_mono_bird_,StartOfLinesSearcher_->GetStartParameters());
+            line_follower_return_info_ = LineFollower_->FollowLines(image_mono_bird_,start_parameters_for_line_follower_);
 
 
-            //cout << start_parameters_for_line_follower.right_x << " " << start_parameters_for_line_follower.right_y << " " << start_parameters_for_line_follower.right_angle << endl;
+            //cout << start_parameters_for_line_follower_.right_x << " " << start_parameters_for_line_follower_.right_y << " " << start_parameters_for_line_follower_.right_angle << endl;
 
             //LineFollower_->CoutReturnInfo();
 
-            vector<PointAndDirection> left_line, right_line;
 
-            if(line_follower_return_info.left_line_iterations_counter >= 2)
+
+            if(line_follower_return_info_.left_line_iterations_counter >= 2)
             {
-                LineFollower_->GetLine(left_line, LEFT_LINE);
+                LineFollower_->GetLine(left_line_from_line_follower_, LEFT_LINE);
                 //LineFollower_->DrawLinePoints(image_rgb_bird_,LEFT_LINE);
             }
 
-            if(line_follower_return_info.right_line_iterations_counter >= 2)
+            if(line_follower_return_info_.right_line_iterations_counter >= 2)
             {
-                LineFollower_->GetLine(right_line, RIGHT_LINE);
+                LineFollower_->GetLine(right_line_from_line_follower_, RIGHT_LINE);
                 //LineFollower_->DrawLinePoints(image_rgb_bird_,RIGHT_LINE);
             }
 
             double max_distance = 5;
 
-            auto line_points_reducer_return_info = LinePointsReducer_->ReduceLinePoints(left_line,right_line,max_distance);
-
-            vector<ReducedPoints> left_line_points_reduced, right_line_points_reduced;
-            vector<PointInDirection> left_line_points_reduced_length_direction,
-                                          right_line_points_reduced_length_direction;
+            line_points_reducer_return_info_ = LinePointsReducer_->ReduceLinePoints(left_line_from_line_follower_,right_line_from_line_follower_,max_distance);
 
 
-            ValidLinePointSearcher_.SetImage(image_mono_bird_);
 
-            if(line_points_reducer_return_info.left_line_is_reduced)
+            //ValidLinePointSearcher_.SetImage(image_mono_bird_);
+            if(line_points_reducer_return_info_.left_line_is_reduced)
             {
                 //LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,LEFT_LINE);
-                LinePointsReducer_->GetReducedLinePoints(left_line_points_reduced,LEFT_LINE);
-                LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(left_line_points_reduced_length_direction, LEFT_LINE);
+                LinePointsReducer_->GetReducedLinePoints(left_line_from_line_points_reducer_,LEFT_LINE);
+                LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_LINE);
 
 
 
 
 
-                ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_points_reduced_length_direction, LEFT_TO_RIGHT);
-                ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_points_reduced_length_direction, LEFT_TO_MID);
+               // ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_RIGHT);
+               // ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_MID);
                 //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, LEFT_TO_RIGHT);
                 //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, LEFT_TO_MID);
 
 
             }
 
-            if(line_points_reducer_return_info.right_line_is_reduced)
+            if(line_points_reducer_return_info_.right_line_is_reduced)
             {
                //LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,RIGHT_LINE);
-                LinePointsReducer_->GetReducedLinePoints(right_line_points_reduced,RIGHT_LINE);
-                LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(right_line_points_reduced_length_direction,RIGHT_LINE);
+                LinePointsReducer_->GetReducedLinePoints(right_line_from_line_points_reducer_,RIGHT_LINE);
+                LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_LINE);
 
 
 
-                ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_points_reduced_length_direction,RIGHT_TO_LEFT);
-                ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_points_reduced_length_direction,RIGHT_TO_MID);
+                //ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_LEFT);
+                //ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_MID);
                 //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_LEFT);
                 //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_MID);
 
@@ -165,30 +161,33 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
 
-        auto mid_line_search_return_info = MidLineSearcher_->FindMidLineClusters(image_mono_bird_);
 
-        if(mid_line_search_return_info.has_found_mid_line_clusters)
+        mid_line_search_return_info_ = MidLineSearcher_->FindMidLineClusters(image_mono_bird_);
+
+
+
+        if(mid_line_search_return_info_.has_found_mid_line_clusters)
         {
            // MidLineSearcher_->DrawClusters(image_rgb_bird_);
             //MidLineSearcher_->DrawSingleClusters(image_rgb_bird_);
             auto single_mid_line_clusters = MidLineSearcher_->GetSingleClusters();
 
-            if(mid_line_search_return_info.has_found_group)
+            if(mid_line_search_return_info_.has_found_group)
             {
                 //MidLineSearcher_->DrawGroupedMidLineClustersDirections(image_rgb_bird_);
                 //MidLineSearcher_->CoutLengthAndDirectionOfConnectedClusters();
 
-                auto grouped_mid_lines = MidLineSearcher_->GetGroupedMidLineClustersLengthAndDirection();
+                 mid_line_groups_from_mid_line_searcher_ = MidLineSearcher_->GetGroupedMidLineClustersLengthAndDirection();
 
-                ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(grouped_mid_lines, MID_TO_LEFT);
-                ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(grouped_mid_lines, MID_TO_RIGHT);
+                //ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_LEFT);
+                //ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_RIGHT);
                 //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, MID_TO_LEFT);
                 //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, MID_TO_RIGHT);
             }
          }
 
 
-
+/*
         ValidLinePointSearcher_.CreateValidationTables();
 
 
@@ -197,10 +196,35 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         ValidLinePointSearcher_.ExtractValidPoints();
 
         ValidLinePointSearcher_.DrawDirectionInRangeTable(image_rgb_bird_);
+
+        */
+        ValidLinePointSearcher_.SetImage(image_mono_bird_);
+
+        if(line_points_reducer_return_info_.left_line_is_reduced)
+        {
+            ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_RIGHT);
+            ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_MID);
+        }
+
+        if(line_points_reducer_return_info_.right_line_is_reduced)
+        {
+            ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_LEFT);
+            ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_MID);
+        }
+
+        if(mid_line_search_return_info_.has_found_group)
+        {
+            ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_LEFT);
+            ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_RIGHT);
+        }
+
         ValidLinePointSearcher_.ValidateTrack(image_rgb_bird_);
 
 
         ValidLinePointSearcher_.DrawSpline(rgb_spline);
+        ValidLinePointSearcher_.ClearValidationTables();
+
+
 
        //ValidLinePointSearcher_.DrawPointsInRect(image_rgb_bird_);
 
@@ -209,7 +233,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         //ValidLinePointSearcher_.DrawLastAdjacentPointMatch(image_rgb_bird_);
 
 
-        ValidLinePointSearcher_.ClearValidationTables();
+
 
 
         //ValidLinePointSearcher_.MergePoints();
@@ -230,16 +254,15 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
 
+
 /*
+        connected_component_search_return_info_ = ConnectedComponentsSearcher_->FindConnectedComponents(image_mono_bird_otsu_);
 
-        ConnectedComponentsSearchReturnInfo connected_component_search_return_info =
-        ConnectedComponentsSearcher_->FindConnectedComponents(image_mono_bird_otsu_);
-
-        if(connected_component_search_return_info.has_found_mid_line_components)
+        if(connected_component_search_return_info_.has_found_mid_line_components)
         {
             //ConnectedComponentsSearcher_->DrawMidLineComponentsRect(image_rgb_bird_);
 
-            if(connected_component_search_return_info.has_found_mid_line_group)
+            if(connected_component_search_return_info_.has_found_mid_line_group)
             {
                 //ConnectedComponentsSearcher_->DrawGroupedMidLineComponents(image_rgb_bird_);
                 ConnectedComponentsSearcher_->DrawGroupedMidLineComponentsDirections(image_rgb_bird_);
@@ -248,17 +271,19 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 */
 
+        ClearTrackingData();
+
 
         clock_t end = clock();
         double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
         //cout << "fps: " << 1/elapsed_secs << endl;
 
-        //warpPerspective(image_rgb_bird_, image_rgb_warped_back_, birdseye_transformation_matrix_.inv(), Size(image_width_,image_height_), INTER_CUBIC | WARP_INVERSE_MAP);
+        warpPerspective(rgb_spline, image_rgb_warped_back_, birdseye_transformation_matrix_.inv(), Size(image_width_,image_height_), INTER_CUBIC | WARP_INVERSE_MAP);
 
         //imshow("input",cv_ptr->image);
         //imshow("bird",image_mono_bird_);
         //imshow("ostu bird",image_mono_bird_otsu_);
-        imshow("normal",image_rgb_);
+        //imshow("normal",image_rgb_);
 
         imshow("spline",rgb_spline);
         imshow("bird_rgb", image_rgb_bird_);
@@ -273,6 +298,30 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         msg->encoding.c_str());
     }
 };
+
+
+void LaneTracker::ClearTrackingData()
+{
+    vanishing_point_search_return_info_.reset();
+    start_parameters_for_line_follower_.reset();
+    line_follower_return_info_.reset();
+    line_points_reducer_return_info_.reset();
+    mid_line_search_return_info_.reset();
+    connected_component_search_return_info_.reset();
+
+
+    left_line_from_line_follower_.clear();
+    right_line_from_line_follower_.clear();
+
+    left_line_from_line_points_reducer_.clear();
+    right_line_from_line_points_reducer_.clear();
+
+    left_line_lengths_and_directions_from_line_points_reducer_.clear();
+    right_line_lengths_and_directions_from_line_points_reducer_.clear();
+
+
+    mid_line_groups_from_mid_line_searcher_;
+}
 
 
 void LaneTracker::LoadStartOfLinesSearchInitializationParameters()
