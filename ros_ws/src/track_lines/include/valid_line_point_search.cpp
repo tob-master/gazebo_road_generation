@@ -1149,6 +1149,7 @@ void ValidLinePointSearch::FollowTrack(float search_direction, Point rect_mid_po
             //cout << new_search_direction << " " << new_rect_mid_point << endl;
 
 /*
+ *
             drawContours(rgb, search_rect, -1, Scalar(0,255,0), 2, LINE_8);
 
             imshow("im", rgb);
@@ -2742,6 +2743,44 @@ void ValidLinePointSearch::CoutRectSafetyTables()
 
 
 
+}
+
+void ValidLinePointSearch::DrawSafetyRects(Mat& rgb_spline)
+{
+/*
+                                                            LSCORE,
+                                                             MSCORE,
+                                                             RSCORE,
+                                                             TRACKSCORE,
+                                                             MAX_LINE,
+                                                             MAX_LINE_SCORE,
+                                                             MAX_LINE_CONTINUOUS,
+                                                             left_line_is_safe,
+                                                             mid_line_is_safe,
+                                                             right_line_is_safe,
+                                                             left_safest_table1,
+                                                             left_safest_table2,
+                                                             mid_safest_table1,
+                                                             mid_safest_table2,
+                                                             right_safest_table1,
+                                                             right_safest_table2,
+                                                             search_direction,
+                                                             rect_mid_point*/
+
+    for(auto it: track_safety_rects_info_)
+    {
+        Point rect_mid_point   = it.rect_mid_point;
+        float search_direction = it.search_direction;
+
+        vector<vector<Point>> search_rect = GetSearchRect(rect_mid_point,search_direction);
+
+        string str_score = to_string(it.MAX_LINE_SCORE);
+
+
+        drawContours(rgb_spline, search_rect, -1, Scalar(255,255,0), 2, LINE_8);
+        putText(rgb_spline, str_score, rect_mid_point,FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,255,255), 1, CV_AA);
+
+    }
 }
 
 

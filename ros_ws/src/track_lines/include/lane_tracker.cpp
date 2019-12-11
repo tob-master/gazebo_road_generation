@@ -7,197 +7,66 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     {
         cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "mono8");
 
-
-
+        // blackout wheels
         circle(cv_ptr->image, Point(709,454),35, Scalar(0,0,0),CV_FILLED, 8,0);
         circle(cv_ptr->image, Point(574,454),35, Scalar(0,0,0),CV_FILLED, 8,0);
 
-
         image_mono_ = cv_ptr->image;
 
-
-
-        cv::cvtColor(image_mono_, image_rgb_, CV_GRAY2BGR);
+        cvtColor(image_mono_, image_rgb_, CV_GRAY2BGR);
 
         warpPerspective(image_mono_, image_mono_bird_, birdseye_transformation_matrix_, kInputImageSize_, INTER_CUBIC | WARP_INVERSE_MAP);
         image_mono_bird_ = image_mono_bird_(Rect(0,0,image_width_,image_height_));
         threshold(image_mono_bird_, image_mono_bird_otsu_, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
 
-         Mat bird2;
-         Mat rgb_spline;
-        cv::cvtColor(image_mono_bird_, image_rgb_bird_, CV_GRAY2BGR);
-        cv::cvtColor(image_mono_bird_, rgb_spline, CV_GRAY2BGR);
-        cv::cvtColor(image_mono_bird_, bird2, CV_GRAY2BGR);
+        cvtColor(image_mono_bird_, image_rgb_bird_, CV_GRAY2BGR);
 
-
-
-
-        //cv::Mat image_rgb2_;
-
-        //cv::cvtColor(image_mono_bird_, image_rgb2_, CV_GRAY2BGR);
         clock_t begin = clock();
-
-
 
         vanishing_point_search_return_info_ = VanishingPointSearcher_->FindVanishingPoint(image_mono_);
 
-        //cout << info.vanishing_point << endl;
-        //cout << info.car_mid_point_to_vanishing_point_angle << endl;
+        //start_of_lines_search_return_info_ = StartOfLinesSearcher_->FindStartParameters(image_mono_bird_otsu_);
 
-        if(vanishing_point_search_return_info_.has_found_left_hough_line)
-        {
-           VanishingPointSearcher_->DrawHoughLines(image_rgb_, LEFT_LINE);
-           VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
+        left_hough_line_  = vanishing_point_search_return_info_.has_found_left_hough_line;
+        right_hough_line_ = vanishing_point_search_return_info_.has_found_right_hough_line;
 
-           //VanishingPointSearcher_->GetWarpedPerspektiveHoughLin
+
+         if(left_hough_line_ || right_hough_line_)
+          {
+                start_parameters_for_line_follower_ = VanishingPointSearcher_->GetLineFollowerStartParameters();
+
+                line_follower_return_info_ = LineFollower_->FollowLines(image_mono_bird_,start_parameters_for_line_follower_);
+
+                left_line_follower_min_iterations_reached_ = line_follower_return_info_.left_line_iterations_counter  >= kMinLineFollowerIterationsCount;
+                right_line_follower_min_iterations_reached_ = line_follower_return_info_.right_line_iterations_counter >= kMinLineFollowerIterationsCount;
+
+                if(left_line_follower_min_iterations_reached_) LineFollower_->GetLine(left_line_from_line_follower_, LEFT_LINE);
+                if(right_line_follower_min_iterations_reached_)LineFollower_->GetLine(right_line_from_line_follower_, RIGHT_LINE);
+
+                line_points_reducer_return_info_ = LinePointsReducer_->ReduceLinePoints(left_line_from_line_follower_,right_line_from_line_follower_,kMaxDistanceToReducePoints);
+
+                left_line_is_reduced_  = line_points_reducer_return_info_.left_line_is_reduced;
+                right_line_is_reduced_ = line_points_reducer_return_info_.right_line_is_reduced;
+
+                if(left_line_is_reduced_)  LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_LINE);
+                if(right_line_is_reduced_) LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_LINE);
         }
-
-        if(vanishing_point_search_return_info_.has_found_right_hough_line)
-        {
-            VanishingPointSearcher_->DrawHoughLines(image_rgb_, RIGHT_LINE);
-            VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, RIGHT_LINE);
-        }
-
-        if(vanishing_point_search_return_info_.has_found_intersections)
-        {
-
-            VanishingPointSearcher_->DrawLineIntersections(image_rgb_);
-        }
-
-        if(vanishing_point_search_return_info_.has_found_vanishing_point)
-        {
-            VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
-            VanishingPointSearcher_->DrawWarpedVanishingPointDirection(image_rgb_bird_);
-        }
-
-
-
-
-
-        //auto start_of_lines_search_return_info = StartOfLinesSearcher_->FindStartParameters(image_mono_bird_otsu_);
-
-        //if(start_of_lines_search_return_info.has_found_start_parameters)
-        if(vanishing_point_search_return_info_.has_found_left_hough_line || vanishing_point_search_return_info_.has_found_right_hough_line )
-        {
-
-            start_parameters_for_line_follower_ = VanishingPointSearcher_->GetLineFollowerStartParameters();
-
-            //StartOfLinesSearcher_->DrawStartParameters(image_rgb_bird_);
-
-            //LineFollowerReturnInfo line_follower_return_info_ = LineFollower_->FollowLines(image_mono_bird_,StartOfLinesSearcher_->GetStartParameters());
-            line_follower_return_info_ = LineFollower_->FollowLines(image_mono_bird_,start_parameters_for_line_follower_);
-
-
-            //cout << start_parameters_for_line_follower_.right_x << " " << start_parameters_for_line_follower_.right_y << " " << start_parameters_for_line_follower_.right_angle << endl;
-
-            //LineFollower_->CoutReturnInfo();
-
-
-
-            if(line_follower_return_info_.left_line_iterations_counter >= 2)
-            {
-                LineFollower_->GetLine(left_line_from_line_follower_, LEFT_LINE);
-                //LineFollower_->DrawLinePoints(image_rgb_bird_,LEFT_LINE);
-            }
-
-            if(line_follower_return_info_.right_line_iterations_counter >= 2)
-            {
-                LineFollower_->GetLine(right_line_from_line_follower_, RIGHT_LINE);
-                //LineFollower_->DrawLinePoints(image_rgb_bird_,RIGHT_LINE);
-            }
-
-            double max_distance = 5;
-
-            line_points_reducer_return_info_ = LinePointsReducer_->ReduceLinePoints(left_line_from_line_follower_,right_line_from_line_follower_,max_distance);
-
-
-
-            //ValidLinePointSearcher_.SetImage(image_mono_bird_);
-            if(line_points_reducer_return_info_.left_line_is_reduced)
-            {
-                //LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,LEFT_LINE);
-                LinePointsReducer_->GetReducedLinePoints(left_line_from_line_points_reducer_,LEFT_LINE);
-                LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_LINE);
-
-
-
-
-
-               // ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_RIGHT);
-               // ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_MID);
-                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, LEFT_TO_RIGHT);
-                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, LEFT_TO_MID);
-
-
-            }
-
-            if(line_points_reducer_return_info_.right_line_is_reduced)
-            {
-               //LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,RIGHT_LINE);
-                LinePointsReducer_->GetReducedLinePoints(right_line_from_line_points_reducer_,RIGHT_LINE);
-                LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_LINE);
-
-
-
-                //ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_LEFT);
-                //ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_MID);
-                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_LEFT);
-                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_MID);
-
-
-
-
-            }
-
-            //LinePointsReducer_->CoutLengthAndDirectionFromConsecutiveReducedLinePoints();
-
-
-
-
-
-
-
-        }
-
-
 
 
         mid_line_search_return_info_ = MidLineSearcher_->FindMidLineClusters(image_mono_bird_);
 
+        mid_lines_found_ = mid_line_search_return_info_.has_found_mid_line_clusters;
+        mid_line_groups_found_ = mid_line_search_return_info_.has_found_group;
 
-
-        if(mid_line_search_return_info_.has_found_mid_line_clusters)
+        if(mid_line_groups_found_)
         {
-           // MidLineSearcher_->DrawClusters(image_rgb_bird_);
-            //MidLineSearcher_->DrawSingleClusters(image_rgb_bird_);
-            auto single_mid_line_clusters = MidLineSearcher_->GetSingleClusters();
-
-            if(mid_line_search_return_info_.has_found_group)
-            {
-                //MidLineSearcher_->DrawGroupedMidLineClustersDirections(image_rgb_bird_);
-                //MidLineSearcher_->CoutLengthAndDirectionOfConnectedClusters();
-
-                 mid_line_groups_from_mid_line_searcher_ = MidLineSearcher_->GetGroupedMidLineClustersLengthAndDirection();
-
-                //ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_LEFT);
-                //ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_RIGHT);
-                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, MID_TO_LEFT);
-                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, MID_TO_RIGHT);
-            }
-         }
+             mid_line_groups_from_mid_line_searcher_ = MidLineSearcher_->GetGroupedMidLineClustersLengthAndDirection();
+        }
 
 
-/*
-        ValidLinePointSearcher_.CreateValidationTables();
+        //connected_component_search_return_info_ = ConnectedComponentsSearcher_->FindConnectedComponents(image_mono_bird_otsu_);
 
 
-        ValidLinePointSearcher_.SearchValidPoints();
-
-        ValidLinePointSearcher_.ExtractValidPoints();
-
-        ValidLinePointSearcher_.DrawDirectionInRangeTable(image_rgb_bird_);
-
-        */
         ValidLinePointSearcher_.SetImage(image_mono_bird_);
 
         if(line_points_reducer_return_info_.left_line_is_reduced)
@@ -218,78 +87,50 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
             ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_RIGHT);
         }
 
+
         ValidLinePointSearcher_.ValidateTrack(image_rgb_bird_);
 
 
-        ValidLinePointSearcher_.DrawSpline(rgb_spline);
-        ValidLinePointSearcher_.ClearValidationTables();
-
-
-
-       //ValidLinePointSearcher_.DrawPointsInRect(image_rgb_bird_);
-
-
-        //ValidLinePointSearcher_.DrawMinMaxFromDirectionInRange(image_rgb_bird_);
-        //ValidLinePointSearcher_.DrawLastAdjacentPointMatch(image_rgb_bird_);
-
-
-
-
-
-        //ValidLinePointSearcher_.MergePoints();
-        //ValidLinePointSearcher_.JJ();
-
-        //ValidLinePointSearcher_.SearchMinMax();
-
-        //ValidLinePointSearcher_.DrawMergedPoints(image_rgb_bird_);
-
-
-        //ValidLinePointSearcher_.ComputePointScores();
-
-
-
-        //ValidLinePointSearcher_.DrawValidScorePoints(image_rgb_bird_);
 
 
 
 
 
 
-/*
-        connected_component_search_return_info_ = ConnectedComponentsSearcher_->FindConnectedComponents(image_mono_bird_otsu_);
 
-        if(connected_component_search_return_info_.has_found_mid_line_components)
-        {
-            //ConnectedComponentsSearcher_->DrawMidLineComponentsRect(image_rgb_bird_);
 
-            if(connected_component_search_return_info_.has_found_mid_line_group)
-            {
-                //ConnectedComponentsSearcher_->DrawGroupedMidLineComponents(image_rgb_bird_);
-                ConnectedComponentsSearcher_->DrawGroupedMidLineComponentsDirections(image_rgb_bird_);
-            }
-        }
+        //DrawHoughLinesFront(image_rgb_);
+        //DrawHoughLinesBird(image_rgb_bird_);
 
-*/
 
-        ClearTrackingData();
+        //DrawLineFollowerBird(image_rgb_bird_);
+        //DrawReducedLinePointsBird(image_rgb_bird_);
 
+        //DrawAllMidLineClustersBird(image_rgb_bird_);
+        //DrawSingleMidLinesBird(image_rgb_bird_);
+        //DrawMidLineGroupsBird(image_rgb_bird_);
+
+        //DrawCCLMidLineRectComponentsBird(image_rgb_bird_);
+        //DrawCCLMidLineComponentsGroupsBird(image_rgb_bird_);
+
+        DrawValidatedLines(image_rgb_bird_);
+        DrawValidatedSplines(image_rgb_bird_);
+        DrawValidatedSafetyAreas(image_rgb_bird_);
 
         clock_t end = clock();
         double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
         //cout << "fps: " << 1/elapsed_secs << endl;
 
-        warpPerspective(rgb_spline, image_rgb_warped_back_, birdseye_transformation_matrix_.inv(), Size(image_width_,image_height_), INTER_CUBIC | WARP_INVERSE_MAP);
+        warpPerspective(image_rgb_bird_, image_rgb_warped_back_, birdseye_transformation_matrix_.inv(), Size(image_width_,image_height_), INTER_CUBIC | WARP_INVERSE_MAP);
 
-        //imshow("input",cv_ptr->image);
-        //imshow("bird",image_mono_bird_);
+
         //imshow("ostu bird",image_mono_bird_otsu_);
-        //imshow("normal",image_rgb_);
-
-        imshow("spline",rgb_spline);
+        imshow("normal",image_rgb_);
         imshow("bird_rgb", image_rgb_bird_);
-        //imshow("bird2",bird2);
         //imshow("warped_back",image_rgb_warped_back_);
         waitKey(1);
+       ValidLinePointSearcher_.ClearValidationTables();
+                ClearTrackingData();
 
     }
     catch (cv_bridge::Exception& e)
@@ -298,6 +139,152 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         msg->encoding.c_str());
     }
 };
+
+void LaneTracker::ReduceLinePoints()
+{
+    LineFollower_->GetLine(left_line_from_line_follower_, LEFT_LINE);
+    LineFollower_->GetLine(right_line_from_line_follower_, RIGHT_LINE);
+
+    line_points_reducer_return_info_ = LinePointsReducer_->ReduceLinePoints(left_line_from_line_follower_,right_line_from_line_follower_,kMaxDistanceToReducePoints);
+
+    left_line_is_reduced_  = line_points_reducer_return_info_.left_line_is_reduced;
+    right_line_is_reduced_ = line_points_reducer_return_info_.right_line_is_reduced;
+
+    LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_LINE);
+    LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_LINE);
+
+}
+
+void LaneTracker::DrawValidatedSafetyAreas(Mat& rgb)
+{
+    ValidLinePointSearcher_.DrawSafetyRects(rgb);
+}
+
+
+
+
+void LaneTracker::DrawValidatedSplines(Mat& rgb)
+{
+     ValidLinePointSearcher_.DrawSpline(rgb);
+}
+
+
+void LaneTracker::DrawCCLMidLineRectComponentsBird(Mat &rgb)
+{
+    if(connected_component_search_return_info_.has_found_mid_line_components)
+    {
+        ConnectedComponentsSearcher_->DrawMidLineComponentsRect(rgb);
+    }
+}
+
+void LaneTracker::DrawValidatedLines(Mat &rgb)
+{
+    ValidLinePointSearcher_.DrawDirectionInRangeTable(rgb);
+}
+
+void LaneTracker::DrawCCLMidLineComponentsGroupsBird(Mat &rgb)
+{
+    if(connected_component_search_return_info_.has_found_mid_line_group)
+    {
+        ConnectedComponentsSearcher_->DrawGroupedMidLineComponentsDirections(rgb);
+    }
+}
+
+
+void LaneTracker::DrawMidLineGroupsBird(Mat &rgb)
+{
+    if(mid_line_search_return_info_.has_found_group)
+    {
+        MidLineSearcher_->DrawGroupedMidLineClustersDirections(image_rgb_bird_);
+    }
+}
+
+
+void LaneTracker::DrawAllMidLineClustersBird(Mat &rgb)
+{
+    if(mid_line_search_return_info_.has_found_mid_line_clusters)
+    {
+        MidLineSearcher_->DrawClusters(rgb);
+    }
+}
+
+void LaneTracker::DrawSingleMidLinesBird(Mat &rgb)
+{
+    if(mid_line_search_return_info_.has_found_mid_line_clusters)
+    {
+        MidLineSearcher_->DrawSingleClusters(rgb);
+    }
+}
+
+void LaneTracker::DrawReducedLinePointsBird(Mat &rgb)
+{
+    if(line_points_reducer_return_info_.left_line_is_reduced)
+    {
+        LinePointsReducer_->DrawReducedLinePoints(rgb,LEFT_LINE);
+    }
+
+    if(line_points_reducer_return_info_.right_line_is_reduced)
+    {
+        LinePointsReducer_->DrawReducedLinePoints(rgb,RIGHT_LINE);
+    }
+}
+
+
+
+void LaneTracker::DrawLineFollowerBird(Mat& rgb)
+{
+    if(line_follower_return_info_.left_line_iterations_counter >= kMinLineFollowerIterationsCount)
+    {
+        LineFollower_->DrawLinePoints(rgb,LEFT_LINE);
+    }
+
+    if(line_follower_return_info_.right_line_iterations_counter >= kMinLineFollowerIterationsCount)
+    {
+        LineFollower_->DrawLinePoints(rgb,RIGHT_LINE);
+    }
+}
+
+void LaneTracker::DrawHoughLinesFront(Mat& rgb)
+{
+    if(vanishing_point_search_return_info_.has_found_left_hough_line)
+    {
+       VanishingPointSearcher_->DrawHoughLines(rgb, LEFT_LINE);
+    }
+
+    if(vanishing_point_search_return_info_.has_found_right_hough_line)
+    {
+        VanishingPointSearcher_->DrawHoughLines(rgb, RIGHT_LINE);
+    }
+
+    if(vanishing_point_search_return_info_.has_found_intersections)
+    {
+
+        VanishingPointSearcher_->DrawLineIntersections(rgb);
+    }
+
+    if(vanishing_point_search_return_info_.has_found_vanishing_point)
+    {
+        VanishingPointSearcher_->DrawVanishingPoint(rgb);
+    }
+}
+
+void LaneTracker::DrawHoughLinesBird(Mat& rgb)
+{
+    if(vanishing_point_search_return_info_.has_found_left_hough_line)
+    {
+       VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(rgb, LEFT_LINE);
+    }
+
+    if(vanishing_point_search_return_info_.has_found_right_hough_line)
+    {
+        VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(rgb, RIGHT_LINE);
+    }
+
+    if(vanishing_point_search_return_info_.has_found_vanishing_point)
+    {
+        VanishingPointSearcher_->DrawWarpedVanishingPointDirection(rgb);
+    }
+}
 
 
 void LaneTracker::ClearTrackingData()
@@ -308,7 +295,7 @@ void LaneTracker::ClearTrackingData()
     line_points_reducer_return_info_.reset();
     mid_line_search_return_info_.reset();
     connected_component_search_return_info_.reset();
-
+    start_of_lines_search_return_info_.reset();
 
     left_line_from_line_follower_.clear();
     right_line_from_line_follower_.clear();
@@ -547,4 +534,307 @@ LaneTracker::LaneTracker(ros::NodeHandle* nh_):n(*nh_),it(*nh_)
 
 };
 
+/*
+void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
+{
+    try
+    {
+        cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(msg, "mono8");
 
+
+
+        circle(cv_ptr->image, Point(709,454),35, Scalar(0,0,0),CV_FILLED, 8,0);
+        circle(cv_ptr->image, Point(574,454),35, Scalar(0,0,0),CV_FILLED, 8,0);
+
+
+        image_mono_ = cv_ptr->image;
+
+
+
+        cv::cvtColor(image_mono_, image_rgb_, CV_GRAY2BGR);
+
+        warpPerspective(image_mono_, image_mono_bird_, birdseye_transformation_matrix_, kInputImageSize_, INTER_CUBIC | WARP_INVERSE_MAP);
+        image_mono_bird_ = image_mono_bird_(Rect(0,0,image_width_,image_height_));
+        threshold(image_mono_bird_, image_mono_bird_otsu_, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+
+         Mat bird2;
+         Mat rgb_spline;
+        cv::cvtColor(image_mono_bird_, image_rgb_bird_, CV_GRAY2BGR);
+        cv::cvtColor(image_mono_bird_, rgb_spline, CV_GRAY2BGR);
+        cv::cvtColor(image_mono_bird_, bird2, CV_GRAY2BGR);
+
+
+
+
+        //cv::Mat image_rgb2_;
+
+        //cv::cvtColor(image_mono_bird_, image_rgb2_, CV_GRAY2BGR);
+        clock_t begin = clock();
+
+
+
+        vanishing_point_search_return_info_ = VanishingPointSearcher_->FindVanishingPoint(image_mono_);
+
+        //cout << info.vanishing_point << endl;
+        //cout << info.car_mid_point_to_vanishing_point_angle << endl;
+
+        if(vanishing_point_search_return_info_.has_found_left_hough_line)
+        {
+           VanishingPointSearcher_->DrawHoughLines(image_rgb_, LEFT_LINE);
+           VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, LEFT_LINE);
+
+           //VanishingPointSearcher_->GetWarpedPerspektiveHoughLin
+        }
+
+        if(vanishing_point_search_return_info_.has_found_right_hough_line)
+        {
+            VanishingPointSearcher_->DrawHoughLines(image_rgb_, RIGHT_LINE);
+            VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(image_rgb_bird_, RIGHT_LINE);
+        }
+
+        if(vanishing_point_search_return_info_.has_found_intersections)
+        {
+
+            VanishingPointSearcher_->DrawLineIntersections(image_rgb_);
+        }
+
+        if(vanishing_point_search_return_info_.has_found_vanishing_point)
+        {
+            VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
+            VanishingPointSearcher_->DrawWarpedVanishingPointDirection(image_rgb_bird_);
+        }
+
+
+
+
+
+        //auto start_of_lines_search_return_info_ = StartOfLinesSearcher_->FindStartParameters(image_mono_bird_otsu_);
+
+        //if(start_of_lines_search_return_info_.has_found_start_parameters)
+        if(vanishing_point_search_return_info_.has_found_left_hough_line || vanishing_point_search_return_info_.has_found_right_hough_line )
+        {
+
+            start_parameters_for_line_follower_ = VanishingPointSearcher_->GetLineFollowerStartParameters();
+
+            //StartOfLinesSearcher_->DrawStartParameters(image_rgb_bird_);
+
+            //LineFollowerReturnInfo line_follower_return_info_ = LineFollower_->FollowLines(image_mono_bird_,StartOfLinesSearcher_->GetStartParameters());
+            line_follower_return_info_ = LineFollower_->FollowLines(image_mono_bird_,start_parameters_for_line_follower_);
+
+
+            //cout << start_parameters_for_line_follower_.right_x << " " << start_parameters_for_line_follower_.right_y << " " << start_parameters_for_line_follower_.right_angle << endl;
+
+            //LineFollower_->CoutReturnInfo();
+
+
+
+            if(line_follower_return_info_.left_line_iterations_counter >= 2)
+            {
+                LineFollower_->GetLine(left_line_from_line_follower_, LEFT_LINE);
+                //LineFollower_->DrawLinePoints(image_rgb_bird_,LEFT_LINE);
+            }
+
+            if(line_follower_return_info_.right_line_iterations_counter >= 2)
+            {
+                LineFollower_->GetLine(right_line_from_line_follower_, RIGHT_LINE);
+                //LineFollower_->DrawLinePoints(image_rgb_bird_,RIGHT_LINE);
+            }
+
+            double max_distance = 5;
+
+            line_points_reducer_return_info_ = LinePointsReducer_->ReduceLinePoints(left_line_from_line_follower_,right_line_from_line_follower_,max_distance);
+
+
+
+            //ValidLinePointSearcher_.SetImage(image_mono_bird_);
+            if(line_points_reducer_return_info_.left_line_is_reduced_)
+            {
+                //LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,LEFT_LINE);
+                LinePointsReducer_->GetReducedLinePoints(left_line_from_line_points_reducer_,LEFT_LINE);
+                LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_LINE);
+
+
+
+
+
+               // ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_RIGHT);
+               // ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_MID);
+                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, LEFT_TO_RIGHT);
+                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, LEFT_TO_MID);
+
+
+            }
+
+            if(line_points_reducer_return_info_.right_line_is_reduced_)
+            {
+               //LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,RIGHT_LINE);
+                LinePointsReducer_->GetReducedLinePoints(right_line_from_line_points_reducer_,RIGHT_LINE);
+                LinePointsReducer_->GetLengthAndDirectionFromConsecutiveReducedLinePoints(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_LINE);
+
+
+
+                //ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_LEFT);
+                //ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_MID);
+                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_LEFT);
+                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_MID);
+
+
+
+
+            }
+
+            //LinePointsReducer_->CoutLengthAndDirectionFromConsecutiveReducedLinePoints();
+
+
+
+
+
+
+
+        }
+
+
+
+
+        mid_line_search_return_info_ = MidLineSearcher_->FindMidLineClusters(image_mono_bird_);
+
+
+
+        if(mid_line_search_return_info_.has_found_mid_line_clusters)
+        {
+           // MidLineSearcher_->DrawClusters(image_rgb_bird_);
+            //MidLineSearcher_->DrawSingleClusters(image_rgb_bird_);
+            auto single_mid_line_clusters = MidLineSearcher_->GetSingleClusters();
+
+            if(mid_line_search_return_info_.has_found_group)
+            {
+                //MidLineSearcher_->DrawGroupedMidLineClustersDirections(image_rgb_bird_);
+                //MidLineSearcher_->CoutLengthAndDirectionOfConnectedClusters();
+
+                 mid_line_groups_from_mid_line_searcher_ = MidLineSearcher_->GetGroupedMidLineClustersLengthAndDirection();
+
+                //ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_LEFT);
+                //ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_RIGHT);
+                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, MID_TO_LEFT);
+                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, MID_TO_RIGHT);
+            }
+         }
+
+
+/*
+        ValidLinePointSearcher_.CreateValidationTables();
+
+
+        ValidLinePointSearcher_.SearchValidPoints();
+
+        ValidLinePointSearcher_.ExtractValidPoints();
+
+        ValidLinePointSearcher_.DrawDirectionInRangeTable(image_rgb_bird_);
+
+
+        ValidLinePointSearcher_.SetImage(image_mono_bird_);
+
+        if(line_points_reducer_return_info_.left_line_is_reduced_)
+        {
+            ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_RIGHT);
+            ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_MID);
+        }
+
+        if(line_points_reducer_return_info_.right_line_is_reduced_)
+        {
+            ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_LEFT);
+            ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_MID);
+        }
+
+        if(mid_line_search_return_info_.has_found_group)
+        {
+            ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_LEFT);
+            ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_RIGHT);
+        }
+
+        ValidLinePointSearcher_.ValidateTrack(image_rgb_bird_);
+
+
+
+
+        ValidLinePointSearcher_.DrawSpline(rgb_spline);
+
+        ValidLinePointSearcher_.DrawSafetyRects(rgb_spline);
+
+
+        ValidLinePointSearcher_.ClearValidationTables();
+
+
+
+       //ValidLinePointSearcher_.DrawPointsInRect(image_rgb_bird_);
+
+
+        //ValidLinePointSearcher_.DrawMinMaxFromDirectionInRange(image_rgb_bird_);
+        //ValidLinePointSearcher_.DrawLastAdjacentPointMatch(image_rgb_bird_);
+
+
+
+
+
+        //ValidLinePointSearcher_.MergePoints();
+        //ValidLinePointSearcher_.JJ();
+
+        //ValidLinePointSearcher_.SearchMinMax();
+
+        //ValidLinePointSearcher_.DrawMergedPoints(image_rgb_bird_);
+
+
+        //ValidLinePointSearcher_.ComputePointScores();
+
+
+
+        //ValidLinePointSearcher_.DrawValidScorePoints(image_rgb_bird_);
+
+
+
+
+
+
+
+        connected_component_search_return_info_ = ConnectedComponentsSearcher_->FindConnectedComponents(image_mono_bird_otsu_);
+
+        if(connected_component_search_return_info_.has_found_mid_line_components)
+        {
+            //ConnectedComponentsSearcher_->DrawMidLineComponentsRect(image_rgb_bird_);
+
+            if(connected_component_search_return_info_.has_found_mid_line_group)
+            {
+                //ConnectedComponentsSearcher_->DrawGroupedMidLineComponents(image_rgb_bird_);
+                ConnectedComponentsSearcher_->DrawGroupedMidLineComponentsDirections(image_rgb_bird_);
+            }
+        }
+
+
+
+        ClearTrackingData();
+
+
+        clock_t end = clock();
+        double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+        //cout << "fps: " << 1/elapsed_secs << endl;
+
+        warpPerspective(rgb_spline, image_rgb_warped_back_, birdseye_transformation_matrix_.inv(), Size(image_width_,image_height_), INTER_CUBIC | WARP_INVERSE_MAP);
+
+        //imshow("input",cv_ptr->image);
+        //imshow("bird",image_mono_bird_);
+        //imshow("ostu bird",image_mono_bird_otsu_);
+        //imshow("normal",image_rgb_);
+
+        imshow("spline",rgb_spline);
+        imshow("bird_rgb", image_rgb_bird_);
+        //imshow("bird2",bird2);
+        //imshow("warped_back",image_rgb_warped_back_);
+        waitKey(1);
+
+    }
+    catch (cv_bridge::Exception& e)
+    {
+        ROS_ERROR("Could not convert from '%s' to 'mono8'.",
+        msg->encoding.c_str());
+    }
+};*/

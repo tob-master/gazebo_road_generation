@@ -32,6 +32,23 @@ private:
     const int image_height_ = 417;
     const int image_width_ = 1280;
 
+    const int kMinLineFollowerIterationsCount = 2;
+            const double kMaxDistanceToReducePoints =5;
+
+
+    bool left_hough_line_  = false;
+    bool right_hough_line_ = false;
+
+    bool left_line_follower_min_iterations_reached_ = false;
+    bool right_line_follower_min_iterations_reached_ = false;
+
+    bool left_line_is_reduced_  = false;
+    bool right_line_is_reduced_ = false;
+
+    bool mid_lines_found_ = false;
+
+    bool mid_line_groups_found_ = false;
+
     StartOfLinesSearchInitializationParameters start_of_lines_search_init;
     LineFollowerInitializationParameters line_follower_init;
     BirdseyeInitializationParameters birdseye_init;
@@ -67,6 +84,7 @@ private:
     LinePointsReducerReturnInfo line_points_reducer_return_info_;
     MidLineSearchReturnInfo mid_line_search_return_info_;
     ConnectedComponentsSearchReturnInfo connected_component_search_return_info_;
+    StartOfLinesSearchReturnInfo start_of_lines_search_return_info_;
 
 
     vector<PointAndDirection> left_line_from_line_follower_,
@@ -85,7 +103,7 @@ private:
     bool newCoords = false;
 
     void ClearTrackingData();
-
+void ReduceLinePoints();
 
     void LoadAllInitializationParameters();
     void LoadStartOfLinesSearchInitializationParameters();
@@ -95,7 +113,26 @@ private:
     void LoadVanishingPointSearchInitializationParameters();
     void LoadConnectedComponentsSearchInitializationParameters();
 
+    void     DrawHoughLinesFront(Mat& rgb);
+    void    DrawHoughLinesBird(Mat& rgb);
+    void DrawLineFollowerBird(Mat& rgb);
+void DrawReducedLinePointsBird(Mat &rgb);
 
+void DrawAllMidLineClustersBird(Mat &rgb);
+
+
+void DrawSingleMidLinesBird(Mat &rgb);
+void DrawMidLineGroupsBird(Mat &rgb);
+
+void DrawCCLMidLineRectComponentsBird(Mat &rgb);
+
+void DrawCCLMidLineComponentsGroupsBird(Mat &rgb);
+
+void DrawValidatedLines(Mat &rgb);
+
+void DrawValidatedSplines(Mat& rgb);
+
+void DrawValidatedSafetyAreas(Mat& rgb);
 
 public:
   LaneTracker(ros::NodeHandle* nh_);

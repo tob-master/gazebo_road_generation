@@ -100,7 +100,7 @@ private:
     const int kRectBorderDistanceThreshold_ = 10;
     const int kMinYDistanceInRect_ = 15;
     const int kMinStraightDifferenceForStraightLineInRect_ = 15;
-    const int kRectStepLength_ = 35;
+
 
 
     const int kMinFoundPercentage_ = 40;
@@ -190,8 +190,9 @@ private:
 
     vector<vector<vector<Point>>> examined_regions_;
 
+    const int kRectStepLength_ = 80;
     float rect_length_ = 300;
-    float rect_height_ = 40;
+    float rect_height_ = 80;
 
     vector<Point> l;
     vector<Point> m;
@@ -434,7 +435,7 @@ void DrawSearchRect(Mat &rgb);
 void DrawSpline(Mat &rgb);
 
 
-
+void DrawSafetyRects(Mat& rgb_spline);
 
     void JJ();
 
