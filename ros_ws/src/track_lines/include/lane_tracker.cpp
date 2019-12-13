@@ -88,6 +88,10 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         }
 
 
+
+
+        //vector<TrackSafetyRects> track_safety_rects;
+
         ValidLinePointSearcher_.ValidateTrack(image_rgb_bird_);
 
 
@@ -100,7 +104,10 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
         //DrawHoughLinesFront(image_rgb_);
-        //DrawHoughLinesBird(image_rgb_bird_);
+
+
+
+       DrawHoughLinesBird(image_rgb_bird_);
 
 
         //DrawLineFollowerBird(image_rgb_bird_);
@@ -113,8 +120,10 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         //DrawCCLMidLineRectComponentsBird(image_rgb_bird_);
         //DrawCCLMidLineComponentsGroupsBird(image_rgb_bird_);
 
-        DrawValidatedLines(image_rgb_bird_);
-        DrawValidatedSplines(image_rgb_bird_);
+        //DrawValidatedLines(image_rgb_bird_);
+
+        DrawValidatedPointsOnDriveWay(image_rgb_bird_);
+        //DrawValidatedSplines(image_rgb_bird_);
         DrawValidatedSafetyAreas(image_rgb_bird_);
 
         clock_t end = clock();
@@ -125,7 +134,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
         //imshow("ostu bird",image_mono_bird_otsu_);
-        imshow("normal",image_rgb_);
+        //imshow("normal",image_rgb_);
         imshow("bird_rgb", image_rgb_bird_);
         //imshow("warped_back",image_rgb_warped_back_);
         waitKey(1);
@@ -160,7 +169,10 @@ void LaneTracker::DrawValidatedSafetyAreas(Mat& rgb)
     ValidLinePointSearcher_.DrawSafetyRects(rgb);
 }
 
-
+void LaneTracker::DrawValidatedPointsOnDriveWay(Mat &rgb)
+{
+   ValidLinePointSearcher_.DrawValidatedPointsOnDriveWay(rgb);
+}
 
 
 void LaneTracker::DrawValidatedSplines(Mat& rgb)
@@ -280,10 +292,10 @@ void LaneTracker::DrawHoughLinesBird(Mat& rgb)
         VanishingPointSearcher_->DrawWarpedPerspektiveHoughLines(rgb, RIGHT_LINE);
     }
 
-    if(vanishing_point_search_return_info_.has_found_vanishing_point)
-    {
-        VanishingPointSearcher_->DrawWarpedVanishingPointDirection(rgb);
-    }
+    //if(vanishing_point_search_return_info_.has_found_vanishing_point)
+    //{
+    //    VanishingPointSearcher_->DrawWarpedVanishingPointDirection(rgb);
+    //}
 }
 
 

@@ -7,8 +7,10 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
 
+
 using namespace std;
 using namespace cv;
+
 
 enum {LEFT_LINE, MID_LINE,RIGHT_LINE };
 enum {LEFT_TO_MID, RIGHT_TO_MID, LEFT_TO_RIGHT, RIGHT_TO_LEFT, MID_TO_LEFT, MID_TO_RIGHT};
@@ -150,6 +152,8 @@ struct VanishingPointSearchInitializationParameters
     float max_standard_deviation_for_valid_vanishing_point;
 
 };
+
+
 
 
 struct MidLineSearchReturnInfo
@@ -633,4 +637,7 @@ namespace start_of_lines_search
       int top_row_mid_id;
     };
 }
+
+
+
 #endif // DATATYPES_H

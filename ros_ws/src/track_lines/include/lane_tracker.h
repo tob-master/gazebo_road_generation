@@ -13,7 +13,7 @@
 
 
 #include "datatypes.h"
-
+#include "line_validation_table.h"
 
 class LaneTracker
 {
@@ -133,6 +133,8 @@ void DrawValidatedLines(Mat &rgb);
 void DrawValidatedSplines(Mat& rgb);
 
 void DrawValidatedSafetyAreas(Mat& rgb);
+
+void DrawValidatedPointsOnDriveWay(Mat &rgb);
 
 public:
   LaneTracker(ros::NodeHandle* nh_);

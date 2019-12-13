@@ -109,5 +109,31 @@ class LineValidationTable
         int GetAdjacent1Prediction(int LINE_CODE);
         int GetAdjacent2Prediction(int LINE_CODE);
 };
+struct TrackSafetyRect
+{
+    unsigned long long int LSCORE;
+    unsigned long long int MSCORE;
+    unsigned long long int RSCORE;
+    unsigned long long int TRACKSCORE;
+
+    int MAX_LINE;
+    int MAX_LINE_SCORE;
+
+    bool MAX_LINE_CONTINUOUS;
+    bool LEFT_CONTINUOUS;
+    bool MID_CONTINUOUS;
+    bool RIGHT_CONTINUOUS;
+
+    vector<LineValidationTable> left_safest_table1;
+    vector<LineValidationTable> left_safest_table2;
+    vector<LineValidationTable> mid_safest_table1;
+    vector<LineValidationTable> mid_safest_table2;
+    vector<LineValidationTable> right_safest_table1;
+    vector<LineValidationTable> right_safest_table2;
+
+    int search_direction;
+    Point rect_mid_point;
+};
+
 
 #endif // LINE_VALIDATION_TABLE_H

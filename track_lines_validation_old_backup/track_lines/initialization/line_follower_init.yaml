@@ -1,0 +1,8 @@
+/line_follower_init/max_iterations: 150
+/line_follower_init/search_radius: 10
+/line_follower_init/max_weight_direction_scaler: 6
+/line_follower_init/field_of_view: 144
+/line_follower_init/max_consecutive_back_steps: 5
+/line_follower_init/min_travel_distance_to_not_got_stuck: 3
+/line_follower_init/max_got_stuck_counts: 6
+
