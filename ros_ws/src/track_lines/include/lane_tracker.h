@@ -9,7 +9,9 @@
 #include "line_points_reducer.h"
 #include "vanishing_point_search.h"
 #include "connected_components.h"
-#include "valid_line_point_search.h"
+#include "line_validation_table_creation.h"
+#include "line_validation_table_feature_extraction.h"
+#include "safe_drive_area_evaluation.h"
 
 
 #include "datatypes.h"
@@ -36,8 +38,20 @@ private:
             const double kMaxDistanceToReducePoints =5;
 
 
-    bool left_hough_line_  = false;
-    bool right_hough_line_ = false;
+    bool found_start_of_lines_ = false;
+
+    bool found_left_hough_line_  = false;
+    bool found_right_hough_line_ = false;
+
+    bool found_vanishing_point_ = false;
+
+
+     int START_PARAMETERS_SCORE_ = 0;
+
+     bool found_start_of_left_line_ = false;
+     bool found_start_of_mid_line_ = false;
+     bool found_start_of_right_line_ = false;
+
 
     bool left_line_follower_min_iterations_reached_ = false;
     bool right_line_follower_min_iterations_reached_ = false;
@@ -76,7 +90,12 @@ private:
     VanishingPointSearch *VanishingPointSearcher_;
     ConnectedComponentsSearch *ConnectedComponentsSearcher_;
 
-    ValidLinePointSearch ValidLinePointSearcher_;
+    LineValidationTableCreation LineValidationTableCreator_;
+    SafeDriveAre
+
+
+
+    LineValidationTableFeatureExtraction LineValidationTableFeatureExtractor_;
 
     VanishingPointSearchReturnInfo vanishing_point_search_return_info_;
     StartParameters start_parameters_for_line_follower_;
@@ -102,8 +121,19 @@ private:
     Point pt = Point(-1,-1);
     bool newCoords = false;
 
+
+    vector<LineValidationTable> left_line_validation_table_;
+    vector<LineValidationTable> mid_line_validation_table_;
+    vector<LineValidationTable> right_line_validation_table_;
+
+
+    vector<LineValidationTable> left_line_in_drive_direction_table_;
+    vector<LineValidationTable> mid_line_in_drive_direction_table_;
+    vector<LineValidationTable> right_line_in_drive_direction_table_;
+
     void ClearTrackingData();
 void ReduceLinePoints();
+void CheckStartParameters();
 
     void LoadAllInitializationParameters();
     void LoadStartOfLinesSearchInitializationParameters();
@@ -136,6 +166,10 @@ void DrawValidatedSafetyAreas(Mat& rgb);
 
 void DrawValidatedPointsOnDriveWay(Mat &rgb);
 
+void DrawStartOfLinesBird(Mat& rgb);
+void DrawStartParameterScore(Mat& rgb);
+
+void DrawLinePointsInDriveDirection(Mat &rgb);
 public:
   LaneTracker(ros::NodeHandle* nh_);
   void imageCallback(const sensor_msgs::ImageConstPtr& msg);

@@ -16,6 +16,18 @@
 using namespace std;
 using namespace cv;
 
+inline int CountDigits(int n)
+{
+    if(n<=0) return 1;
+    else     return floor(log10(n) + 1);
+
+}
+
+inline double Distance2d(const Point p1, const Point p2)
+{
+    return sqrt(pow(p1.x-p2.x,2) + pow(p1.y-p2.y,2));
+}
+
 inline void mouse_callback(int  event, int  x, int  y, int  flag, void *param)
 {
     if (event == EVENT_LBUTTONDOWN)

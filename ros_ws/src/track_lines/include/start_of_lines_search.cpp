@@ -347,14 +347,17 @@ void StartOfLinesSearch::ClearMemory()
     pattern_matches_.clear();
     pattern_to_car_matches_.clear();
 
+    start_parameters_.reset();
+
 }
 
 
 void StartOfLinesSearch::DrawStartParameters(Mat &rgb)
 {
 
-    circle(rgb, Point(start_parameters_.left_x,start_parameters_.left_y), 7, Scalar(0, 255, 255));
-    circle(rgb, Point(start_parameters_.right_x,start_parameters_.right_y), 7, Scalar(255, 255, 0));
+    circle(rgb, Point(start_parameters_.left_x,start_parameters_.left_y), 7, Scalar(255, 0, 0),CV_FILLED);
+    circle(rgb, Point(start_parameters_.right_x,start_parameters_.right_y), 7, Scalar(255, 0, 0),CV_FILLED);
+    line( rgb,Point(start_parameters_.left_x,start_parameters_.left_y),  Point(start_parameters_.right_x,start_parameters_.right_y), Scalar(255,0,0), 3, CV_AA);
 
 }
 

@@ -371,6 +371,60 @@ include/line_validation_table.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_validation_table.cpp.s
 .PHONY : include/line_validation_table.cpp.s
 
+include/line_validation_table_creation.o: include/line_validation_table_creation.cpp.o
+
+.PHONY : include/line_validation_table_creation.o
+
+# target to build an object file
+include/line_validation_table_creation.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_validation_table_creation.cpp.o
+.PHONY : include/line_validation_table_creation.cpp.o
+
+include/line_validation_table_creation.i: include/line_validation_table_creation.cpp.i
+
+.PHONY : include/line_validation_table_creation.i
+
+# target to preprocess a source file
+include/line_validation_table_creation.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_validation_table_creation.cpp.i
+.PHONY : include/line_validation_table_creation.cpp.i
+
+include/line_validation_table_creation.s: include/line_validation_table_creation.cpp.s
+
+.PHONY : include/line_validation_table_creation.s
+
+# target to generate assembly for a file
+include/line_validation_table_creation.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_validation_table_creation.cpp.s
+.PHONY : include/line_validation_table_creation.cpp.s
+
+include/line_validation_table_feature_extraction.o: include/line_validation_table_feature_extraction.cpp.o
+
+.PHONY : include/line_validation_table_feature_extraction.o
+
+# target to build an object file
+include/line_validation_table_feature_extraction.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_validation_table_feature_extraction.cpp.o
+.PHONY : include/line_validation_table_feature_extraction.cpp.o
+
+include/line_validation_table_feature_extraction.i: include/line_validation_table_feature_extraction.cpp.i
+
+.PHONY : include/line_validation_table_feature_extraction.i
+
+# target to preprocess a source file
+include/line_validation_table_feature_extraction.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_validation_table_feature_extraction.cpp.i
+.PHONY : include/line_validation_table_feature_extraction.cpp.i
+
+include/line_validation_table_feature_extraction.s: include/line_validation_table_feature_extraction.cpp.s
+
+.PHONY : include/line_validation_table_feature_extraction.s
+
+# target to generate assembly for a file
+include/line_validation_table_feature_extraction.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_validation_table_feature_extraction.cpp.s
+.PHONY : include/line_validation_table_feature_extraction.cpp.s
+
 include/mid_line_search.o: include/mid_line_search.cpp.o
 
 .PHONY : include/mid_line_search.o
@@ -424,33 +478,6 @@ include/start_of_lines_search.s: include/start_of_lines_search.cpp.s
 include/start_of_lines_search.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/start_of_lines_search.cpp.s
 .PHONY : include/start_of_lines_search.cpp.s
-
-include/valid_line_point_search.o: include/valid_line_point_search.cpp.o
-
-.PHONY : include/valid_line_point_search.o
-
-# target to build an object file
-include/valid_line_point_search.cpp.o:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/valid_line_point_search.cpp.o
-.PHONY : include/valid_line_point_search.cpp.o
-
-include/valid_line_point_search.i: include/valid_line_point_search.cpp.i
-
-.PHONY : include/valid_line_point_search.i
-
-# target to preprocess a source file
-include/valid_line_point_search.cpp.i:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/valid_line_point_search.cpp.i
-.PHONY : include/valid_line_point_search.cpp.i
-
-include/valid_line_point_search.s: include/valid_line_point_search.cpp.s
-
-.PHONY : include/valid_line_point_search.s
-
-# target to generate assembly for a file
-include/valid_line_point_search.cpp.s:
-	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/valid_line_point_search.cpp.s
-.PHONY : include/valid_line_point_search.cpp.s
 
 include/vanishing_point_search.o: include/vanishing_point_search.cpp.o
 
@@ -541,15 +568,18 @@ help:
 	@echo "... include/line_validation_table.o"
 	@echo "... include/line_validation_table.i"
 	@echo "... include/line_validation_table.s"
+	@echo "... include/line_validation_table_creation.o"
+	@echo "... include/line_validation_table_creation.i"
+	@echo "... include/line_validation_table_creation.s"
+	@echo "... include/line_validation_table_feature_extraction.o"
+	@echo "... include/line_validation_table_feature_extraction.i"
+	@echo "... include/line_validation_table_feature_extraction.s"
 	@echo "... include/mid_line_search.o"
 	@echo "... include/mid_line_search.i"
 	@echo "... include/mid_line_search.s"
 	@echo "... include/start_of_lines_search.o"
 	@echo "... include/start_of_lines_search.i"
 	@echo "... include/start_of_lines_search.s"
-	@echo "... include/valid_line_point_search.o"
-	@echo "... include/valid_line_point_search.i"
-	@echo "... include/valid_line_point_search.s"
 	@echo "... include/vanishing_point_search.o"
 	@echo "... include/vanishing_point_search.i"
 	@echo "... include/vanishing_point_search.s"

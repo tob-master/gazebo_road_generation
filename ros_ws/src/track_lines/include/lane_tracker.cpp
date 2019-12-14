@@ -1,6 +1,95 @@
 #include "lane_tracker.h"
 
 
+void LaneTracker::CheckStartParameters()
+{
+    found_start_of_lines_    = start_of_lines_search_return_info_.has_found_start_parameters;
+    found_left_hough_line_   = vanishing_point_search_return_info_.has_found_left_hough_line;
+    found_right_hough_line_  = vanishing_point_search_return_info_.has_found_right_hough_line;
+    found_vanishing_point_   = vanishing_point_search_return_info_.has_found_vanishing_point;
+
+    StartParameters start_of_lines_start_parameters = StartOfLinesSearcher_->GetStartParameters();
+    StartParameters vanishing_point_start_parameters = VanishingPointSearcher_->GetLineFollowerStartParameters();
+
+
+    /*
+    int   sol_left_x = start_of_lines_start_parameters.left_x;
+    int   sol_left_y = start_of_lines_start_parameters.left_y;
+    float sol_left_angle = start_of_lines_start_parameters.left_angle;
+    int   sol_right_x = start_of_lines_start_parameters.right_x;
+    int   sol_right_y = start_of_lines_start_parameters.right_y;
+    float sol_right_angle = start_of_lines_start_parameters.right_angle;
+
+    int   vp_left_x = vanishing_point_start_parameters.left_x;
+    int   vp_left_y = vanishing_point_start_parameters.left_y;
+    float vp_left_angle = vanishing_point_start_parameters.left_angle;
+    int   vp_right_x = vanishing_point_start_parameters.right_x;
+    int   vp_right_y = vanishing_point_start_parameters.right_y;
+    float vp_right_angle = vanishing_point_start_parameters.right_angle;
+    */
+
+
+
+    if(found_start_of_lines_ && found_vanishing_point_)
+    {
+       start_parameters_for_line_follower_ = StartOfLinesSearcher_->GetStartParameters();
+       START_PARAMETERS_SCORE_ = 5;
+       found_start_of_left_line_ = true;
+       found_start_of_mid_line_ = true;
+       found_start_of_right_line_ = true;
+    }
+    else if (found_start_of_lines_)
+    {
+        start_parameters_for_line_follower_ = StartOfLinesSearcher_->GetStartParameters();
+        START_PARAMETERS_SCORE_ = 4;
+        found_start_of_left_line_ = true;
+        found_start_of_mid_line_ = true;
+        found_start_of_right_line_ = true;
+    }
+    else if (found_vanishing_point_)
+    {
+        start_parameters_for_line_follower_ = VanishingPointSearcher_->GetLineFollowerStartParameters();
+        START_PARAMETERS_SCORE_ = 3;
+        found_start_of_left_line_ = true;
+        found_start_of_mid_line_ = false;
+        found_start_of_right_line_ = true;
+    }
+    else if (found_left_hough_line_ && found_right_hough_line_)
+    {
+        start_parameters_for_line_follower_ = VanishingPointSearcher_->GetLineFollowerStartParameters();
+        START_PARAMETERS_SCORE_ = 2;
+        found_start_of_left_line_ = true;
+        found_start_of_mid_line_ = false;
+        found_start_of_right_line_ = true;
+    }
+    else if (found_left_hough_line_)
+    {
+        start_parameters_for_line_follower_ = VanishingPointSearcher_->GetLineFollowerStartParameters();
+        START_PARAMETERS_SCORE_ = 1;
+        found_start_of_left_line_ = true;
+        found_start_of_mid_line_ = false;
+        found_start_of_right_line_ = false;
+    }
+    else if (found_right_hough_line_)
+    {
+        start_parameters_for_line_follower_ = VanishingPointSearcher_->GetLineFollowerStartParameters();
+        START_PARAMETERS_SCORE_ = 1;
+        found_start_of_left_line_ = false;
+        found_start_of_mid_line_ = false;
+        found_start_of_right_line_ = true;
+    }
+    else
+    {
+        START_PARAMETERS_SCORE_ = 0;
+        found_start_of_left_line_ = false;
+        found_start_of_mid_line_ = false;
+        found_start_of_right_line_ = false;
+    }
+
+
+
+}
+
 void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
     try
@@ -25,16 +114,13 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         vanishing_point_search_return_info_ = VanishingPointSearcher_->FindVanishingPoint(image_mono_);
 
-        //start_of_lines_search_return_info_ = StartOfLinesSearcher_->FindStartParameters(image_mono_bird_otsu_);
-
-        left_hough_line_  = vanishing_point_search_return_info_.has_found_left_hough_line;
-        right_hough_line_ = vanishing_point_search_return_info_.has_found_right_hough_line;
+        start_of_lines_search_return_info_ = StartOfLinesSearcher_->FindStartParameters(image_mono_bird_otsu_);
 
 
-         if(left_hough_line_ || right_hough_line_)
+        CheckStartParameters();
+
+         if(START_PARAMETERS_SCORE_ != 0)
           {
-                start_parameters_for_line_follower_ = VanishingPointSearcher_->GetLineFollowerStartParameters();
-
                 line_follower_return_info_ = LineFollower_->FollowLines(image_mono_bird_,start_parameters_for_line_follower_);
 
                 left_line_follower_min_iterations_reached_ = line_follower_return_info_.left_line_iterations_counter  >= kMinLineFollowerIterationsCount;
@@ -67,32 +153,41 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         //connected_component_search_return_info_ = ConnectedComponentsSearcher_->FindConnectedComponents(image_mono_bird_otsu_);
 
 
-        ValidLinePointSearcher_.SetImage(image_mono_bird_);
+        LineValidationTableCreator_.SetImage(image_mono_bird_);
 
         if(line_points_reducer_return_info_.left_line_is_reduced)
         {
-            ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_RIGHT);
-            ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_MID);
+            LineValidationTableCreator_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_RIGHT);
+            LineValidationTableCreator_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_MID);
         }
 
         if(line_points_reducer_return_info_.right_line_is_reduced)
         {
-            ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_LEFT);
-            ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_MID);
+            LineValidationTableCreator_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_LEFT);
+            LineValidationTableCreator_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_MID);
         }
 
         if(mid_line_search_return_info_.has_found_group)
         {
-            ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_LEFT);
-            ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_RIGHT);
+            LineValidationTableCreator_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_LEFT);
+            LineValidationTableCreator_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_RIGHT);
         }
 
+
+        LineValidationTableCreator_.GatherLineValidationTables(left_line_validation_table_,mid_line_validation_table_,right_line_validation_table_);
+
+
+        LineValidationTableFeatureExtractor_.LoadLineValidationTables(left_line_validation_table_,mid_line_validation_table_,right_line_validation_table_);
+
+
+
+        LineValidationTableFeatureExtractor_.GetLinePointsInDriveDirection(left_line_in_drive_direction_table_,mid_line_in_drive_direction_table_,right_line_in_drive_direction_table_);
 
 
 
         //vector<TrackSafetyRects> track_safety_rects;
 
-        ValidLinePointSearcher_.ValidateTrack(image_rgb_bird_);
+        //LineValidationTableCreator_.ValidateTrack(image_rgb_bird_);
 
 
 
@@ -100,6 +195,10 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
 
+        //StartParameters GetStartParameters();
+
+        DrawStartParameterScore(image_rgb_bird_);
+        DrawStartOfLinesBird(image_rgb_bird_);
 
 
 
@@ -122,23 +221,26 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         //DrawValidatedLines(image_rgb_bird_);
 
-        DrawValidatedPointsOnDriveWay(image_rgb_bird_);
+
+        DrawLinePointsInDriveDirection(image_rgb_bird_);
+
+        //DrawValidatedPointsOnDriveWay(image_rgb_bird_);
         //DrawValidatedSplines(image_rgb_bird_);
-        DrawValidatedSafetyAreas(image_rgb_bird_);
+        //DrawValidatedSafetyAreas(image_rgb_bird_);
 
         clock_t end = clock();
         double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
         //cout << "fps: " << 1/elapsed_secs << endl;
 
-        warpPerspective(image_rgb_bird_, image_rgb_warped_back_, birdseye_transformation_matrix_.inv(), Size(image_width_,image_height_), INTER_CUBIC | WARP_INVERSE_MAP);
+        //warpPerspective(image_rgb_bird_, image_rgb_warped_back_, birdseye_transformation_matrix_.inv(), Size(image_width_,image_height_), INTER_CUBIC | WARP_INVERSE_MAP);
 
 
         //imshow("ostu bird",image_mono_bird_otsu_);
         //imshow("normal",image_rgb_);
         imshow("bird_rgb", image_rgb_bird_);
         //imshow("warped_back",image_rgb_warped_back_);
-        waitKey(1);
-       ValidLinePointSearcher_.ClearValidationTables();
+        waitKey(0);
+       LineValidationTableCreator_.ClearValidationTables();
                 ClearTrackingData();
 
     }
@@ -148,6 +250,25 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         msg->encoding.c_str());
     }
 };
+
+
+void LaneTracker::DrawLinePointsInDriveDirection(Mat &rgb)
+{
+    LineValidationTableFeatureExtractor_.DrawLinePointsInDriveDirection(image_rgb_bird_);
+}
+
+void LaneTracker::DrawStartParameterScore(Mat& rgb)
+{
+    string text = to_string(START_PARAMETERS_SCORE_);
+    putText(rgb, text, Point(640, 390),FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,255,255), 1, CV_AA);
+}
+
+
+
+void LaneTracker::DrawStartOfLinesBird(Mat& rgb)
+{
+    if(found_start_of_lines_) StartOfLinesSearcher_->DrawStartParameters(image_rgb_bird_);
+}
 
 void LaneTracker::ReduceLinePoints()
 {
@@ -166,18 +287,18 @@ void LaneTracker::ReduceLinePoints()
 
 void LaneTracker::DrawValidatedSafetyAreas(Mat& rgb)
 {
-    ValidLinePointSearcher_.DrawSafetyRects(rgb);
+    LineValidationTableCreator_.DrawSafetyRects(rgb);
 }
 
 void LaneTracker::DrawValidatedPointsOnDriveWay(Mat &rgb)
 {
-   ValidLinePointSearcher_.DrawValidatedPointsOnDriveWay(rgb);
+   LineValidationTableCreator_.DrawValidatedPointsOnDriveWay(rgb);
 }
 
 
 void LaneTracker::DrawValidatedSplines(Mat& rgb)
 {
-     ValidLinePointSearcher_.DrawSpline(rgb);
+     LineValidationTableCreator_.DrawSpline(rgb);
 }
 
 
@@ -191,7 +312,7 @@ void LaneTracker::DrawCCLMidLineRectComponentsBird(Mat &rgb)
 
 void LaneTracker::DrawValidatedLines(Mat &rgb)
 {
-    ValidLinePointSearcher_.DrawDirectionInRangeTable(rgb);
+    LineValidationTableCreator_.DrawDirectionInRangeTable(rgb);
 }
 
 void LaneTracker::DrawCCLMidLineComponentsGroupsBird(Mat &rgb)
@@ -658,7 +779,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
 
-            //ValidLinePointSearcher_.SetImage(image_mono_bird_);
+            //LineValidationTableCreator_.SetImage(image_mono_bird_);
             if(line_points_reducer_return_info_.left_line_is_reduced_)
             {
                 //LinePointsReducer_->DrawReducedLinePoints(image_rgb_bird_,LEFT_LINE);
@@ -669,10 +790,10 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
 
-               // ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_RIGHT);
-               // ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_MID);
-                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, LEFT_TO_RIGHT);
-                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, LEFT_TO_MID);
+               // LineValidationTableCreator_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_RIGHT);
+               // LineValidationTableCreator_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_MID);
+                //LineValidationTableCreator_.DrawLinePoints(image_rgb_bird_, LEFT_TO_RIGHT);
+                //LineValidationTableCreator_.DrawLinePoints(image_rgb_bird_, LEFT_TO_MID);
 
 
             }
@@ -685,10 +806,10 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
 
-                //ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_LEFT);
-                //ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_MID);
-                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_LEFT);
-                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_MID);
+                //LineValidationTableCreator_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_LEFT);
+                //LineValidationTableCreator_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_MID);
+                //LineValidationTableCreator_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_LEFT);
+                //LineValidationTableCreator_.DrawLinePoints(image_rgb_bird_, RIGHT_TO_MID);
 
 
 
@@ -725,82 +846,82 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
                  mid_line_groups_from_mid_line_searcher_ = MidLineSearcher_->GetGroupedMidLineClustersLengthAndDirection();
 
-                //ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_LEFT);
-                //ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_RIGHT);
-                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, MID_TO_LEFT);
-                //ValidLinePointSearcher_.DrawLinePoints(image_rgb_bird_, MID_TO_RIGHT);
+                //LineValidationTableCreator_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_LEFT);
+                //LineValidationTableCreator_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_RIGHT);
+                //LineValidationTableCreator_.DrawLinePoints(image_rgb_bird_, MID_TO_LEFT);
+                //LineValidationTableCreator_.DrawLinePoints(image_rgb_bird_, MID_TO_RIGHT);
             }
          }
 
 
 /*
-        ValidLinePointSearcher_.CreateValidationTables();
+        LineValidationTableCreator_.CreateValidationTables();
 
 
-        ValidLinePointSearcher_.SearchValidPoints();
+        LineValidationTableCreator_.SearchValidPoints();
 
-        ValidLinePointSearcher_.ExtractValidPoints();
+        LineValidationTableCreator_.ExtractValidPoints();
 
-        ValidLinePointSearcher_.DrawDirectionInRangeTable(image_rgb_bird_);
+        LineValidationTableCreator_.DrawDirectionInRangeTable(image_rgb_bird_);
 
 
-        ValidLinePointSearcher_.SetImage(image_mono_bird_);
+        LineValidationTableCreator_.SetImage(image_mono_bird_);
 
         if(line_points_reducer_return_info_.left_line_is_reduced_)
         {
-            ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_RIGHT);
-            ValidLinePointSearcher_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_MID);
+            LineValidationTableCreator_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_RIGHT);
+            LineValidationTableCreator_.FindValidPointsFromLineFollow(left_line_lengths_and_directions_from_line_points_reducer_, LEFT_TO_MID);
         }
 
         if(line_points_reducer_return_info_.right_line_is_reduced_)
         {
-            ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_LEFT);
-            ValidLinePointSearcher_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_MID);
+            LineValidationTableCreator_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_LEFT);
+            LineValidationTableCreator_.FindValidPointsFromLineFollow(right_line_lengths_and_directions_from_line_points_reducer_,RIGHT_TO_MID);
         }
 
         if(mid_line_search_return_info_.has_found_group)
         {
-            ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_LEFT);
-            ValidLinePointSearcher_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_RIGHT);
+            LineValidationTableCreator_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_LEFT);
+            LineValidationTableCreator_.FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_RIGHT);
         }
 
-        ValidLinePointSearcher_.ValidateTrack(image_rgb_bird_);
+        LineValidationTableCreator_.ValidateTrack(image_rgb_bird_);
 
 
 
 
-        ValidLinePointSearcher_.DrawSpline(rgb_spline);
+        LineValidationTableCreator_.DrawSpline(rgb_spline);
 
-        ValidLinePointSearcher_.DrawSafetyRects(rgb_spline);
-
-
-        ValidLinePointSearcher_.ClearValidationTables();
+        LineValidationTableCreator_.DrawSafetyRects(rgb_spline);
 
 
-
-       //ValidLinePointSearcher_.DrawPointsInRect(image_rgb_bird_);
-
-
-        //ValidLinePointSearcher_.DrawMinMaxFromDirectionInRange(image_rgb_bird_);
-        //ValidLinePointSearcher_.DrawLastAdjacentPointMatch(image_rgb_bird_);
+        LineValidationTableCreator_.ClearValidationTables();
 
 
 
+       //LineValidationTableCreator_.DrawPointsInRect(image_rgb_bird_);
 
 
-        //ValidLinePointSearcher_.MergePoints();
-        //ValidLinePointSearcher_.JJ();
-
-        //ValidLinePointSearcher_.SearchMinMax();
-
-        //ValidLinePointSearcher_.DrawMergedPoints(image_rgb_bird_);
-
-
-        //ValidLinePointSearcher_.ComputePointScores();
+        //LineValidationTableCreator_.DrawMinMaxFromDirectionInRange(image_rgb_bird_);
+        //LineValidationTableCreator_.DrawLastAdjacentPointMatch(image_rgb_bird_);
 
 
 
-        //ValidLinePointSearcher_.DrawValidScorePoints(image_rgb_bird_);
+
+
+        //LineValidationTableCreator_.MergePoints();
+        //LineValidationTableCreator_.JJ();
+
+        //LineValidationTableCreator_.SearchMinMax();
+
+        //LineValidationTableCreator_.DrawMergedPoints(image_rgb_bird_);
+
+
+        //LineValidationTableCreator_.ComputePointScores();
+
+
+
+        //LineValidationTableCreator_.DrawValidScorePoints(image_rgb_bird_);
 
 
 

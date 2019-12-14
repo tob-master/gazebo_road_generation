@@ -146,7 +146,8 @@ add_executable(track include/start_of_lines_search.cpp
                      include/dbscan.cpp
                      include/connected_components.cpp
                      include/depth_first_search.cpp
-                     include/valid_line_point_search.cpp
+                     include/line_validation_table_creation.cpp
+                     include/line_validation_table_feature_extraction.cpp
                      include/line_validation_table.cpp
                      src/line_tracker_node.cpp )
 
