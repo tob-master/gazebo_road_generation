@@ -12,6 +12,7 @@
 #include "line_validation_table_creation.h"
 #include "line_validation_table_feature_extraction.h"
 #include "safe_drive_area_evaluation.h"
+#include "perceptual_grouping.h"
 
 
 #include "datatypes.h"
@@ -91,7 +92,8 @@ private:
     ConnectedComponentsSearch *ConnectedComponentsSearcher_;
 
     LineValidationTableCreation LineValidationTableCreator_;
-    SafeDriveAre
+    SafeDriveAreaEvaluation SafeDriveAreaEvaluator_;
+    PerceptualGrouping PerceputalGrouper_;
 
 
 

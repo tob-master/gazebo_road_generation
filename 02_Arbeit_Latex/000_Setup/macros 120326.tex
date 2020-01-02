@@ -1,0 +1,412 @@
+%
+% Makros       
+%******************************************************************************
+
+%%=============================================================================
+%% Neue, neudefinierte Befehle
+%%=============================================================================
+
+\newenvironment{smethode}%
+  {\begin{list}{}{\let\makelabel\smethodelabel
+  \setlength\labelwidth{10pt}%
+  \setlength\leftmargin{\labelwidth+\labelsep}}}%
+%  \setlength\leftmargin{-\labelwidth-\labelsep}}}%
+  {\end{list}}
+  \newcommand*\smethodelabel[1]{\sffamily\bfseries{\color{blue}#1:}\hfil}
+
+
+\newcommand{\mymarginline}[1]{\marginline{\sffamily\bfseries{#1}}} %Farbe geht nicht
+\newcommand{\mymarginpar}[1]%
+%           {\marginpar{\sffamily\small\bfseries{#1}}}  % immer linksbündig Farbe geht nicht
+{\marginpar[\raggedleft{ \sffamily\small\bfseries{#1}}]{\raggedright{\sffamily\small\bfseries{#1}}}}
+            %{%
+						%\marginpar[\raggedleft{ \sffamily\small\bfseries{#1}}]%
+                      %{\raggedright{\sffamily\small\bfseries{#1}}}%
+						%}%
+
+           
+\newcommand{\todo}[1]{\marginpar{
+%    \fcolorbox{red}{white}{\parbox{\marginparwidth}{ 
+    \fcolorbox{red}{white}{\parbox{30mm}{ 
+            \color{red}\sffamily\small TODO: #1 }}}}
+						
+\newcommand{\XX}[1]{\marginpar{\color{red} #1}}
+
+% Achtung
+\newcommand{\Achtung}{\marginline{\raisebox{-\height}{\includegraphics[width=5mm]{Achtung.png}} }}
+
+\newcommand{\marginlineA}[1]{\marginpar[\raggedleft{\small {\color{LinkColor}\leftpointright} #1}]{\raggedright {\color{LinkColor}\rightpointleft} \small #1}}
+
+
+%\newcommand{\Danger}[1]{\marginpar[\hfill\dbend #1]{#1 \dbend\hfill}}
+\newcommand{\Danger}[1]{\marginpar[\dbend #1 ]{\dbend #1}}
+
+
+\newcommand\marginlineBend[1]{\marginpar[\raggedleft {\raisebox{+1.4\height} {\color{LinkColor}\dbend} \small #1}]{\raggedright  {\raisebox{+1.4\height} {\color{LinkColor}\dbend} \small #1}} }
+
+%\newcommand\marginlineBendB[1]{\marginpar[\raggedleft {{\lettrine{\large\dbend}{}}}  \small #1]{\raggedright {{\lettrine{\large\dbend}{}} \small #1} }}
+%\newcommand\marginlineBendB[1]{\marginpar[\raggedleft {{\lettrine{\normalsize\dbend}{\hspace{0mm}}}}  \small #1]{\raggedright {{\lettrine{\normalsize\dbend}{}}} \small #1} }}
+%\newcommand\marginlineBendB[1]{\marginpar[\raggedleft {\makebox[5mm][l]{\dbend}}  \small #1]{\raggedright {{\dbend}} \small #1} }}
+
+
+%-------------------------------------------------------------------
+% Abbildungen **** Empfehlung: Kopiervorlage nutzen und anpassen, nicht Makro!
+%-------------------------------------------------------------------
+% Vorsicht: Dateinamen in UNIX-Syntax und relativ zu main.tex
+%
+% Syntax gilt für alle unterstützten Grafikformate!
+% Voraussetzung: die Datei existiert und die Endung wird NICHT 
+% im Dateinamen angegeben!
+%
+% Syntax: 
+% \fg {DATEINAME}% = caption
+%          {Ort auf Blatt} htbf
+%          {BREITE} % vorzugsweise als Teil der TExtbreite z.B. '0.8\textwidth'
+%          {ROTATIONSWINKEL}%
+%          {Bildtitel im Abbildungsverzeichnis}
+%          {BILDUNTERSCHRIFT}%
+%
+% Kopiervorlage 
+% \fg{Datei}{Ort}{Breite}{Rotation}{Bildtitel im Abbildungsverzeichnis}{Bildunterschrift}%
+
+%\newcommand{\fg}[6]
+%             {
+%              \begin{figure}[#1]
+%              \begin{center}
+%              \includegraphics[width=#3, angle=#4]{#2}
+%              \caption[#4]{%
+%              \label{fig:#2}%
+%              #5}
+%              \end{center}
+%              \end{figure}
+%             }
+
+             
+%-------------------------------------------------------------------
+% Abbildungen caption beside
+%-------------------------------------------------------------------
+% Kopiervorlage: in den Quelltext kopieren, dann dort umbrechen
+%\fgB{Datei}{Ort, !h oder tbh}{Breite}{Rotation}{Bildunterschrift}{i}{Text}
+%
+% Syntax: 
+%\fgB {DATEINAME}
+%        {Ort, !h oder tbh}   
+%        {BREITE} % vorzugsweise als Teil der TExtbreite z.B. '0.8\textwidth'
+%        {ROTATIONSWINKEL}
+%        {BILDUNTERSCHRIFT}
+%        {Ausrichtung Caption= i oder o}
+%        {Text im Abbildungsverzeichnis}
+%
+% Vorsicht: Dateinamen in UNIX-Syntax und relativ zu main.tex
+% evtl ist der Abstand zwischen Text und Bild zu klein
+% dann ändern (siehe Koma skript  
+
+%\newcommand{\fgB}[7]
+%             {
+%              \begin{figure}[#2]
+%              %\setcapindent*{1em}  %hängender Einzug ab 2. Zeile
+%              \begin{captionbeside}[#7]%
+%              {#5}[#6][\linewidth]%
+%              %[2em]* %Verschiebung nach aussen
+%              \includegraphics[width=#3, angle=#4]{#1}
+%              \end{captionbeside}%              
+%              \label{fig:#1}
+%              \end{figure}
+%             }             
+
+%-------------------------------------------------------------------
+% Tabellen
+%-------------------------------------------------------------------
+% Syntax: \bt{SPALTENDEFINITION} - Begin Table
+%         \et{LABEL}{TABELLENBEZEICHNUNG}
+\newcommand{\bt}[3]
+           { 
+             \begin{table}[!h]
+             \begin{center}
+             \caption{\label{tbl:#2}#3}                          
+             \begin{tabular}{#1}
+           }
+\newcommand{\et}
+           {
+            \end{tabular}
+            \end{center}
+            \end{table}
+           }
+
+
+%%=============================================================================
+%% Abkürzungen (Abteilung "Faulheit")
+%%=============================================================================
+%
+% --- Gleichungen 
+% Syntax: \beq{NAME DER GLEICHUNG} 
+%         \eeq
+% Referenz: \ref{eqt:NAME DER GLEICHUNG}
+%
+% begin
+\newcommand{\beq}[1]
+           {
+            \begin{equation}
+            \label{#1}
+           }
+% end
+\newcommand{\eeq}
+           {
+             \end{equation}
+           }
+\newcommand{\beqa}{\begin{eqnarray}}         
+\newcommand{\eeqa}{\end{eqnarray}}
+
+\newcommand{\ba}{\begin{array}}
+\newcommand{\ea}{\end{array}}
+
+\newcommand{\bdm}{\begin{displaymath}}
+\newcommand{\edm}{\end{displaymath}}
+	   
+% --- Itemize 
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+
+% --- Enumerate
+\newcommand{\be}{\begin{enumerate}}
+\newcommand{\ee}{\end{enumerate}}
+
+% ---
+\newcommand{\bd}{\begin{description}}
+\newcommand{\ed}{\end{description}}
+
+% Fussnoten
+% Syntax: \fn legt fest, wo das Fußnotenzeichen steht
+%         \fnt{FUSSNOTENTEXT} legt den Text fest
+\newcommand{\fn}{\footnotemark}
+\newcommand{\fnt}[1]{\footnotetext{#1}}
+
+\newcommand{\s}{\scriptscriptstyle}
+\newcommand{\D}{\displaystyle}
+
+\newcommand{\bff}[1]{\noindent {\textbf{#1}}}
+
+\newcommand{\ol}{\ddot{O}l}
+\newcommand{\p}{\partial\mspace{2mu}}
+\newcommand{\Dp}{\Delta p}
+\newcommand{\te}{$\vartheta$}             % theta
+\newcommand{\cT}{\vartheta}               %      Celsiustemperatur muss erhalten bleiben
+\newcommand{\Ct}{\vartheta}               %var   Celsiustemperatur kann evtl in t geändert werden
+
+\newcommand{\R}{{\em\bf R}}               % Universelle Gaskonstante fett
+\newcommand{\C}{$^\circ$C}                % Grad Celsius
+%\newcommand{\C}{~\textcentigrade{}}                % Grad Celsius
+\newcommand{\CC}{^\circ \mbox{ C}}                % Grad Celsius
+\newcommand{\mue}{\textmu}
+\renewcommand{\d}{\partial\mspace{2mu}}   % partielles Diff. Zeichen 
+\newcommand{\td}{\,\mathrm{d}}           	% totales Diff (d, nicht kursiv)
+\newcommand{\ddt}[1]{\frac{\td #1}{\td t}}% zweifach 
+
+%% ggfl. umschreiben mit \text{}
+\newcommand{\idx}[1]{_\mathrm{#1}}        % nicht kursiver Index in Gleichungen geht nur mit Umlauten wie "a
+\newcommand{\idxi}[2]{_{\mathrm{#1,}{#2}}}% nicht kursiver Index in Gleichungen geht nur mit Index 
+\newcommand{\idy}[1]{^\mathrm{#1}}        % nicht kursiver Index in Gleichungen geht nur mit Umlauten wie "a
+
+
+\newcommand{\bul}{$\bullet$}              % Mark in Tabs
+\newcommand{\Q}{$\bullet$}                % mark2 in Tabs
+\newcommand{\mc}{\multicolumn}
+
+\def\dbar{{\mathchar'26\mkern-12mu d}}    %( d mit Strich durch für unvollständiges Differential The space after the \mu" is optional but is added f
+
+
+\def\bzw{bzw.\ }
+\def\bspw{bspw.\ }
+\def\ca{ca. }
+\def\dh{d.\,h.\ }
+\def\etc{etc.\ }
+\def\evtl{evtl. }
+\def\ggf{ggf.\ }
+\def\inkl{inkl.\ }
+\def\oä{o.\,ä.\ }
+\def\og{o.\,g.\ }
+\def\so{s.\,o.}
+\def\su{s.\,u.}
+\def\ua{u.\,a.\ }
+\def\zB{z.\,B.\ }
+\def\zT{z.\,T.\ }
+
+%% Spezialitäten für klimatechnik
+\def\mp{\dot{m}}
+\def\m.{\dot{m}} % geht
+\def\V.{\dot{V}} % geht
+\def\pws{p\idx{W}\idy{s}(T)} % geht
+
+\newcommand{\name}[1]{\textsc{#1}}  % für Firmen, Autoren
+
+\def\Re{\mathin{Re}}    % eng geschriebene Variablen durch \mathin
+\def\Nu{\mathin{Nu}}
+\def\Pr{\mathin{Pr}}
+
+
+\newcommand{\uu}[1]{{\it#1}}  %Texthervorhebung
+
+% Punkt + Komma Abstände bei Tausendern/Dezimalzahlen ans dt. anpassen
+% besser: paket ziffer einbinden
+%\mathcode`,="013B
+%\mathcode`.="613A
+
+%%
+%% Refrenzen -------------------------------------------------
+%%
+%\newcommand{\RefTab}[1]{$\underline{\mbox{Tab.~\ref{#1}}}$}   % 1. Tabellenref. im Text
+\newcommand{\RefTab}[1]{\textbf{Tabelle~\ref{#1}}}             % 1. Tabellenref. im Text
+%\newcommand{\RefTab}[1]{{\small \color{LinkColor}$\blacktriangleright${Tabelle~\ref{#1}}}} % 1.
+
+%\newcommand{\RefFig}[1]{$\underline{\mbox{Abb.~\ref{#1}}}$}   % 1. Bildref.
+%\newcommand{\RefFig}[1]{{\color{blue}$\blacktriangleright$\textbf{Bild~\ref{#1}}}} % 1.
+%\newcommand{\RefFig}[1]{{\color{LinkColor}$\blacktriangleright$\textbf{Bild~\ref{#1}}}} % 1.
+\newcommand{\RefFig}[1]{\textbf{Bild~\ref{#1}}}                % 1. Bildref.
+%\newcommand{\RefFig}[1]{{\color{LinkColor}$\blacktriangleright${Bild~\ref{#1}}}} % 1.
+%\newcommand{\RefFig}[1]{{\small \color{LinkColor}$\blacktriangleright${Bild~\ref{#1}}}} % 1.
+
+\newcommand{\RefTabc}[1]{Tabelle~\ref{#1}}                     % 2. Tabellenref. im Text
+%\newcommand{\RefTabc}[1]{{\small Tabelle~\ref{#1}}}             % 2.
+\newcommand{\RefFigc}[1]{Bild~\ref{#1}}                        % 2. Bildref.
+%\newcommand{\RefFigc}[1]{{\small Bild~\ref{#1}}}                % 2. Bildref.
+
+\newcommand{\RefEq}[1]{\mbox{Gl.~(\ref{#1})}}                  % Gleichungen
+
+% \autoref{label} % Erzeugt link inkl dem Wort Abbbildung
+% \nameref{label} % Kapiteltext
+ 
+%
+%
+%
+\newcommand{\ZmE}[2]{$#1$~{#2}}                                % Zahl:#1 mit Einheiten#2 #3
+%\newcommand{\zme}[2]{$#1$~{#2}}                               % Zahl:#1 mit Einheiten#2 #3
+\newcommand{\zme}[2]{#1~\mbox{#2}}                             % Zahl:#1 mit Einheiten#2 #3
+\newcommand{\EH}[1]{#1}                                        %  Einheiten
+\newcommand{\B}[1]{\mbox{#1}}
+
+%-------------------------------------------------------------
+
+\newfont{\ssf}{cmss10 scaled 1000}
+\newfont{\ssb}{cmssbx10 scaled 1000}
+
+\newcommand{\cf}{\ssf}                 % CaptionFonts: in Bildunter- ,Tab?berschriften
+\newcommand{\rf}{\em}                  % RefFonts    : Kennzeichnung von Referenzen im Text
+\newcommand{\eng}{\tt}                 % englische Begriffe im deutschen Text 
+
+% Hinweis
+% Syntax: \oops{ÜBERSCHRIFT}{TEXT}
+%        : nach Überschtift wird automatisch eingefügt
+\newcommand{\oops}[2]{\begin{quote}\textbf{#1}:\\ {#2} \end{quote} }
+
+%---------------------------------------------------------------
+% - Für Übungen und Aufgaben
+%
+% Zähler für Übungen
+\newcounter{iexample} 
+\setcounter{iexample}{0}
+% \addtocounter{iexample}{}
+% \stepcounter{iexample}
+
+% für Aufgaben
+\newcounter{iproblem}
+\setcounter{iproblem}{0}
+% \addtocounter{iproblem}{}
+% \stepcounter{iproblem}
+
+% Hochzahlen und drucken 
+\newcommand{\iexap}{\stepcounter{iexample}\arabic{chapter}.\arabic{iexample}}
+\newcommand{\iprob}{\stepcounter{iproblem}\arabic{chapter}.\arabic{iproblem}}
+
+
+%\newcommand{\example}[1]{\noindent {\sffamily\textbf{\itshape\large Beispiel~\iexap:}}~#1\newline}
+%\newcommand{\problem}[1]{\noindent {\sffamily\textbf{\itshape\large Aufgabe~\iexap:}}~#1\newline}
+%\newcommand{\example}[1]{\noindent\hspace*{0em}{\sffamily\textbf{\itshape\large Beispiel~\iexap:~#1}}\newline\vspace*{-8mm}}
+\newcommand{\example}[1]{\noindent\hspace*{-1mm}%
+{\sffamily\itshape\textbf{Beispiel~\iexap:}~#1}\newline\vspace*{-4mm}} % 
+% -8mm if single
+
+\newcommand{\problem}[1]{\noindent{\sffamily\textbf{\itshape\large Aufgabe~\iexap:~#1}}\newline}
+
+\newcommand{\meth}[1]{\noindent{\color{blue}\sffamily\textbf{#1:}}}
+
+%---------------------------------------------------------------
+% Bildunter- und Tabellenüberschriften
+%---------------------------------------------------------------
+% z.B. andere Schrift, oder auch Schriftform und andere Abkürzung
+%
+% alternaiv : "Abbildungen" lassen und
+%  Zeilenumbruch bei Bildbeschreibungen einführen \setcapindent{1em}
+%
+% bessere Methoden: siehe Komaskript
+\def\figurename{Bild}          % oder: Bild z.B. {\bfseries Abb.}
+%\def\tablename{Tab.}          % oder: z.B. Tafel, Tab.
+
+\renewcommand*{\captionformat}{.~} % DIN lässt grüssen
+%\addtokomafont{caption}{\sffamily\small\raggedright}  % kleinere Schrift, linksbündig
+\addtokomafont{caption}{\sffamily\small}  % kleinere Schrift
+%\setkomafont{descriptionlabel}{\sffamily\small}
+\setkomafont{captionlabel}{\sffamily\bfseries}
+\setcaphanging
+\setcapindent{0em}             % kein Einzug
+
+
+%---------------------------------------------------------------
+% Literaturliste: Formatierung der Liste wird HIER vorgenommen!
+%---------------------------------------------------------------
+\newcommand{\lit}[4]
+           {
+              \bibitem{#1}
+                 {#2:}
+                 #3 
+                 #4 
+           }
+%---------------------------------------------------------------
+%
+%---------------------------------------------------------------
+% Kommentare 
+\newcommand{\Kommentar}[1]{{\em #1}} 
+
+% Verstecktes
+% Alles innerhalb von \Hide{} oder \ignore{}
+% wird von LaTeX komplett ignoriert (wie ein Kommentar)
+%------------------------
+% methode 1
+\newcommand{\Hide}[1]{}
+\let\ignore\Hide
+% methode 2
+%\newcommand{\Hide}[1]{
+%{\color{cyan}\sffamily\small #1}} % green red blue magenta cyan
+% methode 3
+%\newcommand{\Hide}[1]{
+%\let\ignore\Hide #1}
+
+\newcommand{\HideB}[1]{}
+\let\ignore\HideB
+
+%--eigner Befehl, lässt sich besser modifizieren
+%
+\newcommand{\mynewpage}{\newpage}
+\newcommand{\myclearpage}{\clearpage}
+
+
+%% Links
+%
+% \url{http://...}
+% \href{file#mytarget}{text} 
+
+%\usepackage{tabularx} % automatische Spaltenbreite 
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+\newcommand{\LCIRC}[1]{{\large\textcircled{\normalsize \texttt{#1}}}}
+\newcommand{\NCIRC}[1]{\textcircled{ {\small \texttt{#1}} } }
+
+% \marginline{\raisebox{-\height}{\includegraphics[width=2.5cm]{Achtung.png}} und weiterer TExt um mal zu sehn wie es langsam geht  } \\
+
+%Umgebung
+\def\d@nger{\marginpar[\hfill\dbend]{\dbend\hfill}}
+\newenvironment{danger}{\medskip\hspace{0pt}\d@nger}{\medskip}
+
+
+

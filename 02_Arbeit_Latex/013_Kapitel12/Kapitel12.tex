@@ -1,0 +1,23 @@
+%
+%% Kapitel: Kapitel 4
+%%======================================================================
+
+\chapter{Merkmal Extraktion aus den Validierungs-Tabellen}
+\label{cha:Merkmal Extraktion aus den Validierungs-Tabellen} \index{Merkmal Extraktion aus den Validierungs-Tabellen}
+%
+%
+Die FeatureExtractor-Klasse dient dazu alle Merkmale, die durch verschiedene Algorithmen gesammelt wurden in sich zu vereinen und diese weiter aufzubereiten. Die LineValidationTable-Container der einzelnen Linien werden im ersten Schritt in diese geladen. Verschiedene Merkmale der Fahrbahn k{\"o}nnen nun extrahiert werden.
+
+Mit der Funktion GetDrivePointsInDriveDirection werden nur Punkte extrahiert, welche in Fahrtrichtung verlaufen. Abzweigungen wie Sie bei Kreuzungen entstehen werden nicht ber{\"u}cksichtigt.
+Die Funktion betrachtet dabei die {\"A}nderung des Winkels zwischen den einzelnen Punkten einer Linie. Dazu muss der Startwinkel an welchem die Linie im unteren Bildbereich beginnt zwischen einem minimalen und maximalen Wert liegen damit die Linie ber{\"u}cksichtigt wird. Anschlie{\"ss}end wird durch die Linien-Punkte des LineValidationTables iteriert und die Winkel{\"a}nderung der Punkte verglichen. Bei einer abrupten {\"A}nderung {\"u}ber einen Schwellwert wird die Linie abgeschnitten und als Return-Wert ausgegeben. Der Datentyp ist dabei immer noch vector<LineValidationTable> mit allen gespeicherten Informationen.
+
+
+
+
+
+
+
+
+
+
+

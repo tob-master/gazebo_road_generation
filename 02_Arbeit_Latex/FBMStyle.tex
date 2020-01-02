@@ -1,0 +1,79 @@
+%%==========================================================================================
+%%
+%% This is file 'FBMStyle.tex'  v 1.0
+%% see also file 'FBMStyle_develop.tex
+%%
+%% Beta-Version eines Styles von Michael Arnemann
+%% basieren auf einem Muster von Uwe Kappler 
+%%
+%% 2015-03-22 
+%%========================================================================================== 
+\documentclass[
+        final,                % wenn es denn fertig ist.. 
+        11pt,                 % Schriftgröße (10pt, 11pt, 12pt) 11:pala:ok, 
+        twoside,              % oneside, twoside
+        numbers=noenddot,     % Kapitelnummer ohne . am Ende
+        headings=normal,       % Groesse der Ueberschrift (bigheadings, normalheadings, 
+        parskip=half,          % Europäischer Satz mit Abstand zwischen Absätzen
+        index=totoc,             % Index ins Verzeichnis einfügen	*** prüfen     
+%        headsepline,          % Strich unter Kopfzeile
+        headinclude,          % Kopfzeile bei Satzspiegel bereucksichtigen
+        DIV15,                % mit palatino 11pt oder CM 12
+        BCOR14mm]             % Binderand    %1mm, für Klebebindung % 14mm dann etwa gleichmäßig
+   {scrbook}                  % Dokumenttyp // für Dipomarbeiten, Diss
+%----------------------------------------------------------------------------------------
+%  PACKAGES
+%----------------------------------------------------------------------------------------
+\typearea                  % nach der Schrift
+        [current]          % Heftrand BCOR oben definiert
+%        {calc}             % DIV neu berechnen aus package 
+        {last}             % DIV letzte aus Definition zuvor
+
+\usepackage{lmodern}          % empfohlen anstatt CM Fonts, nur so korrekte Darstellung mit CM
+%\usepackage{mathptmx}
+%\fontfamily{ptm}\selectfont  %times
+
+%\usepackage{helvet}
+%\fontfamily{phv}\selectfont  %helvetica
+
+\setkomafont{footnote}{\normalsize}                     % Marke und Text einer Fußnote
+\usepackage{scrpage2}         % Package laden  
+
+\usepackage[T1]{fontenc}      % T1-encoded fonts: auch Wörter mit Umlauten trennen
+\usepackage[T1]{url}          % much like \verb allow line breaks for paths and URLs
+\usepackage[latin1]{inputenc} % Deutsche Umlaute: Eingabe nach ISO 8859-1 (Latin1)
+
+\usepackage{epsfig,xspace}    % PS Bilder
+\usepackage{graphicx,color}   % JPEG und PNG 
+                              % http://en.wikibooks.org/wiki/LaTeX/Colors  
+\usepackage{subfigure}	      % Mehrere Bilder in einem mit ver. Bildunterschriften
+\usepackage{wrapfig}	        % Text um Bild
+
+\usepackage[ngerman]{babel}   % Neue deutsche Rechtschreibung  120412ar
+%\usepackage[babel,german=guillemets]{csquotes} % für quotes
+\usepackage[babel,german=quotes]{csquotes} % für quotes
+
+%tools}             % enthält: afterpage, array, bm, calc, dcolumn, delarray, enumerate, fileerr, fontsmpl, ftnright, hhline, indentfirst, layout, longtable, multicol, rawfonts, showkeys, somedefs, tabularx, theorem, trace, varioref, verbatim, xr, and xspace.
+
+\usepackage{latexsym}         % Sonderzeichen  für ??
+\usepackage{pifont}           % dito
+\usepackage{array}            % für aufwändigere Tabellen
+\usepackage{longtable}        % seitenübergreifende Tabellen passt zu KOMA
+\usepackage{multicol}         % Mehrspaltiger Satz
+
+\usepackage{makeidx}          % für Index-Erstellung 
+%\usepackage{listings}         % für Latex Quelltext
+%\usepackage{textcomp}         % for upright mu (\textmu)
+\usepackage[fleqn]{amsmath}
+\usepackage{amssymb}
+\usepackage{eqnarray}	        % nummerierte und unnummerierte Gleichungen/systeme
+\usepackage{ifthen}
+\usepackage{fancybox}         % für schattierte ovale Boxen etc. geht nicht mit Miktex 5 060614ar
+\usepackage{lscape}           % für landscape
+\usepackage[normalem]{ulem}   % Unterstreichen und durchstreichen  Probleme mit bibtex
+\usepackage{ziffer}           % Komma in math. Umgebung ohne folgendes Leerzeichen
+\usepackage{cancel}           % Kürzen in Brüchen 
+
+\usepackage[plainpages=false,pdfpagelabels]{hyperref}         
+%
+%% **** END OF CLASS MStyle ****

@@ -1,0 +1,29 @@
+%
+%% Kapitel: Kapitel 4
+%%======================================================================
+
+\chapter{Reduzierung der Aussenlinie auf wesentliche Punkte}
+\label{cha:Reduzierung der Aussenlinie auf wesentliche Punkte} \index{Reduzierung der Aussenlinie auf wesentliche Punkte}
+%
+%
+Der Ramer-Douglas-Peucker-Algorithmus kann verwendet werden um eine Polylinie durch Reduzierung der Anzahl der enthaltenen Punkte ann{\"a}hrend zu beschreiben.
+Da der Line-Follower-Algorithmus viele nah beieinander liegende Punkte findet, welche keine wichtigen Informationen enthalten, werden diese durch RDP verworfen um nur noch auf den wichtigen Punkten arbeiten zu k{\"o}nnen.
+Dies geschieht durch das Legen einer imagin{\"a}ren Linie zwischen dem ersten und dem letzten Punkt in einer Reihe von Punkten, welche die Polylinie bilden. Es wird gepr{\"u}ft, welcher Punkt am weitesten von dieser Linie entfernt ist. Die Entfernung ist die euklidische Distanz des Punktes zu dessen Lotfu{\ss}punkt auf der Linie. Wenn der gefundene Punkt (und wie folgt alle anderen Zwischenpunkte) eine kleinere euklidische Distanz als ein gegebener Abstand Epsilon besitzt, werden alle dazwischen liegenden Punkte entfernt. Wenn dieser Ausrei{\ss}er-Punkt andererseits weiter von der Linie entfernt ist als Epsilon, wird die Polylinie in zwei Teile geteilt. Zum einen vom ersten Punkt bis einschlie{\ss}lich zum Ausrei{\ss}er-Punkt. Zum anderen vom Ausrei{\ss}er-Punkt bis hin zum Endpunkt.
+Die Funktion wird f{\"u}r beide resultierenden Polylinien rekursiv aufgerufen.
+Der Start- und Endpunkt wie alle Ausrei{\ss}er-Punkte ergeben die neue reduzierte Linie.
+
+[Bild RDP]
+
+
+Der Algorithmus gibt als R{\"u}ckgabewert die reduzierten Linien-Punkte des Line-Follower-Algorithmus zur{\"u}ck. Jeder Punkt tr{\"a}gt als zus{\"a}tzliche Information den Winkel und die Distanz zu seinem n{\"a}chsten Nachbarpunkt.
+
+
+
+
+
+
+
+
+
+
+

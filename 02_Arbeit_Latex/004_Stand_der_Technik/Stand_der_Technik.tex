@@ -1,0 +1,207 @@
+%
+%% Kapitel: Stand der Technik
+%%======================================================================
+
+\chapter{Stand der Technik}
+\label{cha:StandderTechnik} \index{Stand der Technik}
+%
+%
+Da es sich bei der videogestützten inertialen Navigation um ein aktives Forschungsgebiet handelt \cite{corke2007introduction}, sind in den vergangenen Jahren einige Lösungen für die Kalibrierung eines Kamera-IMU-Systems vorgestellt worden. Im Folgenden werden drei dieser Kalibrierungsverfahren vorgestellt. Abgeschlossen wird das Kapitel mit einer Bewertung, welches der vorgestellten Verfahren für die Umsetzung der Aufgabenstellung dieser Arbeit am besten geeignet ist. 
+
+
+%-----------------------------------------------------------------------
+\section{Verfahren nach Jorge Lobo and Jorge Dias}
+\label{sec:Lobo} \index{Verfahren nach Jorge Lobo and Jorge Dias}
+In der Arbeit von Jorge Lobo and Jorge Dias, \textit{Relative Pose Calibration
+Between Visual and Inertial Sensors} \cite{lobo2007relative}, ist ein Kalibrierverfahren von Kamera zu IMU vorgestellt. Dieses Kalibrierverfahren zielt zunächst auf die unabhängige Kalibrierung der beiden Sensoren ab. Für die Kamera werden dabei die in Kapitel \ref{subsec:Projektion_2D-3D} vorgestellten intrinsischen und extrinsischen Parameter bestimmt. Dies geschieht durch ein Standardkalibrierverfahren, wie es beispielsweise in \cite{bradski2008opencv} beschrieben ist. Die IMU wird durch ein Verfahren kalibriert, welches in \cite{alves2003camera} vorgestellt ist. Hierbei wird die IMU auf einem mechanischem Pendel montiert. Die Position des Pendels kann durch einen hochauflösenden Absolutwertgeber genau bestimmt werden. In Abbildung \ref{fig:IMU_Kalibrierung_Schematisch} sind die Achsen definiert, auf welche die IMU in diesem Verfahren kalibriert wird.
+\begin{figure}
+\centering     %%% not \center
+\subfigure[Schematischer IMU-Ka\-li\-brier\-aufbau nach \cite{lobo2007relative}.]{\label{fig:IMU_Kalibrierung_Schematisch}\includegraphics[width=40mm]{004_Stand_der_Technik/Bilder/mechanischesPendel}}
+\hspace{2cm}
+\subfigure[Schwerebeschleunigung als Referenz für die Kalibrierung nach \cite{lobo2007relative}.]{\label{fig:Schwerbeschleunigung_Referenz}\includegraphics[width=65mm]{004_Stand_der_Technik/Bilder/Observing_Gravitiy}}
+\caption[Kalibrierung nach Lobo et al..]%
+           {\label{fig:Kalibrierung_nach_Lobo}%
+           Kalibrierung nach Lobo/Dias.}
+\end{figure} 
+Bei der Kalibrierung werden die Parameter der Misalignmentmatrix aus Gleichung \ref{eq:Misalignment-Matrix} bestimmt. Nachdem beide Sensoren initialisiert sind, kann die Kamera-IMU-Kalibrierung durchgeführt werden, wobei die Transformation zwischen dem IMU-Koordinaten\-system $i$ und dem Kamerakoordinatensystem $c$ bestimmt wird. Die Kalibrierung gliedert sich in zwei Schritte, zunächst wird der rotatorische Versatz und anschließend der translatorische Versatz bestimmt. Der schematische Aufbau der starr verbundenen Sensoren ist in Abbildung \ref{fig:Schwerbeschleunigung_Referenz} dargestellt. Damit der rotatorische Versatz bestimmt werden kann, benötigen beide Sensoren eine gemeinsame Referenz, welche durch einen Bezug zwischen den Sensoren und der Schwerebeschleunigung gegeben ist. Für die Kamera wird dieser Bezug durch die Auswertung eines, nach der Schwerebeschleunigung ausgerichteten, Kamerakalibriermusters (z.\,B. Schachbrettmuster) bestimmt. Die IMU misst, ohne das Einwirken einer äußeren Beschleunigung, lediglich die Schwerebeschleunigung. Die Richtung der Beschleunigung kann durch Messungen der drei Beschleunigungsmesser bestimmt werden (Abb. \ref{fig:Schwerbeschleunigung_Referenz}). Indem mehrere Messungen in verschiedenen Posen ausgewertet werden, kann so die Verdrehung der Sensoren bestimmt werden. Hierfür wird in dem Verfahren nach Lobo/Dias sinngemäß die Gleichung
+\begin{equation}
+\label{Lobo_Maximierungsterm1}
+\sum_{k=1}^K R_{ci} \: \vv{v}_{k}^{i} \cdot \vv{v}_{k}^{c}
+\end{equation}
+aufgestellt. Die Richtung der Vertikalen (Abb. \ref{fig:Schwerbeschleunigung_Referenz}), gemessen von IMU und Kamera, sind in $\vv{v}_{k}^{i}$ bzw. $\vv{v}_{k}^{c}$ enthalten. Der Index $k$ bezeichnet die Anzahl der verschiedenen Posen, in welchen die Vertikalen gemessen wurden. Der Parameter $R_{ci}$ ist eine Rotationsmatrix (Gl. \ref{eq:Richtungskosinusmatrix}) und beinhaltet die Verdrehung zwischen IMU und Kamera. Mit der Gleichung \ref{Lobo_Maximierungsterm1} kann das Optimierungsproblem
+\begin{equation}
+\label{Lobo_Maximierungsterm2}
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+R_{ci,max} = \argmax_{R_{ci}} \sum_{k=1}^K R_{ci} \: \vv{v}_{k}^{i} \cdot \vv{i}_{k}^{c}
+\end{equation}
+gebildet werden. Durch Lösen dieses Problems kann die Rotationsmatrix $R_{ci,max}$ bestimmt werden, welche die geschätzte Verdrehung von IMU-Koordinatensystem und Kamerakoordinatensystem ist. Zum Bestimmen des translatorischen Versatzes wird der Kamera-IMU-Aufbau auf einer Drehscheibe montiert. Dabei wird die IMU so positioniert, dass die Drehscheibe um deren Ursprung dreht. Die Drehung verursacht also nur bei der Kamera eine Positionsänderung. Die Orientierung ändert sich aber bei beiden Sensoren. Für die Darstellung der rotatorischen und translatorischen Bewegung der Kamera wird eine Rotationsmatrix $R_{cc_{0}}$  und ein Vektor $\vv{r}_{cc_{0}}^c$ verwendet. Da die Sensoren starr miteinander verbunden sind, ändert sich die Orientierung bei beiden Sensoren gleichermaßen und die Orientierungsänderung $R_{\Delta ci}$ zwischen Kamera und IMU kann als eine $3 \times 3$-Einheitsmatrix angenommen werden. Durch diese Annahmen kann die Gleichung
+\begin{equation}
+\label{Lobo_TransVersatz_a}
+0 = \vv{r}_{cc0}^c +  R_{cc0} \: \vv{t}_{ci}^{c_0} - R_{\Delta ci} \: \vv{t}_{ci}^c
+\end{equation}
+aufgestellt werden. Aufgrund der starren Kopplung der Sensoren gilt $\vv{t}_{ci}^{c_0} = \vv{t}_{ci}^{c}$. Die Gleichung kann somit zu 
+\begin{equation}
+\label{Lobo_TransVersatz}
+(R_{cc0} - R_{\Delta ci}) \: \vv{t}_{ci}^c = - \vv{r}_{cc_{0}}^c,
+\end{equation}
+umgeformt werden. Mit dieser Gleichung kann der translatorische Versatz $\vv{t}_{ci}^c$ zwischen Kamera und IMU bestimmt werden. Eine detailliertere Herleitung der Kalibrierung ist in \cite{lobo2007relative} zu finden. 
+
+
+
+%-----------------------------------------------------------------------
+\section{Verfahren nach Faraz M. Mirzaei und Stergios I. Roumeliotis}
+\label{sec:Mirzaei} \index{Verfahren nach Faraz M. Mirzaei und Stergios I. Roumeliotis}
+In der von Faraz M. Mirzaei und Stergios I. Roumeliotis vorgestellten Arbeit, \textit{Kalman Filter-based Algorithm for IMU-Camera Calibration} \cite{mirzaei2008kalman}, wird die Kalibrierung von Kamera zu IMU durch die Verwendung eines erweiterten Kalman-Filters (EKF) realisiert. Ein Kalman-Filter schätzt den Zustand eines linearen Systems. Hierfür werden aus den bekannten Messfehlern stochastische Prozesse gebildet, welche die Genauigkeit bei der Schätzung eines Messwerts erhöhen \cite{brammer1990kalman}. Das verwendete EKF ist eine Erweiterung des Kalman-Filter für nichtlineare Systeme. Auch bei diesem Verfahren müssen zunächst Referenzen zu einem globalen System $w$ erzeugt werden. Für die Kamera geschieht das durch ein Kamerakalibriermuster (z.\,B. ein Schachbrett), dessen Position und Orientierung im globalen System bekannt ist. Die Referenz für die IMU wird durch eine Kombination einer vorläufigen Schätzung der Kamera-IMU-Transformation und der bekannten Kamera-Welt-Transformation bestimmt. Eine vorläufige Kamera-IMU-Transformation kann durch manuelles Ausmessen geschätzt werden. Der Zustand $x$ des Systems wird durch
+\begin{equation}
+\label{eq:Mirzaei_Zustand}
+x = 
+\begin{bmatrix}
+  (q_{wi})^T & (b_{gyro})^T & (v^w_{imu})^T &  (b_{acc})^T & (p^w_{imu}) & (q_{ci})^T & (p_{cam}^i)^T
+\end{bmatrix}^T
+\end{equation}
+definiert. Dabei beschreiben $q_{wi}$ und $q_{ci}$ den rotatorischen Versatz zwischen dem globalen Koordinatensystem $w$ und dem IMU-Koordi\-naten\-system $i$ bzw. zwischen dem IMU-Koordi\-naten\-system $i$ und dem Kamera-Koordinatensystem $c$. Die Position der Kamera im IMU-Koordi\-naten\-system ist in $p_{cam}^i$ beschrieben, Position und Geschwindigkeit der IMU sind durch $p^w_{imu}$ und $v^w_{imu}$ im globalen System beschrieben. Die beiden Biase der Beschleunigungsmesser und der Gyroskope (vgl. Abschn. \ref{subsec:Fehlercharakteristik}) werden durch $b_{acc}$ und $b_{gyro}$ dargestellt. Weiter wird ein Fehlerzustand $\tilde{x}$ definiert, welcher Aufschluss über die Genauigkeit der Schätzung gibt.
+\begin{equation}
+\label{eq:Mirzaei_FehlerZustand}
+\tilde{x} = 
+\begin{bmatrix}
+  (\tilde{q}_{wi})^T & (\tilde{b}_{gyro})^T & (\tilde{v}^w_{imu})^T &  (\tilde{b}_{acc})^T & (\tilde{p}^w_{imu}) & (\tilde{q}_{ci})^T & (\tilde{p}_{cam}^i)^T
+\end{bmatrix}^T
+\end{equation}
+Die einzelnen Fehlerterme in $\tilde{x}$ beziehen sich dabei auf die im Zustand $x$ beschriebenen Parameter. Um den Zustand schätzen zu können, werden Modelle aufgestellt, welche den Zusammenhang zwischen Messwerten und Zustand beschreiben \cite{mirzaei2008kalman}. Die Zustände und Modelle werden einem Kalman-Filter übergeben. Dieses schätzt aus den aktuellen Messungen $u_{k}$, dem aktuellen Zustand $x_k$ und der Funktion $f_k()$ den nächsten Zustand
+\begin{equation}
+\label{eq:Mirzaei_ZustandSchätzer}
+x_{k+1} = f_k(x_{k},u_{k})+w_k
+\end{equation}
+des Systems. Der Zusammenhang zwischen Zustand $x_k$ und den geschätzten Messungen
+\begin{equation}
+\label{eq:Mirzaei_MessungSchätzer}
+y_k = h_k(x_{k})+v_k
+\end{equation}
+ist durch $h_k()$ beschrieben. Die Terme $w_k$ und $v_k$ sind das Prozess- bzw. das Messrauschen. Für eine Herleitung der Gleichungen \ref{eq:Mirzaei_ZustandSchätzer} und \ref{eq:Mirzaei_MessungSchätzer} und eine genauere Beschreibung des Kalman-Filters sei auf \cite{brammer1990kalman}, \cite{groves2013gnss} und \cite{wendel2007integrierte} verwiesen.
+
+% Bei der Kalibrierung wird zunächst ein konstanter Zeitversatz $d$ zwischen zwei Sensoren geschätzt \todo{Janko: Wieso?}, worauf im Weiteren nicht näher eingegangen wird.  Für eine Beschreibung des Verfahrens sei auf \cite{furgale2013unified} und \cite{furgale2012continuous} verwiesen.
+%-----------------------------------------------------------------------
+\section{Verfahren nach Paul Furgale et al.}
+\label{sec:Furgale} \index{Verfahren nach Paul Furgale et al.}
+Ein weiteres Verfahren wurde in der Arbeit, \textit{Unified Temporal and Spatial Calibration for Multi-Sensor Systems} \cite{furgale2013unified}, von Furgale et al. gezeigt. Im Gegensatz zu den anderen vorgestellten Kalibrierverfahren, ist dies ein Ansatz, welcher für eine Vielzahl von Multisensorsystemen gültig ist. Bei der Kalibrierung von IMU und Kamera werden zunächst drei verschiedene Koordinatensysteme $i$, $c$ und $w$ eingeführt (vgl. Abschn. \ref{subsec:Namenskonventionen}). Das Koordinatensystem $w$ dient als ortsfeste Referenz und hat seinen Urpsrung in einem Kamerakalibriermuster (Abb. \ref{fig:CamImuTarget}). Der Ursprung von $i$ und $c$ liegt im Ursprung der IMU bzw. der Kamera und die Achsen der beiden Systeme sind körperfest zu den Sensoren (Abb. \ref{fig:CamImuTarget}).
+\begin{figure}[h]
+\begin{center}
+  \includegraphics[width=0.60\textwidth]{004_Stand_der_Technik/Bilder/CamImuTarget}% keine extention: wählt jpg für DVI
+  \caption[Kalibrieraufbau nach Furgale et al. \cite{furgale2013unified}.]%
+           {\label{fig:CamImuTarget}%
+           Kalibrieraufbau nach Furgale et al. \cite{furgale2013unified}.}
+\end{center}
+\end{figure}
+
+Damit der rotatorische und translatorische Versatz zwischen IMU und Kamera bestimmt werden kann, müssen bei der Kalibrierung mehrere Zustände geschätzt werden. Die Zustände lassen sich in zeitabhängige und zeitunabhängige Zustände unterteilen und werden mit einem Strich über den Variablen gekennzeichnet.\\
+1) Zeitunabhängige Zustände:
+\begin{enumerate}
+\item[]$\bar{\vv{g}}^w$: Schwerebeschleunigung im Koordinatensystem $w$,
+\item[]$\bar{T}_{ci}$: Räumliche Transformation von IMU zu Kamera.
+\end{enumerate}
+2) Zeitabhängige Zustände:
+\begin{enumerate}
+\item[]$\bar{T}_{wi}(t)$: Räumliche Transformation von IMU zu Welt,
+\item[]$\bar{b}_{gyro}(t)$: Bias der Drehratensensoren,
+\item[]$\bar{b}_{acc}(t)$: Bias der Beschleunigungssensoren.
+\end{enumerate}
+Die zeitabhängigen Zustände werden durch B-Spline-Funktionen beschrieben, diese ermöglichen es die diskreten Werte in zeitkontinuierliche Funktionen zu überführen. Für eine genauere Beschreibung sei auf \cite{prautzsch2002spline} verwiesen. Durch die zeitkontinuierlichen B-Spline-Funktion ist es möglich, Kamera- und IMU-Messungen, welche zu unterschiedlichen Zeitpunkten aufgenommen wurden, miteinander zu vergleichen. Die Transformationsmatrix $\bar{T}_{wi}(t)$ wird durch 
+\begin{equation}
+\label{eq:Furgale_Transformationsmatrix}
+\bar{T}_{wi}(t) := 
+\begin{bmatrix}
+  \bar{R}_{wi}(t) && \bar{\vv{t}}_{wi}^w(t) \\
+  0^T && 1
+\end{bmatrix}
+\end{equation}
+gebildet. Dabei ist $\bar{R}_{wi}(t)$ die Rotationsmatrix (Gl. \ref{eq:Richtungskosinusmatrix}) und $ \bar{\vv{t}}_{wi}^w(t)$ der translatorische Versatz (Gl. \ref{eq:translation}) zwischen IMU und dem globalen Koordinatensystem $w$. Durch Ableitungen können aus der Matrix $\bar{T}_{wi}(t)$ die Geschwindigkeit $\bar{\vv{v}}_{wi}^w$, die Beschleunigung $\bar{\vv{a}}_{wi}^w$ und die Winkelgeschwindigkeit $\bar{\vv{\omega}}_{wi}^w$ der IMU geschätzt werden. Für die Kalibrierung werden aus diesen Zuständen Gleichungen aufgestellt, welche die Messwerte der Sensoren schätzen.
+\begin{equation}
+\label{eq:Furgale_Alpha}
+\vv{a}_{imu,k}^i := \bar{R}_{wi}(t)^T (\bar{\vv{a}}_{wi}^w(t_k)-\bar{\vv{g}}^w)+\bar{b}_{acc}(t_k)
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{eq:Furgale_Omega}
+\vv{\omega}_{imu,k}^i := \bar{R}_{wi}(t)^T \bar{\vv{\omega}}_{wi}^w(t_k) + \bar{b}_{gyro}(t_k)
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{eq:Furgale_Landmarken}
+\vv{y}_{mj} := P \bar{T}_{ci} \bar{T}_{wi}(t_j)^{-1}\vv{p}^w_m
+\end{equation}
+Die Messdaten der IMU zum Zeitpunkt $k$ sind die Beschleunigungen $\vv{a}_{imu,k}^i$ und die Drehraten ${\omega}_{imu,k}^i$. Deren Biase $b_{acc}$ und $b_{gyro}$ werden als weiß, normalverteilt und mittelwertfrei angenommen. Die Kameramessdaten $\vv{y}_{mj}$ sind zweidimensionale Projektionen auf die Bildebene und beinhalten pro Messung $M$ Landmarken $\big\{p^w_m | m = 1...M\big\}$ (Abb. \ref{fig:CamImuTarget}). Der Zeitpunkt der Kameramessungen wird mit dem Index $j$ beschrieben. Die extrahierten Landmarken sind in Abbildung \ref{fig:CamImuTarget} auf dem Kamerakalibriermuster zu erkennen. Durch die Multiplikation mit der Projektionsmatrix $P$ können die dreidimensionalen Landmarken $\vv{p}^w_m$ in homogene Koordinaten der Bildebene übertragen werden (vgl. Gl. \ref{eq:Kamera_Projektionsmatrix_angewand}). Durch die entstehende Differenz beim Subtrahieren der gemessenen und der geschätzten Werte, können die folgenden Fehlerterme aufgestellt werden:
+\begin{equation}
+\label{eq:Furgale_Alpha_Fehler_a}
+e_{a_k} := \vv{a}_{imu,k}^i - \bar{R}_{wi}(t)^T (\bar{\vv{a}}_{wi}^w(t_k)-\bar{\vv{g}}^w)+\bar{b}_{acc}(t_k)
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{eq:Furgale_Alpha_Fehler_b}
+J_{a}:= \frac{1}{2} \sum_{k=1}^K e_{a_k}^T R_{a_k}^{-1} e_{a_k}
+\end{equation}
+\vspace{-0.4cm}
+\begin{equation}
+\label{eq:Furgale_Omega_Fehler_a}
+e_{\omega_k}:= \vv{\omega}_{imu,k}^i - \bar{R}_{wi}(t)^T \bar{\vv{\omega}}_{wi}^w(t_k) + \bar{b}_{gyro}(t_k)
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{eq:Furgale_Omega_Fehler_b}
+J_{\omega}:= \frac{1}{2} \sum_{k=1}^K e_{\omega_k}^T R_{\omega_k}^{-1} e_{\omega_k}
+\end{equation}
+\vspace{-0.4cm}
+\begin{equation}
+\label{eq:Furgale_Landmarken_Fehler_a}
+e_{y_{mj}} := \vv{y}_{mj} - P \bar{T}_{ci}\bar{T}_{wi}(t_j)^{-1}\vv{p}^w_m
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{eq:Furgale_Landmarken_Fehler_b}
+J_{y}:= \frac{1}{2} \sum_{j=1}^J \sum_{m=1}^M  e_{{y_{mj}}}^T R_{{y_{mj}}}^{-1} e_{{y_{mj}}}
+\end{equation}
+\vspace{-0.4cm}
+\begin{equation}
+\label{eq:Furgale_BiasAcc_Fehler_a}
+e_{b_{acc}} := \bar{b}_{acc}(t)
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{eq:Furgale_BiasAcc_Fehler_b}
+J_{b_{acc}}:= \frac{1}{2} \int_{t_1}^{t_k} \! e_{b_{acc}}(\tau)^T Q_{acc}^{-1}  e_{b_{acc}}(\tau) \, \mathrm{d}\tau
+\end{equation}
+\vspace{-0.4cm}
+\begin{equation}
+\label{eq:Furgale_BiasOm_Fehler_a}
+e_{b_{gyro}} := \bar{b}_{gyro}(t)
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{eq:Furgale_BiasGyro_Fehler_b}
+J_{b_{gyro}}:= \frac{1}{2} \int_{t_1}^{t_k} \! e_{b_{gyro}}(\tau)^T Q_{gyro}^{-1}  e_{b_{gyro}}(\tau) \, \mathrm{d}\tau .
+\end{equation}
+Die Komponenten der Zielfunktion sind somit durch die $J-$Terme definiert. Dabei stellen die $R-$ bzw. die $Q-$Variablen eine Gewichtung des Fehlers dar und berechnen sich aus den Unsicherheiten der Messung. Die Zielfunktion ist gegeben durch die Summe
+\begin{equation}
+J := J_{a} + J_{\omega} + J_{y} + J_{b_{acc}} + J_{b_{gyro}}. 
+\end{equation}
+Für die Bestimmung der zu schätzenden Parameter wird $J$ durch den Levenberg-Marquardt-(LM)-Algorithmus minimiert. Die zu schätzenden Parameter sind dabei die zuvor vorgestellten zeitabhängigen und zeitunabhängigen Zustände.
+\begin{equation}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+T_{ci,opt} = \argmin_{T_{ci}} \: J
+\end{equation}
+Für die Lösung des Problems mit dem LM-Algorithmus sei auf die einschlägige Literatur \cite{nocedal2006levenberg} verwiesen.
+
+
+
+%-----------------------------------------------------------------------
+\section{Bewertung der Verfahren}
+\label{sec:StanddTDiskussion} \index{Diskussion}
+Die folgende Bewertung gibt Aufschluss darüber, welches der vorgestellten Kalibrierverfahren sich für das weitere Vorgehen der Arbeit eignet.
+\\[0.2cm]
+Grundsätzlich soll die Kalibrierung an einem Aufbau durchgeführt werden, bei welchem sowohl Kamera als auch IMU fest verbaut sind. Aufgrund dieser Vorgabe ist das Verfahren nach Lobo und Dias, welches in Abschnitt \ref{sec:Lobo} vorgestellt wurde, ungeeignet, da sich die verbauten Sensoren nur mit größeren Umständen auf einem Drehteller montieren und justieren lassen. 
+\\[0.2cm]
+Das Verfahren nach Mirzaei und Roumeliotis, welches in Abschnitt \ref{sec:Mirzaei} vorgestellt wurde, benötigt zur Kalibrierung die Schwerebeschleunigung als Referenz. Da für die Kalibrierung eine visuelle Odometrie eingesetzt werden soll und diese keine Schwerebeschleunigung messen kann, ist das Verfahren für diese Anwendung ungeeignet. Eine Erklärung zur visuellen Odometrie folgt in Kapitel \ref{cha:MethodezurKalibrierung}.
+\\[0.2cm]
+Das Verfahren nach Furgale et al. aus Abschnitt \ref{sec:Furgale} wurde nicht explizit für eine Kamera-IMU-Kalibierung entworfen, sondern vielmehr für die Kalibrierung verschiedener Multisensorsysteme. Der Ansatz ist daher sehr flexibel und die Fehlerterme aus den Gleichungen \ref{eq:Furgale_Alpha_Fehler_a} bis \ref{eq:Furgale_BiasGyro_Fehler_b} können mit anderen Termen ersetzt werden. Durch diese Eigenschaft ist das Verfahren für eine Erweiterung zur VO-basierten Kalibrierung geeignet und kann somit als Grundlage zum Lösen der Aufgabenstellung genutzt werden.
+
+ 
+%-----------------------------------------------------------------------

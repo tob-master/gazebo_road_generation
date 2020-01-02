@@ -1,0 +1,278 @@
+%
+%% Kapitel: Methode zur Kalibrierung des Sensorsystems
+%%======================================================================
+
+\chapter{Methode zur Kalibrierung des Sensorsystems}
+\label{cha:MethodezurKalibrierung} \index{Methode zur Kalibrierung des Sensorsystems}
+%
+%  
+In diesem Kapitel wird vorgestellt, wie das Verfahren nach Furgale et al. \cite{furgale2013unified} angepasst werden muss, damit VO-Daten für eine Kamera-IMU-Kalibrierung eingesetzt werden können. Zunächst wird dabei erklärt, was eine visuelle Odometrie ist. Anschließend werden die Anpassungen des Algorithmus gezeigt, welche eine VO-basierte Kamera-IMU-Kalibrierung ermöglichen.
+
+
+%-----------------------------------------------------------------------
+\section{Visuelle Odometrie}
+\label{sec:Visuelle Odometrie} \index{Visuelle Odometrie}
+Mit dem Begriff visuelle Odometrie (VO) werden Verfahren beschrieben, welche durch die Auswertung von Videomaterial eine Posenbestimmung ermöglichen. Um dies zu realisieren werden zunächst sogenannte Merkmalspunkte aus den Bildern extrahiert. Dabei handelt es sich um Merkmale, welche von den Algorithmen besonders gut erkannt werden können. Diese Merkmalspunkte werden in den folgenden Bildern versucht wiederzuerkennen. Durch das Wiederkennen der Merkmale in den zeitlich aufeinander folgenden Bildern kann eine Posenänderung der Kamera zwischen den Bildern geschätzt werden. Auf diese Weise lassen sich aktuelle Position, Orientierung, Geschwindigkeit und Winkelgeschwindigkeit der bewegten Kamera schätzen \cite{willert2013odom}.
+
+%-----------------------------------------------------------------------
+
+\section{Erweiterung zu einem VO-basierten Kalibrierverfahren}
+
+\label{sec:Erweiterung zur Verwendung visueller Odometrie} \index{Erweiterung zu einem VO-basierten Kalibrierverfahren}
+Für den räumlichen Bezug der Kamera wird in dem Verfahren von Furgale et al. der Rückprojektionsfehler $e_{y_{mj}}$ (Gl. \ref{eq:Furgale_Landmarken_Fehler_a}) verwendet. Bei diesem Fehler werden die Landmarken in einem bekannten Muster erkannt und deren Position im u-, v-Koordinatensystem der Kamera bestimmt (vgl. Abschnitt \ref{subsec:Projektion_2D-3D}). Anschließend wird diese Position mit einer Projektion der dreidimensionalen Landmarken auf das u-, v-Koordinatensystem verglichen. Für die Projektion der dreidimensionalen Landmarken wird die Projektionsmatrix $P$ (Gl. \ref{eq:Kamera_Projektionsmatrix_angewand}) mit den Transformationsmatrizen $T_{ci}$ und $T_{wi}^{-1}$ multipliziert. Dadurch entsteht eine Transformation vom Koordinatensystem $w$ in das u-, v-Koordinatensystem. Da für die VO-Datengenerierung kein bekanntes Muster verwendet wird, kann ein solcher Rückprojektionsfehler nicht eingesetzt werden. Als Alternative können aus den VO-Daten andere Fehlerterme gebildet und in den Algorithmus eingesetzt werden. Dadurch ist es möglich, den Algorithmus von Furgale et al. so zu adaptieren, dass eine VO-basierte Kamera-IMU-Kalibrierung möglich ist. Folgende Messdaten werden für diese Adaption vorausgesetzt:
+\begin{itemize}
+\item VO-Messdaten zum Zeitpunkt $j$:
+\begin{itemize}
+\item[]$\vv{\omega}_{cam,j}^c$: Winkelgeschwindigkeit der Kamera bezüglich $w$,
+\item[]$\vv{v}_{cam,j}^c$: Translatorische Geschwindigkeit der Kamera bezüglich $w$,
+\item[]$\vv{p}_{cam,j}^w$: Position der Kamera bezüglich $w$,
+\item[]${R}_{wc,j}$: Orientierung der Kamera bezüglich $w$.
+\end{itemize}
+\item IMU-Messdaten zum Zeitpunkt $k$:
+\begin{itemize}
+\item[]$\vv{\omega}_{imu,k}^i$: Winkelgeschwindigkeit der IMU bezüglich $w$,
+\item[]$\vv{a}_{imu,k}^i$: Beschleunigung der IMU bezüglich $w$.
+\end{itemize}
+\end{itemize}
+Bei der Adaption werden im Wesentlichen zwei Änderungen des Kalibrierverfahrens nach Furgale et al. umgesetzt. Zum einen wird die B-Spline-Funktion (Gl. \ref{eq:Furgale_Transformationsmatrix}) ausgetauscht und zum anderen werden die Fehlerterme (Gl. \ref{eq:Furgale_Alpha_Fehler_a} bis Gl. \ref{eq:Furgale_Landmarken_Fehler_b}) angepasst. In den folgenden Unterkapiteln sollen diese Änderungen näher beschrieben werden. Hierfür wird zunächst die Bildung einer neuen B-Spline-Funktion motiviert und deren Umsetzung dargestellt. Anschließend folgt die Herleitung der Fehlerterme, welche sich aus den IMU-Daten, den VO-Daten und der neuen B-Spline-Funktion ergeben. Abschließend wird gezeigt, wie die Fehlerterme für eine Kamera-IMU-Kalibrierung eingesetzt werden können.
+
+
+\subsection{Modifikation der B-Spline-Funktion}
+\label{subsec:Austausch der B-Spline-Funktion} \index{Modifikation der B-Spline-Funktion}
+Bei der Umsetzung der VO-basierten Kalibrierung wird zunächst die B-Spline-Funktion $\bar{T}_{wi}(t)$, welche die zeitkontinuierliche Transformation zwischen IMU-Koordinatensystem $i$ und Weltkoordinatensystem $w$ darstellt, durch die B-Spline-Funktion $\bar{T}_{wc}(t)$, welche die zeitkontinuierliche Transformation zwischen Kamerakoordinatensystem $c$ und Weltkoordinatensystem $w$ darstellt, ausgetauscht. Durch diesen Austausch kann die B-Spline-Funktion bei der Umsetzung direkt aus den gemessenen VO-Daten $\vv{p}_{cam}^w$ und ${R}_{wc}$ gebildet werden. Das ermöglicht bei idealen Messdaten die Annahme einer fehlerfreien B-Spline-Funktion. Auf die Vorteile, die sich dadurch für die Kalibrierung ergeben, wird in Abschnitt \ref{subsec:Schätzung der Verdrehung und der Transformation} eingegangen. Die neue \mbox{B-Spline-Funktion} $\bar{T}_{wc}(t)$ kann entsprechend der in Abschnitt \ref{sec:Furgale} vorgestellten Funktion $\bar{T}_{wi}(t)$ (Gl. \ref{eq:Furgale_Transformationsmatrix}) gebildet werden: 
+\begin{equation}
+\label{eq:Angepasste_Transformationsmatrix}
+\bar{T}_{wc}(t) := 
+\begin{bmatrix}
+  \bar{R}_{wc}(t) && \bar{\vv{t}}_{wc}^w(t) \\
+  0^T && 1
+\end{bmatrix} .
+\end{equation}
+Der Strich über den Variablen kennzeichnet die geschätzten Zustände (vgl. Abschn. \ref{sec:Furgale}). Durch die Multiplikation der Rotationsmatrix $\bar{R}_{wc}(t)$ mit den Ableitungen der B-Spline-Elemente können die B-Spline-Variablen
+\begin{equation}
+\label{eq:SplineVarTransP}
+\bar{\vv{v}}_{wc}^c(t) = \bar{R}_{wc}(t)^{-1} \: \bar{\dot{\vv{t}}}_{wc}^w(t)
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{eq:SplineVarTransPP}
+\bar{\vv{a}}_{wc}^c(t) = \bar{R}_{wc}(t)^{-1} \: \bar{\ddot{\vv{t}}}_{wc}^w(t)
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{eq:SplineVarOmegaP}
+\bar{\vv{\omega}}_{wc}^c(t) = \bar{R}_{wc}(t)^{-1} \: \omega(\bar{\dot{R}}_{wc}(t))
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{eq:SplineVarOmegaPP}
+\bar{\dot{\vv{\omega}}}_{wc}^c(t) = \bar{R}_{wc}(t)^{-1} \: \omega(\bar{\ddot{R}}_{wc}(t))
+\end{equation}
+definiert werden. Die Funktion $\omega()$ bildet aus den Ableitungen der Rotationsmatrix die Winkelgeschwindigkeit bzw. die Winkelbeschleunigung (Gl. \ref{eq:RotEuler1} und \ref{eq:RotEuler2}). Mit Hilfe dieser Gleichungen können die gesuchten Fehlerterme und die dazugehörigen Zielfunktionen gebildet werden. 
+
+
+\subsection{Herleitung der Fehlerterme}
+\label{subsec:Herleitung der Fehlerterme} \index{\textbf{Herleitung der Fehlerterme}}
+Im Folgenden wird die Definition der Fehlerterme und der Zielfunktionen hergeleitet. Diese ermöglichen es die Gleichungen \ref{eq:Furgale_Alpha_Fehler_a} bis \ref{eq:Furgale_Landmarken_Fehler_b} zu ersetzen. Die neuen Terme werden aus den Messdaten der IMU, den berechneten VO-Daten, den B-Spline-Variablen (Gl. \ref{eq:SplineVarTransP} bis \ref{eq:SplineVarOmegaPP}) und den Optimierungsparametern (Abschn. \ref{sec:Furgale}) gebildet.
+
+\subsubsection{Abweichung der IMU-Winkelgeschwindigkeit $e_{\omega_k^i}$}
+\label{}
+Zunächst wird ein Fehlerterm definiert, welcher die Abweichungen zwischen der berechneten \mbox{B-Spline-Winkelgeschwindigkeit} $\bar{\vv{\omega}}_{wc}^c(t_k)$ und der gemessenen IMU-Winkelgeschwindigkeit $\vv{\omega}_{imu,k}^i$ darstellt. Grundlage für die Bildung dieses Terms liegt in der Starrkörperkinematik. Bei dieser gilt die Eigenschaft, dass sich alle Punkte eines Starrkörpers mit der gleichen Winkelgeschwindigkeit bewegen \cite{gross1999mechanik}. Daraus abgeleitet gilt:
+\begin{equation}
+\label{eq:omega1}
+\vv{\omega}_{wi}^w  = \vv{\omega}_{wc}^w .
+\end{equation}
+Durch Einführen der Rotationsmatrizen $R_{wc}$ und $R_{ci}$, welche die Koordinatensysteme $c$ in $w$ bzw. $i$ in $c$ überführen, kann die Gleichung \ref{eq:omega1} zu
+\begin{equation}
+\label{eq:omega2}
+R_{wi}  \vv{\omega}_{wi}^i = R_{wc} \vv{\omega}_{wc}^c, \quad \text{mit} \quad  R_{wi} = R_{wc} R_{ci}
+\end{equation}
+umgeformt werden. Mit den Inversen $R_{cw} = R_{wc}^{-1}$ und $R_{ic} = R_{ci}^{-1}$ kann die Gleichung \ref{eq:omega2} weiter vereinfacht werden:
+\begin{equation}
+ \vv{\omega}_{wi}^i = R_{ic}  \vv{\omega}_{wc}^c.
+\end{equation}
+Durch Einsetzen der IMU-Winkelgeschwindigkeit $\vv{\omega}_{imu,k}^i$ und der berechneten B-Spline-Win\-kelgeschwindigkeit $\bar{\vv{\omega}}_{wc}^c(t_k)$ kann der Fehlerterm $e_{\omega_k^i}$ und die dazugehörige Zielfunktionen $J_{\omega^i}$ aufgestellt werden:
+\begin{equation}
+\label{eq:Stefan_Omega_Fehler_a}
+e_{\omega_k^i}:=   \vv{\omega}_{imu,k}^i - R(\bar{T}_{ci})^{-1} \: \bar{\vv{\omega}}_{wc}^c(t_k)  + \bar{b}_{gyro}(t_k)
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{eq:Stefan_Omega_Fehler_b}
+J_{\omega^i}:= \frac{1}{2} \sum_{k=1}^K e_{\omega_k^i}^T R_{\omega_k^i}^{-1} e_{\omega_k^i}.
+\end{equation}
+Die Rotationsmatrix $\bar{T}_{ci}$ und der Bias $\bar{b}_{gyro}$ entsprechen den definierten Optimierungsparametern aus Abschnitt \ref{sec:Furgale}. Durch die Funktion $R()$ wird die Rotationsmatrix aus der Transformationsmatrix extrahiert (Gl. \ref{eq:Funktion_R}). Der Index $k$ beschreibt den Zeitpunkt der IMU-Messung.
+
+
+
+
+
+\subsubsection{Abweichung der IMU-Beschleunigung $e_{a^i_k}$}
+\label{AbweichungIMUBeschleunigung}
+Der Fehlerterm $e_{a^i_k}$ beschreibt die Abweichung zwischen den gemessenen IMU-Be\-schleu\-ni\-gungen $\vv{a}_{imu,k}^i$ und den aus den B-Spline-Beschleunigungen $\bar{\vv{a}}_{wi}^c(t_k)$ berechneten IMU-Be\-schleunigungen. Dieser Fehlerterm wird anhand der Abbildung  \ref{fig:Starrkörpersystem} hergeleitet.
+\begin{figure}[h]
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{005_Methode_zur_Kalibrierung/Bilder/Starrkorper_5}% keine extention: wählt jpg für DVI
+  \caption[Starrkörpersystem.]%
+           {\label{fig:Starrkörpersystem}%
+           Starrkörpersystem.}
+\end{center}
+\end{figure}
+In der Abbildung sind Kamerakoordinatensystem $c$ und IMU-Koordinatensystem $i$, mit der Entfernung $\vv{t}_{ci}^w$, in einem Starrkörpersystem fixiert. Dieses dreht sich mit der Winkelgeschwindigkeit $\vv{\omega}_{wD}^w$ um eine Drehachse, welche den Punkt $D$ durchstößt. $D$ ist mit $\vv{a}_{wD,trans}^w$ translatorisch beschleunigt. Die Entfernungen zwischen $D$ und den Koordinatensystemen $i$ und $c$ sind durch die Vektoren $\vv{t}_{Di}^w$ und $\vv{t}_{Dc}^w$ dargestellt. Die Beschleunigungen der Kamera $\vv{a}_{wc}^w$ und der IMU $\vv{a}_{wi}^w$ setzen sich aus der translatorischen Beschleunigung $\vv{a}_{wD,trans}^w$ und den, aus der Drehung resultierenden, tangentialen Beschleunigungen $\vv{a}_{wc,tan}^w$, $\vv{a}_{wi,tan}^w$ und radialen Beschleunigungen $\vv{a}_{wc,rad}^w$, $\vv{a}_{wi,rad}^w$ zusammen:
+\begin{equation}
+\label{eq:Kamerabeschl_raw}
+\vv{a}_{wc}^w = \vv{a}_{wD,trans}^w + \vv{a}_{wc,rad}^w + \vv{a}_{wc,tan}^w
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{eq:IMUbeschl_raw}
+\vv{a}_{wi}^w = \vv{a}_{wD,trans}^w + \vv{a}_{wi,rad}^w + \vv{a}_{wi,tan}^w.
+\end{equation}
+Mit Hilfe der Starrkörperkinematik lassen sich die beiden Gleichungen \ref{eq:Kamerabeschl_raw} und \ref{eq:IMUbeschl_raw} zu
+\begin{equation}
+\label{eq:Kamerabeschl_medium}
+\vv{a}_{wc}^w = \vv{a}_{wD,trans}^w + \vv{\omega}_{wD}^w \times (\vv{\omega}_{wD}^w \times \vv{t}_{Dc}^w) + \dot{\vv{\omega}}_{wD}^w \times \vv{t}_{Dc}^w
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{eq:IMUbeschl_medium}
+\vv{a}_{wi}^w = \vv{a}_{wD,trans}^w + \vv{\omega}_{wD}^w \times (\vv{\omega}_{wD}^w \times \vv{t}_{Di}^w) + \dot{\vv{\omega}}_{wD}^w \times \vv{t}_{Di}^w
+\end{equation}
+umformen \cite{gross1999mechanik}. Durch die Subtraktion Gl. \ref{eq:IMUbeschl_medium} - Gl. \ref{eq:Kamerabeschl_medium} und Einsetzen von $\vv{t}_{Di}^w - \vv{t}_{Dc}^w = \vv{t}_{ci}^w$ kann
+\begin{equation}
+\label{eq:FehlerGrundlage1}
+\vv{a}_{wi}^w = \vv{a}_{wc}^w + \vv{\omega}_{wD}^w \times (\vv{\omega}_{wD}^w \times \vv{t}_{ci}^w) + \dot{\vv{\omega}}_{wD}^w \times \vv{t}_{ci}^w
+\end{equation}
+gebildet werden. Wird diese Gleichung mit der Rotationsmatrix $R_{iw}$ multipliziert, kann die Beschleunigung in das Koordinatensystem $i$ übertragen werden:
+\begin{equation}
+\label{eq:FehlerGrundlage2}
+\vv{a}_{wi}^i = R_{iw} \:\big[\: \vv{a}_{wc}^w + \vv{\omega}_{wD}^w \times (\vv{\omega}_{wD}^w \times \vv{t}_{ci}^w) + \dot{\vv{\omega}}_{wD}^w \times \vv{t}_{ci}^w \: \big].
+\end{equation}
+Diese Gleichung ist die Grundlage für den gesuchten Fehlerterm $e_{a^i_k}$. Damit dieser gebildet werden kann, wird $\vv{a}_{wi}^i$ zunächst durch die B-Spline-Variablen (Gl. \ref{eq:Angepasste_Transformationsmatrix} bis Gl. \ref{eq:SplineVarOmegaPP}) und die Optimierungsvariablen (Abschn. \ref{sec:Furgale}) ausgedrückt. Hierfür werden die Elemente der Gleichung \ref{eq:FehlerGrundlage2} durch
+\begin{equation}
+\label{ElementImuMessung}
+\vv{a}_{wc}^i = R(\bar{T}_{ci})^{-1} \: \bar{\vv{a}}_{wc}^c(t_k)
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{}
+\dot{\vv{\omega}}_{wD}^i = R(\bar{T}_{ci})^{-1} \: \bar{\dot{\vv{\omega}}}_{wc}^c(t_k)
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{}
+\vv{{\omega}}_{wD}^i = R(\bar{T}_{ci})^{-1} \: \bar{\vv{\omega}}_{wc}^c(t_k)
+\end{equation}
+\vspace{-0.6cm}
+\begin{equation}
+\label{eq:ElementTransciw}
+\vv{t}_{ci}^i = R(\bar{T}_{ci})^{-1} \: t(\bar{T}_{ci})
+\end{equation}
+ersetzt:
+\begin{equation}
+\label{eq:IMUBEschlCAM}
+\begin{split}
+&\vv{a}_{wi,k}^i = \\
+&R(\bar{T}_{ci})^{-1}  \Big[ \bar{\vv{a}}_{wc}^c(t_k)
++  \bar{\vv{\omega}}_{wc}^c(t_k) \times \left( \bar{\vv{\omega}}_{wc}^c(t_k) \times  t(\bar{T}_{ci}) \right) 
++ \bar{\dot{\vv{\omega}}}_{wc}^c(t_k) \times t(\bar{T}_{ci}) \Big].
+\end{split}
+\end{equation}
+Der Index $k$ beschreibt den Zeitpunkt der IMU-Messungen. Durch die Funktion $R()$ und $t()$ wird die Rotationsmatrix bzw. der translatorische Versatz aus der Transformationsmatrix extrahiert (Gl. \ref{eq:Funktion_R} u. Gl. \ref{eq:Funktion_t}). Die Beschleunigung $\vv{a}_{wi}^i$ (Gl. \ref{eq:FehlerGrundlage2}) kann aber auch durch die gemessenen IMU-Beschleunigungen ausgedrückt werden:
+\begin{equation}
+\label{eq:IMUBEschlIMU}
+\vv{a}_{wi,k}^i =   a_{imu,k}^i  + \bar{b}_{acc}(t_k) + R(\bar{T}_{ci})^{-1} \: \bar{R}_{wc}(t_k)^{-1}\: \bar{\vv{g}}^w .
+\end{equation}
+Durch die Subtraktion Gl. \ref{eq:IMUBEschlCAM} - Gl. \ref{eq:IMUBEschlIMU} wird somit die Abweichung zwischen den gemessenen IMU-Beschleunigungen und den aus den B-Spline-Beschleunigungen berechneten IMU-Beschleunigungen beschrieben. Daraus kann der Fehlerterm $e_{a^i_k}$ und die Zielfunktion $J_{a^i}$ gebildet werden:
+\begin{equation}
+\label{eq:Fehlerterm_Beschl_a}
+\begin{split}
+e_{a^i_k} := \: & a_{imu,k}^i +  \bar{b}_{acc}(t_k) - R(\bar{T}_{ci})^{-1} \: \Big[ (\bar{\vv{a}}_{wc}^c(t_k) - \bar{R}_{wc}(t_k)^{-1} \: \bar{\vv{g}}^w)\\
+& + \bar{\vv{\omega}}_{wc}^c(t_k) \times \left( \bar{\vv{\omega}}_{wc}^c(t_k) \times t(\bar{T}_{ci}) \right)  + \bar{\dot{\vv{\omega}}}_{wc}^c(t_k) \: t(\bar{T}_{ci}) \Big]
+\end{split}
+\end{equation}
+\vspace{-0.4cm}
+\begin{equation}
+\label{eq:Fehlerterm_Beschl_b}
+J_{a^i}:= \frac{1}{2} \sum_{k=1}^K e_{a^i_k}^T R_{a^i_k}^{-1} e_{a^i_k}.
+\end{equation} 
+
+
+\subsubsection{Abweichung der VO-Daten}
+\label{}
+Die Fehlerterme und die dazugehörigen Zielfunktionen, welche durch die berechneten \mbox{VO-Daten} gebildet werden, können durch einen direkten Vergleich zwischen den VO-Daten und den Daten der B-Spline-Funktion (Gl. \ref{eq:SplineVarTransPP} bis \ref{eq:SplineVarOmegaPP}) definiert werden. 
+\begin{equation}
+\label{eq:VOFehlerOmega}
+e_{\omega^c_j} := \vv{\omega}_{cam,j}^c - \bar{\vv{\omega}}_{wc}^c(t_j)
+\end{equation}
+\vspace{-0.55cm}
+\begin{equation}
+\label{eq:VOZielOmega}
+J_{\omega^c}:= \frac{1}{2} \sum_{j=1}^J e_{\omega^c_j}^T R_{\omega^c_j}^{-1} e_{\omega^c_j}
+\end{equation}
+\vspace{-0.50cm}
+\begin{equation}
+\label{}
+e_{v^c_j}  = \vv{v}_{cam,j}^c - \bar{\vv{v}}_{wc}^c(t_j)
+\end{equation}
+\vspace{-0.55cm}
+\begin{equation}
+\label{}
+J_{v^c}:= \frac{1}{2} \sum_{j=1}^J e_{v^c_j}^T R_{v^c_j}^{-1} e_{v^c_j}
+\end{equation}
+\vspace{-0.50cm}
+\begin{equation}
+\label{}
+e_{p^c_j} = \vv{p}_{cam,j}^w - \bar{\vv{t}}_{wc}^w(t_j)
+\end{equation}
+\vspace{-0.55cm}
+\begin{equation}
+\label{eq:VOZielPos}
+J_{p^c}:= \frac{1}{2} \sum_{j=1}^J e_{p^c_j}^T R_{p^c_j}^{-1} e_{p^c_j}
+\end{equation}
+\vspace{-0.45cm}
+\begin{equation}
+\label{eq:VOFehlerAng}
+e_{ang^c_j} = 
+\varphi (R_{wc,j}) - \varphi (\bar{R}_{wc}(t_j))
+\end{equation}
+\vspace{-0.45cm}
+\begin{equation}
+\label{eq:VOZielAng}
+J_{ang^c}:= \frac{1}{2} \sum_{j=1}^J e_{ang^c_j}^T R_{ang^c_j}^{-1} e_{ang^c_j}.
+\end{equation}
+Der Index $j$ beschreibt den Zeitpunkt der VO-Messungen. Die Funktion $\varphi()$ bestimmt die Eulerwinkel einer Rotationsmatrix (Gl. \ref{eq:Rotationsmatrix_R}).
+
+
+\subsection{Schätzung der Verdrehung $R_{ci}$ und der Transformation $T_{ci}$}
+\label{subsec:Schätzung der Verdrehung und der Transformation} \index{Schätzung der Verdrehung $R_{ci}$ und der Transformation $T_{ci}$}
+Im Folgenden werden Zielfunktionen aufgestellt, welche es ermöglichen die Verdrehung $R_{ci}$ und die Transformation $T_{ci}$ zwischen Kamera und IMU zu schätzen. Diese setzen sich aus Summen der Gleichungen \ref{eq:Stefan_Omega_Fehler_b}, \ref{eq:Fehlerterm_Beschl_b} und \ref{eq:VOZielOmega} bis \ref{eq:VOZielAng} zusammen. Damit aus den Zielfunktionen die gesuchten Matrizen $R_{ci}$ und $T_{ci}$ geschätzt werden können, werden die Funktionen durch einen LM-Algorithmus (vgl. Abschn. \ref{sec:Furgale}) minimiert. Bei der Definition der Zielfunktionen werden zwei unterschiedliche Szenarien betrachtet: Das erste Szenario geht von idealen, fehlerfreien VO-Messwerten aus, das zweite Szenario ist eine Erweiterung des ersten Szenarios für reale, fehlerbehaftete VO-Messwerte.
+
+
+\subsubsection{Verwendung idealer Messwerte}
+\label{Verwendung idealer Messwerte}
+Unter der Annahme, dass die VO ideale Werte generiert, kann die daraus gebildete B-Spline-Funktion ebenfalls als ideal angenommen werden. Diese Annahmen ermöglichen es, eine Kalibrierung durchzuführen, ohne die B-Spline-Funktion beim Optimieren anzupassen. Dadurch müssen die Fehlerterme, welche durch die VO-Daten definiert sind (Gl. \ref{eq:VOFehlerOmega} bis \ref{eq:VOFehlerAng}) nicht berücksichtigt werden. Die Verdrehung $R_{ci}$ zwischen Kamera und IMU kann somit durch die Minimierung der Abweichungen zwischen der B-Spline-Winkelgeschwindigkeit und der IMU-Winkelgeschwindigkeit (Gl. \ref{eq:Stefan_Omega_Fehler_a}) geschätzt werden. Daraus ergibt sich die zu minimierende Zielfunktion
+\begin{equation}
+\label{eq:Zielfunktion1}
+J_{R,\text{fixedSpline}}:= J_{\omega^i} + J_{b_{gyro}} .
+\end{equation} 
+Damit auch der translatorische Versatz und somit die Transformationsmatrix $T_{ci}$ bestimmt werden kann, muss bei der Zielfunktion der Fehler aus Gleichung \ref{eq:Fehlerterm_Beschl_a} mitberücksichtigt werden. Die Zielfunktion wird somit um
+\begin{equation}
+\label{eq:Zielfunktion2}
+J_{T,\text{fixedSpline}}:= J_{\omega^i} + J_{b_{gyro}} + J_{a^i} + J_{b_{acc}}
+\end{equation} 
+erweitert.
+
+\subsubsection{Verwendung realer Messwerte}
+\label{Verwendung realer Messwerte}
+Bei einer Kalibrierung mit realen Messdaten sind die VO-Daten mit Fehlern behaftet und die daraus gebildetet B-Spline-Funktion ist nicht ideal. Daher muss diese bei der Optimierung der Zielfunktion mit angepasst werden. Bei dieser Anpassung müssen sowohl die IMU-Messdaten, als auch die VO-Messdaten berücksichtigt werden. Hierfür werden die Zielfunktionen \ref{eq:Zielfunktion1} und \ref{eq:Zielfunktion2} durch die Gleichungen \ref{eq:VOFehlerOmega} bis \ref{eq:VOZielAng} erweitert. Die zu minimierende Zielfunktion für die Bestimmung der Rotationsmatrix $R_{ci}$ ergibt sich somit zu
+\begin{equation}
+\label{eq:Zielfunktion3}
+J_{R} := J_{\omega^i} + J_{b_{gyro}} + J_{\omega^c} 
+\end{equation} 
+und die zu minimierende Zielfunktion für die Bestimmung der Transformationsmatrix $T_{ci}$ zu
+\vspace{-0.3cm}
+\begin{equation}
+\label{eq:Zielfunktion4}
+J_{T}:= J_{\omega^i} + J_{b_{gyro}} + J_{a^i} + J_{b_{acc}} + J_{\omega^c} + J_{v^c} + J_{p^c} + J_{ang^c} .
+\end{equation} 

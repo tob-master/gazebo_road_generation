@@ -65,6 +65,10 @@ class LineValidationTable
 
     public:
 
+        int GetLabel(){return label_;};
+        int GetNextDirectionDistance(){return next_direction_distance_;};
+
+
         LineValidationTable(int line_code,Point origin,float search_direction, int next_direction_distance, Point adjacent_line_point_1, Point adjacent_line_point_2, int label);
         Point GetAdjacentPointPrediction(int SEARCH_LINE_CODE);
         void SetAdjacentPointPredictionFound(int SEARCH_LINE_CODE, bool flag);
@@ -108,6 +112,8 @@ class LineValidationTable
 
         int GetAdjacent1Prediction(int LINE_CODE);
         int GetAdjacent2Prediction(int LINE_CODE);
+
+
 };
 struct TrackSafetyRect
 {

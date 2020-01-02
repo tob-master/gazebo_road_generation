@@ -1,0 +1,45 @@
+\BOOKMARK [0][]{chapter*.7}{Nomenklatur}{}% 1
+\BOOKMARK [0][]{chapter.1}{1 Einleitung}{}% 2
+\BOOKMARK [1][]{section.1.1}{1.1 Aufgabenstellung}{chapter.1}% 3
+\BOOKMARK [1][]{section.1.2}{1.2 Gliederung}{chapter.1}% 4
+\BOOKMARK [0][]{chapter.2}{2 Einf\374hrung in die Programmierwerkzeuge}{}% 5
+\BOOKMARK [1][]{section.2.1}{2.1 Einf\374hrung in die Funktionen der Stanard Template Library}{chapter.2}% 6
+\BOOKMARK [2][]{subsection.2.1.1}{2.1.1 auto}{section.2.1}% 7
+\BOOKMARK [2][]{subsection.2.1.2}{2.1.2 Vector-Container}{section.2.1}% 8
+\BOOKMARK [2][]{subsection.2.1.3}{2.1.3 Iterator}{section.2.1}% 9
+\BOOKMARK [2][]{subsection.2.1.4}{2.1.4 Pair-Container}{section.2.1}% 10
+\BOOKMARK [2][]{subsection.2.1.5}{2.1.5 Map- und unordered Map-Container}{section.2.1}% 11
+\BOOKMARK [2][]{subsection.2.1.6}{2.1.6 Multimap- und unorderderd Multimap-Container}{section.2.1}% 12
+\BOOKMARK [2][]{subsection.2.1.7}{2.1.7 Find-Funktion}{section.2.1}% 13
+\BOOKMARK [2][]{subsection.2.1.8}{2.1.8 Minmax Element-Funktion}{section.2.1}% 14
+\BOOKMARK [2][]{subsection.2.1.9}{2.1.9 Funktionszeiger}{section.2.1}% 15
+\BOOKMARK [2][]{subsection.2.1.10}{2.1.10 Lambda-Funktionen}{section.2.1}% 16
+\BOOKMARK [1][]{section.2.2}{2.2 Einf\374hrung in die Open Computer Vision Software-Bibliothek}{chapter.2}% 17
+\BOOKMARK [1][]{section.2.3}{2.3 Einf\374hrung in das Robot Operating System Framework}{chapter.2}% 18
+\BOOKMARK [2][]{subsection.2.3.1}{2.3.1 Nodes}{section.2.3}% 19
+\BOOKMARK [2][]{subsection.2.3.2}{2.3.2 Topics}{section.2.3}% 20
+\BOOKMARK [2][]{subsection.2.3.3}{2.3.3 Messages}{section.2.3}% 21
+\BOOKMARK [2][]{subsection.2.3.4}{2.3.4 Packages}{section.2.3}% 22
+\BOOKMARK [1][]{section.2.4}{2.4 Einf\374hrung in das Catkin Build-System}{chapter.2}% 23
+\BOOKMARK [0][]{chapter.3}{3 Auswahl der Entwicklungsumgebung}{}% 24
+\BOOKMARK [0][]{chapter.4}{4 Auswahl der Simulationsumgebung}{}% 25
+\BOOKMARK [1][]{section.4.1}{4.1 Die Virtual Robot Experimentation Platform Simulationsumgebung}{chapter.4}% 26
+\BOOKMARK [1][]{section.4.2}{4.2 Die Gazebo Simulationsumgebung}{chapter.4}% 27
+\BOOKMARK [1][]{section.4.3}{4.3 Begr\374ndung der Auswahl}{chapter.4}% 28
+\BOOKMARK [1][]{section.4.4}{4.4 Die Gazebo Architektur}{chapter.4}% 29
+\BOOKMARK [1][]{section.4.5}{4.5 Das SDF Format - System Description File}{chapter.4}% 30
+\BOOKMARK [1][]{section.4.6}{4.6 Das World File}{chapter.4}% 31
+\BOOKMARK [1][]{section.4.7}{4.7 Das Model File}{chapter.4}% 32
+\BOOKMARK [0][]{chapter.5}{5 Erzeugung von simulierten Verkehrssitationen}{}% 33
+\BOOKMARK [1][]{section.5.1}{5.1 Erstellung der Fahrbahn}{chapter.5}% 34
+\BOOKMARK [1][]{section.5.2}{5.2 Erstellung des Fahrzeugs}{chapter.5}% 35
+\BOOKMARK [0][]{chapter.6}{6 Implementierte Bildverarbeitungsalgorithmen}{}% 36
+\BOOKMARK [1][]{section.6.1}{6.1 Startliniensuche mit dem Start-Of-Lines-Search Algorithmus}{chapter.6}% 37
+\BOOKMARK [1][]{section.6.2}{6.2 Startliniensuche mit dem Vanishing-Point Algorithmus}{chapter.6}% 38
+\BOOKMARK [1][]{section.6.3}{6.3 Aussenlinienverfolgung mit dem Line-Follower Algorithmus}{chapter.6}% 39
+\BOOKMARK [1][]{section.6.4}{6.4 Linienpunktereduzierung mit dem Douglas-Peucker-Algorithmus}{chapter.6}% 40
+\BOOKMARK [1][]{section.6.5}{6.5 Mittelliniensuche und Grapherzeugung}{chapter.6}% 41
+\BOOKMARK [1][]{section.6.6}{6.6 Linien-Validierungs-Tablle Erzeugung}{chapter.6}% 42
+\BOOKMARK [1][]{section.6.7}{6.7 Merkmal Extraktion aus den Validierungs-Tabellen}{chapter.6}% 43
+\BOOKMARK [1][]{section.6.8}{6.8 Bewerten sicherer Fahrbereiche}{chapter.6}% 44
+\BOOKMARK [0][]{figure.6.13}{Literaturverzeichnis}{}% 45

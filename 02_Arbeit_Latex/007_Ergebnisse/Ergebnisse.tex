@@ -1,0 +1,247 @@
+%
+%% Kapitel: Ergebnisse
+%%======================================================================
+
+\chapter{Ergebnisse} 
+\label{cha:Ergebnisse} \index{Ergebnisse}
+%
+% 
+In diesem Kapitel werden die Ergebnisse der durchgeführten Kamera-IMU-Kalibrierungen vorgestellt. Hierfür wird zunächst beschrieben, in welcher Form die Ergebnisse dargestellt und validiert werden. Im Anschluss werden die Ergebnisse der verschiedenen Kalibrierungen präsentiert und validiert. Abschließend folgt eine Gegenüberstellung der Ergebnisse des Kalibriertools Kalibr und der VO-basierten Kalibrierung.
+
+%
+%%-----------------------------------------------------------------------
+
+
+\section{Darstellung der Ergebnisse}
+\label{sec:EvaluationErgebnisse} \index{Darstellung der Ergebnisse}
+Damit die Ergebnisse der durchgeführten Kamera-IMU-Kalibrierungen validiert werden können, wird ein Vergleich benötigt, welcher Aufschluss über die Güte der Ergebnisse gibt. Zudem muss dieser Vergleich in einer interpretierbaren, repräsentativen Form dargestellt werden. Im Folgenden wird zunächst allgemein beschrieben, wie der Vergleich und dessen Darstellung definiert ist. Anschließend wird auf die Darstellung der verschiedenen Kalibrierungen eingegangen.
+
+
+
+\subsection{Abmessung von Position und Orientierung}
+\label{subsec:Abmessung_v_P_O} \index{Abmessung von Position und Orientierung}
+Für einen Vergleich zwischen den geschätzten Werten und dem realen Systemaufbau muss zunächst eine Ground Truth bestimmt werden. Diese stellt den als richtig angenommenen Posenversatz zwischen Kamera und IMU dar. Der Posenversatz der Ground Truth ermöglicht es, die Güte der Ergebnisse zu bestimmen. Für die Darstellung wird die Transformationsmatrix $T_{c_{gt}i}$ verwendet. Bei der Simulation der Kamera-IMU-Kalibrierung kann die Ground Truth direkt aus der Parametrisierung der Simulation abgelesen werden und unterliegt somit keiner Abweichung. Im Fall der realen Messaufbauten kann die Ground Truth nur im Toleranzbereich einer manuellen Messungen bestimmt werden und ist somit nicht exakt. Das Ausmessen der Trägerplattform IOSB.amp Q1 (Abschn. \ref{subsec:Trägerplattformen}) gestaltete sich besonders schwierig, da die Sensoren und der Bereich zwischen den Sensoren nicht frei zugänglich sind. Diese aufwendige und ungenaue Ausmessung motiviert an dieser Stelle die Notwendigkeit einer softwarebasierten Kamera-IMU-Kalibrierung.
+
+
+
+\subsection{Abweichung von Position und Orientierung}
+\label{subsec:PositionOrientierung} \index{Position und Orientierung}
+Damit die Abweichung zwischen der Ground Truth $T_{c_{gt}i}$ und der geschätzten Transformation $T_{c_{s}i}$ ausgewertet werden kann, wird die Transformationsmatrix
+\begin{equation}
+T_{c_{s}c_{gt}} = T_{c_{s}i} \: T_{c_{gt}i}^{-1}
+\end{equation}
+gebildet. Diese stellt den Posenversatz zwischen Ground Truth und Schätzung dar und ist Grundlage zur Bewertung der Messergebnisse. In Abbildung \ref{fig:Transformationen_gt} ist die Bildung der Transformationsmatrix $T_{c_{s}c_{gt}}$ schematisch dargestellt. 
+\begin{figure}[h]
+\begin{center}
+  \includegraphics[width=0.6\textwidth]{007_Ergebnisse/Bilder/Transformationen}% keine extention: wählt jpg für DVI
+  \caption[Schematische Darstellung der Transformationsmatrix $T_{c_{s}c_{gt}}$.]%
+           {\label{fig:Transformationen_gt}%
+           Schematische Darstellung der Transformationsmatrix $T_{c_{s}c_{gt}}$.}
+\end{center}
+\end{figure}
+\subsubsection{Bewertung der Positionsabweichung}
+Die euklidische Norm des Vektors 
+\begin{equation}
+\label{eq:e_trans}
+e_{trans} = |t(T_{c_{s}c_{gt}})|
+\end{equation} 
+stellt den translatorischen Versatz zwischen der geschätzten Position und der Ground Truth dar und wird im Folgenden für die Bewertung der Ergebnisse verwendet. Die Funktion $t()$ extrahiert dabei den translatorischen Versatz der Transformationsmatrix (Gl. \ref{eq:Transformationsmatrix}).
+
+\subsubsection{Bewertung der Orientierungsabweichung}
+Die Abweichung der Orientierung wird durch das, auf die Länge 1 normierte, Quaternion (Gl. \ref{eq:EinQuaternion})
+\begin{equation}
+q_{c_{s}c_{gt}} = q(T_{c_{s}c_{gt}})
+\end{equation}
+bestimmt. Dieses beinhaltet die Verdrehung zwischen Ground Truth und der geschätzten Orientierung. Die Funktion $q()$ bildet aus der Rotationsmatrix der Transformationsmatrix ein Quaternion (Gl. \ref{eq:Transformationsmatrix} u. Gl. \ref{eq:QuaternionRotMatToQuatA} bis \ref{eq:QuaternionRotMatToQuatD}).\\ 
+Ein Quaternion, welches auf die Länge 1 normiert ist, wird durch
+\begin{equation}
+  \label{eq:EinQuaternion}
+  q 
+  = 
+  \begin{pmatrix}    
+    cos \left( \dfrac{\mu}{2}\right) \\
+    q_x \\
+	q_y \\
+	q_z
+  \end{pmatrix}  
+\end{equation} 
+beschrieben. Der Vektor $[q_x,q_y,q_z]^T$ ist der Orientierungsvektor und der dazugehörige Drehwinkel $\mu$ bestimmt den Winkel, um welchen das Quaternion ein Koordinatensystem dreht (Gl. \ref{eq:EinQuaternion}). Dieser Drehwinkel wird durch die Funktion $\mu()$ aus dem Quaternion extrahiert. Die Verdrehung 
+\begin{equation}
+\label{eq:e_rot}
+e_{rot} = |\mu(q_{c_{s}c_{gt}})|
+\end{equation}
+stellt somit den Drehwinkel dar, um welchen die Ground Truth gedreht werden muss, damit die Orientierungen von Ground Truth und Schätzung übereinstimmen. Die Verdrehung $e_{rot}$ wird im Weiteren für die Bewertung der geschätzten Orientierung verwendet.
+
+
+\subsection{Darstellung der Ergebnisse des Kalibriertool Kalibr}
+\label{subsec:Darstellung Kalibr} \index{Darstellung der Ergebnisse des Kalibriertool Kalibr}
+Mit dem Kalibriertool Kalibr (Abschn. \ref{sec:Kamera-Imu-Kalibrierung mit Kalibr}) wird für jede verbaute Kamera eine Transformation geschätzt, welche die Pose der Kamera in Abhängigkeit der IMU beschreibt. Für die beiden Kameras, welche in dieser Arbeit eingesetzt worden sind, werden diese Transformationen mit $T_{c0_{s}i}$ und $T_{c1_{s}i}$ beschrieben. Durch diese Transformationsmatrizen und die Ground Truths der beiden Kameras werden die Matrizen $T_{c0_{s}c0_{gt}}$ und $T_{c1_{s}c1_{gt}}$ gebildet. Für die Bewertung der Ergebnisse wird die mittlere Abweichung der beiden Schätzungen verwendet. Hierfür wird aus beiden Matrizen die translatorische und die rotatorische Abweichung (Gl. \ref{eq:e_trans} und Gl. \ref{eq:e_rot}) berechnet und daraus der Mittelwert gebildet:
+\begin{equation}
+e_{trans} = \dfrac{1}{2} \Big[ e_{trans,c0} + e_{trans,c1}  \Big]
+\end{equation}
+\vspace{-0.3cm}
+\begin{equation}
+e_{rot} = \dfrac{1}{2} \Big[ e_{rot,c0} + e_{rot,c1}  \Big]
+\end{equation}
+
+
+\subsection{Darstellung der Ergebnisse der VO-basierten Kalibrierung}
+\label{subsec:Darstellung VO basierte Kalibrierung} \index{Darstellung der Ergebnisse der VO-basierten Kalibrierung}
+Bei der VO-basierten Kalibrierung gibt es nur eine geschätzte Transformation $T_{c_{s}i}$. Diese stellt das Koordinatensystem $c$, auf welches die VO-Daten referenziert sind, in Abhängigkeit zum IMU-Koordinatensystem $i$ dar. Bei der Simulation ist $c$ durch das Koordinatensystem des Odometriemessers definiert, wohingegen $c$ beim realen Aufbau durch das Koordinatensystem der linken Kamera des Stereokamerasystems definiert ist. Die Transformation von der linken zur rechten Kamera kann aus der VO-Konfiguration gewonnen werden. Diese wird bei der Darstellung der Ergebnisse nicht beachtet. Aus der Transfromationsmatrix $T_{c_{s}c_{gt}}$ können direkt die Posenabweichungen berechnet werden (\ref{subsec:PositionOrientierung}).
+
+
+
+
+
+\section{Ergebnisse des Kalibriertool Kalibr}
+\label{sec:KalibrErg} \index{Ergebnisse des Kalibriertool Kalibr}
+Die Durchführung einer Kalibrierung mit Kalibr ist in Abschnitt \ref{sec:Kamera-Imu-Kalibrierung mit Kalibr} beschrieben worden. Die Ergebnisse einer solchen Kalibrierung sind in Tabelle \ref{tab:KalibrErg} eingetragen. Abbildung \ref{fig:KalibrErg} zeigt eine Visualisierung der geschätzten Transformationen $T_{c0_{s}i}$ und $T_{c1_{s}i}$ und der Ground Truth $T_{c0_{gt}i}$ und $T_{c1_{gt}i}$.
+\begin{table}[h]
+\renewcommand{\arraystretch}{1.2}
+\begin{center}
+\caption{Kalibr Kalibrierergebnisse.}
+\begin{tabular}{|c|c|}
+\hline 
+\textbf{$e_{rot}$} & \textbf{$e_{trans}$} \\ 
+\hline 
+$0,556^{\circ}$ &  $0,014$ m \\ 
+\hline 
+\end{tabular}
+\label{tab:KalibrErg}
+\end{center}
+\end{table} \\[0.2cm]
+\begin{figure}[h]
+\begin{center}
+  \includegraphics[width=0.75\textwidth]{007_Ergebnisse/Bilder/KalibrTransformationen_dark}% keine extention: wählt jpg für DVI
+  \caption[Visualisierung der Transformationsmatrizen $T_{c0_{s}i}$ und $T_{c1_{s}i}$.]%
+           {\label{fig:KalibrErg}%
+           Visualisierung der Transformationsmatrizen $T_{c0_{s}i}$ und $T_{c1_{s}i}$.}
+\end{center}
+\end{figure}
+
+\subsection{Validierung der Ergebnisse}
+Die von Kalibr geschätzten Abweichungen (Tab. \ref{tab:KalibrErg}) liegen sowohl bei der Verdrehung, als auch bei dem translatorischen Versatz in einem Wertebereich, welcher als ein gutes Kalibrierergebnis eingestuft werden kann. Die Ergebnisse können in dieser Form für reale Anwendungen eingesetzt werden.
+
+
+
+
+
+
+
+
+\section{Ergebnisse der Simulation}
+\label{sec:Simulation} 
+Mit den Messdaten der durchgeführten Simulation (Abschn. \ref{subsec:Generierung der Messdaten VO}) werden vier verschiedene Kalibrierungen durchgeführt. Die Grundlage der Kalibrierungen ist durch die Zielfunktionen $J_{R,\text{fixedSpline}}$, $J_{T,\text{fixedSpline}}$, $J_{R}$ und $J_{T}$ (Gl. \ref{eq:Zielfunktion1} bis Gl. \ref{eq:Zielfunktion4}) beschrieben. Der Index fixedSpline gibt dabei an, dass die B-Spline-Funktion der Pose während der Optimierung nicht angepasst wird (Abschn. \ref{Verwendung idealer Messwerte}). Kalibrierungen dieser Art sind nur für ideale Messdaten geeignet und werden daher nur bei der Simulation eingesetzt. Eine Kalibrierung durch eine Zielfunktion ohne den Index fixedSpline kann sowohl mit idealen als auch mit realen Messdaten durchgeführt werden (Abschn. \ref{Verwendung realer Messwerte}). Weiter können die Zielfunktionen durch die Indizes $R$ und $T$ unterschieden werden. Zielfunktionen mit dem Index $R$ ermöglichen die Schätzung der Verdrehung $e_{rot}$, Zielfunktionen mit dem Index $T$ ermöglichen die Schätzung der Verdrehung $e_{rot}$ und des translatorischen Versatzes $e_{trans}$.\\
+Die durchgeführte Simulation setzt sich aus zwei Phasen, in denen unterschiedliche Bewegungsabläufe ausgeführt werden, zusammen. In der ersten Phase werden separate Drehbewegungen um die drei Gelenke des Simulationskörpers ausgeführt (1-Achsbewegungen). Wohingegen in der zweiten Phase Drehbewegungen um drei Achsen gleichzeitig durchgeführt werden (3-Achsbewegungen). Die Phasen wurden sowohl separat als auch zusammen kalibriert. Die Ergebnisse sind in Tabelle \ref{tab:SimuErg} dargestellt. Das Kalibrierergebnis der Zielfunktion $J_{T,\text{fixedSpline}}$, unter Betracht beider Phasen, ist in Abbildung \ref{fig:SimuErg} visualisiert.
+\begin{table}[h]
+\renewcommand{\arraystretch}{1.2}
+\begin{center}
+\caption{VO-basierte Kalibrierergebnisse mit idealen Messdaten.}
+\begin{tabular}{|c|c|c|c|}
+\hline 
+\textbf{Zielfunktion} & \textbf{Phase} & \textbf{$e_{rot}$}  & \textbf{$e_{trans}$} \\ 
+\hline 
+\multirow{3}{*}{$J_{R,\text{fixedSpline}}$} & 1-Achsbewegungen & $0,011^{\circ}$ & - \\
+ & 3-Achsbewegungen & $0,028^{\circ}$ & - \\
+ & 1- u. 3-Achsbewegungen & $0,019^{\circ}$ & - \\ 
+\hline
+\multirow{3}{*}{$J_{T,\text{fixedSpline}}$} & 1-Achsbewegungen & $0,072^{\circ}$ & $0,090 $m \\
+ & 3-Achsbewegungen & $0,063^{\circ}$ & $0,118 $m \\
+ & 1- u. 3-Achsbewegungen & $0,034^{\circ}$ & $0,077$m \\ 
+\hline
+\multirow{3}{*}{$J_{R}$}  & 1-Achsbewegungen & $0,009^{\circ}$ & - \\
+ & 3-Achsbewegungen & $0,029^{\circ}$ & - \\
+ & 1- u. 3-Achsbewegungen & $0,019^{\circ}$ & - \\ 
+\hline
+\multirow{3}{*}{$J_{T}$} & 1-Achsbewegungen & $0,161^{\circ}$ & $0,263$m \\
+ & 3-Achsbewegungen & $0,260^{\circ}$ & $0,186$m \\
+ & 1- u. 3-Achsbewegungen & $0,144^{\circ}$ & $0,172$m \\ 
+\hline
+\end{tabular} 
+\label{tab:SimuErg}
+\end{center}
+\end{table}\\[0.2cm]
+\begin{figure}[h]
+\begin{center}
+  \includegraphics[width=0.75\textwidth]{007_Ergebnisse/Bilder/SimulationTransformationenen2_dark}% keine extention: wählt jpg für DVI
+  \caption[Visualisierung der Transformationsmatrix $T_{c_{s}i}$.]%
+           {\label{fig:SimuErg}%
+           Visualisierung der Transformationsmatrix $T_{c_{s}i}$.}
+\end{center}
+\end{figure}
+
+
+\subsection{Validierung der Ergebnisse} 
+\index{VO-basierte Kalibrierung mit idealen Messdaten} \label{subsec:DiskussionSimu}
+Die Abweichungen zwischen der Ground Truth und den Kalibrierergebnissen liegen  innerhalb der Simulationsumgebung in einem Wertebereich, welcher die Wirksamkeit des entwickelten Kalibrierverfahrens beweist. Durch Vergleiche zwischen den Kalibrierergebnissen (Tab. \ref{tab:SimuErg}) sollen Rückschlüsse auf die unterschiedlichen Parametrisierungen der Kalibrierung gezogen werden. Die Parametrisierung unterscheidet sich dabei durch die verwendete Zielfunktion und die durchgeführte Bewegung. Für die Vergleiche werden die Zielfunktionen $J_{R,\text{fixedSpline}}$, $J_{R}$, $J_{T,\text{fixedSpline}}$ und $J_{T}$ wie folgt gruppiert:
+\begin{itemize}
+\item $Rot$: \\Beinhaltet die Zielfunktionen $J_{R,\text{fixedSpline}}$ und $J_{R}$, welche lediglich den translatorischen Versatz schätzen.
+
+\item $Trans$:\\Beinhaltet die Zielfunktionen $J_{T,\text{fixedSpline}}$ und $J_{T}$, welche den translatorischen und rotatorischen Versatz schätzen.
+
+\item $fixedSpline$:\\Beinhaltet die Zielfunktionen $J_{R,\text{fixedSpline}}$ und $J_{T,\text{fixedSpline}}$, bei deren Optimierung die B-Spline-Funktion der Kamerapose nicht angepasst wird.
+
+\item $looseSpline$: \\Beinhaltet die Zielfunktionen $J_{R}$ und $J_{T}$, bei deren Optimierung die B-Spline-Funktion der Kamerapose angepasst wird.
+
+\end{itemize}
+Zunächst werden die Ergebnisse der unterschiedlichen Phasen verglichen. Anschließend werden die geschätzten Verdrehungen der Gruppen $Rot$ und $Trans$ betrachtet. Abschließend folgt ein Vergleich zwischen den Ergebnissen der Gruppen $fixedSpline$ und $looseSpline$.
+
+
+
+\subsubsection{Vergleich der Phasen} 
+Die genauere Betrachtung der Phasen, in welche die Simulation unterteilt ist, gibt Aufschluss über sinnvolle Bewegungsabläufe bei der Kalibrierung.\\
+Die Ergebnisse der Gruppe $Rot$ haben bei den 1-Achsbewegungen die niedrigsten Werte der Verdrehung $e_{rot}$ und weisen somit den kleinsten Winkelversatz zwischen Ground Truth und Kalibrierergebnis auf. Bei der Gruppe $Trans$ resultieren die besten Ergebnisse der geschätzten Transformation $T_{c_s c_{gt}}$  aus einer Kombination der 1-Achsbewegungen und der 3-Achsbewegungen.\\
+Daraus ist ersichtlich, dass die Kalibrierungen der Gruppe $Rot$ bei Drehungen um die einzelnen Achsen die genauesten Ergebnisse erzielen. Für die Kalibrierungen der Gruppe $Trans$ erweist sich eine Kombination aus Drehungen um die einzelnen Achsen und Drehungen um mehrere Achsen gleichzeitig als die beste Lösung. Das deutet darauf hin, dass sich die Fehler, welche in den beiden Phasen entstehen, in einem gewissen Maß kompensieren.
+
+
+\subsubsection{Vergleich der Gruppierungen $Rot$ und $Trans$} 
+Der Vergleich zwischen den geschätzten Verdrehungen der Gruppen $Rot$ und $Trans$ zeigt, dass die Ergebnisse der Gruppe $Rot$ deutlich genauer sind. Da es sich bei den Zielfunktionen der Gruppe $Trans$ um Erweiterungen der Zielfunktionen der Gruppe $Rot$ handelt, kann daraus geschlussfolgert werden, dass die Erweiterung zu den größeren Abweichungen führt. Bei der Erweiterung handelt es sich um die Fehlerterme, welche den translatorischen Versatz schätzen. Das deutet darauf hin, dass diese Fehlerterme fehlerbehafteter sind, als die Fehlerterme für die Schätzung der Verdrehung.
+
+
+
+\subsubsection{Vergleich der Gruppierungen $fixedSpline$ und $looseSpline$} 
+Weiter können Ergebnisse der Gruppen $fixedSpline$ und $looseSpline$ miteinander verglichen werden. Hier ist zu erkennen, dass die Zielfunktionen $J_{R,\text{fixedSpline}}$ und $J_{R}$ annähernd gleiche Abweichungen schätzen. Die Ergebnisse der Zielfunkionen $J_{T,\text{fixedSpline}}$ und $J_{T}$ weichen stärker voneinander ab, wobei $J_{T,\text{fixedSpline}}$ die geringeren Abweichungen zur Ground Truth aufweist. Da $J_{T}$ eine Erweiterung von $J_{T,\text{fixedSpline}}$ für reale Messdaten ist, kann geschlussfolgert werden, dass die Fehler dieser Erweiterung entstammen.
+
+
+
+\section{Ergebnisse der Messfahrt}
+\label{sec:Messfahrt} 
+Bei einer Fahrt des IOSB.amp Q1 durch hügeliges Gelände wurden reale Messdaten aufgenommen (Abschn. \ref{subsec:Generierung der Messdaten VO}). Bei der Kalibrierung dieser realen Messdaten kommen zwei Kalibriermethoden zum Einsatz. Die Grundlagen dieser Kalibrierungen sind die Zielfunktionen $J_{R}$ (Gl. \ref{eq:Zielfunktion3}) und $J_{T}$ (Gl. \ref{eq:Zielfunktion4}). Mit der Zielfunktion $J_{R}$ wird die Orientierung und mit der Zielfunktion $J_{T}$ wird die Orientierung und der translatorische Versatz geschätzt. Die Ergebnisse der beiden Kalibrierungen können der Tabelle \ref{tab:RealErg} entnommen werden. In Abbildung \ref{fig:RealErg} ist das Quaternion $q_{c_{s}c_{gt}}$ visualisiert, welches durch die Kalibrierung mit dem Fehlerterm $J_{R}$ entstanden ist.
+\begin{table}[h]
+\renewcommand{\arraystretch}{1.2}
+\begin{center}
+\caption{VO-basierte Kalibrierergebnisse mit realen Messdaten.}
+\begin{tabular}{|c|c|c|}
+\hline 
+& \textbf{$e_{rot}$} & \textbf{$e_{trans}$} \\ 
+\hline 
+$J_{R}$ & $1,226^{\circ}$ & -  \\ 
+\hline 
+$J_{T}$ &$7,606^{\circ}$ & $1,953 $m  \\ 
+\hline 
+\end{tabular} 
+\label{tab:RealErg}
+\end{center}
+\end{table}\\[0.2cm]
+\begin{figure}[h]
+\begin{center}
+  \includegraphics[width=0.75\textwidth]{007_Ergebnisse/Bilder/MustangVerdrehung_dark}% keine extention: wählt jpg für DVI
+  \caption[Visualisierung des Quaternion $q_{c_{s}c_{gt}}$.]%
+           {\label{fig:RealErg}%
+           Visualisierung des Quaternion $q_{c_{s}c_{gt}}$.}
+\end{center}
+\end{figure}
+
+
+\subsection{Validierung der Ergebnisse}
+\index{VO-basierte Kalibrierung mit realen Messdaten}
+Die Abweichung der Verdrehung $e_{rot}$, welche durch die Zielfunktion $J_{R}$ geschätzt wird, liegt bei $1,226^{\circ}$ (Tab. \ref{tab:RealErg}). Im Vergleich zu den Ergebnissen der idealen Messdaten (Tab. \ref{tab:SimuErg}), ist diese Verdrehung zwar deutlich ungenauer, kann aber trotzdem als eine geringe Abweichung gewertet werden. Zumal die Ground Truth der Trägerplattform IOSB.amp Q1 (Abschn. \ref{subsec:Trägerplattformen}) einer ungenauen manuellen Messung zugrunde liegt. Daher ist es in diesem Wertebereich nicht eindeutig, zu welchen Teilen die Abweichung aus der Schätzung und zu welchen Teile aus der manuellen Messung stammt. Die Schätzung der Pose durch die Zielfunktion $J_{T}$ weicht sowohl bei der Verdrehung, als auch beim translatorischen Versatz deutlich von der Ground Truth ab, sodass der Großteil der Abweichungen eindeutig der Schätzung zugeordnet werden kann. Die Ursachen der Abweichungen können auf verschiedene Fehlerquellen zurückgeführt werden. Durch die Vergleiche in Abschnitt \ref{subsec:DiskussionSimu} wurde gezeigt, dass die Kalibrierung durch die Zielfunktion $J_{T}$ fehlerbehaftet ist und, dass die durchgeführten Bewegungen Auswirkungen auf das Ergebnis haben. Die Bewegungen, welche bei den Aufnahmen der Messdaten durchgeführt wurden, waren durch die Trägerplattform IOSB.amp Q1 stark eingeschränkt. Hinzukommen die fehlerbehafteten Messdaten der IMU und der VO.
+
+
+%-----------------------------------------------------------------------
+
+\section{Gegenüberstellung von VO-basierter Kalibrierung und Kalibr}
+In diesem Abschnitt sollen die Ergebnisse der VO-basierten Kalibrierung und des Kalibriertools Kalibr gegenübergestellt werden. Bei der VO-basierten Kalibrierung werden dabei die Ergebnisse der idealen Messdaten (Tab. \ref{tab:SimuErg}) und der realen Messdaten (Tab. \ref{tab:RealErg}) unterschieden. Der Vergleich zwischen den Kalibr-Ergebnissen und den VO-basierten Ergebnissen der idealen Messdaten zeigt, dass der translatorische Versatz, trotz der realen Messdaten durch Kalibr genauer geschätzt wird. Die Verdrehung wird dagegen bei den VO-basierten Ergebnissen deutlich genauer geschätzt. Ein ähnliches Muster lässt sich beim Vergleich zwischen den Kalibr-Ergebnissen und den VO-basierten Ergebnissen mit realen Messdaten wiedererkennen. Die Verdrehung wird in diesem Fall durch Kalibr genauer bestimmt, allerdings kommt der VO-basierte Ansatz durch die Zielfunktion $J_{R}$ nahe an das Kalibr-Ergebnis heran. Die Pose, welche durch die Zielfunktion $J_{T}$ geschätzt wurde, ist deutlich ungenauer, als die Schätzung der Kalibr-Kalibrierung. \\
+Zusammenfassend lässt sich feststellen, dass die Kalibrierergebnisse mit Kalibr eine geringe Abweichung besitzen. Durch die Ergebnisse der Simulation kann die Wirksamkeit der VO-basierten Kalibrierung gezeigt werden. Bei der Verwendung realer Daten weichen die Ergebnisse der Posenschätzung jedoch deutlich von der Ground Truth ab. Die Schätzung der Verdrehung liegt dagegen im Bereich einer geringen Abweichung und kann somit für reale Anwendungen eingesetzt werden.
+
+%-----------------------------------------------------------------------

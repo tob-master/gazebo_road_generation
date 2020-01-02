@@ -1,0 +1,233 @@
+%
+%% Kapitel: Umsetzung
+%%======================================================================
+\newcommand{\RM}[1]{\MakeUppercase{\romannumeral #1{.}}}
+
+
+\chapter{Umsetzung}
+\label{cha:Umsetzung} \index{Umsetzung}
+% 
+%
+In diesem Kapitel wird die Umsetzung der Kamera-IMU-Kalibrierung beschrieben. Hierfür werden zunächst die Sensoren und die Testaufbauten vorgestellt, mit welchen die Kalibrierung durchgeführt wird. Anschließend werden das Framework ROS und die C++-Bibliothek libviso2 beschrieben. Darauf aufbauend werden zwei Verfahren zur Kamera-IMU-Kalibrierung vorgestellt. Dabei wird zunächst der prinzipielle Aufbau der Verfahren erklärt und anschließend die praktische Umsetzung beschrieben.
+
+ 
+%-----------------------------------------------------------------------
+
+
+\section{Testaufbau}
+\label{sec:Testaufbau} \index{Testaufbau}
+Ein Testaufbau besteht aus drei Bestandteilen: Kameras, IMU und Trägerplattform. Im Folgenden werden zunächst die für die Durchführung verwendeten Kameras und IMUs einzeln beschrieben. Anschließend folgt eine Vorstellung der Trägerplattformen mit den verbauten Sensoren.
+
+\subsection{Kamerasysteme}
+\label{subsec:Verwendete Kamerasysteme} \index{Kamerasysteme}
+Bei der Kalibrierung wurden die Kameramodelle \textit{XIMEA MQ013RG-E2} und \textit{XIMEA MQ022RG-CM} eingesetzt. In Abbildung \ref{fig:ximea MQ013} ist eine \textit{XIMEA MQ013RG-E2} dargestellt. Äußerlich unterscheiden sich die \textit{XIMEA MQ013RG-E2} und die \textit{XIMEA MQ022RG-CM} kaum voneinander. Die Stereokamerasysteme, zu welchen die Kameras verbaut werden, setzen sich aus jeweils zwei Kameras eines Modells zusammen. In den Abbildungen \ref{fig:Trägerschiene} und \ref{fig:Q1} sind die beiden Stereokamersysteme im verbauten Zustand abgebildet. Detailliertere Spezifikationen der eingesetzten Kameras können der Tabelle \ref{tab:Kamerakonfiguration} entnommen werden.
+\begin{table}[h]
+\renewcommand{\arraystretch}{1.2}
+\begin{center}
+\caption{Kamerakonfiguration.}
+\begin{tabular}{|c|c|c|}
+\hline 
+ & \textbf{XIMEA MQ013RG-E2} & \textbf{XIMEA MQ022RG-CM} \\ 
+\hline 
+\textbf{Auflösung} & 1280 $\times$ 1024 & 2048 $\times$ 1088 \\ 
+\hline 
+\textbf{Öffnungswinkel horizontal} & 81.6 & 96.8 \\ 
+\hline 
+\textbf{Öffnungswinkel vertikal}  & 69.0 & 61.9 \\ 
+\hline 
+\textbf{Bits pro Pixel} & 8, 10 & 8, 10, (12) \\ 
+\hline 
+\textbf{Datenübertragung} & USB 3.0 & USB 3.0 \\ 
+\hline 
+\end{tabular}
+\label{tab:Kamerakonfiguration}
+\end{center}
+\end{table} \\[0.5cm]
+Die Computeranbindung ist für beide Kameramodelle durch den gleichen Kameratreiber realisiert. Dieser empfängt die Bilder über eine USB 3.0 Schnittstelle und versendet die empfangen Bilder in ROS-Messages des Typs \textit{sensor\_msgs/Image}. Dadurch ist es möglich die Kameradaten in die ROS-Umgebung zu integrieren (vgl. Abschn. \ref{sec:ROS}). Weiter ermöglicht der Treiber eine Parametrisierung der Kameras, wodurch beispielsweise Belichtungszeit und Frame-Rate eingestellt werden können. Für die Aufnahme von Stereobildern ist es wichtig, dass die beiden Kameras den gleichen Auslösezeitpunkt und die gleiche Belichtungsdauer haben. Dies wird durch einen sogenannten hybriden Triggermodus gewährleistet. Dabei werden die beiden Kameras in Master und Slave unterteilt. Der Master wird vom Treiber über die USB-Schnittstelle ausgelöst. Durch eine weitere Hardwareverbindung zwischen Master und Slave, wird im Moment des Auslösens eine steigende Spannungsflanke vom Master an den Slave gesendet. Diese lässt den Slave zum gleichen Zeitpunkt auslösen. Die Synchronisierung der Belichtungszeit erfolgt durch den Kameratreiber über die USB-Schnittstelle.
+\begin{figure}[h]
+\begin{center}
+  \includegraphics[width=.262\textwidth]{006_Umsetzung/Bilder/Kamera}% keine extention: wählt jpg für DVI
+  \caption[XIMEA MQ013RG-E2.]%
+           {\label{fig:ximea MQ013}%
+           XIMEA MQ013RG-E2.}
+\end{center}
+\end{figure}
+\vspace{-0.5cm}
+
+
+\subsection{Inertiale Messeinheiten}
+\label{subsec:Verwendete IMUs} \index{Inertiale Messeinheiten}
+Die verwendeten IMU-Modelle sind eine \textit{Xsens MTi-G 700} (Abb. \ref{fig:xsens}) und eine \textit{KVH 1750 IMU} (Abb. \ref{fig:FOG}). Beide Modelle verwenden für die Messung der translatorischen Beschleunigung sogenannte MEMS-Beschleunigungssensoren. Der Drehratensensor der \textit{Xsens MTi-G 700} ist ebenfalls ein MEMS-Sensor, ein sogenannter MEMS-Kreisel. Unter den Begriffen MEMS-Beschleunigungssensoren und MEMS-Kreisel wird eine Vielzahl von Sensoren mit verschiedenen Umsetzungen zusammengefasst \cite{wendel2007integrierte}. Das Messprinzip kann jedoch stets auf das, in Kapitel \ref{sec:Inertialsensorik} vorgestellte, Prinzip der beschleunigten Probemasse zurückgeführt werden.
+\begin{figure}[h]
+\centering     %%% not \center
+\subfigure[Xsens MTi-G 700.]{\label{fig:xsens}\includegraphics[width=37mm]{006_Umsetzung/Bilder/xsens}}
+\hspace{2.5cm}
+\subfigure[KVH 1750 IMU.]{\label{fig:FOG}\includegraphics[width=33.5mm]{006_Umsetzung/Bilder/FOG2}}
+\caption[Eingesetzte IMUs.]%
+           {\label{fig:IMUs}%
+           Eingesetzte IMUs.}
+\end{figure} 
+Ein gänzlich anderes Messprinzip wird in den Drehratensensoren der \textit{KVH 1750 IMU} verwendet. Die Drehraten werden dort mit einem Faserkreisel (engl.: Fiber Optic Gyro) bestimmt. Der Name ist auf die, im Sensor verbauten, Glasfasern zurückzuführen. Das verwendete Messprinzip basiert auf dem Sagnac-Effekt. Dieser soll anhand der Abbildung \ref{fig:Sagnac-Effekt} beschrieben werden. Darin ist eine Glasfaser zu sehen, welche zu einem Ring gebogen ist, an der Verbindungsstelle besteht die Möglichkeit Laserstrahlen ein- und auszukoppeln. Zum Zeitpunkt t=0 starten die Laserstrahlen $L_1$ und $L_2$, die Glasfaser in entgegengesetzter Richtung zu durchlaufen. Während die Laserstrahlen durch die Glasfaser geleitet werden, dreht sich der Aufbau mit $\Omega$. Wenn die Laserstrahlen zum Zeitpunkt t=$\tau$ wieder aus dem Bogen austreten, haben beide Strahlen unterschiedlich lange Strecken zurückgelegt und benötigen dadurch unterschiedliche Laufzeiten. Durch die Auswertung der unterschiedlichen Laufzeiten kann die Winkelgeschwindigkeit $\Omega$ bestimmt werden. Dieses Verfahren ist im Vergleich zu den MEMS-Kreisel deutlich genauer. Während eine \textit{Xsens MTi-G 700} eine Winkeldrift von $10^{\circ} / h$ hat, liegt die Winkeldrift einer \textit{KVH 1750 IMU} bei $0,1^{\circ} / h$. Weitere Informationen zu IMUs und den darin verbauten Sensoren sind in \cite{wendel2007integrierte}, \cite{titterton2004strapdown} und \cite{groves2013gnss} zu finden.
+\begin{figure}[h]
+\begin{center}
+  \includegraphics[width=0.7\textwidth]{006_Umsetzung/Bilder/Sagnac}% keine extention: wählt jpg für DVI
+  \caption[Sagnac-Effekt nach \cite{wendel2007integrierte}.]%
+           {\label{fig:Sagnac-Effekt}%
+           Sagnac-Effekt nach \cite{wendel2007integrierte}.}
+\end{center}
+\end{figure}
+
+
+
+\subsection{Trägerplattformen}
+\label{subsec:Trägerplattformen} \index{Trägerplattformen}
+Damit eine Kalibrierung von Kamerasystem und IMU durchgeführt werden kann, wird eine Trägerplattform benötigt, welche die folgenden Anforderungen erfüllt:
+\begin{itemize}
+\item ausreichende Freiheitsgrade in der Bewegung (Bewegungsfreiheit),
+\item ausreichender Bewegungsraum,
+\item Anbindung an eine Recheneinheit mit ausreichender Rechen- und Speicherkapazität,
+\item starre Kopplung der Sensoren.
+\end{itemize}
+Im Folgenden wird die Durchführung zweier verschiedener Kalibrierverfahren beschrieben. Da diese einen unterschiedlichen Grad der Bewegungsfreiheit und des Bewegungsraumes benötigen, kommen zwei unterschiedliche Trägerplattformen zum Einsatz. Eine dieser Plattformen ist die in Abbildung \ref{fig:Trägerschiene} dargestellte Trägerschiene. Auf dieser sind zwei Kameras des Typs \textit{XIMEA MQ013RG-E2} und eine IMU des Typs \textit{KVH 1750 IMU} verbaut. Diese Plattform verfügt über uneingeschränkte Bewegungsfreiheit. Da die Sensoren an eine externe Recheneinheit angeschlossen werden müssen, ist der Bewegungsraum allerdings durch die Sensorleitungslänge (ca. 2m) begrenzt. Ein solcher Aufbau ermöglicht die Durchführung einer Kalibrierung, wie sie in Abschnitt \ref{sec:Kamera-Imu-Kalibrierung mit Kalibr} vorgestellt wird. Für Trägerplattformen, welche aufgrund der Bauform nur eine bedingte Bewegungsfreiheit besitzen, kann diese Art der Kalibrierung nicht verwendet werden. Daher wurde im Rahmen dieser Arbeit ein VO-basiertes Kalibrierverfahren entwickelt, welches die Kalibrierung dieser Systeme ermöglichen soll. Für die Durchführung der VO-basierten Kalibrierung (Abschn. \ref{sec:Kamera-Imu-Kalibrierung mit angepasstem Kalibr}) wird die Trägerplattform IOSB.amp Q1 (Abb. \ref{fig:Q1}) eingesetzt. Hierbei handelt es sich um eine Entwicklungsplattform für eine Vielzahl von Projekten und Applikationen, die in der Abteilung Mess-, Regelungs- und Diagnosesysteme (MRD), des Fraunhofer IOSB, bearbeitet werden. Da es sich hierbei um ein Fahrzeugsystem mit integrierter Recheneinheit handelt, ist die Bewegungsfreiheit und der Bewegungsraum durch die Kinematik des Fahrzeugs eingeschränkt. Die Trägerplattform IOSB.amp Q1 verfügt über eine Vielzahl verbauter Sensoren. Im Rahmen dieser Arbeit werden davon ein Stereokamerasystem, welches aus zwei Kameras des Typs \textit{MQ022RG-CM} besteht und eine IMU des Typs \textit{Xsens MTi-G 700} verwendet.
+
+\begin{figure}[h]
+\centering     %%% not \center
+\subfigure[Trägerschiene.]{\label{fig:Trägerschiene}\includegraphics[width=65mm]{006_Umsetzung/Bilder/phy_Aufbau_Kamerasystem_St_ohneSN}}
+\hspace{1.5cm}
+\subfigure[IOSB.amp Q1.]{\label{fig:Q1}\includegraphics[width=55mm]{006_Umsetzung/Bilder/Mustang}}
+\caption[Trägerplattformen.]%
+           {\label{fig:Trägerplattformen}%
+           Trägerplattformen}
+\end{figure} 
+
+
+%-----------------------------------------------------------------------
+\section{Robot Operating System}
+\label{sec:ROS} \index{Robot Operating System}
+Das Robot Operating System (ROS) ist ein Framework, welches besonders in der Entwicklung und der Erforschung von Robotersystemen verbreitet ist. Der große Vorteil liegt dabei in der Modularität der Software. Diese wird durch eine standardisierte Interprozesskommunikation erreicht und ermöglicht es, einzelne Komponenten auszutauschen, ohne die restliche Software zu ändern. Mit einer solchen Softwarearchitektur können unabhängig entwickelte Softwarekomponenten verwendet und in bestehende Systeme integriert werden. Besonders in der Forschung stellt dies einen immensen Vorteil dar, da Verknüpfungen verschiedener Forschungsbereiche und -institute realisiert werden können. 
+
+\subsection{ROS-Nodes}
+\label{subsec:ROS Nodes} \index{ROS-Nodes}
+Die Software, welche auf dem ROS-Framework basiert, wird durch die sogenannte ROS-Nodes aufgebaut. Eine Node ist eine Software, welche in der ROS-Umgebung in einem eigenen Prozess gestartet wird und ohne andere Softwarekomponenten lauffähig ist. Ein Beispiel hierfür ist ein Kamera- oder ein IMU-Treiber, welcher mit dem Sensor kommuniziert, Daten empfängt und die empfangenen Daten aufbereitet. Das Konzept des Frameworks sieht den Einsatz vieler solcher Nodes vor, welche für sich abgeschlossene Aufgabenbereiche bearbeiten und untereinander kommunizieren. Durch die von ROS bereitgestellte Arbeitsumgebung ist es möglich, die Nodes auf verschiedenen Plattformen aus ihrem Sourcecode zu kompilieren. Die für den Sourcecode verwendbaren Programmiersprachen sind Python und C++.
+
+\subsection{ROS-Interprozesskommunikation}
+\label{subsec:Interprozesskommunikation} \index{ROS-Interprozesskommunikation}
+Damit die verschiedenen Nodes untereinander kommunizieren können, bietet ROS standardisierte Mechanismen für die Interprozesskommunikation zwischen den Nodes an. Dabei sind nicht nur die Mechanismen, sondern auch die zu übertragenden Daten standardisiert. Zur Standardisierung der Daten kommen sogenannte ROS-Messages zum Einsatz. Diese definieren die zu übertragenden Daten und deren Format. Ein Beispiel hierfür ist die Message \textit{sensor\_msgs/Imu}, welche die zu übertragende Daten einer IMU definiert. Werden die vorgestellten Eigenschaften auf ein System übertragen, welches eine IMU und einen dazugehörigen ROS-Treiber verwendet, können die IMU und der Treiber ohne weitere Systemanpassungen ausgetauscht werden. Ein beispielhafter Systemaufbau ist in Abbildung \ref{fig:ROS Interprozesskommunikation} dargestellt. Dieses Prinzip ist für eine Vielzahl von Datentypen umgesetzt und kann somit in vielen Systemen eingesetzt werden.
+\begin{figure}[h]
+\begin{center}
+  \includegraphics[width=.9\textwidth]{006_Umsetzung/Bilder/ROSNODES_new_new}% keine extention: wählt jpg für DVI
+  \caption[ROS-Interprozesskommunikation.]%
+           {\label{fig:ROS Interprozesskommunikation}%
+           ROS-Interprozesskommunikation.}
+\end{center}
+\end{figure}
+\subsection{ROS-Bagfiles}
+\label{subsec:ROS Bags} \index{ROS-Bagfiles}
+Neben der Schnittstelle zwischen den Nodes bietet die Interprozesskommunikation von ROS noch weitere wichtige Funktionalitäten. Beispielsweise kann die Art der ROS-Messages, deren Inhalt sowie die Frequenz, in welcher die Nachrichten verschickt werden, in Echtzeit beobachtet werden. Außerdem gibt es eine Schnittstelle zum Aufnehmen aller Daten, die durch die ROS-Interprozesskommunikation versendet werden. Die aufgenommenen Daten werden in sogenannten ROS-Bagfiles gespeichert (Abb. \ref{fig:ROS Interprozesskommunikation}). Durch das anschließende Abspielen der Bagfiles können Szenarien virtuell reproduziert werden. Dadurch ist es möglich, aufgenommene Daten im Nachhinein zu analysieren und somit beispielsweise aufgetretene Fehler zu diagnostizieren. In den vorgestellten Kamera-IMU-Kalibrierungen dieses Kapitels, werden ebenfalls Bagfiles eingesetzt. Der Vorteil einer solchen Offline-Kalibrierung liegt darin, dass zu jedem Zeitpunkt des Prozesses alle Daten zur Verfügung stehen und die Berechnungen nicht in Echtzeit der aufgenommenen Daten durchgeführt werden müssen.
+
+
+%-----------------------------------------------------------------------
+
+
+\section{Verwendung von libviso2}
+\label{sec:Verwendung von libviso2} \index{Verwendung von libviso2}
+Für die VO-Datenberechnung wird in dieser Arbeit der ROS-Wrapper viso2 genutzt. Dieser Wrapper ermöglicht es, die Funktionen der C++ Bibliothek libviso2 in einer ROS-Node zu verwenden. Die Grundlagen dieser Bibliothek werden von Geiger et al. in der Arbeit \textit{Visual Odometry based on Stereo Image Sequences with RANSAC-based Outlier Rejection Scheme} \cite{kitt2010visual} vorgestellt. Für die Generierung der VO-Daten wird dabei ein sogenanntes \textit{feature-matching} eingesetzt. Dieses vergleicht und erkennt in aufeinanderfolgenden (Stereo-) Bildern Merkmalspunkte in den Bildern. Durch das Wiedererkennen der Merkmalspunkte kann die Bewegung der Kamera geschätzt werden. Dadurch können Position, Orientierung, Geschwindigkeit und Winkelgeschwindigkeit berechnet werden. Beim Einsatz des ROS-Wrappers viso2 werden diese Informationen durch die ROS-Message \textit{nav\_msgs/Odometry} versendet. Zu der Verwendung des ROS-Wrappers visio2 und den theoretischen Grundlagen von libviso2 wurde in der Abteilung MRD, des Fraunhofer IOSB eine Masterthesis verfasst. In dieser können nähere Informationen zu dem Thema gefunden werden \cite{lorenz2014odom}.
+
+
+%-----------------------------------------------------------------------
+\section{Kamera-IMU-Kalibrierung mit Kalibr}
+\label{sec:Kamera-Imu-Kalibrierung mit Kalibr} \index{Kamera-IMU-Kalibrierung mit Kalibr}
+Für die Kamera-IMU-Kalibrierung wird zunächst das Softwaretool Kalibr verwendet. Dieses auf dem ROS-Framework basierende Softwaretool wurde von Furgale et al. an der ETH Zürich entwickelt \cite{furgale2014kalibr} und kann für die Lösung folgender Probleme eingesetzt werden:
+\begin{itemize}
+\item Multikamera-Kalibrierung: Intrinsische und extrinsische Parametrisierung eines Kamera-Kamera-Systems mit beliebig vielen Kameras.
+\item Kamera-IMU-Kalibrierung: Räumliche und zeitliche Kalibrierung eines Kamera-IMU-Systems.
+\end{itemize}
+Der Algorithmus, welcher bei der implementierten Kamera-IMU-Kalibrierung eingesetzt wird, basiert auf der Arbeit \textit{Unified Temporal and Spatial Calibration for Multi-Sensor Systems} \cite{furgale2013unified} (Abschn. \ref{sec:Furgale}), von Furgale et al.\\
+Im Folgenden wird die Umsetzung der räumlichen Kamera-IMU-Kalibrierung mit Kalibr vorgestellt. Dabei wird der Aufbau der eingesetzten Software und die Generierung der Messdaten näher beschrieben. Auf die Kamera-Kamera-Kalibrierung und die zeitliche Kalibrierung des Kamera-IMU-Systems wird nicht näher eingegangen, für Informationen hierzu ist auf \cite{furgale2014kalibr}, \cite{furgale2013unified} und \cite{furgale2012continuous} verwiesen.
+
+
+
+\subsection{Aufbau der Software}
+\label{subsec:Aufbau der Software} \index{Aufbau der Software}
+Mit Hilfe der Abbildung \ref{fig:KalibrSchema} soll der prinzipielle Ablauf und der Softwareaufbau der Kalibr-Kamera-IMU-Kalibrierung erklärt werden. Voraussetzung für die Kamera-IMU-Kalibrierung ist die Durchführung der Kalibr-Kamera-Kamera-Kalibrierung (\RM{1}). Bei dieser werden die intrinsischen und extrinsischen Parameter für das Kamerasystem bestimmt und in einer Konfigurationsdatei gespeichert. Diese ist gemeinsam mit der IMU-Konfigurationsdatei und einem ROS-Bagfile der Input der Kalibr-Kamera-IMU-Kalibrierung. In dem ROS-Bagfile sind sowohl die Messdaten der IMU, als auch die Bildaufnahmen des Kamerasystems gespeichert. Der Ablauf der Kamera-IMU-Kalibrierung gliedert sich dabei in die folgenden Schritte (\RM{2}): Der Bag-Parser (1) konvertiert die Daten aus dem Bagfile in ein softwareinterenes Datenformat. Somit ist eine freie Verfügbarkeit der Messdaten gegeben. Im nächsten Schritt wird aus diesen Daten die B-Spline-Funktion $T_{wc}(t)$ entwickelt (2). Diese wird gemeinsam mit den Messdaten genutzt, um die Fehlerterme der Gleichungen \ref{eq:Furgale_Alpha_Fehler_a} bis \ref{eq:Furgale_BiasOm_Fehler_a} aufzustellen (3). Im letzten Schritt werden die Fehlerterme mit Hilfe eines Optimierers (4) minimiert. Die Lösung dieses Problems liefert eine Schätzung für die räumliche Transformation $T_{ci}$, welche der Output des Programms ist.
+
+\begin{figure}[h]
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{006_Umsetzung/Bilder/KalibrSchema2}% keine extention: wählt jpg für DVI
+  \caption[Schematischer Aufbau der Kalibr-Kamera-IMU-Kalibrierung.]%
+           {\label{fig:KalibrSchema}%
+           Schematischer Aufbau der Kalibr-Kamera-IMU-Kalibrierung.}
+\end{center}
+\end{figure}
+
+
+
+\subsection{Generierung der Messdaten}
+\label{subsec:Generierung der Messdaten Kalibr} \index{Generierung der Messdaten}
+Die benötigten Messdaten für die Kalibr-Kamera-IMU-Kalibrierung werden mit dem in Abbildung \ref{fig:KalibrMessaufbau} dargestellten Aufbau generiert. Der Messaufbau besteht aus der Trägerschiene (Abschn. \ref{subsec:Trägerplattformen}) und einem Schachbrettmuster. In der Abbildung sind die Koordinatensysteme der Kameras ($c_0, \: c_1$), der IMU ($i$) und des Schachbretts ($w$) dargestellt. Bei den Punkten $p^w_m$ handelt es sich um die Landmarken (Abschn. \ref{sec:Furgale}), welche in den Kamerabildern wiedererkannt werden sollen. Mit diesem Aufbau ist eine praktische Umsetzung der Abbildung \ref{fig:CamImuTarget} realisiert. Für die Messdatenaufnahme wird die Trägerschiene bewegt, sodass der Aufnahmebereich der Kameras stets das Schachbrettmuster beinhaltet. Das dabei entstehende Bewegungsprofil setzt sich aus einer Kombination von translatorischen und rotatorischen Bewegungen zusammen. Die IMU-Daten und die Stereobilder, welche während dieser Bewegungen entstehen, werden in einem ROS-Bagfile abgespeichert und können so an Kalibr übergeben werden.
+\begin{figure}[h]
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{006_Umsetzung/Bilder/DatenGenerierungKalibr}% keine extention: wählt jpg für DVI
+  \caption[Messaufbau der Kalibr-Kamera-IMU-Kalibrierung.]%
+           {\label{fig:KalibrMessaufbau}%
+           Messaufbau der Kalibr-Kamera-IMU-Kalibrierung.}
+\end{center}
+\end{figure}
+
+
+
+%-----------------------------------------------------------------------
+\section{VO-basierte Kamera-IMU-Kalibrierung}
+\label{sec:Kamera-Imu-Kalibrierung mit angepasstem Kalibr} \index{VO-basierte Kamera-IMU-Kalibrierung}
+Als Grundlage für die Umsetzung eines VO-basierten Kamera-IMU-Kalibrierverfahrens dient das Softwaretool Kalibr (Abschn. \ref{sec:Kamera-Imu-Kalibrierung mit Kalibr}). Dieses wird dahingehend angepasst, dass die in Kapitel \ref{cha:MethodezurKalibrierung} vorgestellte Methodik softwaretechnisch umgesetzt werden kann. Die VO-Daten, welche für das angepasste Verfahren benötigt werden, können durch libviso2 (Abschn. \ref{sec:Verwendung von libviso2}) berechnet werden.\\
+Der folgende Abschnitt stellt zunächst die durchgeführten Änderungen und den Ablauf der VO-basierten Kamera-IMU-Kalibrierung dar. Anschließend werden die Methoden der Messdatengenerierung vorgestellt.
+
+
+
+
+\subsection{Aufbau der angepassten Software}
+\label{subsec:Aufbau der angepassten Software} \index{Aufbau der angepassten Software}
+Der Softwareaufbau und der Ablauf der angepassten Kalibrierung soll anhand der Abbildung \ref{fig:VObasiertAufbau} beschrieben werden. Die Änderungen zwischen dem angepassten Softwareaufbau und dem Kalibr-Softwareaufbau (Abb. \ref{fig:KalibrSchema}) sind hier durch farblich hinterlegte Kästen markiert. Bei den blau hinterlegten Kästen handelt es sich um Änderungen, welche durch bereits entwickelte Softwarekomponenten durchgeführt werden können. Die Komponenten der rot hinterlegten Kästen sind im Rahmen dieser Arbeit neu entwickelt worden. Voraussetzung für die Kamera-IMU-Kalibrierung ist ein Bagfile, welches VO-Daten und IMU-Daten beinhaltet. Die Erstellung dieses Bagfiles ist auf der linken Seite der Abbildung \ref{fig:VObasiertAufbau} (\RM{1}) dargestellt. Hier werden aus Stereokameraaufnahmen und einer dazugehörigen Konfigurationsdatei VO-Daten berechnet. Für die Berechnungen wird libviso2 (Abschn. \ref{sec:Verwendung von libviso2}) verwendet. Die berechneten VO-Daten werden gemeinsam mit den IMU-Daten in einem neuen Bagfile gespeichert. Dieses ist zusammen mit den IMU- und VO-Konfigurationsdateien der Input der Kamera-IMU-Kalibrierung. Der Aufbau und der Ablauf dieser VO-basierten Kamera-IMU-Kalibrierung ist auf der rechten Seite der Abbildung \ref{fig:VObasiertAufbau} (\RM{2}) dargestellt. Der Ablauf gliedert sich wie folgt: Zunächst werden die VO-Daten und die IMU-Daten aus dem Bagfile in ein programminternes Datenformat konvertiert (1). Durch die VO-Daten wird die B-Spline-Funktion $T_{wc}(t)$ gebildet (2). Anschließend werden aus den konvertierten Daten des Bagfiles, den Konfigurationsdateien und der B-Spline-Funktion $T_{wc}(t)$ Fehlerterme entwickelt (3). Die B-Spline-Funktion und die Fehlerterme sind im Kapitel \ref{cha:MethodezurKalibrierung} näher beschrieben. Bei der Entwicklung des Fehlerterms $e_{a^i_k}$ (Gl. \ref{eq:Fehlerterm_Beschl_a}), aus den IMU-Beschleunigungen, gibt es eine Abweichung zur vorgestellten Methodik (Abschn. \ref{subsec:Herleitung der Fehlerterme}): Die Ableitung der Winkelgeschwindigkeit wird, unter der Annahme sehr kleiner Winkelgeschwindigkeitsänderungen, vernachlässigt. Abschließend werden die Fehlerterme durch einen Optimierer (4) minimiert und so die räumliche Transformation $T_{ci}$ berechnet.
+
+\begin{figure}[h]
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{006_Umsetzung/Bilder/KalibrVOSchema3}% keine extention: wählt jpg für DVI
+  \caption[Schematischer Aufbau der VO-basierten Kamera-IMU-Kalibrierung.]%
+           {\label{fig:VObasiertAufbau}%
+           Schematischer Aufbau der VO-basierten Kamera-IMU-Kalibrierung.}
+\end{center}
+\end{figure}
+
+
+\subsection{Generierung der Messdaten}
+\label{subsec:Generierung der Messdaten VO} \index{Generierung der Messdaten}
+Bei der Messdatengenerierung für das VO-basierte Kalibrierverfahren werden zwei unterschiedliche Konzepte eingesetzt: Eine Simulation und ein realer Aufbau des Kamera-IMU-Systems. Dadurch ist es möglich die Kalibrierung sowohl mit realen als auch mit idealen Daten durchzuführen und die Ergebnisse miteinander zu vergleichen. Im Folgenden wird die Umsetzung beider Konzepte vorgestellt.
+
+
+
+
+\subsubsection{Simulation}
+Die Simulation des Kamera-IMU-Systems ist mit Gazebo durchgeführt worden. Gazebo ist ein dynamisches 3D Simulationstool, welches auf Robotikanwendungen spezialisiert ist. Durch eine integrierte Schnittstelle ist eine Anbindung der ROS-Interprozesskomminikation möglich. Dadurch können die simulierten Messdaten in ROS-Messages versendet werden. Für die Generierung der Messdaten wird ein kranähnlicher Körper mit IMU und Odometriemesser simuliert. Der Aufbau ist in Abbildung \ref{fig:SimulationKameraIMU} dargestellt. Die IMU und der Odometriemesser sind durch den roten bzw. den grünen Würfel visualisiert.
+\begin{figure}[h]
+\centering     %%% not \center
+\subfigure[Simuliertes Kamera-IMU-System.]{\label{fig:SimulationKameraIMU}\includegraphics[width=0.35\textwidth]{006_Umsetzung/Bilder/Crane}}
+\subfigure[Kamerapose des simulierten Kamera-IMU-Systems.]{\label{fig:PosesplineSimu}\includegraphics[width=0.6\textwidth]{006_Umsetzung/Bilder/CamSplineSimu_dark}}
+\caption[Messdatengenerierung durch ein simuliertes Kamera-IMU-System.]%
+           {\label{fig:Simulation}%
+           Messdatengenerierung durch ein simuliertes Kamera-IMU-System.}
+\end{figure} 
+Der Körper besitzt drei Gelenke, mit je einem rotatorischen Freiheitsgrad. Für die Messdatengenerierung werden diese drei Gelenke mit einem Moment beaufschlagt, welches zu einer Drehung um die Gelenke führt. Die simulierte IMU misst dabei Beschleunigungen und Drehraten, welchen sie bei der Bewegung ausgesetzt ist. Der simulierte Odometriemesser misst die gleichen Daten, welche auch von der VO generiert werden (Abschn. \ref{sec:Visuelle Odometrie}). Beide Messpunkte sind ideal und generieren fehlerfreie Messdaten. Über die ROS-Schnittstelle werden die Messdaten im gleichen Datenformat versendet, wie sie im realen System von der IMU und der VO versendet werden. In der Abbildung \ref{fig:PosesplineSimu} ist ein Auschnitt (von $t=0$ bis $t=K$) der B-Spline-Funktion $T_{wc}(t)$ visualisiert, welcher während der Kalibrierung aus den Messdaten des Odometriemessers erzeugt wird. Die schwarze Linie zeigt die translatorische Bewegung und die Orientierung ist an drei Punkten durch die exemplarisch eingezeichneten Achsen zu erkennen.
+
+ 
+
+
+\subsubsection{Realer Messaufbau}
+Die Aufnahmen der realen Messdaten werden mit dem Fahrzeug IOSB.amp Q1 (Abschn. \ref{subsec:Trägerplattformen}) erzeugt. Hierfür wird eine Fahrt in hügeligem Gelände durchgeführt. Währenddessen werden von dem Stereokamerasystem Aufnahmen der Umgebung gemacht. Diese werden gemeinsam mit den aufgenommenen IMU-Daten in einem Bagfile gespeichert. Durch die Umwandlung der Stereoaufnahmen zu VO-Daten (Abb. \ref{fig:VObasiertAufbau} (\RM{1})) wird der Input für die VO-basierte Kamera-IMU-Kalibrierung erzeugt. Die Bewegung des Fahrzeugs ist in Abbildung \ref{fig:PosesplineMustang} durch die Visualisierung der B-Spline-Funktion $T_{wc}$ dargestellt. Diese wird aus einem Ausschnitt ($t=0$ bis $t=K$) der VO-Daten erzeugt. Die translatorische Bewegung des Fahrzeugs ist durch die schwarze Linie gekennzeichnet. Die Orientierung ist an drei Punkten durch die eingezeichneten Achsen visualisiert. Das fahrzeugtypische Bewegungsprofil des Fahrzeugs ist gut an der translatorischen Bewegungen in Richtung der x-Achse und der Drehungen um die z-Achse zu erkennen.
+\begin{figure}[h]
+\begin{center}
+  \includegraphics[width=0.9\textwidth]{006_Umsetzung/Bilder/SplineMustang_dark}% keine extention: wählt jpg für DVI
+  \caption[Kamerapose einer IOSB.amp Q1 Fahrt.]%
+           {\label{fig:PosesplineMustang}%
+           Kamerapose einer IOSB.amp Q1-Fahrt.}
+\end{center}
+\end{figure}

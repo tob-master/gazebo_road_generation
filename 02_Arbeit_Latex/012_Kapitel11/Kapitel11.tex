@@ -1,0 +1,47 @@
+%
+%% Kapitel: Kapitel 4
+%%======================================================================
+
+\chapter{Linien-Validierungs-Tablle Erzeugung}
+\label{cha:Linien-Validierungs-Tablle Erzeugung} \index{Linien-Validierungs-Tablle Erzeugung}
+%
+%
+Die Klasse LineValidationTableCreator erzeugt eine Bewertungstabelle aus den zur{\"u}ckgelieferten Werten der LinePointsReducer- und MidLineSearch-Klasse. Diese Werte sind Punkte mit einer zugeh{\"o}rigen Richtung und L{\"a}nge zum n{\"a}chsten Punkt auf der entsprechenden Linie. 
+
+In dieser Tabelle werden Informationen {\"u}ber einzelne Punkte der gefundenen Linken-, Mittel- und Rechten-Linie-Punkte berechnet, vermerkt und verglichen um eine robuste Linienerkennung zu erm{\"o}glichen. Daf{\"u}r wird zuerst das Graustufenbild in Birdseye-Perspektive an die Klasse {\"u}bergeben auf welchem der LineValidationTableCreator seine Berechnungen ausf{\"u}hrt. Anschlie{\ss}end werden die einzelnen Linien {\"u}bergeben. Mit den Folgenden Enumerationen welche als Schl{\"u}sselvariablen dienen kann bestimmt werden welche Linien verglichen werden sollen. Gleichzeitig werden dadurch auch Variablen der Operationen der LineValidationCreator-Klasse an die entsprechenden Linien angepasst.
+
+
+\begin{enumerate}
+
+\item[] \textbf{LEFT\_TO\_MID} \hfill \\
+\item[] \textbf{LEFT\_TO\_RIGHT} \hfill \\
+
+\item[] \textbf{MID\_TO\_LEFT} \hfill \\
+\item[] \textbf{MID\_TO\_RIGHT} \hfill \\
+
+\item[] \textbf{RIGHT\_TO\_LEFT} \hfill \\
+\item[] \textbf{RIGHT\_TO\_MID} \hfill \\
+\end{enumerate}
+
+
+Eine weitere gesetzte Konvention ist das die Linien von links (LINKS = 0) nach rechts (RECHTS = 2) durchnummeriert sind.
+
+Je nach Schl{\"u}ssel-Variable wird eine Linie abh{\"a}ngig von den Parametern - Richtung und L{\"a}nge, zum n{\"a}chsten Punkt durchschritten. Dabei werden f{\"u}r jeden Punkt , orthogonal zu diesem, Liniensegmente auf benachbarten Linien im Graustufenbild gesucht. Der orthogonale Suchwinkel ist abh{\"a}ngig von der Schl{\"u}ssel-Variable und der Richtung zum n{\"a}chsten Punkt der aktuellen Linie. Wird ein valides Segment gefunden (seine Breite liegt zwischen einem minimalen und maximalen Schwellwert), wird dies in einer Klasse vermerkt. Diese Klasse ist die LineValidationTable-Klasse. Jeder Punkt einer Linie ist somit eine eigene Klasse in der verschiedene Informationen vermerkt, wie auch Getter- und Setter-Funktionen implementiert sind.
+
+
+Wurden alle Linien-Punkte f{\"u}r jede Linie durchlaufen werden die erzeugten Informationen, in LineValidtionTable, untereinander verglichen. Dadurch wird jeder Linien-Punkt (LineValidtionTable-Klasse) mit weiteren Informationen bef{\"u}llt wird.
+Es wird {\"u}berpr{\"u}ft ob f{\"u}r einen gefundenen benachbarten Linien-Punkt aus [XX] ein Punkt in der benachbarten Bewertungstabelle (LineValidtionTable) gefunden wird. Daf{\"u}r wird die minimale euklidische Distanz der Punkte gesucht. Liegt diese unter einem Schwellwert wird ein Flag in der entsprechenden Bewertungstabelle gesetzt. Dies soll der Absicherung der Punkte dienen. Des weiteren wird die Richtung der einzelnen Punkte untereinander auf ihre gleiche Ausrichtung hin {\"u}berpr{\"u}ft um f{\"u}r einen noch h{\"o}here Genauigkeit zu sorgen.
+Da die Mittellinien in einem Vector-Container bestehend aus einem Vector-Container mit zusammengeh{\"o}rigen Mittellinien-Gruppen gespeichert sind, werden Punkt einer anderen Gruppe in der LineValidationTable-Klasse mit einer zus{\"a}tzlichen Identifikationsnummer markiert.
+Im folgenden sind die Parameter der LineValidationTable-Klasse gegeben. 
+
+
+
+
+
+
+
+
+
+
+
+

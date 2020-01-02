@@ -1,0 +1,42 @@
+%
+%% Kapitel: Kapitel 4
+%%======================================================================
+
+\chapter{Bewerten sicherer Fahrbereiche}
+\label{cha:Bewerten sicherer Fahrbereiche} \index{Bewerten sicherer Fahrbereiche}
+%
+%
+Die Klasse RectSafety dient zur Bewertung von befahrbaren Fahrbahnbereichen.
+Diese Bereiche werden von unten nach oben im Bild fortlaufend ausgewertet.
+RectSafety f{\"u}hrt seine Berechnung auf dem Graustufenbild in Birdseye-Perspektive aus.
+Der Algorithmus verwendet die aus der FeatureExtractor-Klasse extrahierten Fahrbahninformationen in Fahrtrichtung.
+Im ersten Schritt wird ein Rechteck mit der Dimension SafteyRectWidth X SafetyRectHeight im Bildbereich vor dem Fahrzeug betrachtet.
+Mit der OpenCV-Funktion PolygonTest kann ein Punkt darauf gepr{\"u}ft werden ob er sich in einem Polygon befindet. Dieses Polygon ist in diesem Fall das Rechteck. Die Linke-, Mitte und Rechte LineValidationTable-Punkte in Fahrtrichtung werden darauf gepr{\"u}ft ob sie im derzeit betrachteten Rechteck liegen. Anschlie{\ss}end wird eine Metrik erzeugt, welche die Sicherheit des Bereichs kompakt in einer Zahl bewertet. Daf{\"u}r werden die im aktuellen Rechteck enthaltenen LineValidationTable-Punkte aller Linien ausgewertet. Im Folgenden sind die Informationen erl{\"a}utert, welche zur Erzeugung der Metrik genutzt werden. Dabei sind sie der Priorit{\"a}t nach absteigend geordnet.
+
+Priotit{\"a}t 1: Ein LineValidationTable-Punkt hat beide benachbarten Segmente und die Nachbarlinien besitzen einen Punkt in der N{\"a}he dieser.
+
+Priotit{\"a}t 2: Ein LineValidationTable-Punkt hat beide benachbarten Segmente und eine Nachbarlinie liegt in der N{\"a}he zu einem Segment.
+
+Priotit{\"a}t 3: Ein LineValidationTable-Punkt hat ein benachbartes Segment und eine Nachbarlinie liegt in der N{\"a}he zu diesem Segment
+
+Priotit{\"a}t 4: Ein LineValidationTable-Punkt hat beide benachbarten Segmente aber die Nachbarlinien sind nicht in der N{\"a}he zu diesen
+
+Priotit{\"a}t 5: Ein LineValidationTable-Punkt findet ein benachbartes Segment
+
+Um eine kompakte Beschreibung der Bereichssicherheit zu erm{\"o}glichen, werden die Priorit{\"a}ten der LineValidationTable-Punkte aller Linien im Rechteck akkumuliert. Des Weiteren wird die Anzahl der Priorit{\"a}ten in einen prozentualen Wert umgewandelt. Dieser prozentuale Wert ist im normalen Fall abh{\"a}ngig von der H{\"o}he des Rechtecks. Dieser beschreibt wie viele Punkte maximal im Rechteck liegen k{\"o}nnen. Da jedoch bei einer Kurvenfahrt theoretisch mehr Punkte als SafetyRectHeight im Rechteck vorkommen k{\"o}nnen, wird in diesem Ausnahmefall die Anzahl der LineValidationTable-Punkte im Rechteck verwendet. Die prozentualen Werte f{\"u}r jede der akkumulierten Priorit{\"a}ten werden anschlie{\ss}end zu einem Wert zusammengef{\"u}hrt.
+
+[Bild akkumilierte Prios]
+
+Die Berechnung dient nur zur kompakten Beschreibung der Bereichssicherheit, damit sie als einzelner Wert an Funktionen {\"u}bergeben und einfach interpretiert werden kann. Dieser Wert beschreibt die Sicherheit der Punkte im ersten Rechteck.
+Darauf aufbauend, werden nun die sichersten LineValidationTable-Punkte aus dem Rechteck verwendet um die Richtung zu erhalten in welche die Fahrspur ausgerichtet ist. Vom Mittelpunkt des derzeitig betrachteten Rechtecks wird in die berechnete Richtung mit einer festgelegten Schrittweite vorangeschritten und die n{\"a}chste Bereichssicherheit berechnet.
+Falls in einem Bereich keine LineValidationTable-Punkte mit oben beschriebenen Priorit{\"a}tswerten vorhanden sind, wird im Winkel des vorherigen Rechtecks solange vorangeschritten, bis der Mittelpunkt eine Rechtecks au{\ss}erhalb des betrachteten Graustufenbilds liegt. Dies erlaubt es zus{\"a}tzlich {\"u}ber Kreuzungen hinaus, Bereiche fr{\"u}hzeitig zu bewerten.
+Wurden alle m{\"o}glichen Bereiche ausgewertet terminiert die Funktion und gibt die Bereichsicherheiten zur{\"u}ck.
+
+
+
+
+
+
+
+
+

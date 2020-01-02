@@ -1,0 +1,39 @@
+\babel@toc {ngerman}{}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 2.1}{\ignorespaces DieROSKommunikationsarchitektur}}{7}{figure.2.1}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 3.1}{\ignorespaces PaarweiserVergleichIDE}}{10}{figure.3.1}
+\contentsline {figure}{\numberline {\relax 3.2}{\ignorespaces NutzwertAnalyseIDE}}{11}{figure.3.2}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 4.1}{\ignorespaces PaarweiserVergleichSIM}}{12}{figure.4.1}
+\contentsline {figure}{\numberline {\relax 4.2}{\ignorespaces NutzwertAnalyseSIM}}{13}{figure.4.2}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 5.1}{\ignorespaces GeradeSrecke}}{17}{figure.5.1}
+\contentsline {figure}{\numberline {\relax 5.2}{\ignorespaces Kurve}}{18}{figure.5.2}
+\contentsline {figure}{\numberline {\relax 5.3}{\ignorespaces Zielliniensegment}}{18}{figure.5.3}
+\contentsline {figure}{\numberline {\relax 5.4}{\ignorespaces Geschwindigkeitsbegrenzungssegmente}}{18}{figure.5.4}
+\contentsline {figure}{\numberline {\relax 5.5}{\ignorespaces Zebrastreifensegment}}{18}{figure.5.5}
+\contentsline {figure}{\numberline {\relax 5.6}{\ignorespaces Kreuzungssegmente}}{19}{figure.5.6}
+\contentsline {figure}{\numberline {\relax 5.7}{\ignorespaces SBPBSegment}}{19}{figure.5.7}
+\contentsline {figure}{\numberline {\relax 5.8}{\ignorespaces Verkehrsinselsegmente}}{20}{figure.5.8}
+\contentsline {figure}{\numberline {\relax 5.9}{\ignorespaces Verkehrsschilder}}{20}{figure.5.9}
+\contentsline {figure}{\numberline {\relax 5.10}{\ignorespaces Abbiegepfeile}}{21}{figure.5.10}
+\contentsline {figure}{\numberline {\relax 5.11}{\ignorespaces GazeboKreuzungModel}}{22}{figure.5.11}
+\contentsline {figure}{\numberline {\relax 5.12}{\ignorespaces GazeboBoxModel}}{23}{figure.5.12}
+\contentsline {figure}{\numberline {\relax 5.13}{\ignorespaces GazeboRundkursWorld}}{24}{figure.5.13}
+\contentsline {figure}{\numberline {\relax 5.14}{\ignorespaces GazeboFahrzeug}}{25}{figure.5.14}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 6.1}{\ignorespaces StartliniensucheFahrbahnmuster}}{27}{figure.6.1}
+\contentsline {figure}{\numberline {\relax 6.2}{\ignorespaces BildbereichCanny}}{27}{figure.6.2}
+\contentsline {figure}{\numberline {\relax 6.3}{\ignorespaces HoughRaum}}{28}{figure.6.3}
+\contentsline {figure}{\numberline {\relax 6.4}{\ignorespaces HoughLineVP}}{29}{figure.6.4}
+\contentsline {figure}{\numberline {\relax 6.5}{\ignorespaces SuchrichtingLF}}{30}{figure.6.5}
+\contentsline {figure}{\numberline {\relax 6.6}{\ignorespaces LPLF}}{31}{figure.6.6}
+\contentsline {figure}{\numberline {\relax 6.7}{\ignorespaces RDPAlgorihtmus}}{32}{figure.6.7}
+\contentsline {figure}{\numberline {\relax 6.8}{\ignorespaces RDPAlgorihtmusBild}}{33}{figure.6.8}
+\contentsline {figure}{\numberline {\relax 6.9}{\ignorespaces RasterisiertesBild}}{34}{figure.6.9}
+\contentsline {figure}{\numberline {\relax 6.10}{\ignorespaces MittellinienGraph}}{35}{figure.6.10}
+\contentsline {figure}{\numberline {\relax 6.11}{\ignorespaces ExtrahierteLinienpunkte}}{38}{figure.6.11}
+\contentsline {figure}{\numberline {\relax 6.12}{\ignorespaces RectSafety}}{40}{figure.6.12}
+\contentsline {figure}{\numberline {\relax 6.13}{\ignorespaces SafetyRectKreuzung}}{41}{figure.6.13}

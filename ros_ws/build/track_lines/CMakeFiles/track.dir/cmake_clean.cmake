@@ -11,6 +11,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/track.dir/include/line_validation_table_creation.cpp.o"
   "CMakeFiles/track.dir/include/line_validation_table_feature_extraction.cpp.o"
   "CMakeFiles/track.dir/include/line_validation_table.cpp.o"
+  "CMakeFiles/track.dir/include/safe_drive_area_evaluation.cpp.o"
+  "CMakeFiles/track.dir/include/perceptual_grouping.cpp.o"
   "CMakeFiles/track.dir/src/line_tracker_node.cpp.o"
   "/home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track.pdb"
   "/home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track"

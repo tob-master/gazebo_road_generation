@@ -1,0 +1,222 @@
+%
+%% Kapitel: Kapitel 4
+%%======================================================================
+
+\chapter{Erzeugung von simulierten Verkehrssitationen}
+\label{cha:Erzeugung von simulierten Verkehrssitationen} \index{Erzeugung von simulierten Verkehrssitationen}
+
+Um ein Testen der Bildverarbeitungsalgorithmen zu ermöglichen soll eine Simulationsumgebung implementiert werden. Mit der in [XXX] ausgewählten Simulationsumgebung Gazebo wurde dafür eine Fahrbahn und ein mit einem Controller gesteuertes Fahrzeug mit Kamera implementiert. In diesem Kapitel wird der Aufbau und die Verwendung der Simulationsumgebung näher beschrieben.
+
+
+\section{Erstellung der Fahrbahn}
+\label{sec:Erstellung der Fahrbahn}
+
+Mit Gazebo ist es möglich Bilddateien durch OGRE (Object-Oriented Graphics Rendering Engine) in die Simulationsumgebung einzuladen und entsprechend darzustellen. Es bedurfte eines geeigneten Software-Werkzeugs um eine Fahrbahn entsprechend den Regeln des Carolo-Cups zu modellieren.
+Vektorbasierte 2D-Grafiken können zum Beispiel mit Inkscape oder Adobe Illustrator designt werden wie es in XXX getan wurde. Auch wäre es denkbar die 3D-Grafiksuit Blender oder ein entsprechendes CAD-Programm zu verwenden. Um es dem Anwender zu vereinfachen wurde sich aber für eine andere Methode entschieden. Cairo ist eine 2D-Grafikbibliothek. Sie ermöglicht es vektorbasierte Grafiken zu erzeugen. Mit der Python-API von Cairo namens Pycairo wurde die Erzeugung von Fahrbahnsegmenten automatisiert. Die Idee war es einen Modularen Aufbau von Fahrbahnsegmenten zu realisieren, welche durch Pycario erzeugt und automatisiert in das Gazebo-Modell-Format konvertiert und über das Gazebo-Client-Interface zusammengefügt werden können. Dazu wurden für jedes Modell der Fahrbahn Python-Skripte geschrieben, welche Bilddateien im PNG-Format für jede Fahrsituation erzeugen. Im Folgenden werden diese einzelnen Python-Skripte näher beschrieben.
+
+
+\begin{enumerate}
+
+\item[] \textbf{Gerade Strecken} \hfill \\
+Als Eingabeparameter nimmt das Skript die Länge der Fahrbahn und den Offset für den Start der Mittellinienrasterung entgegen. Anschließend speichert es das Segment in einer PNG-Datei.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.3\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/straight_1m}% keine extention: wählt jpg für DVI
+  \caption[GeradeSrecke]%
+           {\label{fig:GeradeSrecke}%
+           Gerades Streckensegment}
+\end{center}
+\end{figure}
+
+
+
+\item[] \textbf{Kurven}\hfill \\
+Als Eingangsparameter nimmt es den Radius der Kurve entgegen wie auch den Offset der Mittellinienrasterung. Anschließend speichert es das Segment in einer PNG-Datei.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.3\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/Kurve}% keine extention: wählt jpg für DVI
+  \caption[Kurve]%
+           {\label{fig:Kurve}%
+           Kurvensegment}
+\end{center}
+\end{figure}
+
+
+
+\item[] \textbf{Ziellinie}\hfill \\
+Erzeugt die Ziellinie ohne Eingabeparameter.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/ziel}% keine extention: wählt jpg für DVI
+  \caption[Zielliniensegment]%
+           {\label{fig:Zielliniensegment}%
+           Zielliniensegment}
+\end{center}
+\end{figure}
+
+\item[] \textbf{Geschwindigkeitsbegrenzungen}\hfill \\
+Als Eingangsparameter nimmt es den Wert der Begrenzung entgegen. Anschließend speichert es das Segment in einer PNG-Datei.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/roadspeedsigngs}% keine extention: wählt jpg für DVI
+  \caption[Geschwindigkeitsbegrenzungssegmente]%
+           {\label{fig:Geschwindigkeitsbegrenzungssegmente}%
+           Geschwindigkeitsbegrenzungssegmente}
+\end{center}
+\end{figure}
+
+
+\item[] \textbf{Zebrastreifen}\hfill \\
+Erzeugt einen Zebrastreifen ohne Eingabeparameter.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/crosswalk}% keine extention: wählt jpg für DVI
+  \caption[Zebrastreifensegment]%
+           {\label{fig:Zebrastreifensegment}%
+           Zebrastreifensegment}
+\end{center}
+\end{figure}
+
+\item[] \textbf{Kreuzungen}\hfill \\
+Die verschiedenen Arten möglicher Kreuzungen wurden aus einzelnen durch Pycairo erzeugten Module in Inkscape zu einer Einheit zusammengeführt.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/crossings}% keine extention: wählt jpg für DVI
+  \caption[Kreuzungssegmente]%
+           {\label{fig:Kreuzungssegmente}%
+           Kreuzungssegmente}
+\end{center}
+\end{figure}
+
+
+\item[] \textbf{Startbox und Parkbereich}\hfill \\
+Der Parkbereich wurde zusammen mit der Startbox aus einzelnen Pycairo-Modulen in Inkscape zusammengeführt. Da diese immer gleich aufgebaut sind werden keine Eingabeparameter benötigt. 
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/start_of_track}% keine extention: wählt jpg für DVI
+  \caption[SBPBSegment]%
+           {\label{fig:SBPBSegment}%
+           Startbox- und Parkbereichsegment}
+\end{center}
+\end{figure}
+
+
+\item[] \textbf{Verkehrsinseln}\hfill \\
+Die Verkehrsinseln wurden aus einzelnen Pycairo-Modulen mit Inkscape zusammengführt.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/islands}% keine extention: wählt jpg für DVI
+  \caption[Verkehrsinselsegmente]%
+           {\label{fig:Verkehrsinselsegmente}%
+           Verkehrsinselsegmente}
+\end{center}
+\end{figure}
+
+\item[] \textbf{Linienverdeckungsfläche}\hfill \\
+Es können schwarze rechteckige Flächen erzeugt werden, welche zum Verdecken von Fahrlinien verwendet werden können. Die Eingangsparameter sind die Höhe und Breite der Fläche.
+
+\item[] \textbf{Verkehrsschilder}\hfill \\
+Die im Carolo-Cup möglichen Verkehrsschilder wurden aus dem Github-Repository XXX entnommen.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/Bilder/alleSchilder}% keine extention: wählt jpg für DVI
+  \caption[Verkehrsschilder]%
+           {\label{fig:Verkehrsschilder}%
+           Verkehrsschilder des CaroloCups}
+\end{center}
+\end{figure}
+
+
+\item[] \textbf{Abbiegepfeile}\hfill \\
+Der Abbiegepfeil wurde dem Github-Repository XXX entnommen.
+\end{enumerate}
+
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.2\textwidth]{/home/tb/Desktop/Master/Bilder/abbiegepfeil}% keine extention: wählt jpg für DVI
+  \caption[Abbiegepfeile]%
+           {\label{fig:Abbiegepfeile}%
+           Abbiegepfeile}
+\end{center}
+\end{figure}
+
+
+
+
+
+
+Die Anzahl von Bildpixeln pro Meter in der Simulationsumgebung wurde dabei in den Python-Skripten auf XXX festgelegt. Dies ermöglicht eine scharfe Ansicht der Module in der Simulationsumgebung wobei nicht allzu viel Rechenleistung für das Rendering benötigt wird.
+
+
+Mit dem Python-Skript XXX können die Fahrbahn-Module (PNG-Dateien) automatisiert in das Gazebo-Modell-format (SDF) konvertiert werden.
+Dafür muss der Dateiname, der Speicherort und das Auflösungsverhältnis als Eingabeparameter dem Skript übergeben werden. Dieses erzeugt die entsprechende Modell-Datei und kopiert sie in den Gazebo-Modell-Ordner (.gazebo/models). Nach dem Starten des Gazebo-Clients können die Module im Reiter XXX gefunden und zu einer Fahrbahn zusammengeführt werden. 
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/Bilder/rotateFahrbahn}% keine extention: wählt jpg für DVI
+  \caption[GazeboKreuzungModel]%
+           {\label{fig:GazeboKreuzungModel}%
+           Einfügen eines Kreuzungssegments in den Gazebo Simulator}
+\end{center}
+\end{figure}
+
+
+
+
+Desweitern können dreidimensionale Kisten direkt im Gazebo-Client eingefügt werden. Diese werden zum Beispiel für Parklücken benötigt.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/Bilder/box}% keine extention: wählt jpg für DVI
+  \caption[GazeboBoxModel]%
+           {\label{fig:GazeboBoxModel}%
+           Einfügen eines Parklückenhindernisses in den Gazebo Simulator}
+\end{center}
+\end{figure}
+
+
+
+Nach beenden der Fahrbahnmodellierung kann die Fahrbahn durch den Gazebo-Client als World-Datei im SDF-Format gespeichert werden.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/Bilder/driveTrack}% keine extention: wählt jpg für DVI
+  \caption[GazeboRundkursWorld]%
+           {\label{fig:GazeboRundkursWorld}%
+           Modularer Aufbau eines gesamten Rundkurses im Gazebo-Simulator}
+\end{center}
+\end{figure}
+
+
+
+\section{Erstellung des Fahrzeugs}
+\label{sec:Erstellung der Fahrzeugs}
+
+Die Modellierung des Fahrzeugs wurde mit dem ROS-Package XXX ermöglicht.
+Das Package implementiert ein Fahrzeug mit Ackermann-Lenkung für ROS-Gazebo. Dafür nutzt es das Ackermann-Plugin.
+Das Fahrzeug durch eine Modell-Datei beschrieben im SDF-Format implementiert. In dieser Modell-Datei wurden Anpassungen vorgenommen, um das Fahrzeug auf die Dimensionen des Fahrzeugs der Hochschule Karlsruhe zu bringen. Außerdem es um ein Kamera-Plugin erweitert, um Rosbags in der Simulation aufnehmen zu können. Folgende Parameter lassen sich darüber einstellen:
+
+Paramter
+
+Das steuern des Fahrzeugs ist über das ROS-Package joy realisiert. Durch dieses kann das Fahrzeug über einen Controller manuell gesteuert werden. In Zukunft könnte auch eine autonome Fahrt durch publishen von Fahrinformationen auf die joy-Topic realisiert werden.
+Über Blender wurden zudem die im Wintersemester 18/19 erzeugten CAD-Konstruktionsteile im STL-format zusammengeführt. In Blender konnte daraus ein Mesh im Format Collada erzeugt werden. COLLADA ist ein XML-basiertes Austausch Format für 3D-Programme. Das durch Blender erzeugte Mesh kann zusammen mit dem XXX-Package genutzt werden um das CaroloCup-Fahrzeug in der Simulation darzustellen.
+
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/Bilder/car.png}% keine extention: wählt jpg für DVI
+  \caption[GazeboFahrzeug]%
+           {\label{fig:GazeboFahrzeug}%
+           Das in Gazebo simulierte Fahrzeug nach dem vorhandenen CAD-Modell}
+\end{center}
+\end{figure}

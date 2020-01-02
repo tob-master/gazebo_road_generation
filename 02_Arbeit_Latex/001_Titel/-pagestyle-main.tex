@@ -1,0 +1,87 @@
+%%
+%%  Pagestyle für Hauptteil
+%%  061218ar
+%=============================================================================
+\automark[section]{chapter}
+\clearscrheadfoot                  % Alles auf "" setzen
+\pagestyle{scrheadings}            % Kopf- und Fusszeilen
+\pagenumbering{arabic}
+\setcounter{page}{1}
+%
+\lehead{\pagemark \hspace*{2em} \headmark}
+\rohead{\headmark \hspace*{2em} \pagemark }
+%
+% alternativ
+%
+%\ohead[\pagemark]{\pagemark}
+%\ihead[]{\headmark}
+%\ifoot[Hochschule Karlsruhe - Fakultät für Maschinebau und Mechantronik]{Diplomarbeit KOMA OMA}
+%\ifoot[]{Diplomarbeit KOMA OMA}    % wennn es denn sein muss
+
+%%  Kolumnentitel  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  alternativ: von wiley 
+%%
+\clearscrheadings
+\clearscrplain
+\pagestyle{scrheadings}
+
+\lehead[%
+  \llap{%
+    \pagemark
+    \hspace{1mm}%
+    \smash{\rule[-2.8mm]{1pt}{6mm}}%
+    \hspace{2mm}%
+  }%
+]{%
+  \llap{%
+    \pagemark
+    \hspace{1mm}%
+    \smash{\rule[-2.8mm]{1pt}{6mm}}%
+    \hspace{2mm}%
+  }%
+  {%
+    \sffamily
+    \itshape
+    \selectfont
+    \headmark
+  }%
+}
+
+\rohead[%
+  \rlap{%
+    \hspace{2mm}%
+    \smash{\rule[-2.8mm]{1pt}{6mm}}%
+    \hspace{1mm}%
+    \pagemark
+  }%
+]{%
+  {%
+      \sffamily
+    \itshape
+    \selectfont
+    \headmark
+  }%
+  \rlap{%
+    \hspace{2mm}%
+    \smash{\rule[-2.8mm]{1pt}{6mm}}%
+    \hspace{1mm}%
+    \pagemark
+  }%
+}
+
+\renewcommand\pnumfont{%
+  \sffamily%
+  \bfseries
+  \upshape
+%  \fontsize{8}{12}%
+  \fontsize{10}{12}%
+  \selectfont
+}
+
+\renewcommand\headfont{%
+  \sffamily%
+  \itshape
+%  \fontsize{8.5}{12}%
+  \fontsize{10}{12}%
+  \selectfont
+}

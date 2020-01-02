@@ -1,0 +1,136 @@
+%%
+%%  Hauptdatei
+%%
+%%  Projekt: Bachelorthesis 
+%%  Autor:   Tobias Busch
+%%  Status:  
+%%  Datum:   28022017we
+%%
+%===================================================================
+%% P R Ä A M B E L
+%-------------------------------------------------------------------
+%
+\input{FBMStyle}
+%
+
+\include{000_Setup/includes}       %benutzte packages S.W.
+\include{000_Setup/pdf-setup}
+\include{000_Setup/macros}         % Macros lagen
+\include{001_Titel/titleM}         % Titeldefinition, kann so nicht genutzt werden
+
+
+\makeindex
+
+%===================================================================
+% B E G I N N  D E S  D O K U M E N T S
+%
+%% Hier kommen die einzelnen Kapitel, die jeweils in einem eigenen
+%% Folder stehen. Dateiendung MUSS .tex sein. Wird hier nicht angegeben. 
+%% W I C H T I G : Pfade in Unix-Syntax d.h.:
+%% 0010/chapter und NICHT 0010\chapter !!!
+%% ALLE PFADE RELATIV ZU DIESER DATEI!!
+%-------------------------------------------------------------------
+\begin{document}
+
+\pagestyle{scrheadings}            % Kopf- und Fusszeilen
+\clearscrheadfoot                  % Alles auf "" setzen
+\pagestyle{empty}
+   
+
+% Titelblatt erzeugen
+\include{001_Titel/-pagestyle-pre}
+\maketitle  %erzeugt 1 --> kein Fehler
+
+
+
+\include{001_Titel/erklaerung}     % Hochschul-spezifisch
+\let\cleardoublepage\clearpage
+\include{001_Titel/danksagung}
+%-----------
+\include{001_Titel/Kurzfassung}% als Kurzfassung formuliert
+%-----------
+%\include{001_Titel/nomenklatur}    % Formel und Abkürzungsverzeichnis 
+\include{001_Titel/Inhalt_Listen}
+\include{001_Titel/nomenklatur}
+%
+%-------------------------------------------------------------------
+%  Hauptteil
+%-------------------------------------------------------------------
+%
+\include{001_Titel/-pagestyle-main}
+%
+
+% Beginn Literaturverzeichnis 
+% 
+%\ Stil für das Literaturverzeichnis auswählen, alle Stile nach Din 1505  -------------------   %
+%\bibliographystyle{gerplain} 
+%\bibliographystyle{unsrt} 
+%\bibliographystyle{plaindin} %alphabetisch 
+%\bibliographystyle{abbrvdin} %wie plaindin, nur abgekürtze Scheibweise
+
+%\bibliographystyle{natdin}   %statt[1] steht z.B. [Kohm(2006)] vor dem entspr. Eintrag im Verzeichnis
+
+
+\bibliographystyle{unsrtdin} % 1505 in der Reihenfolge wie im Text
+%\bibliographystyle{alphadin} %alphabetische Reihenfolge, statt [1] steht z.B.[Koh]vor dem entspr. Eintrag im
+
+
+
+
+\include{002_Einleitung/Einleitung}     % Der Teil Einleitung
+\include{003_Kapitel2/Kapitel2}     % 
+\include{004_Kapitel3/Kapitel3}
+\include{005_Kapitel4/Kapitel4}
+\include{006_Kapitel5/Kapitel5}
+\include{007_Kapitel6/Kapitel6}
+%\include{008_Kapitel7/Kapitel7}
+%\include{009_Kapitel8/Kapitel8}
+%\include{010_Kapitel9/Kapitel9}
+%\include{011_Kapitel10/Kapitel10}
+%\include{012_Kapitel11/Kapitel11}
+%\include{013_Kapitel12/Kapitel12}
+%\include{014_Kapitel13/Kapitel13}
+
+
+%der_Technik}     % Der Teil Grundlagen
+%\include{005_Methode_zur_Kalibrierung/Methode_zur_Kalibrierung}     % Der Teil Grundlagen 
+%\include{006_Umsetzung/Umsetzung}     % Der Teil Grundlagen 
+%\include{007_Ergebnisse/Ergebnisse}     % Der Teil Grundlagen 
+%\include{008_Zusammenfassung_und_Ausblick/Zusammenfassung_und_Ausblick}     % Der Teil Grundlagen  
+%\include{099_Richtlinie/RichtlinieCC}     % Ein Teil der Richtlinie
+
+
+
+
+%-------------------------------------------------------------------
+% Literaturliste
+%-------------------------------------------------------------------
+%\input{Listen/literatur1fach}       %Pfad zur Datei
+%\input{Listen/literatur}            %Pfad zur Datei
+
+%-------------------------------------------------------------------
+% Anhang
+%-------------------------------------------------------------------1
+\appendix        % Alles was hier kommt, landet im Anhang
+%-------------------------------------------------------------------
+\addcontentsline{toc}{chapter}{Literaturverzeichnis}
+
+%hier die Datei, in der die Literaturangaben stehen, angeben (hier: Literatur.bib). 
+\bibliography{Literatur}
+\label{cha:LitVerzeichnis}
+
+%-------------------------------------------------------------------
+% Index
+%-------------------------------------------------------------------
+%\makeindex
+\printindex
+%-------------------------------------------------------------------
+%\newpage
+%\include{Anhang/Anhang02}
+%\include{Anhang/anhang1}
+
+
+\end{document}   % Nach dieser Zeile darf nichts mehr kommen
+%-------------------------------------------------------------------
+% E N D E  D E S  D O K U M E N T S
+%-------------------------------------------------------------------

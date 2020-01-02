@@ -118,7 +118,7 @@ void LinePointsReducer::DrawReducedLinePoints(Mat &rgb, int line)
     {
         for(auto &it: left_line_points_reduced_)
         {
-            circle(rgb, Point((int)it.first,(int)it.second), 7, Scalar(0, 0, 255));
+            circle(rgb, Point((int)it.first,(int)it.second), 7, Scalar(0, 255, 255));
         }
     }
 
@@ -126,7 +126,7 @@ void LinePointsReducer::DrawReducedLinePoints(Mat &rgb, int line)
     {
         for(auto &it: right_line_points_reduced_)
         {
-            circle(rgb, Point((int)it.first,(int)it.second), 7, Scalar(0, 0, 255));
+            circle(rgb, Point((int)it.first,(int)it.second), 7, Scalar(255, 255, 0));
         }
     }
 }

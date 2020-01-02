@@ -1,0 +1,260 @@
+%
+%% Kapitel: Grundlagen
+%%======================================================================
+
+
+\chapter{Einführung in die Programmierwerkzeuge}
+\label{cha:Einführung in die Programmierwerkzeuge} \index{Einführung in die Programmierwerkzeuge}
+%
+%
+
+
+%-----------------------------------------------------------------------
+
+
+\section{Einführung in die Funktionen der Stanard Template Library}
+\label{sec:Einführung in die Funktionen der Stanard Template Library}
+Die Programmiersprache C{\tiny++} ist eine Erweiterung von C und wurde ab 1979 von Bjarne Stroustrup entwickelt. Die Möglichkeit mit C{\tiny++}  objektorientiert zu Software zu entwickeln und somit Probleme in Klassen zu abstrahieren, ermöglicht eine einfachere Einarbeitung in den Programm-Code. Dies ist damit zu begründen das Menschen gewohnt sind in Objekten zu denken. 
+Vor allem die Performanzvorteile begünstigen das Nutzen von C{\tiny++}  in der Bildverarbeitung, da die Sprache es erlaubt maschinennah zu programmieren und somit alle Leistungsgrenzen der Hardware voll auszunutzen.  
+C{\tiny++} ist eine Compilersprache. Die Performanz auf der Hardware ist deshalb auch abhängig von den enthaltenen Optimierungsalgorithmen des verwendeten Compilers. Der verwendete Compiler ist der auf dem Linux-Derivat Ubuntu 18.04 installierte GNU Compiler Collection kurz GCC. Der Programm dieser Arbeit ist mit der GCC-Version [X] entwickelt und kompiliert worden. Die Programmiersprache C{\tiny++} entwickelt sich fortlaufend weiter, um mit der sich schnell verändernden Computer-Technik Schritt zu halten. Der C{\tiny++}11-Standard und die Features der Standard Template Library (STL) werden in der in dieser Arbeit entwickelten Software ausgiebig verwendet, deshalb werden im Folgenden die wichtigsten Features vorgestellt.
+
+
+\subsection{auto}
+\label{subsec:auto}
+Der Platzhaltertyp-Bezeichner auto ermöglicht es, den zu deklarierenden Typ einer Variablen automatisch durch ihren Initialisierer abzuleiten. Daraus ergibt sich vor allem eine bessere Lesbarkeit des Codes. Dies ist vorallem bei Iteratoren der Fall.
+
+\begin{lstlisting}
+auto variable = 5;
+\end{lstlisting}
+
+
+
+
+
+
+\subsection{Vector-Container}
+\label{subsec:Vector-Container}
+Vektoren sind mit dynamischen Arrays identisch. Sie ändern ihre Größe automatisch, wenn ein Element eingefügt (push{\tiny\_}back) 
+oder entfernt wird (erase). Vector ist ein Template und kann mit verschiedenen Datentypen wie zum Beispiel Variablen, Pointern oder ganzen Klassen deklariert werden.
+Vektorelemente werden in einem zusammenhängen Speicher abgelegt, dadurch können Sie mit Iteratoren durchlaufen werden. 
+
+\begin{lstlisting}
+vector<int> vec = {0, 1, 2, 3, 4};
+
+vec.push_back(5);
+
+vec.erase(vec.begin() + 5);
+\end{lstlisting}
+
+\subsection{Iterator}
+\label{subsec:Iterator}
+Iteratoren werden verwendet, um auf die Speicheradressen von STL-Containern zu verweisen und diese so zu durchlaufen. Sie verringern die Komplexität und Ausführungszeit des Programms. 
+\begin{lstlisting}
+vector<int> vec = {0, 1, 2, 3, 4};
+for(auto it = vec.begin(); it < vec.end(); it++){ cout << it << endl; }
+for(auto it : vec){ cout << it << endl; }
+\end{lstlisting}
+
+
+\subsection{Pair-Container}
+\label{subsec:Pair-Container}
+Pair wird verwendet, um zwei Werte miteinander zu kombinieren, deren Typ unterschiedlich sein kann. Pair bietet die Möglichkeit, zwei heterogene Objekte als eine Einheit zu speichern. Das erste Element wird als "first" und das zweite Element als "second" bezeichnet.Die Reihenfolge der Elemente ist fest definiert (first, second).
+\begin{lstlisting}
+pair<string,int> bild_merkmal;
+bild_merkmal.first = ?Mittellinie?
+bild_merkmal.second = 42;
+vector< pair<string,int> > bild_merkmale;
+bild_merkmale.push_back(make_pair(?Mittellinie?,42)); 
+\end{lstlisting}
+\subsection{Map- und unordered Map-Container}
+\label{subsec:Map- und unordered Map-Container}
+Maps sind assoziative Container, in denen Elemente zugeordnet gespeichert werden. Jedes Element hat einen Schlüsselwert und einen zugeordneten Wert. Keine zwei zugeordneten Werte können denselben Schlüsselwert haben.
+Der Map-Container sortiert dabei seine Elemente nach aufsteigender Reihenfolge während der unordered{\tiny\_}map Container dies nicht tut. Das Sortieren der Elemente kann Performanzvorteile bei der Suche von Elementen im Container ermöglichen. Es benötigt jedoch auch mehr Zeit beim Einfügen oder löschen der Elemente. Der Map-Container hat im schlechtesten Fall eine Zeitkomplexität von O(log(n)) und Unordered{\tiny\_}map-Container von O(n).
+%https://hackernoon.com/what-does-the-time-complexity-o-log-n-actually-mean-45f94bb5bfbf
+\begin{lstlisting}
+map<string,int> bild_merkmale_anzahl;
+bild_merkmale_anzahl.insert(make_pair(?Mittellinien?, 42)); 
+bild_merkmale_anzahl.insert(make_pair(?Parkflächen?, 5)); 
+bild_merkmale_anzahl.insert(make_pair(?Außenlinien?, 2)); 
+int anzahl_mittellinien = bild_merkmale_anzahl[?Mittellinien?];
+\end{lstlisting}
+
+\subsection{Multimap- und unorderderd Multimap-Container}
+\label{subsec:Multimap- und unorderderd Multimap-Container}
+Multimap-Container sind assoziative Container, in denen Elemente gespeichert werden, die aus einer Kombination eines Schlüsselwerts und eines zugeordneten Werts in einer bestimmten Reihenfolge bestehen und in denen mehrere Elemente über denselben Schlüssel verfügen können. Multimap-Container ermöglichen es Elemente mit gleichen Schlüsselpaaren mit einem iterator zu durchlaufen (equal{\tiny\_}range). Multimap-Container und Unordered{\tiny\_}multimap-Container weisen dieselbe Zeitkomplexität bei der Suche auf wie Map- und Unordered{\tiny\_}map-Container auf.
+\begin{lstlisting}
+multimap<string,int> bild_features_anzahl;
+bild_features_anzahl.insert(make_pair(?Mittellinie?, 42)); 
+bild_features_anzahl.insert(make_pair(?Mittellinie?, 5)); 
+bild_features_anzahl.insert(make_pair(?Außenlinie?, 15)); 
+bild_features_anzahl.insert(make_pair(?Mittellinie?, 36)); 
+pair <multimap<string,int>::iterator, multimap<string,int>::iterator> ret;
+ret = bild_features_anzahl.equal_range(?Mittellinie?);
+    
+for (multimap<char,int>::iterator it=ret.first; it!=ret.second; ++it)
+{
+      cout << it->second << endl;
+}
+\end{lstlisting}
+\subsection{Find-Funktion }
+\label{subsec:Find-Funktion }
+Diese Funktion sucht ein Element in einer gegebenen Sequenz. Der Rückgabewert ist ein Iterator, der auf die erste Speicheradresse in der Sequenz weist, die mit dem Element übereinstimmt.
+Wird kein solches Element gefunden, gibt die Funktion das Ende der letzten Speicheradresse der Sequenz zurück. Die Zeitkomplexität ist dabei maximal O(n). Mit der Funktion ?distance? lässt sich zusätzlich der Index der Speicheradresse finden. 
+\begin{lstlisting}
+vector<int> vec = {0, 1, 2, 3, 4};
+vector<int>::iterator it;
+int element = 3;
+it = find (vec.begin(), vec.end(), element);
+int pos = distance(vec.begin(), it);
+if(it!=vec.end())
+{ 
+cout<<"Element "<<vec[pos]<<" gefunden auf Position: "<<pos<< endl; 
+} 
+\end{lstlisting}
+\subsection{Minmax Element-Funktion}
+\label{subsec:Minmax Element-Funktion}
+Sucht das größte und niedrigste Element in einer gegebenen Sequenz.
+Der Rückgabewert ist ein Pair-Container aus Iteratoren. first zeigt dabei auf das erste und niedrigste Element und second auf das letzte und höchste Element in der Sequenz. Diese Suche hat eine Zeitkomplexität von schlechtesten O(max(floor(1.5*(N?1)), 0)) und ist somit 50\% schneller als wenn die Funktionen Min{\tiny\_}element und Max{\tiny\_}element nacheinander ausgeführt werden würden. min{\tiny\_}element und max{\tiny\_}element werden im schlechtesten Fall mit O(max(N-1,0)) ausgeführt. 
+\begin{lstlisting}
+vector<int> vec = {0, 1, 2, 3, 4};
+auto result = std::minmax_element (vec.begin(),vec.end());
+int min_pos = distance(vec.begin(), result.first);
+int max_pos = distance(vec.begin(), result.second);
+cout<<"Min ist " <<*result.first <<?auf Position: ?<<min_pos<<endl:
+cout<<"Max ist " <<*result.second<<?auf Position: ?<<max_pos<<endl; 
+\end{lstlisting}
+\subsection{Funktionszeiger}
+\label{subsec:Funktionszeiger}
+Ein Funktionszeiger ist eine Variable, die die Adresse einer Funktion speichert, die später über diesen Funktionszeiger aufgerufen werden kann. Dies ist nützlich, da Funktionen das Verhalten kapseln. Ihre Anwendung finden Funktionszeiger zum Beispiel in Callback-Funktionen wie Sie in ROS oder OpenCV genutzt werden.
+\begin{lstlisting}
+Einfaches Beispiel:
+void HalloWelt(){ cout<<?Hallo Welt!?<<endl; }
+void(*funktion)();
+funktion = HelloWorld;
+OpenCV:
+Void mouse_cb(int event, int x, int y, int flags, void* userdata)
+{
+      if ( event == EVENT_MOUSEMOVE && flags == EVENT_FLAG_ALTKEY)
+     {
+         cout<<?Position ("<<x<<","<<y<<")"<<endl;
+     }
+}
+setMouseCallback("grauwert_bild", mouse_cb, NULL);
+ROS:
+void image_cb(const ImageConstPtr& msg)
+{
+   imshow("view", toCvShare(msg, "bgr8")->image);
+}
+Subscriber sub = it.subscribe("camera/image", 1, image_cb);
+\end{lstlisting}
+\subsection{Lambda-Funktionen}
+\label{subsec:Lambda-Funktionen}
+Definiert ein anonymes Funktions-Objekt direkt an dem Ort, an dem es aufgerufen wird oder kann als Argument für eine Funktion eingesetzt werden.
+Eine Lambda Funktion kann einen Funktionszeiger ersetzen. Typischerweise werden sie verwendet um Code-Zeilen zu Kapseln um sie dann Algorithmen oder Asynchronen Methoden zu übergeben. In dieser Arbeit wurden Lambda-Funktionen verwendet, um STL-Funktionen zu erweitern. Im Folgenden ist ein Beispiel gegeben, um die kleinste euklidische Distanz von einem Punkt zu einem Vector-Container aus Linienpunkten zu finden.
+\begin{lstlisting}
+double Distanz2d(const Point p1, const Point p2)
+{
+        return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
+}
+vector<Point> linien_punkte;
+linien_punkte.push_back(Point(14,30));
+linien_punkte.push_back(Point(16,40));
+linien_punkte.push_back(Point(13,60));
+linien_punkte.push_back(Point(15,80));
+Point vergleichs_punkt = Point(15,38);
+min_element(linien_punkte.begin(), 
+            linien_punkte.end(),
+            [=vergleichs_punkt] (const Point& lhs, const Point& rhs) 
+            {
+return (Distanz2d(vergleichs_punkt,lhs)<Distanz2d(vergleichs_punkt,rhs)); 
+} 
+);
+\end{lstlisting}
+
+\section{Einführung in die Open Computer Vision Software-Bibliothek}
+\label{sec:Einführung in die Open Computer Vision Software-Bibliothe}
+Die Programmierbibliothek OpenCV in der Version [X] ist im ROS-Framework bereits integriert und steht für Open Computer Vision. OpenCV enthält Algorithmen für die Bildverarbeitung und das maschinelle Lernen und ist in C++ programmiert. OpenCV ist dabei auf die Bildverarbeitung in Echtzeit ausgelegt. Intel leitetw die Entwicklung dieser Open Source Bibliothek ein, um den Verkauf von neuer Hardware zu begünstigen. OpenCV verfügt auch über Module die es erlauben Algorithmen parallel auszuführen, um einen Performanz Steigerung zu ermöglichen. Mit der CUDA-API von OpenCV lassen sich Algorithmen auf NVIDIA-Hardware, wie deren Grafikkarten oder dem NVIDIA Jetson-Board, ausführen. Auch eine OpenCL-API ist vorhanden um Algorithmen auf Intel-, AMD- oder spezieller ASIC-Hardware zu ermöglichen. Mit OpenCV lassen sich auch kleine User-Interfaces programmieren. [EXPORTIERE ZU BIRDSEYE BESCHREIBUNG]Durch diese können zum Beispiel mit Verschiebereglern Variablen der Birdseye-Transformationsmatrizen zur Laufzeit des Programms angepasst werden.
+
+
+
+\section{Einführung in das Robot Operating System Framework}
+\label{sec:Einführung in das Robot Operating System Framework}
+Das Robot Operating System (ROS) ist ein Open Source Framework, das primär für die Robotik-Forschung entwickelt wurde. Es ist eine Ansammlung von Tools, Programmbibliotheken und Konventionen zum Erleichtern der Entwicklung komplexer Robotik Anwendungen. Das Hauptziel dieses Frameworks ist die Förderung der Wiederverwendung von Code in der Robotik-Forschung und Entwicklung. Im Bereich des autonomen Fahrens wird ROS zum Beispiel von der Bosch-Gruppe oder dem Fraunhofer Institut verwendet, um Applikationen zu testen. Auch einige Carolo-Cup-Teams nutzen ROS[links].  Verwendbare Programmiersprachen sind hierbei C++ und Python. Verwendet wird die ROS-Distribution Melodic Morenia welche kompatibel zu Ubuntu 18.04 ist. Auf die in dieser Arbeit genutzten ROS-Features wird in diesem Abschnitt eingegangen.
+
+%https://miro.medium.com/max/1193/1*fyWZBFPKEoLedhvo7nZyMQ.jpeg
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/003_Kapitel2/Bilder/ros_communication}% keine extention: wählt jpg für DVI
+  \caption[DieROSKommunikationsarchitektur]%
+           {\label{fig:DieROSKommunikationsarchitektur}%
+           Die ROS Kommunikationsarchitektur.}
+\end{center}
+\end{figure}
+
+
+\subsection{Nodes}
+\label{subsec:Nodes}
+
+ROS ist ein verteiltes System bestehend aus Prozessen, sogenannten Nodes welche es ermöglichen individuell ausführbare Programme zur Laufzeit einfach miteinander kommunizieren zu lassen. Diese Prozesse sind freilaufend über die ROS-Kommunikationsinfrastruktur verbunden.
+
+\subsection{Topics}
+\label{subsec:Topics}
+Sind Datenbusse über welche ROS-Nachrichten asynchron ausgetauscht werden können. Nodes können Daten auf verschiedene Topics senden (publish), während andere Nodes diese Topics auslesen (subscribe) können, um die Daten weiterzuverarbeiten. Dadurch lässt sich die Produktion und der Konsum von Informationen entkoppeln. Mit einer solchen Softwarearchitektur können unabhängig entwickelte Softwarekomponenten verwendet und in bestehende Systeme integriert werden. Ein weiterer Vorteil ist dabei das durch Topics klare Schnittstellen zu anderen Nodes festgelegt werden und ein sauberes Programmieren erzwungen wird.
+
+\subsection{Messages}
+\label{subsec:Messages}
+Um den Datenaustausch über Topics zu vereinfachen, nutzt ROS die Standardisierung von Daten und deren Format. Dies wird mit sogenannten ROS-Messages umgesetzt. Diese Messages beschreiben die Datenstrukturen, welche auf ROS-Topics gesendet werden und ermöglicht es ROS-Tools automatisch Quellcode für den Message-Typ in verschiedenen Programmiersprachen zu generieren. Als Beispiel kann die ROS-Message sensor{\tiny\_}msgs/Image genannt werden, welche die Breite und Höhe wie auch die Pixelcodierung eines auf eine Topic gesendeten Kamera-Frames de?niert.
+
+\subsection{Packages}
+\label{subsec:Packages}
+In ROS wird Software in Packages verarbeitet. Ein Package kann eine ROS-Node enthalten, eine von ROS unabhängige Programmbibliothek, ein Datenset von Kon?gurations-Dateien, die Software eines Drittanbieters, kurz gesagt jede mögliche Art von nützlichen Software-Modulen. Dabei ist das Ziel dieser Packages ein einfaches Wiederverwenden von Softwarefunktionalitäten zu ermöglichen.
+
+\section{Einführung in das Catkin Build-System}
+\label{sec:Einführung in das Catkin Build-System}
+Catkin ist das Meta-Buildsystem von ROS. Es ermöglicht automatische Builds der Software im ROS-Workspace. Unter Ausnutzung des Cross-Platform Build-Management-Tools CMake werden separat abhängige CMake-Projekte in einem Build zu einem großen CMake-Projekt zusammengeführt.
+Dies wird durch eine spezielle Top-Level CMakeLists.txt erreicht. Bevor es CMake gab, musste für jede Plattform und für jeden Compiler und Linker manuell ein eigenes Makefile geschrieben werden. CMake automatisiert diesen Prozess mittels plattformunabhängiger Bauanweisungen für Makefiles. CMake generiert Dateien für verschiedene Build-Tools wie Make, Ninja, Apple's Xcode und Microsoft Visual Studio. CMake wird auch von einigen IDEs wie Qt-Creator direkt verwendet. Der Build-Prozess mit CMake erfolgt in zwei Schritten. Zunächst werden Standardbuilddateien aus Konfigurationsdateien (CMakeLists.txt) erstellt. Dann werden die nativen Build-Tools der Plattform für das eigentliche Builden verwendet. Unter Linux ist Make das native Build-Tool und das Makefile die Standardbuilddatei. Das Makefile weist Make an wie es ein Programm für die verwendete Hardware-Plattform zu kompilieren und zu Linken hat. Jeder Kompilier-Vorgang erzeugt eine Objektdatei, die einer Quelldatei entspricht. Wenn eine Quelldatei erneut kompiliert wurde, müssen alle Objektdateien, unabhängig davon, ob sie neu erstellt oder aus früheren Kompilierungen gespeichert wurden, durch den Linker miteinander verknüpft werden, um das neue ausführbare Programm zu erstellen. Im Folgenden soll veranschaulicht werden wie der Aufbau einer CMakeLists.txt in ROS gestaltet sein muss, um ausführbaren Programm-Code erzeugen zu können.
+
+
+
+
+\begin{enumerate}
+
+\item[] \textbf{CMAKE\_MINIMUM\_REQUIRED()} \hfill \\
+Legt die minimal erforderliche Version von cmake für ein Projekt fest.
+Wenn die aktuelle Version von CMake niedriger ist als die erforderliche Version, wird das Projekt nicht mehr verarbeitet und ein Fehler gemeldet.
+
+
+\item[] \textbf{PROJECT()}\hfill \\
+Legt den Namen des Projekts fest und speichert ihn in der Variablen PROJECT\_NAME. Beim Aufruf aus der obersten Ebene (Top-Level) speichert CMakeLists.txt auch den Projektnamen in der Variablen CMAKE\_PROJECT\_NAME.
+
+
+\item[] \textbf{ADD\_COMPILE\_OPTIONS()}\hfill \\
+Fügt Kompilieroptionen unter der Variablen COMPILE\_OPTIONS hinzu. Diese Optionen werden beim kompilieren von Targets aus dem aktuellen Verzeichnis und darunter verwendet. Hier kann zum Beispiel der C++-Standard festgelegt werden.
+
+\item[] \textbf{find\_package()}\hfill \\
+Sucht und lädt Einstellungen aus externen Projekten. <package>\_FOUND wird gesetzt, um anzuzeigen, ob das Paket gefunden wurde. Wenn das Paket gefunden wird, werden paketspezifische Informationen über Variablen und importierte Targets bereitgestellt.
+Die Funktion wird benötigt, um Catkin-Makros zu laden und Abhängigkeiten zu anderen ROS-Paketen anzugeben.
+Es definiert Abhängigkeiten für dieses Package.
+
+
+\item[] \textbf{catkin\_package()}\hfill \\
+Dies ist ein Catkin-Makro. Es ist für die ROS-spezifische Konfiguration des Pakets verantwortlich. Es ist der wesentliche Teil, der ein ROS-Paket von einem normalen CMake-Projekt unterscheidet. Es deklariert Abhängigkeiten für Packages welche dieses Package Inkludieren wollen.
+
+
+\item[] \textbf{include\_directiories()}\hfill \\
+ügt die angegebenen Verzeichnisse zu den Verzeichnissen hinzu, in denen der Compiler nach Include-Dateien sucht. Relative Pfade werden als relativ zum aktuellen Quellverzeichnis interpretiert. Die Include-Verzeichnisse werden für die aktuelle CMakeLists.txt-Datei der Variablen INCLUDE\_DIRECTORIES hinzugefügt.
+
+
+\item[] \textbf{add\_exetutable()}\hfill \\
+Fügt dem Projekt eine ausführbare Datei mit den angegebenen Quelldateien hinzu.
+
+
+\item[] \textbf{target\_link\_libraries()}\hfill \\
+Verknüpft ein Target mit den angegeben Libraries (Linken) auch spezielle Flags können gesetzt werden.
+
+
+\end{enumerate}
+
+
+

@@ -1,12 +1,36 @@
 #ifndef SAFE_DRIVE_AREA_EVALUATION_H
 #define SAFE_DRIVE_AREA_EVALUATION_H
 
+#include <iostream>
+#include <stdio.h>
+#include <string>
+#include <ctime>
+
+#include <ros/ros.h>
+#include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
+
+#include <opencv2/core/mat.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgcodecs.hpp>
+
+
+#include "datatypes.h"
+#include "line_validation_table.h"
+#include "utils.h"
+#include "defines.h"
+
+
+using namespace std;
+using namespace cv;
+using namespace valid_line_point_search;
 
 class SafeDriveAreaEvaluation
 {
 
 private:
-    void FollowTrack(float search_direction, Point rect_mid_point, Mat &rgb);
+    void FollowTrack(float search_direction, Point rect_mid_point);
         const Point kStartMidPointOfRectSafety_ = Point(612,360);
         const float kStartSearchDirectionOfRectSafety_ = 90;
 
@@ -25,7 +49,7 @@ private:
             vector<LineValidationTable> mid_line_points_in_rect_;
             vector<LineValidationTable> right_line_points_in_rect_;
 
-        void FillPriorityTables(vector<LineValidationTable>& left_line_direction_in_range_,vector<int> left_line_points_in_rect_ids_, vector<LineValidationTable>& mid_line_direction_in_range_,vector<int> mid_line_points_in_rect_ids_,vector<LineValidationTable>& right_line_direction_in_range_,vector<int> right_line_points_in_rect_ids_);
+        void FillPriorityTables(vector<LineValidationTable>& left_line_in_drive_direction_table_,vector<int> left_line_points_in_rect_ids_, vector<LineValidationTable>& mid_line_in_drive_direction_table_,vector<int> mid_line_points_in_rect_ids_,vector<LineValidationTable>& right_line_in_drive_direction_table_,vector<int> right_line_points_in_rect_ids_);
             void FillPriorityTable(LineValidationTable table,int i, bool found_point1,bool found_point2,bool prediction1,bool prediction2, bool directions_in_range1, bool directions_in_range2, vector<vector<int>>& priority_ids,vector<vector<LineValidationTable>>& priority_table);
                 vector<vector<int>> left_priority_ids_{14};
                 vector<vector<int>> mid_priority_ids_{14};
@@ -39,7 +63,7 @@ private:
             RectSafetyTable mid_line_rect_safety_;
             RectSafetyTable right_line_rect_safety_;
             const float kSearchRectHeight_ = 80;
-            //void ExtractMinMaxLineElements( vector<LineValidationTableCreation>  line,  MinMaxLineElements& line_minmax_elements );
+            //void ExtractMinMaxLineElements( vector<SafeDriveAreaEvaluation>  line,  MinMaxLineElements& line_minmax_elements );
             const int kMinYDistanceInRect_ = 15;
             const int kMinStraightDifferenceForStraightLineInRect_ = 15;
             const int kRectBorderDistanceThreshold_ = 10;
@@ -78,9 +102,23 @@ private:
         const int kRightToLeftDriveLaneOffset_ = 93;
 
 
+        vector<LineValidationTable> left_line_in_drive_direction_table_;
+        vector<LineValidationTable> mid_line_in_drive_direction_table_;
+        vector<LineValidationTable> right_line_in_drive_direction_table_;
+
+float GetOrthogonalAngle(float angle, int SEARCH_LINE_CODE);
+void ExtractMinMaxLineElements( vector<LineValidationTable>  line,  MinMaxLineElements& line_minmax_elements );
+
+
+
 
 public:
-    SafeDriveAreaEvaluation();
+        void LoadLinePointsInDriveDirection(vector<LineValidationTable> left_line_in_drive_direction_table,vector<LineValidationTable>mid_line_in_drive_direction_table,vector<LineValidationTable>right_line_in_drive_direction_table);
+    void EvaluateTrackInDriveDirection();
+    void DrawEvaluatedSafetyAreasInDriveDirection(Mat& rgb);
+
+    void ClearValidationTables();
+    //SafeDriveAreaEvaluation();
 };
 
 #endif // SAFE_DRIVE_AREA_EVALUATION_H

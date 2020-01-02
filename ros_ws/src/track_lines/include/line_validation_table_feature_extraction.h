@@ -24,12 +24,21 @@
 
 using namespace std;
 using namespace cv;
-
+using namespace valid_line_point_search;
 class LineValidationTableFeatureExtraction
 {
 
 
 private:
+
+    Mat current_image_;
+
+    Mat labeled_image_;
+    Mat components_stats_;
+    Mat components_centroids_;
+    int components_count_ = 0;
+
+    const int kConnectionCount_ = 8;
 
     vector<LineValidationTable> left_line_validation_table_;
     vector<LineValidationTable> mid_line_validation_table_;
@@ -55,12 +64,15 @@ private:
             LastAdjacentPointMatch mid_line_last_adjacent_point_match_;
             LastAdjacentPointMatch right_line_last_adjacent_point_match_;
 */
+        void ExtractMinMaxLineElements( vector<LineValidationTable>  line,  MinMaxLineElements& line_minmax_elements );
 
 public:
     //LineValidationTableFeatureExtraction();
+        void LoadImage(Mat image){current_image_ = image;};
     void LoadLineValidationTables(vector<LineValidationTable> left_line_validation_table,vector<LineValidationTable>mid_line_validation_table,vector<LineValidationTable>right_line_validation_table);
     void GetLinePointsInDriveDirection(vector<LineValidationTable> &l,vector<LineValidationTable> &m,vector<LineValidationTable> &r);
     void DrawLinePointsInDriveDirection(Mat &rgb);
+    void SearchCrossRoad(Mat &rgb);
     void ClearMemory();
 };
 

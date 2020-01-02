@@ -1,0 +1,49 @@
+%
+%% Kapitel: Stand der Technik
+%%======================================================================
+
+\chapter{Auswahl der Entwicklungsumgebung}
+\label{cha:Auswahl der Entwicklungsumgebung} \index{Auswahl der Entwicklungsumgebung}
+
+Um Software effizient entwickeln zu k{\"o}nnen ist eine geeignete Programmierumgebung unabdingbar. 
+Da nicht jede Entwicklungsumgebung mit ROS kompatibel ist und jeder dieser IDEs ihre vor und Nachteile besitzt wurde wurden Methoden der Entscheidungstheorie angewandt um die bestm{\"o}gliche IDE auszuw{\"a}hlen.
+
+Durch die Methode Paarweiser Vergleich wurden die Gewichtungen vor eine Nutzweranalyse ermittelt. Es stellte sich heraus das bei der Auswahl einer IDE vorallem wichtig ist das Sie mit dem Betriebssystemlinux kompatibel ist, sie den Code mit CMake buildet und einen guten Debug-Modus hat.
+
+
+
+
+
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/004_Kapitel3/Bilder/paarweiser_vergleich_ide}% keine extention: wählt jpg für DVI
+  \caption[PaarweiserVergleichIDE]%
+           {\label{fig:PaarweiserVergleichIDE}%
+           Paarweiser Vergleich wichtiger Attribute einer Entwicklungsumgebung.}
+\end{center}
+\end{figure}
+
+Durch die Nutzwertanalyse konnten nun die zur Verfügung stehenden Entwicklungsumgebungen verglichen werden. 
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/004_Kapitel3/Bilder/nutzwertanalyse_ide}% keine extention: wählt jpg für DVI
+  \caption[NutzwertAnalyseIDE]%
+           {\label{fig:NutzwertAnalyseIDE}%
+           Auswertung der Nutzwertanalyse von verschiedenen Entwicklungsumgebungen.}
+\end{center}
+\end{figure}
+
+
+Wie in Abbildung [X] zu sehen ist, ergibt sich durch die Auswertung der Nutzwertanalyse das die Qt-Creator DIE die beste Wahl f{\"u}r die gestellten Anforderungen ist. Vorallem weil sie stark in der Industrie und Forschung angewandt wird viel die Wahl auf den Qt-Creator. Zudem ist Qt mit zugeh{\"o}rigem ROS-Plugin sehr einfach mit einem run skript zu installieren.
+%https://ros-qtc-plugin.readthedocs.io/en/latest/_source/How-to-Install-Users.html
+
+
+
+%\begin{enumerate}
+
+%\item
+%\end{enumerate}
+
+

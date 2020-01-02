@@ -452,6 +452,60 @@ include/mid_line_search.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/mid_line_search.cpp.s
 .PHONY : include/mid_line_search.cpp.s
 
+include/perceptual_grouping.o: include/perceptual_grouping.cpp.o
+
+.PHONY : include/perceptual_grouping.o
+
+# target to build an object file
+include/perceptual_grouping.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/perceptual_grouping.cpp.o
+.PHONY : include/perceptual_grouping.cpp.o
+
+include/perceptual_grouping.i: include/perceptual_grouping.cpp.i
+
+.PHONY : include/perceptual_grouping.i
+
+# target to preprocess a source file
+include/perceptual_grouping.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/perceptual_grouping.cpp.i
+.PHONY : include/perceptual_grouping.cpp.i
+
+include/perceptual_grouping.s: include/perceptual_grouping.cpp.s
+
+.PHONY : include/perceptual_grouping.s
+
+# target to generate assembly for a file
+include/perceptual_grouping.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/perceptual_grouping.cpp.s
+.PHONY : include/perceptual_grouping.cpp.s
+
+include/safe_drive_area_evaluation.o: include/safe_drive_area_evaluation.cpp.o
+
+.PHONY : include/safe_drive_area_evaluation.o
+
+# target to build an object file
+include/safe_drive_area_evaluation.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/safe_drive_area_evaluation.cpp.o
+.PHONY : include/safe_drive_area_evaluation.cpp.o
+
+include/safe_drive_area_evaluation.i: include/safe_drive_area_evaluation.cpp.i
+
+.PHONY : include/safe_drive_area_evaluation.i
+
+# target to preprocess a source file
+include/safe_drive_area_evaluation.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/safe_drive_area_evaluation.cpp.i
+.PHONY : include/safe_drive_area_evaluation.cpp.i
+
+include/safe_drive_area_evaluation.s: include/safe_drive_area_evaluation.cpp.s
+
+.PHONY : include/safe_drive_area_evaluation.s
+
+# target to generate assembly for a file
+include/safe_drive_area_evaluation.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/safe_drive_area_evaluation.cpp.s
+.PHONY : include/safe_drive_area_evaluation.cpp.s
+
 include/start_of_lines_search.o: include/start_of_lines_search.cpp.o
 
 .PHONY : include/start_of_lines_search.o
@@ -577,6 +631,12 @@ help:
 	@echo "... include/mid_line_search.o"
 	@echo "... include/mid_line_search.i"
 	@echo "... include/mid_line_search.s"
+	@echo "... include/perceptual_grouping.o"
+	@echo "... include/perceptual_grouping.i"
+	@echo "... include/perceptual_grouping.s"
+	@echo "... include/safe_drive_area_evaluation.o"
+	@echo "... include/safe_drive_area_evaluation.i"
+	@echo "... include/safe_drive_area_evaluation.s"
 	@echo "... include/start_of_lines_search.o"
 	@echo "... include/start_of_lines_search.i"
 	@echo "... include/start_of_lines_search.s"

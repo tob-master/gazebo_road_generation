@@ -1,0 +1,227 @@
+%
+% Makros       
+% 120409ar
+% 
+%%=============================================================================
+%% Abkürzungen (Abteilung "Faulheit")
+%%=============================================================================
+%
+% --- Gleichungen 
+% Syntax: \beq{NAME DER GLEICHUNG} 
+%         \eeq
+% Referenz: \ref{eqt:NAME DER GLEICHUNG}
+%
+% begin
+\newcommand{\beq}[1]
+           {
+            \begin{equation}
+            \label{#1}
+           }
+% end
+\newcommand{\eeq}
+           {
+             \end{equation}
+           }
+\newcommand{\ba}{\begin{array}}
+\newcommand{\ea}{\end{array}}
+
+\newcommand{\bdm}{\begin{displaymath}}
+\newcommand{\edm}{\end{displaymath}}
+	   
+% --- Itemize 
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+
+% --- Enumerate
+\newcommand{\be}{\begin{enumerate}}
+\newcommand{\ee}{\end{enumerate}}
+
+% ---
+\newcommand{\bd}{\begin{description}}
+\newcommand{\ed}{\end{description}}
+
+%Römisches Zahlen
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+
+% Fussnoten
+% Syntax: \fn legt fest, wo das Fußnotenzeichen steht
+%         \fnt{FUSSNOTENTEXT} legt den Text fest
+\newcommand{\fn}{\footnotemark}
+\newcommand{\fnt}[1]{\footnotetext{#1}}
+
+\newcommand{\s}{\scriptscriptstyle}
+\newcommand{\D}{\displaystyle}
+
+\newcommand{\bff}[1]{\noindent {\textbf{#1}}}
+
+\newcommand{\ol}{\ddot{O}l}
+\newcommand{\p}{\partial}
+\newcommand{\Dp}{\Delta p}
+\newcommand{\te}{$\vartheta$}             % theta
+\newcommand{\cT}{\vartheta}               %      Celsiustemperatur muss erhalten bleiben
+\newcommand{\Ct}{\vartheta}               %var   Celsiustemperatur kann evtl in t geändert werden
+
+\newcommand{\R}{{\em\bf R}}               % Universelle Gaskonstante fett
+\newcommand{\C}{$^\circ$C}                % Grad Celsius
+%\newcommand{\C}{~\textcentigrade{}}                % Grad Celsius
+%\newcommand{\CC}{^\circ\mbox{C}}                % Grad Celsius
+\newcommand{\CC}{\,^\circ\mathrm{C}}                % Grad Celsius
+\newcommand{\CCe}{^\circ\mathrm{C}}                % Grad Celsius
+\newcommand{\mue}{\textmu}
+\renewcommand{\d}{\partial\mspace{2mu}}   % partielles Diff. Zeichen 
+\newcommand{\td}{\,\mathrm{d}}           	% totales Diff (d, nicht kursiv)
+\newcommand{\ddt}[1]{\frac{\td #1}{\td t}}% zweifach 
+
+%% ggfl. umschreiben mit \text{}
+\newcommand{\idx}[1]{_\mathrm{#1}}        % nicht kursiver Index in Gleichungen geht nur mit Umlauten wie "a
+\newcommand{\idxi}[2]{_{\mathrm{#1,}{#2}}}% nicht kursiver Index in Gleichungen geht nur mit Index 
+\newcommand{\idy}[1]{^\mathrm{#1}}        % nicht kursiver Index in Gleichungen geht nur mit Umlauten wie "a
+
+
+\newcommand{\bul}{$\bullet$}              % Mark in Tabs
+\newcommand{\Q}{$\bullet$}                % mark2 in Tabs
+\newcommand{\mc}{\multicolumn}
+
+%\def\dbar{{\mathchar'26\mkern-12mu d}}  %(The space after the \mu" is optional but is added f
+\def\dbar{{\mathchar'26\mkern-11mu\mathrm{d}}}  %130102ar hier für lmodern,  achtung passt nich bei jedem Font !
+%\def\dbar{{\mathchar'26\mkern-9mu\mathrm{d}}}  %130102ar hier für times !
+
+\def\bzw{bzw.\ }
+\def\bspw{bspw.\ }
+\def\ca{ca. }
+\def\dh{d.\,h.\ }
+\def\etc{etc.\ }
+\def\evtl{evtl. }
+\def\ggf{ggf.\ }
+\def\inkl{inkl.\ }
+\def\oä{o.\,ä.\ }
+\def\og{o.\,g.\ }
+\def\so{s.\,o.}
+\def\su{s.\,u.}
+\def\ua{u.\,a.\ }
+\def\zB{z.\,B.\ }
+\def\zT{z.\,T.\ }
+
+%% Spezialitäten für klimatechnik
+\def\mp{\dot{m}}
+\def\m.{\dot{m}} % geht
+\def\V.{\dot{V}} % geht
+\def\pws{p\idx{W}\idy{s}(T)} % geht
+
+\newcommand{\name}[1]{\textsc{#1}}  % für Firmen, Autoren
+
+\def\Re{\mathin{Re}}
+\def\Nu{\mathin{Nu}}
+\def\Pr{\mathin{Pr}}
+
+%%
+%%
+%%
+\newcommand{\uu}[1]{\emph{#1}}  %Texthervorhebung
+%%
+%% Refrenzen -------------------------------------------------
+%%
+%\newcommand{\RefTab}[1]{$\underline{\mbox{Tab.~\ref{#1}}}$}   % 1. Tabellenref. im Text
+%\newcommand{\RefFig}[1]{$\underline{\mbox{Abb.~\ref{#1}}}$}   % 1. Bildref.
+%\newcommand{\RefTab}[1]{\textbf{Tabelle~\ref{#1}}}             % 1. Tabellenref. im Text
+\newcommand{\RefTab}[1]{{\small \color{LinkColor}$\blacktriangleright${Tabelle~\ref{#1}}}} % 1.
+
+%\newcommand{\RefFig}[1]{{\color{blue}$\blacktriangleright$\textbf{Bild~\ref{#1}}}} % 1.
+%\newcommand{\RefFig}[1]{{\color{LinkColor}$\blacktriangleright$\textbf{Bild~\ref{#1}}}} % 1.
+%\newcommand{\RefFig}[1]{\textbf{Bild~\ref{#1}}}                % 1. Bildref.
+%\newcommand{\RefFig}[1]{{\color{LinkColor}$\blacktriangleright${Bild~\ref{#1}}}} % 1.
+\newcommand{\RefFig}[1]{{\small \color{LinkColor}$\blacktriangleright${Bild~\ref{#1}}}} % 1.
+
+%\newcommand{\RefTabc}[1]{Tabelle~\ref{#1}}                     % 2. Tabellenref. im Text
+\newcommand{\RefTabc}[1]{{\small Tabelle~\ref{#1}}}             % 2.
+%\newcommand{\RefFigc}[1]{Bild~\ref{#1}}                        % 2. Bildref.
+\newcommand{\RefFigc}[1]{{\small Bild~\ref{#1}}}                % 2. Bildref.
+
+\newcommand{\RefEq}[1]{\mbox{Gl.~(\ref{#1})}}                  % Gleichungen
+
+% \autoref{label} % Erzeugt link inkl dem Wort Abbbildung
+% \nameref{label} % Kapiteltext
+ 
+%
+%
+%
+\newcommand{\ZmE}[2]{$#1$~{#2}}                                % Zahl:#1 mit Einheiten#2 #3
+%\newcommand{\zme}[2]{$#1$~{#2}}                               % Zahl:#1 mit Einheiten#2 #3
+\newcommand{\zme}[2]{#1~\mbox{#2}}                             % Zahl:#1 mit Einheiten#2 #3
+\newcommand{\EH}[1]{#1}                                        %  Einheiten
+\newcommand{\B}[1]{\mbox{#1}}
+
+%-------------------------------------------------------------
+\newfont{\ssf}{cmss10 scaled 1000}
+\newfont{\ssb}{cmssbx10 scaled 1000}
+\newcommand{\cf}{\ssf}                 % CaptionFonts: in Bildunter- ,Tab?berschriften
+\newcommand{\rf}{\em}                  % RefFonts    : Kennzeichnung von Referenzen im Text
+\newcommand{\eng}{\tt}                 % englische Begriffe im deutschen Text 
+
+% Hinweis
+% Syntax: \oops{ÜBERSCHRIFT}{TEXT}
+%        : nach Überschtift wird automatisch eingefügt
+\newcommand{\oops}[2]{\begin{quote}\textbf{#1}:\\ {#2} \end{quote} }
+
+%---------------------------------------------------------------
+% Bildunter- und Tabellenüberschriften
+%---------------------------------------------------------------
+% z.B. andere Schrift, oder auch Schriftform und andere Abkürzung
+%
+% alternaiv : "Abbildungen" lassen und
+%  Zeilenumbruch bei Bildbeschreibungen einführen \setcapindent{1em}
+%
+% bessere Methoden: siehe Komaskript
+\def\figurename{Bild}          % oder: Bild z.B. {\bfseries Abb.}
+%\def\tablename{Tab.}          % oder: z.B. Tafel, Tab.
+
+\renewcommand*{\captionformat}{.~} % DIN lässt grüssen
+%\addtokomafont{caption}{\sffamily\small\raggedright}  % kleinere Schrift, linksbündig
+\addtokomafont{caption}{\sffamily\small}  % kleinere Schrift
+%\setkomafont{descriptionlabel}{\sffamily\small}
+\setkomafont{captionlabel}{\sffamily\bfseries}
+\setcaphanging
+\setcapindent{0em}             % kein Einzug
+
+%---------------------------------------------------------------
+% Kommentare 
+\newcommand{\Kommentar}[1]{{\em #1}} 
+
+
+% Verstecktes
+% Alles innerhalb von \Hide{} oder \ignore{}
+% wird von LaTeX komplett ignoriert (wie ein Kommentar)
+%------------------------
+% methode 1
+\newcommand{\Hide}[1]{}
+\let\ignore\Hide
+\newcommand{\HideB}[1]{}
+\let\ignore\HideB
+
+%--eigner Befehl, lässt sich besser modifizieren
+%
+\newcommand{\mynewpage}{\newpage}
+\newcommand{\myclearpage}{\clearpage}
+
+
+%\usepackage{tabularx} % automatische Spaltenbreite 
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+
+\newcommand{\LCIRC}[1]{{\large\textcircled{\normalsize \texttt{#1}}}}
+\newcommand{\NCIRC}[1]{\textcircled{ {\small \texttt{#1}} } }
+
+
+%Umgebung
+\def\d@nger{\marginpar[\hfill\dbend]{\dbend\hfill}}
+\newenvironment{danger}{\medskip\hspace{0pt}\d@nger}{\medskip}
+
+% for multicolumn
+\newcommand{\cg}{\centering}  %120409ar
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\Sum{\scalebox{0.7}{$\sum$}}
+\def\IntIm{\scalebox{1.2}{$I§}}

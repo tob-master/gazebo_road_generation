@@ -1,0 +1,5 @@
+ZITat in litertur.bib 
+dann in tex file mit cite erwähnen
+Main.tex builden mit LATEX
+MAIN.out mit BIBTEX builden
+MAIN.tex mit LATEX builden 

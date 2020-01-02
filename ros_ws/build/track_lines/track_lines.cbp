@@ -62,28 +62,88 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/houghline_transform.cpp">
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/connected_components.cpp">
 			<Option target="track"/>
 		</Unit>
-		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/houghline_transform.h">
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/connected_components.h">
 			<Option target="track"/>
 		</Unit>
-		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_classification.cpp">
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/dbscan.cpp">
 			<Option target="track"/>
 		</Unit>
-		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_classification.h">
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/dbscan.h">
 			<Option target="track"/>
 		</Unit>
-		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_tracker.cpp">
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/depth_first_search.cpp">
 			<Option target="track"/>
 		</Unit>
-		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_tracker.h">
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/depth_first_search.h">
 			<Option target="track"/>
 		</Unit>
-		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/midline_search.cpp">
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/lane_tracker.cpp">
 			<Option target="track"/>
 		</Unit>
-		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/midline_search.h">
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/lane_tracker.h">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_follower.cpp">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_follower.h">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_points_reducer.cpp">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_points_reducer.h">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_validation_table.cpp">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_validation_table.h">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_validation_table_creation.cpp">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_validation_table_creation.h">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_validation_table_feature_extraction.cpp">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_validation_table_feature_extraction.h">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/mid_line_search.cpp">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/mid_line_search.h">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/perceptual_grouping.cpp">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/perceptual_grouping.h">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/safe_drive_area_evaluation.cpp">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/safe_drive_area_evaluation.h">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/start_of_lines_search.cpp">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/start_of_lines_search.h">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/vanishing_point_search.cpp">
+			<Option target="track"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/vanishing_point_search.h">
 			<Option target="track"/>
 		</Unit>
 		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/src/line_tracker_node.cpp">

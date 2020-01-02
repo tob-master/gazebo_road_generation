@@ -1,0 +1,52 @@
+%
+%% Kapitel: Kapitel 4
+%%======================================================================
+
+\chapter{Startliniensuche mit dem Vanishing-Point Algorithmus}
+\label{cha:Startliniensuche mit dem Vanishing-Point Algorithmus}\index{Startliniensuche mit dem Vanishing-Point Algorithmus}
+%
+%
+Der Vanishing-Point-Algorithmus dient dazu sichere Startpunkte der linken und rechten Außenlinie zu finden. Er wurde nach der Beschreibung des Papers [X] implementiert.
+
+Das Verfahren liefert Punkte mit zugehörigem Winkel nahe dem Fahrzeug, nach denen gefahren werden kann. Zudem liefert es Informationen über fehlende Außenlinien.
+Der Vanishing-Point-Algorithmus wird auf dem Graustufenbild in Frontalsicht ausgeführt.
+Der Algorithmus führt die Liniensuche im unteren Bildbereich genau vor dem Fahrzeug aus.
+Auf diesen Bildbereich wird zuerst eine Kantenextraktion angewandt.
+Dies wird durch den Canny-Edge-Algorithmus erreicht.
+Canny nutzt Sobel-Operatoren in X- und Y- Richtung, die mit dem Bild an jeder Position gefaltet werden. Der Operator liefert eine hohe Filterantwort bei einem abrupten Übergang von niedrigen zu hohen Pixelintensitäten, welche als Kanten wahrgenommen werden. Zudem wird durch die beiden Sobel-Operatoren die Richtung, in welche die Kante zeigt, ermittelt. 
+Unter Berücksichtigung der Orientierung der Kante, werden lokale Maxima der Filterantwort extrahiert um Kantenübergänge auszudünnen.
+
+Die Extrahierten Merkmale werden im nächsten Schritt durch einen Hysterese-Schwellwert gefiltert. Dieser besteht aus zwei Schwellwerten S1 und S2.
+Alle Filterantworten, welche unter S1 und S2 liegen werden als Rauschen betrachtet und verworfen. Liegt eine Filterwort über S1 und S2 dann ist diese Position eine valide Kante. Werte die zwischen S1 und S2 liegen, werden nur als valide Kanten betrachten, wenn Sie mit Filterantworten verbunden sind, die über S1 und S2 liegen. Ansonsten werden diese auch als Rauschen verworfen.
+
+[Bild nach Canny]
+
+Darauf aufbauend, werden durch das Hough-Lines-Verfahren Linien im Bildbreich gesucht. Durch die Reduktion des Bildbereichs auf relevante Punkte, werden durch Hough-Lines weniger redundante Linien gefunden.
+Das Ziel von Hough-Lines ist es Pixel-Gruppen zu finden welche miteinander Linien formen. Hough-Lines transformiert dafür Pixel, beschrieben durch die Koordinaten X und Y, in einen anderen Merkmals-Raum den Hough-Raum. 
+
+Der Hough-Raum beschreibt alle Geraden, die durch ein Pixel laufen können über die hessesche Normalform D  = x *cos(alpha) + y* sin(alpha). Die neue Ordinate D beschreibt die euklidische Distanz zum Lotfußpunkt. Und die neue Abszisse alpha steht für den Winkel zwischen dem Lot der Geraden hin zur Abszisse. Nachdem jedes Pixel des Bildraums in den Hough-Raum transformiert wurde, ergibt sich eine Voting-Matrix deren Häufigkeitspunkte mögliche geraden im Bildraum beschreiben. Durch das Setzen eines Schwellwertes, werden nur geraden über einer gewissen Anzahl von Häufigkeitspunkten gefunden, welche nach Rücktransformation die zu suchenden Außenlinien darstellen.
+
+[Hough Raum Bild]
+
+Die OpenCV-Funktion Hough-Lines liefert die Anfangs- und Endpunkte der gefundenen Linien zurück.
+Darauf folgt das Drehen der Linien. in die Fahrtrichtung des Fahrzeugs, im Bild.
+Nun werden die Linien aussortiert, welche nicht in den Bildbereichen liegen, in denen die Außenlinien vorkommen. Dabei wird davon ausgegangen, dass sich das Fahrzeug in der rechten Fahrspur befindet. Da der Algorithmus auf der Frontalansicht arbeitet, können die Hough-Linien weiter durch ihre Winkel validiert werden. Alle Linien im linken und rechten Bereich werden darauf hin überprüft, ob sie zwischen einem minimalen und maximalen Winkel liegen. Falls dies nicht der Fall ist, werden diese auch verworfen.
+Wenn nur eine oder keine Außenlinie aufzufinden ist, terminiert der Algorithmus.
+Werden beide Außenlinien gefunden, wird untersucht ob die linken und rechten Hough-Linien einen gemeinsamen Schnittpunkt haben. Dieser Schnittpunkt wird auch Vanishing-Point genannt und gibt die Fahrtrichtung des Fahrzeugs an.
+Es werden alle Permutation von Schnittpunkten der Linien berechnet.
+Hier kommt wieder die in [XX] beschriebene Funktion isPertmuted zum Einsatz.
+Um nun den besten Vanishing-Point zu finden, nach dem gefahren werden kann, wird der Mittelwert und die Standardabweichung der Punkte berechnet.
+In einer While-Schleife werden nur Punkte in Betracht gezogen, welche unter einen maximalen Standardabweichung liegen. Aus diesen wird dann ein neuer Mittelwert berechnet. Liegen keine Punkte unter der maximalen Standardabweichung vor, erhöht diese sich immer weiter um eins, bis Punkte gefunden werden, aus welchen der neue Mittelwert berechnet werden kann. 
+Ist die Berechnung abgeschlossen, terminiert der Algorithmus und es werden Folgende Parameter zurückgegeben.
+
+
+
+
+
+
+
+
+
+
+
+

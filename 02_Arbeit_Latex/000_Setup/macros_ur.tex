@@ -1,0 +1,265 @@
+%
+% Makros       
+% 060911ar
+% 060926ar evtl. Unterschied zu Richtlinie
+%******************************************************************************
+
+
+%%=============================================================================
+%% Neue, neudefinierte Befehle
+%%=============================================================================
+
+%-------------------------------------------------------------------
+% Abbildungen **** Empfehlung: Kopiervorlage nutzen und anpassen, nicht Makro!
+%-------------------------------------------------------------------
+% Vorsicht: Dateinamen in UNIX-Syntax und relativ zu main.tex
+%
+% Syntax gilt für alle unterstützten Grafikformate!
+% Voraussetzung: die Datei existiert und die Endung wird NICHT 
+% im Dateinamen angegeben!
+%
+% Syntax: 
+% \fg {DATEINAME}% = caption
+%          {Ort auf Blatt} htbf
+%          {BREITE} % vorzugsweise als Teil der TExtbreite z.B. '0.8\textwidth'
+%          {ROTATIONSWINKEL}%
+%          {Bildtitel im Abbildungsverzeichnis}
+%          {BILDUNTERSCHRIFT}%
+%
+% Kopiervorlage 
+% \fg{Datei}{Ort}{Breite}{Rotation}{Bildtitel im Abbildungsverzeichnis}{Bildunterschrift}%
+
+\newcommand{\fg}[6]
+             {
+              \begin{figure}[#1]
+              \begin{center}
+              \includegraphics[width=#3, angle=#4]{#2}
+              \caption[#4]{%
+              \label{fig:#2}%
+              #5}
+              \end{center}
+              \end{figure}
+             }
+
+             
+%-------------------------------------------------------------------
+% Abbildungen caption beside
+%-------------------------------------------------------------------
+% Kopiervorlage: in den Quelltext kopieren, dann dort umbrechen
+%\fgB{Datei}{Ort, !h oder tbh}{Breite}{Rotation}{Bildunterschrift}{i}{Text}
+%
+% Syntax: 
+%\fgB {DATEINAME}
+%        {Ort, !h oder tbh}   
+%        {BREITE} % vorzugsweise als Teil der TExtbreite z.B. '0.8\textwidth'
+%        {ROTATIONSWINKEL}
+%        {BILDUNTERSCHRIFT}
+%        {Ausrichtung Caption= i oder o}
+%        {Text im Abbildungsverzeichnis}
+%
+% Vorsicht: Dateinamen in UNIX-Syntax und relativ zu main.tex
+% evtl ist der Abstand zwischen Text und Bild zu klein
+% dann ändern (siehe Koma skript  
+\newcommand{\fgB}[7]
+             {
+              \begin{figure}[#2]
+              %\setcapindent*{1em}  %hängender Einzug ab 2. Zeile
+              \begin{captionbeside}[#7]%
+              {#5}[#6][\linewidth]%
+              %[2em]* %Verschiebung nach aussen
+              \includegraphics[width=#3, angle=#4]{#1}
+              \end{captionbeside}%              
+              \label{fig:#1}
+              \end{figure}
+             }             
+%-------------------------------------------------------------------
+% Tabellen
+%-------------------------------------------------------------------
+% Syntax: \bt{SPALTENDEFINITION} - Begin Table
+%         \et{LABEL}{TABELLENBEZEICHNUNG}
+\newcommand{\bt}[3]
+           { 
+             \begin{table}[!h]
+             \begin{center}
+             \caption{\label{tbl:#2}#3}                          
+             \begin{tabular}{#1}
+           }
+\newcommand{\et}
+           {
+            \end{tabular}
+            \end{center}
+            \end{table}
+           }
+
+
+%%=============================================================================
+%% Abkürzungen (Abteilung "Faulheit")
+%%=============================================================================
+%
+% --- Gleichungen 
+% Syntax: \beq{NAME DER GLEICHUNG} 
+%         \eeq
+% Referenz: \ref{eqt:NAME DER GLEICHUNG}
+%
+% begin
+\newcommand{\beq}[1]
+           {
+            \begin{equation}
+            \label{eqt:#1}
+           }
+% end
+\newcommand{\eeq}
+           {
+             \end{equation}
+           }
+\newcommand{\beqa}{\begin{eqnarray}}         
+\newcommand{\eeqa}{\end{eqnarray}}
+
+\newcommand{\ba}{\begin{array}}
+\newcommand{\ea}{\end{array}}
+
+\newcommand{\bdm}{\begin{displaymath}}
+\newcommand{\edm}{\end{displaymath}}
+	   
+% --- Itemize 
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+
+% --- Enumerate
+\newcommand{\be}{\begin{enumerate}}
+\newcommand{\ee}{\end{enumerate}}
+
+% ---
+\newcommand{\bd}{\begin{description}}
+\newcommand{\ed}{\end{description}}
+
+% Fussnoten
+% Syntax: \fn legt fest, wo das Fußnotenzeichen steht
+%         \fnt{FUSSNOTENTEXT} legt den Text fest
+\newcommand{\fn}{\footnotemark}
+\newcommand{\fnt}[1]{\footnotetext{#1}}
+
+\newcommand{\s}{\scriptscriptstyle}
+\newcommand{\D}{\displaystyle}
+
+\newcommand{\ol}{\ddot{O}l}
+\newcommand{\p}{\partial}
+\newcommand{\Dp}{\Delta p}
+\newcommand{\te}{$\vartheta$}             % theta
+\newcommand{\R}{{\em\bf R}}               % Universelle Gaskonstante fett
+\newcommand{\C}{$^\circ$C}                % Grad Celsius
+\newcommand{\mue}{\textmu}
+\renewcommand{\d}{\partial\mspace{2mu}}   % partielles Diff. Zeichen 
+\newcommand{\td}{\,\mathrm{d}}           	% totales Diff (d, nicht kursiv)
+\newcommand{\ddt}[1]{\frac{\td #1}{\td t}}% zweifach 
+
+\newcommand{\idx}[1]{_\mathrm{#1}}        % nicht kursiver Index in Gleichungen geht nur mit Umlauten wie "a
+
+
+\newcommand{\bul}{$\bullet$}              % Mark in Tabs
+\newcommand{\Q}{$\bullet$}                % mark2 in Tabs
+\newcommand{\mc}{\multicolumn}
+
+
+\def\zB{z.\,B.\ }
+\def\dh{d.\,h.\ }
+\def\ua{u.\,a.\ }
+\def\so{s.\,o.}
+\def\su{s.\,u.}
+\def\og{o.\,g.\ }
+\def\oä{o.\,ä.\ }
+\def\zT{z.\,T.\ }
+\def\ca{ca. }
+\def\evtl{evtl. }
+
+\def\bzw{bzw.\ }
+\def\bspw{bspw.\ }
+\def\etc{etc.\ }
+\def\ggf{ggf.\ }
+\def\inkl{inkl.\ }
+
+\def\dbar{{\mathchar'26\mkern-12mu d}}  %(The space after the \mu" is optional but is added f
+
+
+%%
+%% Refrenzen
+%%
+%\newcommand{\RefTab}[1]{$\underline{\mbox{Tab.~\ref{#1}}}$}   % 1. Tabellenref. im Text
+%\newcommand{\RefFig}[1]{$\underline{\mbox{Abb.~\ref{#1}}}$}   % 1. Bildref.
+\newcommand{\RefTab}[1]{\textbf{Tabelle~\ref{#1}}}             % 1. Tabellenref. im Text
+\newcommand{\RefFig}[1]{\textbf{Bild~\ref{#1}}}                % 1. Bildref.
+\newcommand{\RefTabc}[1]{Tabelle~\ref{#1}}                        % 2. Tabellenref. im Text
+\newcommand{\RefFigc}[1]{Bild~\ref{#1}}                        % 2. Bildref.
+
+\newcommand{\RefEq}[1]{\mbox{Gl.~(\ref{#1})}}                  % Gleichungen
+
+%-------------------------------------------------------------
+%
+\newcommand{\ZmE}[2]{$#1$~{#2}}                                % Zahl:#1 mit Einheiten#2 #3
+%\newcommand{\zme}[2]{$#1$~{#2}}                               % Zahl:#1 mit Einheiten#2 #3
+\newcommand{\zme}[2]{#1~\mbox{#2}}                             % Zahl:#1 mit Einheiten#2 #3
+\newcommand{\EH}[1]{#1}                                        %  Einheiten
+\newcommand{\B}[1]{\mbox{#1}}
+
+%-------------------------------------------------------------
+
+\newfont{\ssf}{cmss10 scaled 1000}
+\newfont{\ssb}{cmssbx10 scaled 1000}
+
+\newcommand{\cf}{\ssf}                 % CaptionFonts: in Bildunter- ,Tab?berschriften
+\newcommand{\rf}{\em}                  % RefFonts    : Kennzeichnung von Referenzen im Text
+\newcommand{\eng}{\tt}                 % englische Begriffe im deutschne Text 
+
+% Hinweis
+% Syntax: \oops{ÜBERSCHRIFT}{TEXT}
+%        : nach Überschtift wird automatisch eingefügt
+\newcommand{\oops}[2]{\begin{quote}\textbf{#1}:\\ {#2} \end{quote} }
+
+
+%---------------------------------------------------------------
+% Bildunter- und Tabellenüberschriften
+%---------------------------------------------------------------
+% z.B. andere Schrift, oder auch Schriftform und andere Abkürzung
+%
+% alternaiv : "Abbildungen" lassen und
+%  Zeilenumbruch bei Bildbeschreibungen einführen \setcapindent{1em}
+%
+% bessere Methoden: siehe Komaskript
+\def\figurename{Bild}          % oder: Bild z.B. {\bfseries Abb.}
+%\def\tablename{Tab.}          % oder: z.B. Tafel, Tab.
+
+\renewcommand*{\captionformat}{.~} % DIN lässt grüssen
+%\addtokomafont{caption}{\sffamily\small\raggedright}  % kleinere Schrift, linksbündig
+\addtokomafont{caption}{\sffamily\small}  % kleinere Schrift
+%\setkomafont{descriptionlabel}{\sffamily\small}
+\setkomafont{captionlabel}{\sffamily\bfseries}
+\setcaphanging
+\setcapindent{0em}             % kein Einzug
+
+
+%---------------------------------------------------------------
+% Literaturliste: Formatierung der Liste wird HIER vorgenommen!
+%---------------------------------------------------------------
+\newcommand{\lit}[4]
+           {
+              \bibitem{#1}
+                 {#2:}
+                 #3 
+                 #4 
+           }
+
+%---------------------------------------------------------------
+%
+%---------------------------------------------------------------
+% Kommentare 
+\newcommand{\Kommentar}[1]{{\em #1}} 
+
+
+% Verstecktes
+% Alles innerhalb von \Hide{} oder \ignore{}
+% wird von LaTeX komplett ignoriert (wie ein Kommentar)
+\newcommand{\Hide}[1]{}
+\let\ignore\Hide
+
+
+

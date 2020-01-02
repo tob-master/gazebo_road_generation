@@ -80,9 +80,9 @@ private:
     bool has_found_mid_line_components_;
     bool has_found_mid_line_group_;
 
-    void SetImage(Mat image);
+
     void ClearMemory();
-    void ApplyConnectedComponents();
+
     void FilterMidLineComponents();
     void ComputeLengthAndDirectionOfConnectedMidLineComponents();
     void GroupMidLineComponents();
@@ -99,6 +99,10 @@ private:
     ConnectedComponentsSearchReturnInfo GetReturnInfo();
 
 public:
+
+    void SetImage(Mat image);
+    void ApplyConnectedComponents();
+
     ConnectedComponentsSearch(int image_height, int image_width, ConnectedComponentsSearchInitializationParameters init);
     ConnectedComponentsSearchReturnInfo FindConnectedComponents(Mat image);
     void DrawConnectedComponents(Mat &rgb);

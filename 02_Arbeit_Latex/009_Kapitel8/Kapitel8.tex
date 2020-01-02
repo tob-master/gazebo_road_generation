@@ -1,0 +1,50 @@
+%
+%% Kapitel: Kapitel 4
+%%======================================================================
+
+\chapter{Aussenlinienverfolgung mit dem Line-Follower Algorithmus}
+\label{cha:Aussenlinienverfolgung mit dem Line-Follower Algorithmus} \index{Aussenlinienverfolgung mit dem Line-Follower Algorithmus}
+%
+%
+
+Der Line-Follower-Algorithmus setzt auf den beiden Startpunkt-Algorithmen start of lines search und Vanishin Point search auf. 
+Der Algorithmus arbeitet auf dem Graustufenbild in der Birdseye-Ansicht.
+Er ben{\"o}tigt einen Startpunkt und einen Startwinkel als Eingabeparameter. 
+Ziel ist es eine Au{\ss}enlinie von einem Startpunkt im unteren Bildbereich soweit es m{\"o}glich ist nachzuverfolgen. Das Verfahren ist ein rekursives Verfahren und ruft sich mit neuem Startpunkt und Startwinkel immer wieder selbst auf bis eine von mehreren Terminierungsbedingungen in Kraft tritt.
+
+Angefangen vom ersten Startpunkt betrachtet der Algorithmus eine Anzahl von AR Richtungen mit Sichtweite SW und einem Sichtfeld SF festgelegt durch einen festen Winkel.
+Die Mitte des Sichtfeldes wird durch den Startwinkel festgelegt.
+
+[Bild Sichtfeld]
+
+Im ersten Schritt werden alle Pixelintensit{\"a}ten unter den Zweigen der Suchrichtungen in einem Vector-Container gesammelt.
+Anschlie{\ss}end wird der Algorithmus Otsus-Methode auf diesen Container angewandt.
+Otsus-Methode findet einen Schwellwert der das Bild in zwei Klassen aufteilt.
+In diesem Fall der schwarze Hintergrund der Fahrbahn und die wei{\ss}en Linien.
+Es wird ein Histogramm aus vorkommenden Pixel-Intensit{\"a}ten erzeugt und ein Schwellwert berechnet, der die gewichtete Interklassen Varianz der beiden Klassen minimiert. 
+
+[Formel]
+
+Mit dem berechneten Otsu-Schwellwert werden die AR Suchrichtungen wieder durchschritten. F{\"u}r jede der Suchrichtungen wird die aktuelle Intensit{\"a}t der Position mit dem Otsu-Schwellwert verglichen. Liegt eine Intensit{\"a}t unter dem Otsu-Schwellwert wird die vorherige Position und die Akkumulation aller Pixel-Intensit{\"a}ten bis zu dieser Position gespeichert. Ansonsten bricht die Suche nach Erreichen von SW in dem derzeitigen Zweig ab und es wird auch hier die Positionen mit akkumulierten Pixel-Intensit{\"a}ten gespeichert.
+Sind alle Zweige durchlaufen wird {\"u}ber all jene der nach Intensit{\"a}ten gewichtete Schwerpunkt ermittelt.
+[Formel]
+Das Pixel im vierer Nachbarschaftsbereich des Schwerpunktes mit h{\"o}chster Intensit{\"a}t wird als neuer Startpunkt festgelegt. Und der neue Suchwinkel ist der Winkel zwischen altem und neuem Startpunkt. Der Algorithmus ruft die Suchfunktion erneut auf bis eines der folgenden Terminierungsbedingungen erf{\"u}llt ist. 
+
+Eine maximale Anzahl von Iterationen wurde erreicht
+Die Suche bleibt Stecken
+Wenn gefundene Punkte nacheinander sich unter einer festgelegten euklidischen Distanz zum vorhergehenden Punkt befinden wird ein Counter hochgesetzt welcher den rekursiven Aufruf terminiert wenn dieser Counter einen Schwellwert {\"u}berschreitet
+
+Die Suche bewegt sich zur{\"u}ck
+Wenn der Y-Wert des vorherigen Startpunktes gr{\"o}{\ss}er ist als der neue Startpunkt wird eine Counter erh{\"o}ht der nach {\"u}berschreiten eines Schwellwertes den Algorithmus terminiert.
+Die Suche ist au{\ss}erhalb des Bildbereichs
+
+Ist die Suche beendet gibt line\_follower folgende R{\"u}ckgabeparamter zur{\"u}ck.
+
+Gefundene Linien-Punkte mit zugeh{\"o}rigem Winkel
+
+
+
+
+
+
+

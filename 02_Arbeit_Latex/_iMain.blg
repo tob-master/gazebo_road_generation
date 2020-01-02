@@ -1,0 +1,284 @@
+This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: _iMain.aux
+A level-1 auxiliary file: 001_Titel/-pagestyle-pre.aux
+A level-1 auxiliary file: 001_Titel/erklaerung.aux
+A level-1 auxiliary file: 001_Titel/danksagung.aux
+A level-1 auxiliary file: 001_Titel/Kurzfassung.aux
+A level-1 auxiliary file: 001_Titel/Inhalt_Listen.aux
+A level-1 auxiliary file: 001_Titel/nomenklatur.aux
+A level-1 auxiliary file: 001_Titel/-pagestyle-main.aux
+The style file: unsrtdin.bst
+A level-1 auxiliary file: 002_Einleitung/Einleitung.aux
+A level-1 auxiliary file: 003_Kapitel2/Kapitel2.aux
+A level-1 auxiliary file: 004_Kapitel3/Kapitel3.aux
+A level-1 auxiliary file: 005_Kapitel4/Kapitel4.aux
+A level-1 auxiliary file: 006_Kapitel5/Kapitel5.aux
+A level-1 auxiliary file: 007_Kapitel6/Kapitel6.aux
+A level-1 auxiliary file: 008_Kapitel7/Kapitel7.aux
+A level-1 auxiliary file: 009_Kapitel8/Kapitel8.aux
+A level-1 auxiliary file: 010_Kapitel9/Kapitel9.aux
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: Literatur.bib
+I was expecting a `{' or a `('---line 3 of file Literatur.bib
+ : 
+ : @misc{zheng2016car,
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "yolocfg" isn't style-file defined
+--line 67 of file Literatur.bib
+Warning--entry type for "bioneuron" isn't style-file defined
+--line 76 of file Literatur.bib
+Warning--entry type for "haarfeatures" isn't style-file defined
+--line 83 of file Literatur.bib
+Warning--entry type for "RCNN" isn't style-file defined
+--line 90 of file Literatur.bib
+Warning--entry type for "yoloworkflow" isn't style-file defined
+--line 97 of file Literatur.bib
+Warning--entry type for "localization" isn't style-file defined
+--line 117 of file Literatur.bib
+Warning--entry type for "convnet" isn't style-file defined
+--line 127 of file Literatur.bib
+Warning--entry type for "maxpool" isn't style-file defined
+--line 134 of file Literatur.bib
+Warning--entry type for "kuenstlichesneuron" isn't style-file defined
+--line 143 of file Literatur.bib
+Warning--entry type for "integralimage" isn't style-file defined
+--line 150 of file Literatur.bib
+Warning--entry type for "stanfordyolo" isn't style-file defined
+--line 157 of file Literatur.bib
+Warning--entry type for "haarparameters" isn't style-file defined
+--line 167 of file Literatur.bib
+I was expecting a `,' or a `}'---line 171 of file Literatur.bib
+ : 
+ : institution ={Microprocessor Research Lab, Intel Labs}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "hubelwiesel" isn't style-file defined
+--line 174 of file Literatur.bib
+I was expecting a `,' or a `}'---line 178 of file Literatur.bib
+ : 
+ : institution ={Neurophysiolojy Laboratory, Department of Pharmacology Harvard Aledical School, Boston}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "adaboost" isn't style-file defined
+--line 181 of file Literatur.bib
+I was expecting a `,' or a `}'---line 185 of file Literatur.bib
+ : 
+ : institution ={AT&T Labs - Research}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "HOG" isn't style-file defined
+--line 189 of file Literatur.bib
+Warning--entry type for "SIFT" isn't style-file defined
+--line 195 of file Literatur.bib
+I was expecting a `,' or a `}'---line 199 of file Literatur.bib
+ : 
+ : institution ={Computer Science Department University of British Columbia Vancouver}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "SURF" isn't style-file defined
+--line 203 of file Literatur.bib
+I was expecting a `,' or a `}'---line 207 of file Literatur.bib
+ : 
+ : institution ={ETH Zurich}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "SVM" isn't style-file defined
+--line 210 of file Literatur.bib
+I was expecting a `,' or a `}'---line 214 of file Literatur.bib
+ : 
+ : institution ={AT&T Bell Labs}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "AlexNET" isn't style-file defined
+--line 217 of file Literatur.bib
+I was expecting a `,' or a `}'---line 221 of file Literatur.bib
+ : 
+ : institution ={University of Toronto}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "GoogLeNet" isn't style-file defined
+--line 224 of file Literatur.bib
+I was expecting a `,' or a `}'---line 228 of file Literatur.bib
+ : 
+ : institution ={Google Inc, University of North Carolina, University of Michigan}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "summedareatables" isn't style-file defined
+--line 231 of file Literatur.bib
+I was expecting a `,' or a `}'---line 235 of file Literatur.bib
+ : 
+ : institution ={Computer Sciences Laboratory Xerox Palo Alto Research Center}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "HaarCascade" isn't style-file defined
+--line 240 of file Literatur.bib
+I was expecting a `,' or a `}'---line 245 of file Literatur.bib
+ : 
+ : institution ={Mitsubishi Electric Research Labs, Compaq CRL
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "Haar" isn't style-file defined
+--line 249 of file Literatur.bib
+I was expecting a `,' or a `}'---line 253 of file Literatur.bib
+ : 
+ : institution ={Center for Biological and Computational Learning, Artificial Intelligence Laboratory, MIT,
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "ResNET" isn't style-file defined
+--line 258 of file Literatur.bib
+I was expecting a `,' or a `}'---line 262 of file Literatur.bib
+ : 
+ : institution ={Microsoft Research}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "FasterRCNN" isn't style-file defined
+--line 265 of file Literatur.bib
+Warning--entry type for "SSD" isn't style-file defined
+--line 272 of file Literatur.bib
+I was expecting a `,' or a `}'---line 276 of file Literatur.bib
+ : 
+ : institution ={NC Chapel Hill, Zoox Inc.,  Google Inc., University of Michigan}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "YOLO" isn't style-file defined
+--line 279 of file Literatur.bib
+I was expecting a `,' or a `}'---line 283 of file Literatur.bib
+ : 
+ : institution ={University of Washington, Facebook AI Research}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--entry type for "FasterRCNNTraffic" isn't style-file defined
+--line 286 of file Literatur.bib
+I was expecting a `,' or a `}'---line 290 of file Literatur.bib
+ : 
+ : institution ={TNList, Tsinghua University Beijing, China}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--I didn't find a database entry for "convlayer"
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Christian Szeged, Wei Liu, Yangqing Jia , Pierre Sermanet , Scott Reed ,Dragomir Anguelov , Dumitru Erhan , Vincent Vanhoucke , Andrew Rabinovich" for entry GoogLeNet
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun" for entry ResNET
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun" for entry ResNET
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun" for entry ResNET
+while executing---line 1887 of file unsrtdin.bst
+Warning--empty pages in Houben-IJCNN-2013
+Name 1 in "Shaoqing Ren, Kaiming He, Ross Girshick, and Jian Sun" has a comma at the end for entry FasterRCNN
+while executing---line 1887 of file unsrtdin.bst
+Name 1 in "Shaoqing Ren, Kaiming He, Ross Girshick, and Jian Sun" has a comma at the end for entry FasterRCNN
+while executing---line 1887 of file unsrtdin.bst
+Name 1 in "Shaoqing Ren, Kaiming He, Ross Girshick, and Jian Sun" has a comma at the end for entry FasterRCNN
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Wei Liu , Dragomir Anguelov , Dumitru Erhan , Christian Szegedy ,Scott Reed , Cheng-Yang Fu , Alexander C. Berg" for entry SSD
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Wei Liu , Dragomir Anguelov , Dumitru Erhan , Christian Szegedy ,Scott Reed , Cheng-Yang Fu , Alexander C. Berg" for entry SSD
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Wei Liu , Dragomir Anguelov , Dumitru Erhan , Christian Szegedy ,Scott Reed , Cheng-Yang Fu , Alexander C. Berg" for entry SSD
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Wei Liu , Dragomir Anguelov , Dumitru Erhan , Christian Szegedy ,Scott Reed , Cheng-Yang Fu , Alexander C. Berg" for entry SSD
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Wei Liu , Dragomir Anguelov , Dumitru Erhan , Christian Szegedy ,Scott Reed , Cheng-Yang Fu , Alexander C. Berg" for entry SSD
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Wei Liu , Dragomir Anguelov , Dumitru Erhan , Christian Szegedy ,Scott Reed , Cheng-Yang Fu , Alexander C. Berg" for entry SSD
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Wei Liu , Dragomir Anguelov , Dumitru Erhan , Christian Szegedy ,Scott Reed , Cheng-Yang Fu , Alexander C. Berg" for entry SSD
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Wei Liu , Dragomir Anguelov , Dumitru Erhan , Christian Szegedy ,Scott Reed , Cheng-Yang Fu , Alexander C. Berg" for entry SSD
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Wei Liu , Dragomir Anguelov , Dumitru Erhan , Christian Szegedy ,Scott Reed , Cheng-Yang Fu , Alexander C. Berg" for entry SSD
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Wei Liu , Dragomir Anguelov , Dumitru Erhan , Christian Szegedy ,Scott Reed , Cheng-Yang Fu , Alexander C. Berg" for entry SSD
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Wei Liu , Dragomir Anguelov , Dumitru Erhan , Christian Szegedy ,Scott Reed , Cheng-Yang Fu , Alexander C. Berg" for entry SSD
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Wei Liu , Dragomir Anguelov , Dumitru Erhan , Christian Szegedy ,Scott Reed , Cheng-Yang Fu , Alexander C. Berg" for entry SSD
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Joseph Redmon, Santosh Divvala, Ross Girshick, Ali Farhadi" for entry YOLO
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Joseph Redmon, Santosh Divvala, Ross Girshick, Ali Farhadi" for entry YOLO
+while executing---line 1887 of file unsrtdin.bst
+Too many commas in name 1 of "Joseph Redmon, Santosh Divvala, Ross Girshick, Ali Farhadi" for entry YOLO
+while executing---line 1887 of file unsrtdin.bst
+You've used 38 entries,
+            4011 wiz_defined-function locations,
+            966 strings with 10671 characters,
+and the built_in function-call counts, 11600 in all, are:
+= -- 1119
+> -- 161
+< -- 680
++ -- 717
+- -- 58
+* -- 463
+:= -- 1760
+add.period$ -- 38
+call.type$ -- 38
+change.case$ -- 0
+chr.to.int$ -- 0
+cite$ -- 39
+duplicate$ -- 294
+empty$ -- 877
+format.name$ -- 120
+if$ -- 2323
+int.to.chr$ -- 0
+int.to.str$ -- 39
+missing$ -- 184
+newline$ -- 213
+num.names$ -- 32
+pop$ -- 134
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 906
+stack$ -- 0
+substring$ -- 715
+swap$ -- 79
+text.length$ -- 41
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 1
+while$ -- 74
+width$ -- 40
+write$ -- 454
+(There were 55 error messages)

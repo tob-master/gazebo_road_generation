@@ -1,14 +1,14 @@
 #include "safe_drive_area_evaluation.h"
-
+/*
 SafeDriveAreaEvaluation::SafeDriveAreaEvaluation()
 {
 
 }
+*/
 
+//FollowTrack(kStartSearchDirectionOfRectSafety_,kStartMidPointOfRectSafety_, rgb);
 
-FollowTrack(kStartSearchDirectionOfRectSafety_,kStartMidPointOfRectSafety_, rgb);
-
-void LineValidationTableCreation::ClearAllFollowTrackTables()
+void SafeDriveAreaEvaluation::ClearAllFollowTrackTables()
 {
     left_line_points_in_rect_ids_.clear();
     mid_line_points_in_rect_ids_.clear();
@@ -31,7 +31,21 @@ void LineValidationTableCreation::ClearAllFollowTrackTables()
     EmtpySafetyTable(right_line_rect_safety_);
 }
 
-vector<vector<Point>> LineValidationTableCreation::GetSearchRect(Point rect_mid, float search_direction)
+void SafeDriveAreaEvaluation::EvaluateTrackInDriveDirection()
+{
+    FollowTrack(kStartSearchDirectionOfRectSafety_,kStartMidPointOfRectSafety_);
+}
+
+
+
+void SafeDriveAreaEvaluation::LoadLinePointsInDriveDirection(vector<LineValidationTable> left_line_in_drive_direction_table,vector<LineValidationTable>mid_line_in_drive_direction_table,vector<LineValidationTable>right_line_in_drive_direction_table)
+{
+    left_line_in_drive_direction_table_ = left_line_in_drive_direction_table;
+    mid_line_in_drive_direction_table_ = mid_line_in_drive_direction_table;
+    right_line_in_drive_direction_table_ = right_line_in_drive_direction_table;
+}
+
+vector<vector<Point>> SafeDriveAreaEvaluation::GetSearchRect(Point rect_mid, float search_direction)
 {
 
     float rect_length_radius = kSearchRectLength_ / 2;
@@ -92,18 +106,18 @@ vector<vector<Point>> LineValidationTableCreation::GetSearchRect(Point rect_mid,
     return contours;
 }
 
-void LineValidationTableCreation::FillPriorityTables(vector<LineValidationTable>& left_line_direction_in_range_,
+void SafeDriveAreaEvaluation::FillPriorityTables(vector<LineValidationTable>& left_line_in_drive_direction_table_,
                                               vector<int> left_line_points_in_rect_ids_,
-                                              vector<LineValidationTable>& mid_line_direction_in_range_,
+                                              vector<LineValidationTable>& mid_line_in_drive_direction_table_,
                                               vector<int> mid_line_points_in_rect_ids_,
-                                              vector<LineValidationTable>& right_line_direction_in_range_,
+                                              vector<LineValidationTable>& right_line_in_drive_direction_table_,
                                               vector<int> right_line_points_in_rect_ids_)
 {
 
 
     for(int i=0; i<left_line_points_in_rect_ids_.size(); i++)
     {
-        LineValidationTable left_table = left_line_direction_in_range_[left_line_points_in_rect_ids_[i]];
+        LineValidationTable left_table = left_line_in_drive_direction_table_[left_line_points_in_rect_ids_[i]];
 
 
         bool found_mid_point = left_table.GetFoundMidPoint();
@@ -130,7 +144,7 @@ void LineValidationTableCreation::FillPriorityTables(vector<LineValidationTable>
     for(int i=0; i<mid_line_points_in_rect_ids_.size(); i++)
     {
 
-        LineValidationTable mid_table = mid_line_direction_in_range_[mid_line_points_in_rect_ids_[i]];
+        LineValidationTable mid_table = mid_line_in_drive_direction_table_[mid_line_points_in_rect_ids_[i]];
 
         bool found_left_point = mid_table.GetFoundLeftPoint();
         bool left_prediction  = mid_table.GetLeftPrediction();
@@ -152,7 +166,7 @@ void LineValidationTableCreation::FillPriorityTables(vector<LineValidationTable>
 
     for(int i=0; i<right_line_points_in_rect_ids_.size(); i++)
     {
-       LineValidationTable right_table =  right_line_direction_in_range_[right_line_points_in_rect_ids_[i]];
+       LineValidationTable right_table =  right_line_in_drive_direction_table_[right_line_points_in_rect_ids_[i]];
 
        bool found_left_point = right_table.GetFoundLeftPoint();
        bool left_prediction  = right_table.GetLeftPrediction();
@@ -178,7 +192,7 @@ void LineValidationTableCreation::FillPriorityTables(vector<LineValidationTable>
 
 }
 
-void LineValidationTableCreation::FillPriorityTable(LineValidationTable table, int i, bool found_point1,bool found_point2,bool prediction1,bool prediction2,
+void SafeDriveAreaEvaluation::FillPriorityTable(LineValidationTable table, int i, bool found_point1,bool found_point2,bool prediction1,bool prediction2,
                                              bool directions_in_range1, bool directions_in_range2, vector<vector<int>>& priority_ids,vector<vector<LineValidationTable>>& priority_table)
 {
 
@@ -259,7 +273,7 @@ void LineValidationTableCreation::FillPriorityTable(LineValidationTable table, i
 }
 
 
-void LineValidationTableCreation::GatherRectSafetyInfo(vector<TrackSafetyRect>& track_safety_rects_,float search_direction, Point rect_mid_point )
+void SafeDriveAreaEvaluation::GatherRectSafetyInfo(vector<TrackSafetyRect>& track_safety_rects_,float search_direction, Point rect_mid_point )
 {
     bool left_too_few_points_in_rect = left_line_rect_safety_.too_few_points_in_rect;
     bool mid_too_few_points_in_rect = mid_line_rect_safety_.too_few_points_in_rect;
@@ -487,13 +501,13 @@ void LineValidationTableCreation::GatherRectSafetyInfo(vector<TrackSafetyRect>& 
 
 }
 
-int LineValidationTableCreation::CountDigits(unsigned long long int n)
+int SafeDriveAreaEvaluation::CountDigits(unsigned long long int n)
 {
     if(n<=0) return 1;
     else     return floor(log10(n) + 1);
 
 }
-bool LineValidationTableCreation::RectMidPointOutOfImage(Point rect_mid_point)
+bool SafeDriveAreaEvaluation::RectMidPointOutOfImage(Point rect_mid_point)
 {
     if(rect_mid_point.x >= kImageWidth_ || rect_mid_point.x < 0){ return true;}
 
@@ -503,7 +517,22 @@ bool LineValidationTableCreation::RectMidPointOutOfImage(Point rect_mid_point)
 
 }
 
-void LineValidationTableCreation::FindSafePointsForSpline()
+float SafeDriveAreaEvaluation::GetOrthogonalAngle(float angle, int SEARCH_LINE_CODE)
+{
+    int  angle_ = 0;
+
+    if(SEARCH_LINE_CODE == LEFT_TO_MID || SEARCH_LINE_CODE == LEFT_TO_RIGHT || SEARCH_LINE_CODE == MID_TO_RIGHT) angle_ = (angle - 90);
+
+    if(SEARCH_LINE_CODE == RIGHT_TO_MID || SEARCH_LINE_CODE == RIGHT_TO_LEFT || SEARCH_LINE_CODE == MID_TO_LEFT) angle_ = (angle + 90);
+
+    if(angle_ > 359) angle_ = angle_ % 360;
+
+    if(angle_ < 0) angle_ =  360 - abs(angle_);
+
+    return float(angle_);
+}
+
+void SafeDriveAreaEvaluation::FindSafePointsForSpline()
 {
 
 
@@ -644,7 +673,7 @@ void LineValidationTableCreation::FindSafePointsForSpline()
 
 }
 
-void LineValidationTableCreation::GetNewRectMidPoint(float new_search_direction,Point rect_mid_point, Point& new_rect_mid_point)
+void SafeDriveAreaEvaluation::GetNewRectMidPoint(float new_search_direction,Point rect_mid_point, Point& new_rect_mid_point)
 {
     int new_search_direction_i = new_search_direction;
 
@@ -667,7 +696,7 @@ void LineValidationTableCreation::GetNewRectMidPoint(float new_search_direction,
 }
 
 
-void LineValidationTableCreation::GetSafestDirections(vector<LineValidationTable> safest_table1,vector<LineValidationTable> safest_table2,
+void SafeDriveAreaEvaluation::GetSafestDirections(vector<LineValidationTable> safest_table1,vector<LineValidationTable> safest_table2,
                     vector<pair<int,float>>& safest_line_directions1, vector<pair<int,float>>& safest_line_directions2)
 {
     vector<float> safest_directions1, safest_directions2;
@@ -706,7 +735,7 @@ void LineValidationTableCreation::GetSafestDirections(vector<LineValidationTable
 }
 
 
-void LineValidationTableCreation::FindNewSearchDirection(vector<TrackSafetyRect> track_safety_rects_, float& search_direction)
+void SafeDriveAreaEvaluation::FindNewSearchDirection(vector<TrackSafetyRect> track_safety_rects_, float& search_direction)
 {
 
     int last_id = track_safety_rects_.size() - 1;
@@ -747,7 +776,7 @@ void LineValidationTableCreation::FindNewSearchDirection(vector<TrackSafetyRect>
                         track_safety_rects_[last_id].right_safest_table2,
                         right_safest_directions1,right_safest_directions2);
 
-    //cout << "LEFT DIRS" << endl;
+ /*   //cout << "LEFT DIRS" << endl;
     for(auto it:left_safest_directions1) cout << it.first << " " << it.second << endl;
     for(auto it:left_safest_directions2) cout << it.first << " " << it.second << endl;
 
@@ -758,7 +787,7 @@ void LineValidationTableCreation::FindNewSearchDirection(vector<TrackSafetyRect>
    // cout << "RIGHT DIRS" << endl;
     for(auto it:right_safest_directions1) cout << it.first << " " << it.second << endl;
     for(auto it:right_safest_directions2) cout << it.first << " " << it.second << endl;
-
+*/
     vector<pair<int,float>> safest_directions1, safest_directions2;
 
     if(MAX_LINE==LEFT_LINE)
@@ -803,8 +832,70 @@ void LineValidationTableCreation::FindNewSearchDirection(vector<TrackSafetyRect>
 
 }
 
+void SafeDriveAreaEvaluation::ClearValidationTables()
+{
 
-void LineValidationTableCreation::GetSafestTables(vector<LineValidationTable>& safest_table1 , vector<LineValidationTable>& safest_table2,
+    left_lane_drive_points_.clear();
+    right_lane_drive_points_.clear();
+
+    track_safety_rects_.clear();
+
+    left_line_points_in_rect_ids_.clear();
+    mid_line_points_in_rect_ids_.clear();
+    right_line_points_in_rect_ids_.clear();
+
+
+    for(auto &it: left_priority_ids_) it.clear();
+    for(auto &it: mid_priority_ids_) it.clear();
+    for(auto &it: right_priority_ids_) it.clear();
+
+
+
+
+
+
+}
+
+void SafeDriveAreaEvaluation::DrawEvaluatedSafetyAreasInDriveDirection(Mat& rgb)
+{
+/*
+                                                            LSCORE,
+                                                             MSCORE,
+                                                             RSCORE,
+                                                             TRACKSCORE,
+                                                             MAX_LINE,
+                                                             MAX_LINE_SCORE,
+                                                             MAX_LINE_CONTINUOUS,
+                                                             left_line_is_safe,
+                                                             mid_line_is_safe,
+                                                             right_line_is_safe,
+                                                             left_safest_table1,
+                                                             left_safest_table2,
+                                                             mid_safest_table1,
+                                                             mid_safest_table2,
+                                                             right_safest_table1,
+                                                             right_safest_table2,
+                                                             search_direction,
+                                                             rect_mid_point*/
+
+    for(auto it: track_safety_rects_)
+    {
+        Point rect_mid_point   = it.rect_mid_point;
+        float search_direction = it.search_direction;
+
+        vector<vector<Point>> search_rect = GetSearchRect(rect_mid_point,search_direction);
+
+        string str_score = to_string(it.MAX_LINE_SCORE);
+
+
+        drawContours(rgb, search_rect, -1, Scalar(0,255,0), 2, LINE_8);
+        putText(rgb, str_score, rect_mid_point,FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,255,0), 1, CV_AA);
+
+    }
+}
+
+
+void SafeDriveAreaEvaluation::GetSafestTables(vector<LineValidationTable>& safest_table1 , vector<LineValidationTable>& safest_table2,
                                            vector<vector<LineValidationTable>> priority_table, unsigned long long int SCORE)
 {
     switch(CountDigits(SCORE))
@@ -835,7 +926,7 @@ void LineValidationTableCreation::GetSafestTables(vector<LineValidationTable>& s
 }
 
 
-void LineValidationTableCreation::EmtpySafetyTable(RectSafetyTable& rect_safety)
+void SafeDriveAreaEvaluation::EmtpySafetyTable(RectSafetyTable& rect_safety)
 {
     rect_safety.percent_points_with_priority_0 = 0;
     rect_safety.percent_points_with_priority_1 = 0;
@@ -862,7 +953,37 @@ void LineValidationTableCreation::EmtpySafetyTable(RectSafetyTable& rect_safety)
     rect_safety.y_max_in_rect_border_range = false;
 }
 
-void LineValidationTableCreation::CheckRectSafety(vector<vector<Point>> search_rect,vector<LineValidationTable>line_points_in_rect_,vector<vector<LineValidationTable>> priority_table_,
+void SafeDriveAreaEvaluation::ExtractMinMaxLineElements( vector<LineValidationTable>  line,  MinMaxLineElements& line_minmax_elements )
+{
+
+    if(line.size() > 0)
+    {
+        auto x_it = minmax_element(begin(line),end(line),
+                                            [&](LineValidationTable& line_point1, LineValidationTable& line_point2)
+                                            {
+                                                return line_point1.GetOriginPoint().x < line_point2.GetOriginPoint().x;
+                                            });
+
+        auto y_it = minmax_element(begin(line),end(line),
+                                           [&](LineValidationTable& line_point1, LineValidationTable& line_point2)
+                                           {
+                                               return line_point1.GetOriginPoint().y < line_point2.GetOriginPoint().y;
+                                           });
+
+        int x_min_id = std::distance(line.begin(), x_it.first);
+        int x_max_id = std::distance(line.begin(), x_it.second);
+        int y_min_id = std::distance(line.begin(), y_it.first);
+        int y_max_id = std::distance(line.begin(), y_it.second);
+
+        line_minmax_elements = MinMaxLineElements{line[x_min_id].GetOriginPoint(),
+                                                  line[x_max_id].GetOriginPoint(),
+                                                  line[y_min_id].GetOriginPoint(),
+                                                  line[y_max_id].GetOriginPoint(),
+                                                  true};
+    }
+}
+
+void SafeDriveAreaEvaluation::CheckRectSafety(vector<vector<Point>> search_rect,vector<LineValidationTable>line_points_in_rect_,vector<vector<LineValidationTable>> priority_table_,
                                            RectSafetyTable& rect_safety)
 {
 
@@ -914,7 +1035,7 @@ void LineValidationTableCreation::CheckRectSafety(vector<vector<Point>> search_r
 
 
 
-
+/*
 
         bool too_few_points_in_rect_ = false;
         bool rect_straight_ = false;
@@ -973,10 +1094,10 @@ void LineValidationTableCreation::CheckRectSafety(vector<vector<Point>> search_r
             }
         }
         else {
-            cout << "wrong4" << endl;
+            cout << "wrong44" << endl;
         }
 
-
+*/
         double res = 0;
 
         bool y_min_in_rect_border_range_ = false;
@@ -1042,12 +1163,12 @@ void LineValidationTableCreation::CheckRectSafety(vector<vector<Point>> search_r
         rect_safety.percent_points_with_priority_12 = prio_12_percent_found;
         rect_safety.percent_points_with_priority_13 = prio_13_percent_found;
         rect_safety.percent_points_in_rect = all_percent_found;
-
+/*
         rect_safety.too_few_points_in_rect = too_few_points_in_rect_;
         rect_safety.rect_straight = rect_straight_;
         rect_safety.rect_left_curve = rect_left_curve_;
         rect_safety.rect_right_curve = rect_right_curve_;
-
+*/
         rect_safety.y_min_in_rect_border_range = y_min_in_rect_border_range_;
         rect_safety.y_max_in_rect_border_range = y_max_in_rect_border_range_;
 
@@ -1060,7 +1181,7 @@ void LineValidationTableCreation::CheckRectSafety(vector<vector<Point>> search_r
 
 }
 
-void LineValidationTableCreation::GetLinesPointsInRect( vector<LineValidationTable> line_direction_in_range_, vector<vector<Point>> contours, vector<int>& line_points_in_rect_id,
+void SafeDriveAreaEvaluation::GetLinesPointsInRect( vector<LineValidationTable> line_direction_in_range_, vector<vector<Point>> contours, vector<int>& line_points_in_rect_id,
                                                     vector<LineValidationTable>& line_points_in_rect_)
 {
     for(int i=0; i<line_direction_in_range_.size(); i++)
@@ -1078,7 +1199,7 @@ void LineValidationTableCreation::GetLinesPointsInRect( vector<LineValidationTab
     }
 }
 
-void LineValidationTableCreation::FollowTrack(float search_direction, Point rect_mid_point, Mat &rgb)
+void SafeDriveAreaEvaluation::FollowTrack(float search_direction, Point rect_mid_point)
 {
 
 
@@ -1086,27 +1207,27 @@ void LineValidationTableCreation::FollowTrack(float search_direction, Point rect
 
             vector<vector<Point>> search_rect = GetSearchRect(rect_mid_point,search_direction);
 
-            GetLinesPointsInRect(left_line_direction_in_range_,
+            GetLinesPointsInRect(left_line_in_drive_direction_table_,
                                  search_rect,
                                  left_line_points_in_rect_ids_,
                                  left_line_points_in_rect_);
 
-            GetLinesPointsInRect(mid_line_direction_in_range_,
+            GetLinesPointsInRect(mid_line_in_drive_direction_table_,
                                  search_rect,
                                  mid_line_points_in_rect_ids_,
                                  mid_line_points_in_rect_);
 
-            GetLinesPointsInRect(right_line_direction_in_range_,
+            GetLinesPointsInRect(right_line_in_drive_direction_table_,
                                  search_rect,
                                  right_line_points_in_rect_ids_,
                                  right_line_points_in_rect_);
 
 
-            FillPriorityTables(left_line_direction_in_range_,
+            FillPriorityTables(left_line_in_drive_direction_table_,
                                left_line_points_in_rect_ids_,
-                               mid_line_direction_in_range_,
+                               mid_line_in_drive_direction_table_,
                                mid_line_points_in_rect_ids_,
-                               right_line_direction_in_range_,
+                               right_line_in_drive_direction_table_,
                                right_line_points_in_rect_ids_);
 
 
@@ -1150,66 +1271,12 @@ void LineValidationTableCreation::FollowTrack(float search_direction, Point rect
 
             if(RectMidPointOutOfImage(new_rect_mid_point)) return;
 
-            //cout << new_search_direction << " " << new_rect_mid_point << endl;
-
-/*
- *
-            drawContours(rgb, search_rect, -1, Scalar(0,255,0), 2, LINE_8);
-
-            imshow("im", rgb);
-
-            waitKey(1);
-*/
-
-
-            FollowTrack(new_search_direction, new_rect_mid_point, rgb);
 
 
 
-
-/*
-            rect_info_.push_back(RectInfo{
-                                            left_line_points_in_rect_,
-                                            mid_line_points_in_rect_,
-                                            right_line_points_in_rect_,
-
-                                            left_priority_table_,
-                                            mid_priority_table_,
-                                            right_priority_table_,
-
-                                            left_line_rect_safety_,
-                                            mid_line_rect_safety_,
-                                            right_line_rect_safety_,
-
-                                            rect_mid_point,
-                                            search_direction
-                                        });
-*/
+            FollowTrack(new_search_direction, new_rect_mid_point);
 
 
 
-
-            //cout <<"new mid: " <<  new_rect_mid_point << endl;
-            //cout <<"new angle: " <<  new_search_direction << endl;
-
-            //counterr++;
-
-/*
-            cout << "found left side:" << endl;
-            cout <<  mid_priority_ids_[PRIO_9_P1].size()
-                 << " " <<  right_priority_ids_[PRIO_9_P1].size() << endl;
-
-            cout << "found mid :" << endl;
-            cout << left_priority_ids_[PRIO_9_P1].size()
-                 << " " <<  right_priority_ids_[PRIO_10_P2].size() << endl;
-
-
-            cout << "found right side:" << endl;
-            cout << left_priority_ids_[PRIO_10_P2].size()
-                 << " " <<  mid_priority_ids_[PRIO_10_P2].size() << endl;
-
-
-            cout << "########\n\n";
-*/
-
+}
 

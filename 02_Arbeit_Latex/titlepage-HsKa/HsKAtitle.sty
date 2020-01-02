@@ -1,0 +1,165 @@
+%%------------------------------------------------------------
+%% Titelseite für Berichte (Abschlussarbeiten
+%% für Schriftgröße 11pt
+%%
+%% v 1.01
+%% Arnemann
+%%
+%%------------------------------------------------------------
+\newcommand{\department}[1]{
+	\def\@department{#1}
+	}	
+\newcommand{\institute}[1]{
+	\def\@institute{#1}
+	}
+\newcommand{\thesistype}[1]{
+	\def\@thesistype{#1}
+	}	
+\newcommand{\thesisno}[1]{
+	\def\@thesisno{#1}
+	}
+\newcommand{\BDate}[1]{
+	\def\@BDate{#1}
+	}
+\newcommand{\BLocation}[1]{
+	\def\@BLocation{#1}
+	}	
+\newcommand{\matno}[1]{
+	\def\@matno{#1}
+	}
+\newcommand{\companyname}[1]{
+  \def\@companyname{#1}
+  }
+\newcommand{\tutor}[2]{
+  \def\@tutorfirst{#1}
+  \def\@tutorsecond{#2}
+  }
+\newcommand{\location}[1]{
+  \def\@location{#1}
+  }	
+\newcommand{\duration}[1]{
+  \def\@duration{#1}
+  }	
+\newcommand{\Schriftsatz}[1]{
+  \def\@Schriftsatz{#1}
+  }	
+  
+\renewcommand{\maketitle}{
+	\begin{titlepage}
+	\thispagestyle{empty}
+	%	\renewcommand{\headrulewidth}{0.0pt}
+	
+%%
+%%
+\oddsidemargin4mm   % Hier BCOR  eingeben  !! 14
+\evensidemargin4mm  %
+	
+%%---------------------------------------------------------------
+%%   Titelblatt Einbandvorderseite
+%%---------------------------------------------------------------
+%%
+  \vspace*{10mm}
+%  
+\begin{center}
+\sffamily
+{\LARGE 
+  Hochschule Karlsruhe - Technik und Wirtschaft   \\
+  \@department\\
+%
+  \vspace{40mm}
+%  
+   {\huge  \bfseries \@title  \\} % 
+%  {\LARGE \bf  \@title \\}  
+%
+    \vspace*{10mm}
+%    
+    {\@thesistype \\Nr. \@thesisno \\}
+    \vspace*{40mm}
+%    
+    von\\  
+    %\vspace*{5mm}
+     \@author  \\          
+}     
+\end{center}
+
+\newpage
+\thispagestyle{empty}
+.
+\newpage
+\thispagestyle{empty}
+
+%%---------------------------------------------------------------
+%%   Deckblatt 
+%%---------------------------------------------------------------
+%%
+\thispagestyle{empty}
+         % 
+         %\vspace*{-20mm} % wenn Bild
+	 \vspace*{-10mm} 
+         %\includegraphics[width=80mm]{titlepage-HsKa/hska_vor_cmyk.eps} % nur für dvi
+         %\includegraphics[width=80mm]{titlepage-HsKa/fh_signet.jpg}      % für pdf
+         %
+   \begin{center}
+      \large 
+      Hochschule Karlsruhe - Technik und Wirtschaft   \\
+      \@department\\
+   \end{center}
+%
+   \vspace{1cm}	 
+  
+   \begin{center}
+		{\sffamily \LARGE \bfseries  \@title \\}   
+%		
+    \vspace*{20mm}
+%    
+{\large  
+%    
+    \@thesistype \\Nr. \@thesisno\\
+%    
+    \vspace*{20mm}
+%    
+                 von\\  
+    \vspace*{5mm}
+		\@author           \\  
+                {geb. am }\@BDate  \\
+		{in }\@BLocation   \\	
+                {Matr.-Nr.: }  \@matno	\\    
+%	
+    \vspace*{35mm}
+    
+    {Betreuer der Firma \@companyname}\\
+        \@tutorfirst \\             
+    \vspace{5mm}	
+    {Betreuer der Hochschule Karlsruhe}\\    
+        \@tutorsecond \\            
+  
+  \vspace{20mm}
+  \@location,  \@duration
+}     
+\end{center}
+
+%
+\newpage
+\pagestyle{empty}
+
+%%---------------------------------------------------------------
+%%   Rückseite Deckblatt 
+%%
+%\vspace*{200mm}
+\vspace*{\fill}
+\@Schriftsatz
+     
+%
+\newpage
+\pagestyle{empty}
+%
+
+\end{titlepage}
+%
+}
+
+
+
+
+
+

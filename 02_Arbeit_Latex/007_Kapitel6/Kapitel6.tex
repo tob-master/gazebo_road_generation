@@ -1,0 +1,376 @@
+%
+%% Kapitel: Kapitel 4
+%%======================================================================
+
+\chapter{Implementierte Bildverarbeitungsalgorithmen}
+\label{cha:Implementierte Bildverarbeitungsalgorithmen} \index{Implementierte Bildverarbeitungsalgorithmen}
+%
+
+
+%
+\section{Startliniensuche mit dem Start-Of-Lines-Search Algorithmus}
+\label{sec:Startliniensuche mit dem Start-Of-Lines-Search Algorithmus}
+
+
+Die Startliniensuche sucht im unteren Bildbereich, direkt vor dem Fahrzeug, nach einem eindeutigen Fahrbahnmuster. Der Algorithmus arbeitet auf 
+einem Graustufenbild in der Birdseye-Perspektive.
+Im ersten Schritt werden drei Bildreihen mit dem horizontalen Abstand HA, nach Pixelintensitäten über einem Schwellwert FS, vom linken zum rechten Bildrand in einer Schleife, abgesucht. Dies geschieht durch einen Filter F, mit der Dimension 1xFilterbreite und Schrittweite SW. Die Filterbreite FB muss eine ungerade Zahl sein, wodurch die Mitte des iterierenden Filters als FI bezeichnet ist. Wird eine Pixelintensität größer FS in F gefunden, so wird in einem mit nullen initialisierten Vector-Container FC der Dimension 1xBildbreite,  der Wert des Vector-Containers auf der Indexposition FI auf eins gesetzt. Es ergeben sich drei Vector-Container mit den entsprechenden Filterantworten auf die jeweilige Bildzeile.
+Durch das Absuchen mit dem Filter sollen zusammengehörige Liniensegmente besser auffindbar werden. Falls fehl
+
+Im darauffolgenden Schritt werden benachbarte Filterantworten zu einem gemeinsamen Segment, definiert durch Segmentbreite und dem Startindex in FC, zusammengeführt.
+Werden in der mittleren Zeile nicht mindestens drei Segmente gefunden terminiert der Algorithmus.
+
+Werden mehr als zwei Mittelliniensegmente gefunden, wird die Segmentbreite der gefundenen Liniensegmente überprüft. Liegt ein Segment nicht zwischen einem minimalen und maximalen Linienbreiten-Schwellwert wird dieses verworfen. 
+Alle Segmente je FC werden anschließend untereinander darauf überprüft ob ihr Abstand, dem der Fahrbahnbreite entspricht. Es werden alle Segmente verworfen, welche diesem Kriterium, mit einer festgelegten Toleranz, nicht entsprechen. Die anderen, werden als zusammengehörig in einem Vector-Container vermerkt.
+Es folgt die Überprüfung ob die Segmente der einzelnen FC eine gemeinsame Ausrichtung haben. Dafür wird die Distanz in X-Richtung,
+eines Segments eines FC, mit den Segmenten der anderen FC verglichen.
+Alle Segmente die keinen Nachbarn mit selber Ausrichtung in einer Toleranzgrenze besitzen, werden verworfen. 
+Die übrig gebliebenen zusammengehörigen FC Segmente, werden nun darauf überprüft ob zwischen ihnen ein Mittellinien-Segment liegt.
+Es darf nur in der mittleren Zeile ein Mittellinien-Segment gefunden werden.
+Im nächsten Schritt wird überprüft ob ein Fahrbahnmuster gefunden wurde, das all diese Kriterien erfüllt. Falls nicht terminiert der Algorithmus.
+Ist ein Muster gefunden, wird zusätzlich überprüft ob das Muster im korrekten Abstand zum Fahrzeug liegt.
+Anschließend werden die Startpunkte und Startwinkel für die Linke und Rechte Außenlinie berechnet.
+
+Der Algorithmus termininert und gibt folgende Parameter zurück.
+
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/sof_muster}% keine extention: wählt jpg für DVI
+  \caption[StartliniensucheFahrbahnmuster]%
+           {\label{fig:StartliniensucheFahrbahnmuster}%
+           Das zu suchende Fahrbahnmuster des Start-Of-Lines-Search -Algorithmus}
+\end{center}
+\end{figure}
+
+
+\section{Startliniensuche mit dem Vanishing-Point Algorithmus}
+\label{sec:Startliniensuche mit dem Vanishing-Point Algorithmus}
+
+%
+%
+Der Vanishing-Point-Algorithmus dient dazu sichere Startpunkte der linken und rechten Außenlinie zu finden. Er wurde nach der Beschreibung des Papers [X] implementiert.
+
+Das Verfahren liefert Punkte mit zugehörigem Winkel nahe dem Fahrzeug, nach denen gefahren werden kann. Zudem liefert es Informationen über fehlende Außenlinien.
+Der Vanishing-Point-Algorithmus wird auf dem Graustufenbild in Frontalsicht ausgeführt.
+Der Algorithmus führt die Liniensuche im unteren Bildbereich genau vor dem Fahrzeug aus.
+Auf diesen Bildbereich wird zuerst eine Kantenextraktion angewandt.
+Dies wird durch den Canny-Edge-Algorithmus erreicht.
+Canny nutzt Sobel-Operatoren in X- und Y- Richtung, die mit dem Bild an jeder Position gefaltet werden. Der Operator liefert eine hohe Filterantwort bei einem abrupten Übergang von niedrigen zu hohen Pixelintensitäten, welche als Kanten wahrgenommen werden. Zudem wird durch die beiden Sobel-Operatoren die Richtung, in welche die Kante zeigt, ermittelt. 
+Unter Berücksichtigung der Orientierung der Kante, werden lokale Maxima der Filterantwort extrahiert um Kantenübergänge auszudünnen.
+
+Die Extrahierten Merkmale werden im nächsten Schritt durch einen Hysterese-Schwellwert gefiltert. Dieser besteht aus zwei Schwellwerten S1 und S2.
+Alle Filterantworten, welche unter S1 und S2 liegen werden als Rauschen betrachtet und verworfen. Liegt eine Filterwort über S1 und S2 dann ist diese Position eine valide Kante. Werte die zwischen S1 und S2 liegen, werden nur als valide Kanten betrachten, wenn Sie mit Filterantworten verbunden sind, die über S1 und S2 liegen. Ansonsten werden diese auch als Rauschen verworfen.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/Bilder/canny}% keine extention: wählt jpg für DVI
+  \caption[BildbereichCanny]%
+           {\label{fig:BildbereichCanny}%
+           Darstellung des Bildbereichs nach anwendung des Canny-Edge-Verfahrens}
+\end{center}
+\end{figure}
+
+
+Darauf aufbauend, werden durch das Hough-Lines-Verfahren Linien im Bildbreich gesucht. Durch die Reduktion des Bildbereichs auf relevante Punkte, werden durch Hough-Lines weniger redundante Linien gefunden.
+Das Ziel von Hough-Lines ist es Pixel-Gruppen zu finden welche miteinander Linien formen. Hough-Lines transformiert dafür Pixel, beschrieben durch die Koordinaten X und Y, in einen anderen Merkmals-Raum den Hough-Raum. 
+
+Der Hough-Raum beschreibt alle Geraden, die durch ein Pixel laufen können über die hessesche Normalform D  = x *cos(alpha) + y* sin(alpha). Die neue Ordinate D beschreibt die euklidische Distanz zum Lotfußpunkt. Und die neue Abszisse alpha steht für den Winkel zwischen dem Lot der Geraden hin zur Abszisse. Nachdem jedes Pixel des Bildraums in den Hough-Raum transformiert wurde, ergibt sich eine Voting-Matrix deren Häufigkeitspunkte mögliche geraden im Bildraum beschreiben. Durch das Setzen eines Schwellwertes, werden nur geraden über einer gewissen Anzahl von Häufigkeitspunkten gefunden, welche nach Rücktransformation die zu suchenden Außenlinien darstellen.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/Bilder/houghraum}% keine extention: wählt jpg für DVI
+  \caption[HoughRaum]%
+           {\label{fig:HoughRaum}%
+           Die Hough-Transformation}
+\end{center}
+\end{figure}
+
+
+Die OpenCV-Funktion Hough-Lines liefert die Anfangs- und Endpunkte der gefundenen Linien zurück.
+Darauf folgt das Drehen der Linien. in die Fahrtrichtung des Fahrzeugs, im Bild.
+Nun werden die Linien aussortiert, welche nicht in den Bildbereichen liegen, in denen die Außenlinien vorkommen. Dabei wird davon ausgegangen, dass sich das Fahrzeug in der rechten Fahrspur befindet. Da der Algorithmus auf der Frontalansicht arbeitet, können die Hough-Linien weiter durch ihre Winkel validiert werden. Alle Linien im linken und rechten Bereich werden darauf hin überprüft, ob sie zwischen einem minimalen und maximalen Winkel liegen. Falls dies nicht der Fall ist, werden diese auch verworfen.
+Wenn nur eine oder keine Außenlinie aufzufinden ist, terminiert der Algorithmus.
+Werden beide Außenlinien gefunden, wird untersucht ob die linken und rechten Hough-Linien einen gemeinsamen Schnittpunkt haben. Dieser Schnittpunkt wird auch Vanishing-Point genannt und gibt die Fahrtrichtung des Fahrzeugs an.
+Es werden alle Permutation von Schnittpunkten der Linien berechnet.
+Hier kommt wieder die in [XX] beschriebene Funktion isPertmuted zum Einsatz.
+Um nun den besten Vanishing-Point zu finden, nach dem gefahren werden kann, wird der Mittelwert und die Standardabweichung der Punkte berechnet.
+In einer While-Schleife werden nur Punkte in Betracht gezogen, welche unter einen maximalen Standardabweichung liegen. Aus diesen wird dann ein neuer Mittelwert berechnet. Liegen keine Punkte unter der maximalen Standardabweichung vor, erhöht diese sich immer weiter um eins, bis Punkte gefunden werden, aus welchen der neue Mittelwert berechnet werden kann. 
+Ist die Berechnung abgeschlossen, terminiert der Algorithmus und es werden Folgende Parameter zurückgegeben.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/Bilder/vanishingPoint}% keine extention: wählt jpg für DVI
+  \caption[HoughLineVP]%
+           {\label{fig:HoughLineVP}%
+           Veranschaulichung der Hough-Linien-Suche mit Vanishing-Point und dessen Winkel}
+\end{center}
+\end{figure}
+
+
+
+%
+\section{Aussenlinienverfolgung mit dem Line-Follower Algorithmus}
+\label{sec:Aussenlinienverfolgung mit dem Line-Follower Algorithmus}
+
+Der Line-Follower-Algorithmus setzt auf den beiden Startpunkt-Algorithmen start of lines search und Vanishin Point search auf. 
+Der Algorithmus arbeitet auf dem Graustufenbild in der Birdseye-Ansicht.
+Er ben{\"o}tigt einen Startpunkt und einen Startwinkel als Eingabeparameter. 
+Ziel ist es eine Au{\ss}enlinie von einem Startpunkt im unteren Bildbereich soweit es m{\"o}glich ist nachzuverfolgen. Das Verfahren ist ein rekursives Verfahren und ruft sich mit neuem Startpunkt und Startwinkel immer wieder selbst auf bis eine von mehreren Terminierungsbedingungen in Kraft tritt.
+
+Angefangen vom ersten Startpunkt betrachtet der Algorithmus eine Anzahl von AR Richtungen mit Sichtweite SW und einem Sichtfeld SF festgelegt durch einen festen Winkel.
+Die Mitte des Sichtfeldes wird durch den Startwinkel festgelegt.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/line_follower_directions}% keine extention: wählt jpg für DVI
+  \caption[SuchrichtingLF]%
+           {\label{fig:SuchrichtingLF}%
+           Die AR Suchrichtungen in gelb und t{\"u}rkis und das Sichtfeld des Line-Follower-Algorithmus dargestellt in rot}
+\end{center}
+\end{figure}
+
+
+Im ersten Schritt werden alle Pixelintensit{\"a}ten unter den Zweigen der Suchrichtungen in einem Vector-Container gesammelt.
+Anschlie{\ss}end wird der Algorithmus Otsus-Methode auf diesen Container angewandt.
+Otsus-Methode findet einen Schwellwert der das Bild in zwei Klassen aufteilt.
+In diesem Fall der schwarze Hintergrund der Fahrbahn und die wei{\ss}en Linien.
+Es wird ein Histogramm aus vorkommenden Pixel-Intensit{\"a}ten erzeugt und ein Schwellwert berechnet, der die gewichtete Interklassen Varianz der beiden Klassen minimiert. 
+
+[Formel]
+
+Mit dem berechneten Otsu-Schwellwert werden die AR Suchrichtungen wieder durchschritten. F{\"u}r jede der Suchrichtungen wird die aktuelle Intensit{\"a}t der Position mit dem Otsu-Schwellwert verglichen. Liegt eine Intensit{\"a}t unter dem Otsu-Schwellwert wird die vorherige Position und die Akkumulation aller Pixel-Intensit{\"a}ten bis zu dieser Position gespeichert. Ansonsten bricht die Suche nach Erreichen von SW in dem derzeitigen Zweig ab und es wird auch hier die Positionen mit akkumulierten Pixel-Intensit{\"a}ten gespeichert.
+Sind alle Zweige durchlaufen wird {\"u}ber all jene der nach Intensit{\"a}ten gewichtete Schwerpunkt ermittelt.
+[Formel]
+Das Pixel im vierer Nachbarschaftsbereich des Schwerpunktes mit h{\"o}chster Intensit{\"a}t wird als neuer Startpunkt festgelegt. Und der neue Suchwinkel ist der Winkel zwischen altem und neuem Startpunkt. Der Algorithmus ruft die Suchfunktion erneut auf bis eines der folgenden Terminierungsbedingungen erf{\"u}llt ist. 
+
+Eine maximale Anzahl von Iterationen wurde erreicht
+Die Suche bleibt Stecken
+Wenn gefundene Punkte nacheinander sich unter einer festgelegten euklidischen Distanz zum vorhergehenden Punkt befinden wird ein Counter hochgesetzt welcher den rekursiven Aufruf terminiert wenn dieser Counter einen Schwellwert {\"u}berschreitet
+
+Die Suche bewegt sich zur{\"u}ck
+Wenn der Y-Wert des vorherigen Startpunktes gr{\"o}{\ss}er ist als der neue Startpunkt wird eine Counter erh{\"o}ht der nach {\"u}berschreiten eines Schwellwertes den Algorithmus terminiert.
+Die Suche ist au{\ss}erhalb des Bildbereichs
+
+Ist die Suche beendet gibt line\_follower folgende R{\"u}ckgabeparamter zur{\"u}ck.
+
+Gefundene Linien-Punkte mit zugeh{\"o}rigem Winkel
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/linefollower}% keine extention: wählt jpg für DVI
+  \caption[LPLF]%
+           {\label{fig:LPLF}%
+           Die gefundenen Linienpunkte des Line-Follower Algorithmus für die linke(gelb) und rechte(t{\"u}rkis Außenlinie)}
+\end{center}
+\end{figure}
+
+
+\section{Linienpunktereduzierung mit dem Douglas-Peucker-Algorithmus}
+\label{sec:Linienpunktereduzierung mit dem Douglas-Peucker-Algorithmus}
+
+%
+Der Douglas-Peucker-Algorithmus kann verwendet werden um eine Polylinie durch Reduzierung der Anzahl der enthaltenen Punkte ann{\"a}hrend zu beschreiben.
+Da der Line-Follower-Algorithmus viele nah beieinander liegende Punkte findet, welche keine wichtigen Informationen enthalten, werden diese durch RDP verworfen um nur noch auf den wichtigen Punkten arbeiten zu k{\"o}nnen.
+Dies geschieht durch das Legen einer imagin{\"a}ren Linie zwischen dem ersten und dem letzten Punkt in einer Reihe von Punkten, welche die Polylinie bilden. Es wird gepr{\"u}ft, welcher Punkt am weitesten von dieser Linie entfernt ist. Die Entfernung ist die euklidische Distanz des Punktes zu dessen Lotfu{\ss}punkt auf der Linie. Wenn der gefundene Punkt (und wie folgt alle anderen Zwischenpunkte) eine kleinere euklidische Distanz als ein gegebener Abstand Epsilon besitzt, werden alle dazwischen liegenden Punkte entfernt. Wenn dieser Ausrei{\ss}er-Punkt andererseits weiter von der Linie entfernt ist als Epsilon, wird die Polylinie in zwei Teile geteilt. Zum einen vom ersten Punkt bis einschlie{\ss}lich zum Ausrei{\ss}er-Punkt. Zum anderen vom Ausrei{\ss}er-Punkt bis hin zum Endpunkt.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/Douglas_Peucker}% keine extention: wählt jpg für DVI
+  \caption[RDPAlgorihtmus]%
+           {\label{fig:RDPAlgorihtmus}%
+           Veranschaulichung des Douglas-Peucker-Algorithmus}
+\end{center}
+\end{figure}
+
+
+
+
+Die Funktion wird f{\"u}r beide resultierenden Polylinien rekursiv aufgerufen.
+Der Start- und Endpunkt wie alle Ausrei{\ss}er-Punkte ergeben die neue reduzierte Linie.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/rdp}% keine extention: wählt jpg für DVI
+  \caption[RDPAlgorihtmusBild]%
+           {\label{fig:RDPAlgorihtmusBild}%
+           Darstellung der Linienpunkte nach der anwendung des Douglas-Peucker-Algorithmus}
+\end{center}
+\end{figure}
+
+
+Der Algorithmus gibt als R{\"u}ckgabewert die reduzierten Linien-Punkte des Line-Follower-Algorithmus zur{\"u}ck. Jeder Punkt tr{\"a}gt als zus{\"a}tzliche Information den Winkel und die Distanz zu seinem n{\"a}chsten Nachbarpunkt.
+
+
+
+
+\section{Mittelliniensuche und Grapherzeugung}
+\label{sec:Mittelliniensuche und Grapherzeugung}
+
+%
+%
+Um eine robuste Linienerkennung zu erm{\"o}glichen muss auch die Mittellinie in betracht gezogen werden. Der Algorithmus nutzt dabei einen Clustering-Ansatz. Zuerst werden einzelne Pixel, die zu einer Mittellinie geh{\"o}ren in einer Gruppe zusammengef{\"u}hrt. Anschlie{\ss}end werden aufeinander Folgende Mittellinien-Gruppen, wenn sie unter einem gewissen Abstand voneinander entfernt sind, zu Knoten in einem Graphen vereint. In folgendem wird dieser Algorithmus n{\"a}her beschrieben.
+
+Der Algorithmus startet mit dem Einlesen des Graustufenbilds in Birdseye-Perspektive.
+Das Eingangsbild wird in Raster der H{\"o}he RH und der Breite RB aufgeteilt. Die einzelnen Bereiche stehen f{\"u}r Gruppen durch welche Mittellinien gekennzeichnet sind. Jeder Bildbereich wird dadurch mit einen Bereichsschl{\"u}ssel gekennzeichnet. Der Schl{\"u}ssel ist ein Tupel definiert durch pair<int,int>. Die einzelnen Bereichsschl{\"u}ssel sind abh{\"a}nig von der Bilddimension und der Rasterisierung.
+Der Schl{\"u}ssel eines Bereichs wird beschrieben durch Bildh{\"o}he/RH (erster Wert des Tupels) und Bildbreite/RB (zweiter Wert des Tupels).
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{/home/tb/Desktop/Master/Bilder/rasterierung_small}% keine extention: wählt jpg für DVI
+  \caption[RasterisiertesBild]%
+           {\label{fig:RasteriertesBild}%
+           Das Rasterisierte Bild in rot mit zugehörigen Rasterschküsseln in grün}
+\end{center}
+\end{figure}  
+
+Durch eine For-Schleife wird durch das Bild iteriert und die Pixelintensit{\"a}ten PI werden mit dem festgelegten Schwellwert PIS verglichen. Wird ein PI gr{\"o}{\ss}er PIS auf einer Pixelposition PP gefunden so wird die Funktion radial\_scan aufgerufen. Die Funktion sucht in einem radius SR alle PI um PP ab. Wird eine PI gefunden die gr{\"o}{\ss}er als ein maximaler radial Schwellwert MRS ist, dann bricht der Algorithmus ab und geht zur n{\"a}chsten PP {\"u}ber. Falls keiner der PI um die PP gr{\"o}{\ss}er dem MRS ist wird diese PP mit seinem zugeh{\"o}rigen Bereichsschl{\"u}ssel in dem Container multimap<pair<int,int>,Point> gespeichert. Dementsprechend wird das ganze Bild durchlaufen.
+
+[Bild Radial Scan Rasterschl{\"u}ssel]
+
+Im n{\"a}chsten Schritt wird die Anzahl von PP f{\"u}r jeden Bereichsschl{\"u}ssel im Multimap-Container gez{\"a}hlt. Liegt diese Anzahl unter einem minimalen Schwellwert MPPS so wird der Speicherbereich (PPs mit zugeh{\"o}rigem Bereichsschl{\"u}ssel) aussortiert. Die {\"u}brigbleibenden Daten innerhalb des Multimap-Containers k{\"o}nnen als valide Gruppen von Mittellinienpunkte MP angesehen werden. Falls der Multimap-Container leer ist terminiert der Algorithmus und keine Mittellinien wurden gefunden.
+
+Ist die Mittelliniensuche nicht Terminiert beginnt der Aufbau eines ungerichteten Graphen.
+Im ersten Schritt werden daf{\"u}r die geometrischen Schwerpunkte GS durch die MP f{\"u}r jeden Bereichsschl{\"u}ssel berechnet.
+
+[Formel]
+
+Anschlie{\ss}end wird die euklidische Distanz zwischen den GS der Bereichsschl{\"u}ssel mit einem Schwellwert verglichen. Ist die Distanz zweier GS unter dem Schwellwert geh{\"o}ren die Bereichsschl{\"u}ssel I und J zusammen und diese Verbindung wird in einem Vector-Container hinterlegt.  
+Alle m{\"o}glichen Permutationen werden so verglichen. Durch die Funktion isPermuted wird w{\"a}hrenddessen sichergestellt das nicht dieselben Bereichsschl{\"u}ssel verglichen werden als auch das keine Bereichsschl{\"u}ssel mehrmals mit dem Schwellwert verglichen werden.
+Wurden alle Verbindungen von Bereichsschl{\"u}sseln berechnet, werden diese durch den Algorithmus Depth First Search aufgel{\"o}st. Depth First Search ist ein rekursiver Algorithmus der angewandt wird um  Knoten in einem Graphen zu suchen . Im Gegensatz zur Breitensuche BFS wird bei der Tiefensuche DFS zun{\"a}chst ein Pfad vollst{\"a}ndig in die Tiefe beschritten, bevor abzweigende Pfade beschritten werden.
+
+
+DFS wurde gew{\"a}hlt da die Bereichsschl{\"u}ssel so gut wie immer nur einen Nachbarknoten besitzen und nicht in die Breite gesucht werden muss. Dies ist damit zu begr{\"u}nden das die Mittellinien der Fahrbahn aufeinanderfolgen. Au{\ss}erdem ben{\"o}tigt DFS weniger Speicherressourcen da nicht alle Kind-Knoten eines aktuell zu pr{\"u}fenden Knotens gespeichert werden m{\"u}ssen. Zudem sind die Knoten nach Beendigung der Suche bereits topologisch sortiert. Durch die implementierte Klasse depth\_first\_search werden die Bereichsschl{\"u}ssel zu Graphen zugeordnet. Dabei k{\"o}nnen auch Graphen mit nur einem Knoten entstehen.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{/home/tb/Desktop/Master/Bilder/midlinesearch_cluster}% keine extention: wählt jpg für DVI
+  \caption[MittellinienGraph]%
+           {\label{fig:MittellinienGraph}%
+           Darstellung eines Graphen von verbundenen Mittellinien.
+           Der grüne Punkt und der rote Kreis geben die Start und Endwerte der einzelnen Mittelliniensegmente an.
+           }
+\end{center}
+\end{figure}  
+
+Ist DFS terminiert werden die in den Graphen enthaltenen Bereichsschl{\"u}ssel durch den Abstand ihres GS zum Fahrzeug sortiert. Dies ist durch die Funktion sort() realisiert welche durch {\"U}berladung mit einer Lambda-Funktion nach der kleinsten euklidischen Distanz absteigend zum Fahrzeug hin sortiert. Werden keine Graphen mit einer Anzahl Knoten gr{\"o}{\ss}er eins gefunden, terminiert der Algorithmus. Ist dies nicht der Fall, werden zus{\"a}tzlich der Richtungswinkel und der Abstand eines Knoten zu seinem n{\"a}chsten Nachbarn berechnet.
+
+Vor dem Beenden der Mittellinien Suche werden alle R{\"u}ckgabeparameter gesetzt. Die sind :
+
+
+
+%https://stackoverflow.com/questions/3332947/when-is-it-practical-to-use-depth-first-search-dfs-vs-breadth-first-search-bf
+%Comparing BFS and DFS, the big advantage of DFS is that it has much lower memory requirements than BFS, because it?s not necessary to %store all of the child pointers at each level.
+
+
+\section{Linien-Validierungs-Tablle Erzeugung}
+\label{sec:Linien-Validierungs-Tablle Erzeugung}
+
+%
+%
+Die Klasse LineValidationTableCreator erzeugt eine Bewertungstabelle aus den zur{\"u}ckgelieferten Werten der LinePointsReducer- und MidLineSearch-Klasse. Diese Werte sind Punkte mit einer zugeh{\"o}rigen Richtung und L{\"a}nge zum n{\"a}chsten Punkt auf der entsprechenden Linie. 
+
+In dieser Tabelle werden Informationen {\"u}ber einzelne Punkte der gefundenen Linken-, Mittel- und Rechten-Linie-Punkte berechnet, vermerkt und verglichen um eine robuste Linienerkennung zu erm{\"o}glichen. Daf{\"u}r wird zuerst das Graustufenbild in Birdseye-Perspektive an die Klasse {\"u}bergeben auf welchem der LineValidationTableCreator seine Berechnungen ausf{\"u}hrt. Anschlie{\ss}end werden die einzelnen Linien {\"u}bergeben. Mit den Folgenden Enumerationen welche als Schl{\"u}sselvariablen dienen kann bestimmt werden welche Linien verglichen werden sollen. Gleichzeitig werden dadurch auch Variablen der Operationen der LineValidationCreator-Klasse an die entsprechenden Linien angepasst.
+
+
+\begin{enumerate}
+
+\item[] \textbf{LEFT\_TO\_MID} \hfill \\
+\item[] \textbf{LEFT\_TO\_RIGHT} \hfill \\
+
+\item[] \textbf{MID\_TO\_LEFT} \hfill \\
+\item[] \textbf{MID\_TO\_RIGHT} \hfill \\
+
+\item[] \textbf{RIGHT\_TO\_LEFT} \hfill \\
+\item[] \textbf{RIGHT\_TO\_MID} \hfill \\
+\end{enumerate}
+
+
+Eine weitere gesetzte Konvention ist das die Linien von links (LINKS = 0) nach rechts (RECHTS = 2) durchnummeriert sind.
+
+Je nach Schl{\"u}ssel-Variable wird eine Linie abh{\"a}ngig von den Parametern - Richtung und L{\"a}nge, zum n{\"a}chsten Punkt durchschritten. Dabei werden f{\"u}r jeden Punkt , orthogonal zu diesem, Liniensegmente auf benachbarten Linien im Graustufenbild gesucht. Der orthogonale Suchwinkel ist abh{\"a}ngig von der Schl{\"u}ssel-Variable und der Richtung zum n{\"a}chsten Punkt der aktuellen Linie. Wird ein valides Segment gefunden (seine Breite liegt zwischen einem minimalen und maximalen Schwellwert), wird dies in einer Klasse vermerkt. Diese Klasse ist die LineValidationTable-Klasse. Jeder Punkt einer Linie ist somit eine eigene Klasse in der verschiedene Informationen vermerkt, wie auch Getter- und Setter-Funktionen implementiert sind.
+
+
+Wurden alle Linien-Punkte f{\"u}r jede Linie durchlaufen werden die erzeugten Informationen, in LineValidtionTable, untereinander verglichen. Dadurch wird jeder Linien-Punkt (LineValidtionTable-Klasse) mit weiteren Informationen bef{\"u}llt wird.
+Es wird {\"u}berpr{\"u}ft ob f{\"u}r einen gefundenen benachbarten Linien-Punkt aus [XX] ein Punkt in der benachbarten Bewertungstabelle (LineValidtionTable) gefunden wird. Daf{\"u}r wird die minimale euklidische Distanz der Punkte gesucht. Liegt diese unter einem Schwellwert wird ein Flag in der entsprechenden Bewertungstabelle gesetzt. Dies soll der Absicherung der Punkte dienen. Des weiteren wird die Richtung der einzelnen Punkte untereinander auf ihre gleiche Ausrichtung hin {\"u}berpr{\"u}ft um f{\"u}r einen noch h{\"o}here Genauigkeit zu sorgen.
+Da die Mittellinien in einem Vector-Container bestehend aus einem Vector-Container mit zusammengeh{\"o}rigen Mittellinien-Gruppen gespeichert sind, werden Punkt einer anderen Gruppe in der LineValidationTable-Klasse mit einer zus{\"a}tzlichen Identifikationsnummer markiert.
+Im folgenden sind die Parameter der LineValidationTable-Klasse gegeben. 
+
+
+
+\section{Merkmal Extraktion aus den Validierungs-Tabellen}
+\label{sec:Merkmal Extraktion aus den Validierungs-Tabellen}
+
+%
+Die FeatureExtractor-Klasse dient dazu alle Merkmale, die durch verschiedene Algorithmen gesammelt wurden in sich zu vereinen und diese weiter aufzubereiten. Die LineValidationTable-Container der einzelnen Linien werden im ersten Schritt in diese geladen. Verschiedene Merkmale der Fahrbahn k{\"o}nnen nun extrahiert werden.
+
+Mit der Funktion GetDrivePointsInDriveDirection werden nur Punkte extrahiert, welche in Fahrtrichtung verlaufen. Abzweigungen wie Sie bei Kreuzungen entstehen werden nicht ber{\"u}cksichtigt.
+Die Funktion betrachtet dabei die {\"A}nderung des Winkels zwischen den einzelnen Punkten einer Linie. Dazu muss der Startwinkel an welchem die Linie im unteren Bildbereich beginnt zwischen einem minimalen und maximalen Wert liegen damit die Linie ber{\"u}cksichtigt wird. Anschlie{\"ss}end wird durch die Linien-Punkte des LineValidationTables iteriert und die Winkel{\"a}nderung der Punkte verglichen. Bei einer abrupten {\"A}nderung {\"u}ber einen Schwellwert wird die Linie abgeschnitten und als Return-Wert ausgegeben. Der Datentyp ist dabei immer noch vector<LineValidationTable> mit allen gespeicherten Informationen.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{/home/tb/Desktop/Master/Bilder/indrivedir}% keine extention: wählt jpg für DVI
+  \caption[ExtrahierteLinienpunkte]%
+           {\label{fig:ExtrahierteLinienpunkte}%
+           Extrahierte linke(gelb), mittel(lila) und rechte(t{\"u}rkis) Linienpunkte in Fahrtrichtung.
+           }
+\end{center}
+\end{figure}
+
+
+
+\section{Bewerten sicherer Fahrbereiche}
+\label{sec:Bewerten sicherer Fahrbereiche}
+
+%
+%
+Die Klasse RectSafety dient zur Bewertung von befahrbaren Fahrbahnbereichen.
+Diese Bereiche werden von unten nach oben im Bild fortlaufend ausgewertet.
+RectSafety f{\"u}hrt seine Berechnung auf dem Graustufenbild in Birdseye-Perspektive aus.
+Der Algorithmus verwendet die aus der FeatureExtractor-Klasse extrahierten Fahrbahninformationen in Fahrtrichtung.
+Im ersten Schritt wird ein Rechteck mit der Dimension SafteyRectWidth X SafetyRectHeight im Bildbereich vor dem Fahrzeug betrachtet.
+Mit der OpenCV-Funktion PolygonTest kann ein Punkt darauf gepr{\"u}ft werden ob er sich in einem Polygon befindet. Dieses Polygon ist in diesem Fall das Rechteck. Die Linke-, Mitte und Rechte LineValidationTable-Punkte in Fahrtrichtung werden darauf gepr{\"u}ft ob sie im derzeit betrachteten Rechteck liegen. Anschlie{\ss}end wird eine Metrik erzeugt, welche die Sicherheit des Bereichs kompakt in einer Zahl bewertet. Daf{\"u}r werden die im aktuellen Rechteck enthaltenen LineValidationTable-Punkte aller Linien ausgewertet. Im Folgenden sind die Informationen erl{\"a}utert, welche zur Erzeugung der Metrik genutzt werden. Dabei sind sie der Priorit{\"a}t nach absteigend geordnet.
+
+Priotit{\"a}t 1: Ein LineValidationTable-Punkt hat beide benachbarten Segmente und die Nachbarlinien besitzen einen Punkt in der N{\"a}he dieser.
+
+Priotit{\"a}t 2: Ein LineValidationTable-Punkt hat beide benachbarten Segmente und eine Nachbarlinie liegt in der N{\"a}he zu einem Segment.
+
+Priotit{\"a}t 3: Ein LineValidationTable-Punkt hat ein benachbartes Segment und eine Nachbarlinie liegt in der N{\"a}he zu diesem Segment
+
+Priotit{\"a}t 4: Ein LineValidationTable-Punkt hat beide benachbarten Segmente aber die Nachbarlinien sind nicht in der N{\"a}he zu diesen
+
+Priotit{\"a}t 5: Ein LineValidationTable-Punkt findet ein benachbartes Segment
+
+Um eine kompakte Beschreibung der Bereichssicherheit zu erm{\"o}glichen, werden die Priorit{\"a}ten der LineValidationTable-Punkte aller Linien im Rechteck akkumuliert. Des Weiteren wird die Anzahl der Priorit{\"a}ten in einen prozentualen Wert umgewandelt. Dieser prozentuale Wert ist im normalen Fall abh{\"a}ngig von der H{\"o}he des Rechtecks. Dieser beschreibt wie viele Punkte maximal im Rechteck liegen k{\"o}nnen. Da jedoch bei einer Kurvenfahrt theoretisch mehr Punkte als SafetyRectHeight im Rechteck vorkommen k{\"o}nnen, wird in diesem Ausnahmefall die Anzahl der LineValidationTable-Punkte im Rechteck verwendet. Die prozentualen Werte f{\"u}r jede der akkumulierten Priorit{\"a}ten werden anschlie{\ss}end zu einem Wert zusammengef{\"u}hrt.
+
+[Bild akkumilierte Prios]
+
+Die Berechnung dient nur zur kompakten Beschreibung der Bereichssicherheit, damit sie als einzelner Wert an Funktionen {\"u}bergeben und einfach interpretiert werden kann. Dieser Wert beschreibt die Sicherheit der Punkte im ersten Rechteck.
+Darauf aufbauend, werden nun die sichersten LineValidationTable-Punkte aus dem Rechteck verwendet um die Richtung zu erhalten in welche die Fahrspur ausgerichtet ist. Vom Mittelpunkt des derzeitig betrachteten Rechtecks wird in die berechnete Richtung mit einer festgelegten Schrittweite vorangeschritten und die n{\"a}chste Bereichssicherheit berechnet.
+Falls in einem Bereich keine LineValidationTable-Punkte mit oben beschriebenen Priorit{\"a}tswerten vorhanden sind, wird im Winkel des vorherigen Rechtecks solange vorangeschritten, bis der Mittelpunkt eine Rechtecks au{\ss}erhalb des betrachteten Graustufenbilds liegt. 
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{/home/tb/Desktop/Master/Bilder/safetytrack2}% keine extention: wählt jpg für DVI
+  \caption[RectSafety]%
+           {\label{fig:RectSafety}%
+           Bewertete Bereichssicherheiten dargestellt als grüne Rechtecke.
+           }
+\end{center}
+\end{figure}
+
+
+
+Dies erlaubt es zus{\"a}tzlich {\"u}ber Kreuzungen hinaus, Bereiche fr{\"u}hzeitig zu bewerten.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{/home/tb/Desktop/Master/Bilder/safetytrack}% keine extention: wählt jpg für DVI
+  \caption[SafetyRectKreuzung]%
+           {\label{fig:SafetyRectKreuzung}%
+           Bewertung der Bereichssicherheit über die Kreuzung hinaus.
+           }
+\end{center}
+\end{figure}
+
+Wurden alle m{\"o}glichen Bereiche ausgewertet terminiert die Funktion und gibt die Bereichsicherheiten zur{\"u}ck.
