@@ -17,10 +17,10 @@ gazebo_path = "/home/tb/.gazebo/models/"
 
 ###########################
 Floor = True
-model_name  = "box_l100_w100_h100"
-image_path  = "/home/tb/gazebo_road_generation/scripts/"
-size_x      = 0.1
-size_y      = 0.1
+model_name  = "island_no_crossing_gimp"
+image_path  = "/home/tb/gazebo_road_generation/ros_ws/scripts/"
+size_x      = 2.25
+size_y      = 1.8
 size_z      = 0.1
 ###########################
 

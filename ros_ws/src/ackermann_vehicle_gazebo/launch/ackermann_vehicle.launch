@@ -41,7 +41,7 @@ limitations under the License.
 <launch>
   <arg name="namespace" default="/"/>
  <!-- <arg name="world_name" default="worlds/empty_world.launch"/> -->
- <arg name="world_name" default="/home/tb/gazebo_road_generation/ros_ws/src/ackermann_vehicle_gazebo/worlds/carolo_base_track.world"/> 
+ <arg name="world_name" default="/home/tb/gazebo_road_generation/ros_ws/src/ackermann_vehicle_gazebo/worlds/carolo_track_island.world"/> 
 
 
 

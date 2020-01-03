@@ -18,6 +18,8 @@ in the defined zones, the vehicle must stop in frontof the crosswalk. Stopping m
 Pedestrians start crossing the street only after the vehicle has stopped. If all relevant pedestrianshave crossed in front of the vehicle, 
 the vehicle may continue. Driving on before all pedestriansstarted to cross and have cleared the right lane will be penalized as collisions 
 with obstacles.
+
+36 mmto40 mmwide and400 mmlong white markings parallel to the direction of trave
 """
 
 

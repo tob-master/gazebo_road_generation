@@ -90,6 +90,32 @@ void LaneTracker::CheckStartParameters()
 
 }
 
+float GetOrthogonalAngle(float angle, int SEARCH_LINE_CODE)
+{
+    int  angle_ = 0;
+
+    if(SEARCH_LINE_CODE == LEFT_TO_MID || SEARCH_LINE_CODE == LEFT_TO_RIGHT || SEARCH_LINE_CODE == MID_TO_RIGHT) angle_ = (angle - 90);
+
+    if(SEARCH_LINE_CODE == RIGHT_TO_MID || SEARCH_LINE_CODE == RIGHT_TO_LEFT || SEARCH_LINE_CODE == MID_TO_LEFT) angle_ = (angle + 90);
+
+    if(angle_ > 359) angle_ = angle_ % 360;
+
+    if(angle_ < 0) angle_ =  360 - abs(angle_);
+
+    return float(angle_);
+}
+
+
+
+Point GetPolarCoordinate(int x, int y, float angle, int radius)
+{
+    x = x + radius * cos(angle) + 0.5;
+    y = y - radius * sin(angle) + 0.5;
+
+    return Point(x,y);
+}
+
+
 void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
     try
@@ -118,11 +144,223 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         //StartOfLinesSearcher_->DrawStartParameters(image_rgb_bird_);
         //VanishingPointSearcher_->ShowCannyEdgeImage();
-        //VanishingPointSearcher_->DrawHoughLines(image_rgb_,LEFT_LINE);
-        //VanishingPointSearcher_->DrawHoughLines(image_rgb_,RIGHT_LINE);
-        //VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
+        VanishingPointSearcher_->DrawHoughLines(image_rgb_,LEFT_LINE);
+        VanishingPointSearcher_->DrawHoughLines(image_rgb_,RIGHT_LINE);
+        VanishingPointSearcher_->DrawVanishingPoint(image_rgb_);
 
         CheckStartParameters();
+
+
+        if(found_vanishing_point_)
+        {
+
+            StartParameters vanishing_point_start_parameters = VanishingPointSearcher_->GetLineFollowerStartParameters();
+
+            int start_left_x_ = vanishing_point_start_parameters.left_x;
+            int start_left_y_ = vanishing_point_start_parameters.left_y;
+            float start_angle_left_ = vanishing_point_start_parameters.left_angle;// *(180/PI);
+
+
+
+            int max_forsight_distance = 150;
+
+
+            float orthogonal_angle = GetOrthogonalAngle(start_angle_left_,LEFT_TO_RIGHT);
+
+
+
+
+            for(float current_angle=(orthogonal_angle-10); current_angle<orthogonal_angle+10; current_angle+=1)
+            {
+
+
+
+
+                float angle =  (current_angle*PI)/180;
+                //cout << orthogonal_angle << " " << angle << " " <<  vanishing_point_start_parameters.left_angle <<  endl;
+                Point line_iterator_end = GetPolarCoordinate(start_left_x_, start_left_y_, angle, 120);
+
+                //int curren_left_x  = start_left_x_ + current_distance * cos(start_angle_left_*PI/180);
+                //int curren_left_y  = start_left_y_ - current_distance * sin(start_angle_left_*PI/180);
+
+
+                 LineIterator line_iterator(image_mono_bird_, Point(start_left_x_,start_left_y_),line_iterator_end , 8);
+
+
+                 //line( image_rgb_bird_, Point(start_left_x_,start_left_y_),line_iterator_end, Scalar(255,0,0), 1, CV_AA);
+
+                 vector<uchar> scanned_line;
+
+                 for(int i=0; i<line_iterator.count; i++,line_iterator++)
+                 {
+                     scanned_line.push_back(**line_iterator);
+                 }
+
+
+                                 Mat scanned_line_mat(scanned_line);
+
+                                 threshold(scanned_line_mat, scanned_line_mat, 100, 255, CV_THRESH_BINARY);
+
+                                 int white_counter = 0;
+                                 int black_counter = 0;
+
+                                 vector<pair<string,int>> type;
+
+                                 vector<int> xxx;
+                                 xxx.push_back(-1);
+
+                                 for (int i = 0; i < scanned_line_mat.rows; ++i)
+                                  {
+                                     for (int j = 0; j < scanned_line_mat.cols; ++j)
+                                     {
+                                         int px = (int)scanned_line_mat.at<uchar>(i,j);
+
+                                         if(xxx[xxx.size()-1] == px) xxx.push_back(px);
+                                         else
+                                         {
+                                             if(px == 255 && xxx[xxx.size()-1] != -1){
+                                                 type.push_back(make_pair("black",xxx.size()));
+                                             }
+                                             else if(px == 0 && xxx[xxx.size()-1] != -1){
+                                                 type.push_back(make_pair("white",xxx.size()));
+                                             }
+                                             xxx.clear();
+                                             xxx.push_back(px);
+                                         }
+                                     }
+                                }
+
+                                 if(xxx[xxx.size()-1] == 255)  type.push_back(make_pair("white",xxx.size()));
+                                 else                          type.push_back(make_pair("black",xxx.size()));
+
+                                 int goal_line_counter = 0;
+
+                                 for(auto it : type){
+                                     if(it.second >= 2 && it.second <= 4) goal_line_counter++;
+                                 }
+
+                                 if(goal_line_counter >= 20)
+                                 {
+                                     circle(image_rgb_bird_,Point(start_left_x_,start_left_y_), 5, Scalar(0,255,0),CV_FILLED);
+
+                                     cout << "GOAL LINE ! " << goal_line_counter << endl;
+                                 }
+                              }
+            }
+
+
+
+
+
+        if(found_vanishing_point_)
+        {
+
+            StartParameters vanishing_point_start_parameters = VanishingPointSearcher_->GetLineFollowerStartParameters();
+
+            int start_left_x_ = vanishing_point_start_parameters.left_x;
+            int start_left_y_ = vanishing_point_start_parameters.left_y;
+            float start_angle_left_ = vanishing_point_start_parameters.left_angle;
+
+            int start_right_x_ = vanishing_point_start_parameters.right_x;
+            int start_right_y_ = vanishing_point_start_parameters.right_y;
+            int start_angle_right_ = vanishing_point_start_parameters.right_angle;
+
+
+            int max_forsight_distance = 150;
+
+            for(int current_distance=0; current_distance<max_forsight_distance; current_distance+=5)
+            {
+                int curren_left_x  = start_left_x_ + current_distance * cos(start_angle_left_*PI/180);
+                int curren_left_y  = start_left_y_ - current_distance * sin(start_angle_left_*PI/180);
+
+                int curren_right_x  = start_right_x_ + current_distance * cos(start_angle_right_*PI/180);
+                int curren_right_y  = start_right_y_ - current_distance * sin(start_angle_right_*PI/180);
+
+                 LineIterator line_iterator(image_mono_bird_, Point(curren_left_x,curren_left_y), Point(curren_right_x,curren_right_y), 8);
+
+                 vector<uchar> scanned_line;
+
+                 for(int i=0; i<line_iterator.count; i++,line_iterator++)
+                 {
+                     scanned_line.push_back(**line_iterator);
+                 }
+
+                Mat scanned_line_mat(scanned_line);
+
+                threshold(scanned_line_mat, scanned_line_mat, 100, 255, CV_THRESH_BINARY);
+
+                int white_counter = 0;
+                int black_counter = 0;
+
+                vector<pair<string,int>> type;
+
+                vector<int> xxx;
+                xxx.push_back(-1);
+
+                for (int i = 0; i < scanned_line_mat.rows; ++i)
+                 {
+                    for (int j = 0; j < scanned_line_mat.cols; ++j)
+                    {
+                        int px = (int)scanned_line_mat.at<uchar>(i,j);
+
+                        if(xxx[xxx.size()-1] == px) xxx.push_back(px);
+                        else
+                        {
+                            if(px == 255 && xxx[xxx.size()-1] != -1){
+                                type.push_back(make_pair("black",xxx.size()));
+                            }
+                            else if(px == 0 && xxx[xxx.size()-1] != -1){
+                                type.push_back(make_pair("white",xxx.size()));
+                            }
+                            xxx.clear();
+                            xxx.push_back(px);
+                        }
+                    }
+               }
+
+                if(xxx[xxx.size()-1] == 255)  type.push_back(make_pair("white",xxx.size()));
+                else                          type.push_back(make_pair("black",xxx.size()));
+
+                int crosswalk_counter = 0;
+
+                for(auto it : type){
+
+                    //cout <<current_distance << " " << it.first << " " << it.second << endl;
+                    if(it.second >= 6 && it.second <= 8) crosswalk_counter++;
+
+                }
+
+
+
+                if(crosswalk_counter >= 10)
+                {
+                    circle(image_rgb_bird_,Point(start_left_x_,start_left_y_), 5, Scalar(0,0,255),CV_FILLED);
+                    circle(image_rgb_bird_,Point(start_right_x_,start_right_y_), 5, Scalar(0,0,255),CV_FILLED);
+                    cout << "Crosswalk ! " << crosswalk_counter << endl;
+                }
+
+             }
+
+        }
+
+/*
+                    if(px == 255 && px == tmp_px){ white_counter++; tmp_px = 255;}
+                    else if(px==0 && px == tmp_px){black_counter++; tmp_px = 0;}
+
+                    if(px == 255)
+                    {
+                        if(tmp_px == 255){ white_counter++; tmp_px = 255;}
+                        else{ type.push_back(make_pair("white",white_counter)); tmp_px = 0; black_counter++;}
+                    }
+                    else
+                    {
+                        if(tmp_px == 0){ black_counter++; tmp_px = 0;}
+                        else{ type.push_back(make_pair("black",black_counter)); tmp_px = 255; white_counter++;}
+                    }
+
+                }
+*/
+
 
          if(START_PARAMETERS_SCORE_ != 0)
           {
@@ -192,15 +430,18 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         LineValidationTableCreator_.GatherLineValidationTables(left_line_validation_table_,mid_line_validation_table_,right_line_validation_table_);
 
-        ConnectedComponentsSearcher_->SetImage(image_mono_bird_otsu_);
-        ConnectedComponentsSearcher_->ApplyConnectedComponents();
+        //ConnectedComponentsSearcher_->SetImage(image_mono_bird_otsu_);
+        //ConnectedComponentsSearcher_->ApplyConnectedComponents();
 
 
-
+        LineValidationTableFeatureExtractor_.LoadImage(image_mono_bird_otsu_);
         LineValidationTableFeatureExtractor_.LoadLineValidationTables(left_line_validation_table_,mid_line_validation_table_,right_line_validation_table_);
 
         LineValidationTableFeatureExtractor_.SearchCrossRoad(image_rgb_bird_);
-        LineValidationTableFeatureExtractor_.SearchParkingArea();
+
+
+
+        //LineValidationTableFeatureExtractor_.SearchParkingArea(image_rgb_bird_);
 
         LineValidationTableFeatureExtractor_.GetLinePointsInDriveDirection(left_line_in_drive_direction_table_,mid_line_in_drive_direction_table_,right_line_in_drive_direction_table_);
 

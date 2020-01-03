@@ -1,0 +1,17 @@
+material line_remove/Image
+    {
+      technique
+      {
+        pass
+        {
+          
+          texture_unit
+          {
+            texture line_remove.png PF_L8
+    	    filtering anisotropic
+            max_anisotropy 16
+          }
+        }
+      }
+    }
+    

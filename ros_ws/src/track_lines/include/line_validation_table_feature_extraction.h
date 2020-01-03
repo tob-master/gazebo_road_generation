@@ -31,6 +31,9 @@ class LineValidationTableFeatureExtraction
 
 private:
 
+    enum {ROI_X_COLUMN, ROI_Y_COLUMN, ROI_WIDTH_COLUMN, ROI_HEIGHT_COLUMN, COMPONENT_SIZE_COLUMN};
+    enum {CENTROIDS_X_COLUMN, CENTROIDS_Y_COLUMN};
+
     Mat current_image_;
 
     Mat labeled_image_;
@@ -67,6 +70,7 @@ private:
         void ExtractMinMaxLineElements( vector<LineValidationTable>  line,  MinMaxLineElements& line_minmax_elements );
 
 public:
+        void SearchParkingArea(Mat &rgb);
     //LineValidationTableFeatureExtraction();
         void LoadImage(Mat image){current_image_ = image;};
     void LoadLineValidationTables(vector<LineValidationTable> left_line_validation_table,vector<LineValidationTable>mid_line_validation_table,vector<LineValidationTable>right_line_validation_table);
@@ -74,6 +78,7 @@ public:
     void DrawLinePointsInDriveDirection(Mat &rgb);
     void SearchCrossRoad(Mat &rgb);
     void ClearMemory();
+
 };
 
 #endif // LINE_VALIDATION_TABLE_FEATURE_EXTRACTION_H

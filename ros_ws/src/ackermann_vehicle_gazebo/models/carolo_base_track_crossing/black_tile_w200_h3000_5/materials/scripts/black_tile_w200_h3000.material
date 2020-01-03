@@ -1,0 +1,17 @@
+material black_tile_w200_h3000/Image
+    {
+      technique
+      {
+        pass
+        {
+          
+          texture_unit
+          {
+            texture black_tile_w200_h3000.png PF_L8
+    	    filtering anisotropic
+            max_anisotropy 16
+          }
+        }
+      }
+    }
+    

@@ -1,0 +1,17 @@
+material box_l300_w200_h100/Image
+    {
+      technique
+      {
+        pass
+        {
+          
+          texture_unit
+          {
+            texture box_l300_w200_h100.png PF_L8
+    	    filtering anisotropic
+            max_anisotropy 16
+          }
+        }
+      }
+    }
+    

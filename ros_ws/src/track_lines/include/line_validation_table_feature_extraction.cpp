@@ -53,14 +53,56 @@ void LineValidationTableFeatureExtraction::ClearMemory()
 }
 
 
-void LineValidationTableFeatureExtraction::SearchParkingArea()
+void LineValidationTableFeatureExtraction::SearchParkingArea(Mat &rgb)
 {
+    components_stats_.release();
+    components_centroids_.release();
+    labeled_image_.release();
     components_count_ = connectedComponentsWithStats(current_image_, labeled_image_, components_stats_, components_centroids_, kConnectionCount_, CV_32S);
 
+    Mat under_max_size_components_truth_table = components_stats_.col(COMPONENT_SIZE_COLUMN)<1280*100;
+    Mat over_min_size_components_truth_table  = components_stats_.col(COMPONENT_SIZE_COLUMN)>30000;
 
-    components_centroids_.at<float>(id,CENTROIDS_X_COLUMN);
 
-   int component_roi_x      = components_stats_.at<int>(id,ROI_X_COLUMN);
+        under_max_size_components_truth_table.convertTo(under_max_size_components_truth_table, CV_8UC1);
+        over_min_size_components_truth_table.convertTo(over_min_size_components_truth_table, CV_8UC1);
+
+        for (int id = 0; id < components_count_; id++)
+        {
+            if (under_max_size_components_truth_table.at<uchar>(id, 0)&&
+                over_min_size_components_truth_table.at<uchar>(id, 0))
+            {
+
+                int component_centroid_x = components_centroids_.at<float>(id,CENTROIDS_X_COLUMN);
+                int component_centroid_y = components_centroids_.at<float>(id,CENTROIDS_Y_COLUMN);
+                int component_roi_x      = components_stats_.at<int>(id,ROI_X_COLUMN);
+                int component_roi_y      = components_stats_.at<int>(id,ROI_Y_COLUMN);
+                int component_roi_width  = components_stats_.at<int>(id,ROI_WIDTH_COLUMN);
+                int component_roi_height = components_stats_.at<int>(id,ROI_HEIGHT_COLUMN);
+                int component_size       = components_stats_.at<int>(id,COMPONENT_SIZE_COLUMN);
+
+
+                cout <<component_centroid_x << endl;
+                cout <<component_centroid_y << endl;
+                cout <<component_roi_x << endl;
+                cout <<component_roi_y << endl;
+                cout <<component_roi_width << endl;
+                cout <<component_roi_height << endl;
+                cout <<component_size << endl;
+                cout <<"#######################" << endl;
+
+
+                rectangle(rgb, Rect(component_roi_x,component_roi_y,component_roi_width,component_roi_height), Scalar(0, 0, 255), 1, 8 );
+
+            }
+        }
+
+
+    //cout << components_stats_ << endl;
+
+    //components_centroids_.at<float>(id,CENTROIDS_X_COLUMN);
+
+   //int component_roi_x      = components_stats_.at<int>(id,ROI_X_COLUMN);
 
 }
 
@@ -282,6 +324,8 @@ void LineValidationTableFeatureExtraction::ExtractLinePointsInDriveDirection(vec
     }
 }
 
+
+//void LineValidationTableFeatureExtraction::FindSafestPointsOnTrack
 
 void LineValidationTableFeatureExtraction::DrawLinePointsInDriveDirection(Mat &rgb)
 {

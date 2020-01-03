@@ -1,0 +1,17 @@
+material island_no_crossing_gimp/Image
+    {
+      technique
+      {
+        pass
+        {
+          
+          texture_unit
+          {
+            texture island_no_crossing_gimp.png PF_L8
+    	    filtering anisotropic
+            max_anisotropy 16
+          }
+        }
+      }
+    }
+    

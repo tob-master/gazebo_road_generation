@@ -1,0 +1,38 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+  <model name="right_curve_r150_a90_o30">
+      <static>true</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+         <box>
+            <size>3 3 0.05</size>
+          </box>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+         <box>
+            <size>3 3 0.05</size>
+          </box>
+          </geometry>
+          <material>
+            <script>
+              <uri>model://right_curve_r150_a90_o30/materials/scripts</uri>
+              <uri>model://right_curve_r150_a90_o30/materials/textures/</uri>
+              <name>right_curve_r150_a90_o30/Image</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+  </model>
+</sdf>

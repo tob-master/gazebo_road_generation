@@ -144,6 +144,9 @@ class VanishingPointSearch
         void DrawLineIntersections(Mat &rgb);
         void DrawVanishingPoint(Mat &rgb);
         void DrawWarpedVanishingPointDirection(Mat &rgb);
+
+
+
 };
 
 #endif // VANISHING_POINT_SEARCH_H
