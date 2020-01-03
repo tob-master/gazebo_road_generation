@@ -332,7 +332,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
 
-                if(crosswalk_counter >= 10)
+                if(crosswalk_counter >= 15)
                 {
                     circle(image_rgb_bird_,Point(start_left_x_,start_left_y_), 5, Scalar(0,0,255),CV_FILLED);
                     circle(image_rgb_bird_,Point(start_right_x_,start_right_y_), 5, Scalar(0,0,255),CV_FILLED);
@@ -452,7 +452,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
         SafeDriveAreaEvaluator_.EvaluateTrackInDriveDirection();
-        //SafeDriveAreaEvaluator_.DrawEvaluatedSafetyAreasInDriveDirection(image_rgb_bird_);
+        SafeDriveAreaEvaluator_.DrawEvaluatedSafetyAreasInDriveDirection(image_rgb_bird_);
 
         //vector<TrackSafetyRects> track_safety_rects;
 

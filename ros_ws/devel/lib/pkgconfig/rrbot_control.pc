@@ -1,0 +1,8 @@
+prefix=/home/tb/gazebo_road_generation/ros_ws/devel
+
+Name: rrbot_control
+Description: Description of rrbot_control
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/tb/gazebo_road_generation/ros_ws/devel/lib 
+Requires: 

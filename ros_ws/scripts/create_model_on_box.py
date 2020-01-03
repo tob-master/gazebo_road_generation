@@ -17,11 +17,11 @@ gazebo_path = "/home/tb/.gazebo/models/"
 
 ###########################
 Floor = True
-model_name  = "island_no_crossing_gimp"
+model_name  = "startboxsign"
 image_path  = "/home/tb/gazebo_road_generation/ros_ws/scripts/"
-size_x      = 2.25
-size_y      = 1.8
-size_z      = 0.1
+size_x      = 0.15
+size_y      = 0.35
+size_z      = 0.01
 ###########################
 
 
