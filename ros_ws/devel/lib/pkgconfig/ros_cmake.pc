@@ -1,0 +1,8 @@
+prefix=/home/tb/gazebo_road_generation/ros_ws/devel
+
+Name: ros_cmake
+Description: Description of ros_cmake
+Version: 0.0.0
+Cflags: -I/home/tb/gazebo_road_generation/ros_ws/src/ros_cmake/include
+Libs: -L/home/tb/gazebo_road_generation/ros_ws/devel/lib 
+Requires: roscpp

@@ -1,0 +1,6 @@
+sudo apt-get install python-qrtools
+sudo apt-get install libzbar-dev
+sudo pip install zbar
+
+
+rosrun zbar_ros barcode_readerode

@@ -107,6 +107,8 @@ datatypes.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/datatypes.h
 line_validation_table.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_validation_table.h
+zbar.h
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/zbar.h
 
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/line_follower.cpp
 line_follower.h
@@ -491,6 +493,8 @@ datatypes.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/datatypes.h
 utils.h
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/utils.h
+
+/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/zbar.h
 
 /home/tb/gazebo_road_generation/ros_ws/src/track_lines/src/line_tracker_node.cpp
 lane_tracker.h

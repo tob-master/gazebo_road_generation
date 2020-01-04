@@ -137,9 +137,11 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/tb/gazebo_road_generation/ros_ws/build/gazebo_ros_demos/rrbot_description/cmake_install.cmake")
   include("/home/tb/gazebo_road_generation/ros_ws/build/gazebo_ros_demos/rrbot_gazebo/cmake_install.cmake")
   include("/home/tb/gazebo_road_generation/ros_ws/build/ackerman_vehicle_drive/cmake_install.cmake")
+  include("/home/tb/gazebo_road_generation/ros_ws/build/ros_cmake/cmake_install.cmake")
   include("/home/tb/gazebo_road_generation/ros_ws/build/gazebo_ros_demos/gazebo_tutorials/cmake_install.cmake")
   include("/home/tb/gazebo_road_generation/ros_ws/build/track_annotation/cmake_install.cmake")
   include("/home/tb/gazebo_road_generation/ros_ws/build/track_lines/cmake_install.cmake")
+  include("/home/tb/gazebo_road_generation/ros_ws/build/zbar_ros/cmake_install.cmake")
 
 endif()
 

@@ -150,7 +150,9 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         CheckStartParameters();
 
+        //ImageScanner scanner;
 
+        //zbar::Scanner scanner;
         if(found_vanishing_point_)
         {
 

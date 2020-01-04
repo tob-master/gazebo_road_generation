@@ -17,6 +17,8 @@
 
 #include "datatypes.h"
 #include "line_validation_table.h"
+#include "zbar.h"
+
 
 class LaneTracker
 {
