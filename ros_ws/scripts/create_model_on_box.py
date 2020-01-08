@@ -17,11 +17,11 @@ gazebo_path = "/home/tb/.gazebo/models/"
 
 ###########################
 Floor = True
-model_name  = "startboxsign"
+model_name  = "straight_3000_o_0"
 image_path  = "/home/tb/gazebo_road_generation/ros_ws/scripts/"
-size_x      = 0.15
-size_y      = 0.35
-size_z      = 0.01
+size_x      = 30
+size_y      = 1
+size_z      = 0.1
 ###########################
 
 

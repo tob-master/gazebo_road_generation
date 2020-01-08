@@ -18,7 +18,7 @@ Vektorbasierte 2D-Grafiken können zum Beispiel mit Inkscape oder Adobe Illustrat
 \begin{enumerate}
 
 \item[] \textbf{Gerade Strecken} \hfill \\
-Als Eingabeparameter nimmt das Skript die Länge der Fahrbahn und den Offset für den Start der Mittellinienrasterung entgegen. Anschließend speichert es das Segment in einer PNG-Datei.
+Als Eingabeparameter nimmt das Skript die Länge der Fahrbahn und den Offset für den Start der Mittellinienrasterung entgegen. Anschließend speichert es das Segment in einer PNG-Datei. Die breite einer der Fahrspuren beträgt in der Simulation 400mm. Die Mittel- und Außenlinien besitzen eine breite von 20mm. Die länge der Mittellinie ist mit 200mm bemessen genau wie auch deren Abstand.
 
 \begin{figure}[H]
 \begin{center}
@@ -33,6 +33,7 @@ Als Eingabeparameter nimmt das Skript die Länge der Fahrbahn und den Offset für 
 
 \item[] \textbf{Kurven}\hfill \\
 Als Eingangsparameter nimmt es den Radius der Kurve entgegen wie auch den Offset der Mittellinienrasterung. Anschließend speichert es das Segment in einer PNG-Datei.
+Die Kurvensegmente besitzen die selbe Dimensionierung wie gerade Streckenabschnitte.
 
 \begin{figure}[H]
 \begin{center}
@@ -46,7 +47,8 @@ Als Eingangsparameter nimmt es den Radius der Kurve entgegen wie auch den Offset
 
 
 \item[] \textbf{Ziellinie}\hfill \\
-Erzeugt die Ziellinie ohne Eingabeparameter.
+Erzeugt die Startlinie ohne Eingabeparameter.
+Die Startlinie besteht aus einem karierten Muster welches aus Quadraten mit 50mm Seitenlänge aufgebaut ist.
 
 \begin{figure}[H]
 \begin{center}
@@ -58,7 +60,7 @@ Erzeugt die Ziellinie ohne Eingabeparameter.
 \end{figure}
 
 \item[] \textbf{Geschwindigkeitsbegrenzungen}\hfill \\
-Als Eingangsparameter nimmt es den Wert der Begrenzung entgegen. Anschließend speichert es das Segment in einer PNG-Datei.
+Als Eingangsparameter nimmt es den Wert der Begrenzung entgegen. Anschließend speichert es das Segment in einer PNG-Datei. Auf der Fahrbahn besitzen die Markierungen eine höhe von 400mm und eine breite von 150mm.
 
 \begin{figure}[H]
 \begin{center}
@@ -72,6 +74,7 @@ Als Eingangsparameter nimmt es den Wert der Begrenzung entgegen. Anschließend sp
 
 \item[] \textbf{Zebrastreifen}\hfill \\
 Erzeugt einen Zebrastreifen ohne Eingabeparameter.
+Die einzelnen Streifen besitzen eine Breite von 40mm und eine Höhe von 400mm. 
 
 \begin{figure}[H]
 \begin{center}

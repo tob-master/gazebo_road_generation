@@ -151,7 +151,9 @@ add_executable(track include/start_of_lines_search.cpp
                      include/line_validation_table.cpp
                      include/safe_drive_area_evaluation.cpp
                      include/perceptual_grouping.cpp
-                     src/line_tracker_node.cpp )
+                     include/on_road_search.cpp
+                     src/line_tracker_node.cpp
+                     )
 
 #add_executable(track_mid_line_node src/nodes/track_mid_line_node.cpp)
 

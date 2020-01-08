@@ -452,6 +452,33 @@ include/mid_line_search.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/mid_line_search.cpp.s
 .PHONY : include/mid_line_search.cpp.s
 
+include/on_road_search.o: include/on_road_search.cpp.o
+
+.PHONY : include/on_road_search.o
+
+# target to build an object file
+include/on_road_search.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.o
+.PHONY : include/on_road_search.cpp.o
+
+include/on_road_search.i: include/on_road_search.cpp.i
+
+.PHONY : include/on_road_search.i
+
+# target to preprocess a source file
+include/on_road_search.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.i
+.PHONY : include/on_road_search.cpp.i
+
+include/on_road_search.s: include/on_road_search.cpp.s
+
+.PHONY : include/on_road_search.s
+
+# target to generate assembly for a file
+include/on_road_search.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.s
+.PHONY : include/on_road_search.cpp.s
+
 include/perceptual_grouping.o: include/perceptual_grouping.cpp.o
 
 .PHONY : include/perceptual_grouping.o
@@ -631,6 +658,9 @@ help:
 	@echo "... include/mid_line_search.o"
 	@echo "... include/mid_line_search.i"
 	@echo "... include/mid_line_search.s"
+	@echo "... include/on_road_search.o"
+	@echo "... include/on_road_search.i"
+	@echo "... include/on_road_search.s"
 	@echo "... include/perceptual_grouping.o"
 	@echo "... include/perceptual_grouping.i"
 	@echo "... include/perceptual_grouping.s"

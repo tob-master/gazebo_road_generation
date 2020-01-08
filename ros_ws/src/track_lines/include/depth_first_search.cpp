@@ -2,7 +2,7 @@
 
 // Method to print connected components in an
 // undirected graph
-vector<vector<int>> DepthFirstSearch::connectedComponents()
+std::vector<std::vector<int>> DepthFirstSearch::connectedComponents()
 {
     // Mark all the vertices as not visited
     bool *visited = new bool[V];
@@ -35,7 +35,7 @@ void DepthFirstSearch::DFSUtil(int v, bool visited[])
     connected_components.push_back(v);
     // Recur for all the vertices
     // adjacent to this vertex
-    list<int>::iterator i;
+    std::list<int>::iterator i;
     for(i = adj[v].begin(); i != adj[v].end(); ++i)
         if(!visited[*i])
             DFSUtil(*i, visited);
@@ -44,7 +44,7 @@ void DepthFirstSearch::DFSUtil(int v, bool visited[])
 DepthFirstSearch::DepthFirstSearch(int V)
 {
     this->V = V;
-    adj = new list<int>[V];
+    adj = new std::list<int>[V];
 }
 
 // method to add an undirected edge

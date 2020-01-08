@@ -393,9 +393,33 @@ track_lines/CMakeFiles/track.dir/include/perceptual_grouping.cpp.o.provides: tra
 track_lines/CMakeFiles/track.dir/include/perceptual_grouping.cpp.o.provides.build: track_lines/CMakeFiles/track.dir/include/perceptual_grouping.cpp.o
 
 
+track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.o: track_lines/CMakeFiles/track.dir/flags.make
+track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/on_road_search.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.o"
+	cd /home/tb/gazebo_road_generation/ros_ws/build/track_lines && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/track.dir/include/on_road_search.cpp.o -c /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/on_road_search.cpp
+
+track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/track.dir/include/on_road_search.cpp.i"
+	cd /home/tb/gazebo_road_generation/ros_ws/build/track_lines && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/on_road_search.cpp > CMakeFiles/track.dir/include/on_road_search.cpp.i
+
+track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/track.dir/include/on_road_search.cpp.s"
+	cd /home/tb/gazebo_road_generation/ros_ws/build/track_lines && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/on_road_search.cpp -o CMakeFiles/track.dir/include/on_road_search.cpp.s
+
+track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.o.requires:
+
+.PHONY : track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.o.requires
+
+track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.o.provides: track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.o.requires
+	$(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.o.provides.build
+.PHONY : track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.o.provides
+
+track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.o.provides.build: track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.o
+
+
 track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: track_lines/CMakeFiles/track.dir/flags.make
 track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o: /home/tb/gazebo_road_generation/ros_ws/src/track_lines/src/line_tracker_node.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o"
 	cd /home/tb/gazebo_road_generation/ros_ws/build/track_lines && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/track.dir/src/line_tracker_node.cpp.o -c /home/tb/gazebo_road_generation/ros_ws/src/track_lines/src/line_tracker_node.cpp
 
 track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.i: cmake_force
@@ -433,6 +457,7 @@ track_OBJECTS = \
 "CMakeFiles/track.dir/include/line_validation_table.cpp.o" \
 "CMakeFiles/track.dir/include/safe_drive_area_evaluation.cpp.o" \
 "CMakeFiles/track.dir/include/perceptual_grouping.cpp.o" \
+"CMakeFiles/track.dir/include/on_road_search.cpp.o" \
 "CMakeFiles/track.dir/src/line_tracker_node.cpp.o"
 
 # External object files for target track
@@ -452,6 +477,7 @@ track_EXTERNAL_OBJECTS =
 /home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track: track_lines/CMakeFiles/track.dir/include/line_validation_table.cpp.o
 /home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track: track_lines/CMakeFiles/track.dir/include/safe_drive_area_evaluation.cpp.o
 /home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track: track_lines/CMakeFiles/track.dir/include/perceptual_grouping.cpp.o
+/home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track: track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.o
 /home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track: track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o
 /home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track: track_lines/CMakeFiles/track.dir/build.make
 /home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track: /usr/lib/x86_64-linux-gnu/libopencv_shape.so.3.2.0
@@ -529,7 +555,7 @@ track_EXTERNAL_OBJECTS =
 /home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track: /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.3.2.0
 /home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track: /usr/lib/x86_64-linux-gnu/libopencv_core.so.3.2.0
 /home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track: track_lines/CMakeFiles/track.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Linking CXX executable /home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking CXX executable /home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/track"
 	cd /home/tb/gazebo_road_generation/ros_ws/build/track_lines && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/track.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -551,6 +577,7 @@ track_lines/CMakeFiles/track.dir/requires: track_lines/CMakeFiles/track.dir/incl
 track_lines/CMakeFiles/track.dir/requires: track_lines/CMakeFiles/track.dir/include/line_validation_table.cpp.o.requires
 track_lines/CMakeFiles/track.dir/requires: track_lines/CMakeFiles/track.dir/include/safe_drive_area_evaluation.cpp.o.requires
 track_lines/CMakeFiles/track.dir/requires: track_lines/CMakeFiles/track.dir/include/perceptual_grouping.cpp.o.requires
+track_lines/CMakeFiles/track.dir/requires: track_lines/CMakeFiles/track.dir/include/on_road_search.cpp.o.requires
 track_lines/CMakeFiles/track.dir/requires: track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.o.requires
 
 .PHONY : track_lines/CMakeFiles/track.dir/requires

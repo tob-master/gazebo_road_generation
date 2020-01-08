@@ -21,8 +21,8 @@
 #include "datatypes.h"
 using namespace connected_components_search;
 
-using namespace std;
-using namespace cv;
+//using namespace std;
+//using namespace cv;
 
 
 class ConnectedComponentsSearch

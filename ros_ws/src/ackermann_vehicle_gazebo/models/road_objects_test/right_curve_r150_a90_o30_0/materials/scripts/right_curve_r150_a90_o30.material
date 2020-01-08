@@ -1,0 +1,17 @@
+material right_curve_r150_a90_o30/Image
+    {
+      technique
+      {
+        pass
+        {
+          
+          texture_unit
+          {
+            texture right_curve_r150_a90_o30.png PF_L8
+    	    filtering anisotropic
+            max_anisotropy 16
+          }
+        }
+      }
+    }
+    

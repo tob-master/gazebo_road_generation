@@ -19,8 +19,8 @@
 #include "utils.h"
 #include "datatypes.h"
 
-using namespace std;
-using namespace cv;
+//using namespace std;
+//using namespace cv;
 
 
 

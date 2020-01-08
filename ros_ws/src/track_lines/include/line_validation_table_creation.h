@@ -26,8 +26,8 @@
 
 
 
-using namespace std;
-using namespace cv;
+//using namespace std;
+//using namespace cv;
 using namespace line_points_reducer;
 using namespace valid_line_point_search;
 using namespace mid_line_search;

@@ -315,12 +315,12 @@ void StartOfLinesSearch::SetStartParameters()
         float left_angle = CalculateAngle4Quadrants(opposite, left_adjacent);
         float right_angle = CalculateAngle4Quadrants(opposite, right_adjacent);
 
-        start_parameters_ = StartParameters{mid_row_left_id,
-                                            kMidRow_,
+        start_parameters_ = StartParameters{bottom_row_left_id,
+                                            kBottomRow_,
                                             left_angle,
                                             true,
-                                            mid_row_right_id,
-                                            kMidRow_,
+                                            bottom_row_right_id,
+                                            kBottomRow_,
                                             right_angle,
                                             true};
     }

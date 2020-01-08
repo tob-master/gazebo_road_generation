@@ -21,8 +21,8 @@
 #include "utils.h"
 #include "defines.h"
 
-using namespace std;
-using namespace cv;
+//using namespace std;
+//using namespace cv;
 using namespace start_of_lines_search;
 
 class StartOfLinesSearch

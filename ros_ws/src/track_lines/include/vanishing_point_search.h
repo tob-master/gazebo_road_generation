@@ -23,8 +23,8 @@
 #include "datatypes.h"
 #include "utils.h"
 
-using namespace std;
-using namespace cv;
+//using namespace std;
+//using namespace cv;
 using namespace vanishing_point_search;
 
 
@@ -32,7 +32,7 @@ class VanishingPointSearch
 {
     private:
 
-        const Mat frontalview_to_birdseye_transformation_matrix_;
+        const cv::Mat frontalview_to_birdseye_transformation_matrix_;
 
         const int kCannyLowThreshold_;
         const int kCannyHighThreshold_;
@@ -60,29 +60,29 @@ class VanishingPointSearch
         const int kXMinRightLine_;
         const int kXMaxRightLine_;
 
-        const Point kCarMidPoint_;
+        const cv::Point kCarMidPoint_;
 
         const float kMaxStandardDeviationForValidVanishingPoint_;
 
-        Mat current_image_;
-        Mat canny_image_;
-        Mat hough_image_;
-        Mat current_image_roi_;
-        vector<Vec4i> hough_lines_;
+        cv::Mat current_image_;
+        cv::Mat canny_image_;
+        cv::Mat hough_image_;
+        cv::Mat current_image_roi_;
+        std::vector<Vec4i> hough_lines_;
 
-        vector<HoughLinesInDriveDirection> hough_lines_in_drive_direction_;
-        vector<HoughLinesInDriveDirection> left_hough_lines_in_drive_direction_;
-        vector<HoughLinesInDriveDirection> right_hough_lines_in_drive_direction_;
+        std::vector<HoughLinesInDriveDirection> hough_lines_in_drive_direction_;
+        std::vector<HoughLinesInDriveDirection> left_hough_lines_in_drive_direction_;
+        std::vector<HoughLinesInDriveDirection> right_hough_lines_in_drive_direction_;
 
-        vector<HoughLinesPointsAndAngle> left_hough_lines_points_and_angle_;
-        vector<HoughLinesPointsAndAngle> right_hough_lines_points_and_angle_;
+        std::vector<HoughLinesPointsAndAngle> left_hough_lines_points_and_angle_;
+        std::vector<HoughLinesPointsAndAngle> right_hough_lines_points_and_angle_;
 
-        vector<Intersections> intersecting_lines_;
-        vector<Intersections> vanishing_point_intersections_;
+        std::vector<Intersections> intersecting_lines_;
+        std::vector<Intersections> vanishing_point_intersections_;
         StartParameters line_follower_start_parameters_;
-        Point vanishing_point_;
-        Point warped_vanishing_point_;
-        Point warped_car_mid_point_;
+        cv::Point vanishing_point_;
+        cv::Point warped_vanishing_point_;
+        cv::Point warped_car_mid_point_;
 
         int left_hough_lines_count_;
         int right_hough_lines_count_;
@@ -110,8 +110,8 @@ class VanishingPointSearch
         void GatherTrueRangeLeftAndRightLines();
         void RejectFalseLeftAndRightLineAngles();
 
-        pair<double, double> ComputeLineIntersection(pair<double, double> A, pair<double, double> B,
-                                                     pair<double, double> C, pair<double, double> D);
+        std::pair<double, double> ComputeLineIntersection(std::pair<double, double> A, std::pair<double, double> B,
+                                                     std::pair<double, double> C, std::pair<double, double> D);
 
         void ComputeLeftAndRightHoughLineIntersections();
         //void ApplyDBScan();

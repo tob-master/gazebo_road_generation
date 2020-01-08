@@ -5,7 +5,7 @@ CWD="$(pwd)"
 gnome-terminal -x bash -c "source ~/anaconda3/etc/profile.d/conda.sh; 
                            conda activate ros_python; 
 			   source  ${CWD}/devel/setup.bash;	
-                           export GAZEBO_MODEL_PATH=${CWD}/src/ackermann_vehicle_gazebo/models/carolo_base_track/;
+                           export GAZEBO_MODEL_PATH=${CWD}/src/ackermann_vehicle_gazebo/models/road_objects_test/;
                            roslaunch ackermann_vehicle_gazebo ackermann_vehicle.launch" &
 
 gnome-terminal -x bash -c "rosrun joy joy_node" &

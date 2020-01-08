@@ -26,21 +26,20 @@
 \contentsline {chapter}{\numberline {4}Auswahl der Simulationsumgebung}{12}{chapter.4}
 \contentsline {section}{\numberline {4.1}Die Virtual Robot Experimentation Platform Simulationsumgebung}{13}{section.4.1}
 \contentsline {section}{\numberline {4.2}Die Gazebo Simulationsumgebung}{14}{section.4.2}
-\contentsline {section}{\numberline {4.3}Begr\"undung der Auswahl}{14}{section.4.3}
-\contentsline {section}{\numberline {4.4}Die Gazebo Architektur}{14}{section.4.4}
-\contentsline {section}{\numberline {4.5}Das SDF Format - System Description File}{15}{section.4.5}
-\contentsline {section}{\numberline {4.6}Das World File}{15}{section.4.6}
-\contentsline {section}{\numberline {4.7}Das Model File}{15}{section.4.7}
-\contentsline {chapter}{\numberline {5}Erzeugung von simulierten Verkehrssitationen}{17}{chapter.5}
-\contentsline {section}{\numberline {5.1}Erstellung der Fahrbahn}{17}{section.5.1}
-\contentsline {section}{\numberline {5.2}Erstellung des Fahrzeugs}{24}{section.5.2}
-\contentsline {chapter}{\numberline {6}Implementierte Bildverarbeitungsalgorithmen}{26}{chapter.6}
-\contentsline {section}{\numberline {6.1}Startliniensuche mit dem Start-Of-Lines-Search Algorithmus}{26}{section.6.1}
-\contentsline {section}{\numberline {6.2}Startliniensuche mit dem Vanishing-Point Algorithmus}{27}{section.6.2}
-\contentsline {section}{\numberline {6.3}Aussenlinienverfolgung mit dem Line-Follower Algorithmus}{29}{section.6.3}
-\contentsline {section}{\numberline {6.4}Linienpunktereduzierung mit dem Douglas-Peucker-Algorithmus}{31}{section.6.4}
-\contentsline {section}{\numberline {6.5}Mittelliniensuche und Grapherzeugung}{33}{section.6.5}
-\contentsline {section}{\numberline {6.6}Linien-Validierungs-Tablle Erzeugung}{36}{section.6.6}
-\contentsline {section}{\numberline {6.7}Merkmal Extraktion aus den Validierungs-Tabellen}{37}{section.6.7}
-\contentsline {section}{\numberline {6.8}Bewerten sicherer Fahrbereiche}{38}{section.6.8}
-\contentsline {chapter}{Literaturverzeichnis}{42}{figure.6.13}
+\contentsline {section}{\numberline {4.3}Begr{\"u}ndung der Auswahl}{14}{section.4.3}
+\contentsline {section}{\numberline {4.4}Das SDF Format - System Description File}{15}{section.4.4}
+\contentsline {section}{\numberline {4.5}Das World File}{15}{section.4.5}
+\contentsline {section}{\numberline {4.6}Das Model File}{15}{section.4.6}
+\contentsline {chapter}{\numberline {5}Erzeugung von simulierten Verkehrssitationen}{16}{chapter.5}
+\contentsline {section}{\numberline {5.1}Erstellung der Fahrbahn}{16}{section.5.1}
+\contentsline {section}{\numberline {5.2}Erstellung des Fahrzeugs}{23}{section.5.2}
+\contentsline {chapter}{\numberline {6}Implementierte Bildverarbeitungsalgorithmen}{25}{chapter.6}
+\contentsline {section}{\numberline {6.1}Startliniensuche mit dem Start-Of-Lines-Search Algorithmus}{25}{section.6.1}
+\contentsline {section}{\numberline {6.2}Startliniensuche mit dem Vanishing-Point Algorithmus}{26}{section.6.2}
+\contentsline {section}{\numberline {6.3}Aussenlinienverfolgung mit dem Line-Follower Algorithmus}{28}{section.6.3}
+\contentsline {section}{\numberline {6.4}Linienpunktereduzierung mit dem Douglas-Peucker-Algorithmus}{30}{section.6.4}
+\contentsline {section}{\numberline {6.5}Mittelliniensuche und Grapherzeugung}{32}{section.6.5}
+\contentsline {section}{\numberline {6.6}Linien-Validierungs-Tablle Erzeugung}{35}{section.6.6}
+\contentsline {section}{\numberline {6.7}Merkmal Extraktion aus den Validierungs-Tabellen}{36}{section.6.7}
+\contentsline {section}{\numberline {6.8}Bewerten sicherer Fahrbereiche}{37}{section.6.8}
+\contentsline {chapter}{Literaturverzeichnis}{41}{figure.6.13}

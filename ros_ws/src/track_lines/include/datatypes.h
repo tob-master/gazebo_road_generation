@@ -33,6 +33,14 @@ enum {PRIO_0_P1_AND_P2_AND_D1_AND_D2,
      };
 
 
+struct MinMaxLineElements
+{
+    Point x_min;
+    Point x_max;
+    Point y_min;
+    Point y_max;
+    bool initialized;
+};
 
 
 struct PointInDirection
@@ -322,6 +330,7 @@ namespace mid_line_search
 
 
     typedef std::reverse_iterator<std::_Rb_tree_iterator<pair<pair<int, int> const, vector<pair<int, int>,allocator<pair<int, int>>>>>> ReverseMidLineCoordinatesIterator;
+    //typedef std::reverse_iterator<std::_Rb_tree_iterator<pair<pair<int, int> const, vector<pair<int, int>,allocator<pair<int, int>>>>>> ReverseMidLineCoordinatesIterator;
 
 
     struct ClusterBinKey
@@ -478,14 +487,6 @@ namespace valid_line_point_search
 
     };
 
-    struct MinMaxLineElements
-    {
-        Point x_min;
-        Point x_max;
-        Point y_min;
-        Point y_max;
-        bool initialized;
-    };
 
 
     struct SearchLineDistanceThresholds

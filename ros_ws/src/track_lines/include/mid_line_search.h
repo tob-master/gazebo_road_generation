@@ -28,8 +28,10 @@
 #include "defines.h"
 #include "depth_first_search.h"
 
-using namespace std;
-using namespace cv;
+
+
+//using namespace std;
+//using namespace cv;
 using namespace mid_line_search;
 
 class MidLineSearch
