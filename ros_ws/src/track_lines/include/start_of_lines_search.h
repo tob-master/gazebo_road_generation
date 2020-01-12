@@ -25,6 +25,13 @@
 //using namespace cv;
 using namespace start_of_lines_search;
 
+
+
+/*! This class searches for a pattern in 3 distinct rows of the image.
+ * The mid row must find 3 segments which have a correct line width and the outer line must have the corrct track width.
+ * The bottom and top row must find 2 segments which have the correct track with.
+ * In the mid of the segments (resembled as the mid of the lane) white pixels must be found in the mid row and no white segments in the bottom and top row.
+ */
 class StartOfLinesSearch
 {
     private:
@@ -70,6 +77,7 @@ class StartOfLinesSearch
         const int kMaxRightLineToCarDistance_;
 
         bool mid_row_is_matched_;
+        bool found_adjacent_row_pairs_;
 
         int pattern_matches_count_;
         int pattern_to_car_matches_count_;
@@ -88,35 +96,132 @@ class StartOfLinesSearch
         bool has_found_start_parameters_;
 
 
-        void ClearRowFilterActivations();
-        int GetPixelValue(int x, int y);
-        void SetRowFilterActivation(int row, int index);
-        bool RowFilterIndexActivated(int row, int index);
-        void MeasureSegment(int row, int &index, int &start_id, int &width);
-        bool HasCorrectLineWidth(int width);
-        bool IsPermuted(int it1_pos, int &it2_pos, vector<string> &used_permutations);
-        bool HasCorrectTrackWidth(int id1, int id2);
-        bool FoundAdjacentRowPairs();
-        bool HasCorrectAlignment(int bottom_row_left_id, int bottom_row_right_id, int mid_row_left_id, int mid_row_right_id);
-        int GetMidId(int left_row_id, int right_row_id);
-        int GetTopRowMidId(int bottom_row_mid_id, int mid_row_mid_id);
-        bool PatternHasMatched(int bottom_row_mid_id, int mid_row_mid_id, int top_row_mid_id);
-        bool HasCorrectPatternToCarDistance(int bottom_row_left_id, int bottom_row_right_id);
+        void ClearRowFilterActivations(vector<int> rows_to_search_for_lines,
+                                       map<int,vector<int>> &row_filter_activations);
+
+        int GetPixelValue(Mat image,
+                          int x,
+                          int y);
+
+        void SetRowFilterActivation(map<int,vector<int>> &row_filter_activations,
+                                    int row,
+                                    int index);
+
+        bool RowFilterIndexActivated(map<int,vector<int>> row_filter_activations,
+                                     int row,
+                                     int index);
+
+        void MeasureSegment(map<int,vector<int>> row_filter_activations,
+                            const int kImageWidth,
+                            int row,
+                            int &index,
+                            int &start_id,
+                            int &width);
+
+        bool HasCorrectLineWidth(int width,
+                                 int kMinLineWidth,
+                                 const int kMaxLineWidth);
+
+        bool IsPermuted(int it1_pos,
+                        int &it2_pos,
+                        vector<string> &used_permutations);
+
+        bool HasCorrectTrackWidth(int id1,
+                                  int id2,
+                                  const int kMinTrackWidth,
+                                  const int kMaxTrackWidth);
+
+        bool CheckIfFoundAdjacentRowPairs(multimap<int,TrueTrackWidthRowPairIds> row_segments_true_track_width,
+                                          bool &found_adjacent_row_pairs,
+                                          const int kBottomRow,
+                                          const int kMidRow);
+
+        bool HasCorrectAlignment(int bottom_row_left_id,
+                                 int bottom_row_right_id,
+                                 int mid_row_left_id,
+                                 int mid_row_right_id,
+                                 const int kMaxDistanceBetweenAdjacentRowPairs);
+
+        int GetMidId(int left_row_id,
+                     int right_row_id);
+
+        int GetTopRowMidId(int bottom_row_mid_id,
+                           int mid_row_mid_id);
+
+        bool PatternHasMatched(Mat image,
+                               int bottom_row_mid_id,
+                               int mid_row_mid_id,
+                               int top_row_mid_id);
+
+        bool HasCorrectPatternToCarDistance(int bottom_row_left_id,
+                                            int bottom_row_right_id,
+                                            const int kCarPositionInFrame,
+                                            const int kMinLeftLineToCarDistance,
+                                            const int kMaxLeftLineToCarDistance,
+                                            const int kMinRightLineToCarDistance,
+                                            const int kMaxRightLineToCarDistance);
 
 
-        void SetImage(Mat image);
-        void FilterRowsForActivations();
-        void FindStartAndWidthOfRowSegments();
-        bool CheckMidRowMatch();
-        void RejectFalseLineWidth();
-        void RejectFalseTrackWidth();
-        void RejectFalseAlignedAdjacentRowPairs();
-        void CheckPatternMatch();
-        void CountPatternMatches();
-        void CheckPatternToCarMatch();
-        void CountPatternToCarMatches();
-        void SetStartParameters();
-        void ClearMemory();
+
+        void FilterRowsForActivations(Mat image,
+                                      vector<int> rows_to_search_for_lines,
+                                      map<int,vector<int>> &row_filter_activations,
+                                      const int kImageWidth,
+                                      const int kWindowSizeForLineSearch,
+                                      const int kLineThreshold);
+
+        void FindStartAndWidthOfRowSegments(vector<int> rows_to_search_for_lines,
+                                            map<int,vector<int>> row_filter_activations,
+                                            multimap<int,SegmentStartIDAndWidth> &row_segments_raw,
+                                            const int kImageWidth);
+
+        bool CheckMidRowMatch(multimap<int,
+                              SegmentStartIDAndWidth> row_segments_raw,
+                              bool &mid_row_is_matched,
+                              const int kMidRow);
+
+        void RejectFalseLineWidth(vector<int> rows_to_search_for_lines,
+                                  multimap<int,SegmentStartIDAndWidth> row_segments_raw,
+                                  multimap<int,TrueLineWidthRowId> &row_segments_true_line_width,
+                                  const int kMinLineWidth,
+                                  const int kMaxLineWidth);
+
+        void RejectFalseTrackWidth(vector<int> rows_to_search_for_lines,
+                                   multimap<int,TrueLineWidthRowId> row_segments_true_line_width,
+                                   multimap<int,TrueTrackWidthRowPairIds> &row_segments_true_track_width,
+                                   const int kMinTrackWidth,
+                                   const int kMaxTrackWidth);
+
+        void RejectFalseAlignedAdjacentRowPairs(multimap<int,TrueTrackWidthRowPairIds> row_segments_true_track_width_,
+                                                vector<TrueAdjacentTrackWidthRowPairIds> &row_segments_true_adjacent_track_width_,
+                                                const int kBottomRow,
+                                                const int kMidRow,
+                                                const int kMaxDistanceBetweenAdjacentRowPairs);
+
+        void CheckPatternMatch(Mat image,
+                               vector<TrueAdjacentTrackWidthRowPairIds> row_segments_true_adjacent_track_width,
+                               vector<PatternMatchIds> &pattern_matches);
+
+        void CountPatternMatches(vector<PatternMatchIds> pattern_matches,
+                                 int &pattern_matches_count);
+
+        void CheckPatternToCarMatch(vector<PatternMatchIds> pattern_matches,
+                                    vector<PatternMatchIds> &pattern_to_car_matches,
+                                    const int kCarPositionInFrame,
+                                    const int kMinLeftLineToCarDistance,
+                                    const int kMaxLeftLineToCarDistance,
+                                    const int kMinRightLineToCarDistance,
+                                    const int kMaxRightLineToCarDistance);
+
+        void CountPatternToCarMatches(vector<PatternMatchIds> pattern_to_car_matches,
+                                      int &pattern_to_car_matches_count);
+
+        void SetStartParameters(vector<PatternMatchIds> pattern_to_car_matches,
+                                StartParameters &start_parameters,
+                                int pattern_matches_count,
+                                const int kBottomRow,
+                                const int kMidRow);
+
 
         StartOfLinesSearchReturnInfo GetReturnInfo();
 
@@ -124,11 +229,11 @@ class StartOfLinesSearch
     public:
 
         StartOfLinesSearch(int image_height,int image_width,StartOfLinesSearchInitializationParameters init);
-        StartOfLinesSearchReturnInfo FindStartParameters(Mat image);
+        StartOfLinesSearchReturnInfo FindStartParameters();
         StartParameters GetStartParameters();
         void DrawStartParameters(Mat &rgb);
-
-
+        void ClearMemory();
+        void SetImage(Mat image);
 };
 
 

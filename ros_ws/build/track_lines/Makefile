@@ -56,17 +56,49 @@ CMAKE_BINARY_DIR = /home/tb/gazebo_road_generation/ros_ws/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
 
-# Special rule for the target install/strip
-install/strip/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip/fast
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
 
 # Special rule for the target install/local
 install/local: preinstall
@@ -91,49 +123,17 @@ test/fast: test
 
 .PHONY : test/fast
 
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
 
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
-
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
-
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
-
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -168,6 +168,21 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
+track_lines/CMakeFiles/test_start_of_lines_search.dir/rule:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f CMakeFiles/Makefile2 track_lines/CMakeFiles/test_start_of_lines_search.dir/rule
+.PHONY : track_lines/CMakeFiles/test_start_of_lines_search.dir/rule
+
+# Convenience name for target.
+test_start_of_lines_search: track_lines/CMakeFiles/test_start_of_lines_search.dir/rule
+
+.PHONY : test_start_of_lines_search
+
+# fast build rule for target.
+test_start_of_lines_search/fast:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_start_of_lines_search.dir/build.make track_lines/CMakeFiles/test_start_of_lines_search.dir/build
+.PHONY : test_start_of_lines_search/fast
+
+# Convenience name for target.
 track_lines/CMakeFiles/track.dir/rule:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f CMakeFiles/Makefile2 track_lines/CMakeFiles/track.dir/rule
 .PHONY : track_lines/CMakeFiles/track.dir/rule
@@ -181,6 +196,51 @@ track: track_lines/CMakeFiles/track.dir/rule
 track/fast:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/build
 .PHONY : track/fast
+
+# Convenience name for target.
+track_lines/CMakeFiles/test_vanishing_point_search.dir/rule:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f CMakeFiles/Makefile2 track_lines/CMakeFiles/test_vanishing_point_search.dir/rule
+.PHONY : track_lines/CMakeFiles/test_vanishing_point_search.dir/rule
+
+# Convenience name for target.
+test_vanishing_point_search: track_lines/CMakeFiles/test_vanishing_point_search.dir/rule
+
+.PHONY : test_vanishing_point_search
+
+# fast build rule for target.
+test_vanishing_point_search/fast:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_vanishing_point_search.dir/build.make track_lines/CMakeFiles/test_vanishing_point_search.dir/build
+.PHONY : test_vanishing_point_search/fast
+
+# Convenience name for target.
+track_lines/CMakeFiles/test_line_follower.dir/rule:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f CMakeFiles/Makefile2 track_lines/CMakeFiles/test_line_follower.dir/rule
+.PHONY : track_lines/CMakeFiles/test_line_follower.dir/rule
+
+# Convenience name for target.
+test_line_follower: track_lines/CMakeFiles/test_line_follower.dir/rule
+
+.PHONY : test_line_follower
+
+# fast build rule for target.
+test_line_follower/fast:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_follower.dir/build.make track_lines/CMakeFiles/test_line_follower.dir/build
+.PHONY : test_line_follower/fast
+
+# Convenience name for target.
+track_lines/CMakeFiles/test_line_points_reducer.dir/rule:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f CMakeFiles/Makefile2 track_lines/CMakeFiles/test_line_points_reducer.dir/rule
+.PHONY : track_lines/CMakeFiles/test_line_points_reducer.dir/rule
+
+# Convenience name for target.
+test_line_points_reducer: track_lines/CMakeFiles/test_line_points_reducer.dir/rule
+
+.PHONY : test_line_points_reducer
+
+# fast build rule for target.
+test_line_points_reducer/fast:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_points_reducer.dir/build.make track_lines/CMakeFiles/test_line_points_reducer.dir/build
+.PHONY : test_line_points_reducer/fast
 
 include/connected_components.o: include/connected_components.cpp.o
 
@@ -297,6 +357,8 @@ include/line_follower.o: include/line_follower.cpp.o
 # target to build an object file
 include/line_follower.cpp.o:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_follower.cpp.o
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_follower.dir/build.make track_lines/CMakeFiles/test_line_follower.dir/include/line_follower.cpp.o
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_points_reducer.dir/build.make track_lines/CMakeFiles/test_line_points_reducer.dir/include/line_follower.cpp.o
 .PHONY : include/line_follower.cpp.o
 
 include/line_follower.i: include/line_follower.cpp.i
@@ -306,6 +368,8 @@ include/line_follower.i: include/line_follower.cpp.i
 # target to preprocess a source file
 include/line_follower.cpp.i:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_follower.cpp.i
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_follower.dir/build.make track_lines/CMakeFiles/test_line_follower.dir/include/line_follower.cpp.i
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_points_reducer.dir/build.make track_lines/CMakeFiles/test_line_points_reducer.dir/include/line_follower.cpp.i
 .PHONY : include/line_follower.cpp.i
 
 include/line_follower.s: include/line_follower.cpp.s
@@ -315,6 +379,8 @@ include/line_follower.s: include/line_follower.cpp.s
 # target to generate assembly for a file
 include/line_follower.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_follower.cpp.s
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_follower.dir/build.make track_lines/CMakeFiles/test_line_follower.dir/include/line_follower.cpp.s
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_points_reducer.dir/build.make track_lines/CMakeFiles/test_line_points_reducer.dir/include/line_follower.cpp.s
 .PHONY : include/line_follower.cpp.s
 
 include/line_points_reducer.o: include/line_points_reducer.cpp.o
@@ -324,6 +390,7 @@ include/line_points_reducer.o: include/line_points_reducer.cpp.o
 # target to build an object file
 include/line_points_reducer.cpp.o:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_points_reducer.cpp.o
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_points_reducer.dir/build.make track_lines/CMakeFiles/test_line_points_reducer.dir/include/line_points_reducer.cpp.o
 .PHONY : include/line_points_reducer.cpp.o
 
 include/line_points_reducer.i: include/line_points_reducer.cpp.i
@@ -333,6 +400,7 @@ include/line_points_reducer.i: include/line_points_reducer.cpp.i
 # target to preprocess a source file
 include/line_points_reducer.cpp.i:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_points_reducer.cpp.i
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_points_reducer.dir/build.make track_lines/CMakeFiles/test_line_points_reducer.dir/include/line_points_reducer.cpp.i
 .PHONY : include/line_points_reducer.cpp.i
 
 include/line_points_reducer.s: include/line_points_reducer.cpp.s
@@ -342,6 +410,7 @@ include/line_points_reducer.s: include/line_points_reducer.cpp.s
 # target to generate assembly for a file
 include/line_points_reducer.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/line_points_reducer.cpp.s
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_points_reducer.dir/build.make track_lines/CMakeFiles/test_line_points_reducer.dir/include/line_points_reducer.cpp.s
 .PHONY : include/line_points_reducer.cpp.s
 
 include/line_validation_table.o: include/line_validation_table.cpp.o
@@ -539,6 +608,7 @@ include/start_of_lines_search.o: include/start_of_lines_search.cpp.o
 
 # target to build an object file
 include/start_of_lines_search.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_start_of_lines_search.dir/build.make track_lines/CMakeFiles/test_start_of_lines_search.dir/include/start_of_lines_search.cpp.o
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/start_of_lines_search.cpp.o
 .PHONY : include/start_of_lines_search.cpp.o
 
@@ -548,6 +618,7 @@ include/start_of_lines_search.i: include/start_of_lines_search.cpp.i
 
 # target to preprocess a source file
 include/start_of_lines_search.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_start_of_lines_search.dir/build.make track_lines/CMakeFiles/test_start_of_lines_search.dir/include/start_of_lines_search.cpp.i
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/start_of_lines_search.cpp.i
 .PHONY : include/start_of_lines_search.cpp.i
 
@@ -557,6 +628,7 @@ include/start_of_lines_search.s: include/start_of_lines_search.cpp.s
 
 # target to generate assembly for a file
 include/start_of_lines_search.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_start_of_lines_search.dir/build.make track_lines/CMakeFiles/test_start_of_lines_search.dir/include/start_of_lines_search.cpp.s
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/start_of_lines_search.cpp.s
 .PHONY : include/start_of_lines_search.cpp.s
 
@@ -567,6 +639,7 @@ include/vanishing_point_search.o: include/vanishing_point_search.cpp.o
 # target to build an object file
 include/vanishing_point_search.cpp.o:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/vanishing_point_search.cpp.o
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_vanishing_point_search.dir/build.make track_lines/CMakeFiles/test_vanishing_point_search.dir/include/vanishing_point_search.cpp.o
 .PHONY : include/vanishing_point_search.cpp.o
 
 include/vanishing_point_search.i: include/vanishing_point_search.cpp.i
@@ -576,6 +649,7 @@ include/vanishing_point_search.i: include/vanishing_point_search.cpp.i
 # target to preprocess a source file
 include/vanishing_point_search.cpp.i:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/vanishing_point_search.cpp.i
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_vanishing_point_search.dir/build.make track_lines/CMakeFiles/test_vanishing_point_search.dir/include/vanishing_point_search.cpp.i
 .PHONY : include/vanishing_point_search.cpp.i
 
 include/vanishing_point_search.s: include/vanishing_point_search.cpp.s
@@ -585,6 +659,7 @@ include/vanishing_point_search.s: include/vanishing_point_search.cpp.s
 # target to generate assembly for a file
 include/vanishing_point_search.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/vanishing_point_search.cpp.s
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_vanishing_point_search.dir/build.make track_lines/CMakeFiles/test_vanishing_point_search.dir/include/vanishing_point_search.cpp.s
 .PHONY : include/vanishing_point_search.cpp.s
 
 src/line_tracker_node.o: src/line_tracker_node.cpp.o
@@ -614,20 +689,132 @@ src/line_tracker_node.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/src/line_tracker_node.cpp.s
 .PHONY : src/line_tracker_node.cpp.s
 
+test/test_line_follower.o: test/test_line_follower.cpp.o
+
+.PHONY : test/test_line_follower.o
+
+# target to build an object file
+test/test_line_follower.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_follower.dir/build.make track_lines/CMakeFiles/test_line_follower.dir/test/test_line_follower.cpp.o
+.PHONY : test/test_line_follower.cpp.o
+
+test/test_line_follower.i: test/test_line_follower.cpp.i
+
+.PHONY : test/test_line_follower.i
+
+# target to preprocess a source file
+test/test_line_follower.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_follower.dir/build.make track_lines/CMakeFiles/test_line_follower.dir/test/test_line_follower.cpp.i
+.PHONY : test/test_line_follower.cpp.i
+
+test/test_line_follower.s: test/test_line_follower.cpp.s
+
+.PHONY : test/test_line_follower.s
+
+# target to generate assembly for a file
+test/test_line_follower.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_follower.dir/build.make track_lines/CMakeFiles/test_line_follower.dir/test/test_line_follower.cpp.s
+.PHONY : test/test_line_follower.cpp.s
+
+test/test_line_points_reducer.o: test/test_line_points_reducer.cpp.o
+
+.PHONY : test/test_line_points_reducer.o
+
+# target to build an object file
+test/test_line_points_reducer.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_points_reducer.dir/build.make track_lines/CMakeFiles/test_line_points_reducer.dir/test/test_line_points_reducer.cpp.o
+.PHONY : test/test_line_points_reducer.cpp.o
+
+test/test_line_points_reducer.i: test/test_line_points_reducer.cpp.i
+
+.PHONY : test/test_line_points_reducer.i
+
+# target to preprocess a source file
+test/test_line_points_reducer.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_points_reducer.dir/build.make track_lines/CMakeFiles/test_line_points_reducer.dir/test/test_line_points_reducer.cpp.i
+.PHONY : test/test_line_points_reducer.cpp.i
+
+test/test_line_points_reducer.s: test/test_line_points_reducer.cpp.s
+
+.PHONY : test/test_line_points_reducer.s
+
+# target to generate assembly for a file
+test/test_line_points_reducer.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_points_reducer.dir/build.make track_lines/CMakeFiles/test_line_points_reducer.dir/test/test_line_points_reducer.cpp.s
+.PHONY : test/test_line_points_reducer.cpp.s
+
+test/test_start_of_lines_search.o: test/test_start_of_lines_search.cpp.o
+
+.PHONY : test/test_start_of_lines_search.o
+
+# target to build an object file
+test/test_start_of_lines_search.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_start_of_lines_search.dir/build.make track_lines/CMakeFiles/test_start_of_lines_search.dir/test/test_start_of_lines_search.cpp.o
+.PHONY : test/test_start_of_lines_search.cpp.o
+
+test/test_start_of_lines_search.i: test/test_start_of_lines_search.cpp.i
+
+.PHONY : test/test_start_of_lines_search.i
+
+# target to preprocess a source file
+test/test_start_of_lines_search.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_start_of_lines_search.dir/build.make track_lines/CMakeFiles/test_start_of_lines_search.dir/test/test_start_of_lines_search.cpp.i
+.PHONY : test/test_start_of_lines_search.cpp.i
+
+test/test_start_of_lines_search.s: test/test_start_of_lines_search.cpp.s
+
+.PHONY : test/test_start_of_lines_search.s
+
+# target to generate assembly for a file
+test/test_start_of_lines_search.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_start_of_lines_search.dir/build.make track_lines/CMakeFiles/test_start_of_lines_search.dir/test/test_start_of_lines_search.cpp.s
+.PHONY : test/test_start_of_lines_search.cpp.s
+
+test/test_vanishing_point_search.o: test/test_vanishing_point_search.cpp.o
+
+.PHONY : test/test_vanishing_point_search.o
+
+# target to build an object file
+test/test_vanishing_point_search.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_vanishing_point_search.dir/build.make track_lines/CMakeFiles/test_vanishing_point_search.dir/test/test_vanishing_point_search.cpp.o
+.PHONY : test/test_vanishing_point_search.cpp.o
+
+test/test_vanishing_point_search.i: test/test_vanishing_point_search.cpp.i
+
+.PHONY : test/test_vanishing_point_search.i
+
+# target to preprocess a source file
+test/test_vanishing_point_search.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_vanishing_point_search.dir/build.make track_lines/CMakeFiles/test_vanishing_point_search.dir/test/test_vanishing_point_search.cpp.i
+.PHONY : test/test_vanishing_point_search.cpp.i
+
+test/test_vanishing_point_search.s: test/test_vanishing_point_search.cpp.s
+
+.PHONY : test/test_vanishing_point_search.s
+
+# target to generate assembly for a file
+test/test_vanishing_point_search.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_vanishing_point_search.dir/build.make track_lines/CMakeFiles/test_vanishing_point_search.dir/test/test_vanishing_point_search.cpp.s
+.PHONY : test/test_vanishing_point_search.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... install/strip"
+	@echo "... install"
+	@echo "... list_install_components"
+	@echo "... rebuild_cache"
+	@echo "... edit_cache"
+	@echo "... test_start_of_lines_search"
 	@echo "... install/local"
 	@echo "... test"
-	@echo "... list_install_components"
 	@echo "... track"
-	@echo "... install"
-	@echo "... edit_cache"
-	@echo "... rebuild_cache"
+	@echo "... test_vanishing_point_search"
+	@echo "... test_line_follower"
+	@echo "... install/strip"
+	@echo "... test_line_points_reducer"
 	@echo "... include/connected_components.o"
 	@echo "... include/connected_components.i"
 	@echo "... include/connected_components.s"
@@ -676,6 +863,18 @@ help:
 	@echo "... src/line_tracker_node.o"
 	@echo "... src/line_tracker_node.i"
 	@echo "... src/line_tracker_node.s"
+	@echo "... test/test_line_follower.o"
+	@echo "... test/test_line_follower.i"
+	@echo "... test/test_line_follower.s"
+	@echo "... test/test_line_points_reducer.o"
+	@echo "... test/test_line_points_reducer.i"
+	@echo "... test/test_line_points_reducer.s"
+	@echo "... test/test_start_of_lines_search.o"
+	@echo "... test/test_start_of_lines_search.i"
+	@echo "... test/test_start_of_lines_search.s"
+	@echo "... test/test_vanishing_point_search.o"
+	@echo "... test/test_vanishing_point_search.i"
+	@echo "... test/test_vanishing_point_search.s"
 .PHONY : help
 
 

@@ -1,0 +1,8 @@
+prefix=/home/tb/gazebo_road_generation/ros_ws/install
+
+Name: ScikitLearnSVM
+Description: Description of ScikitLearnSVM
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/tb/gazebo_road_generation/ros_ws/install/lib 
+Requires: 

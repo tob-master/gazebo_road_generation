@@ -31,6 +31,7 @@ private:
 
     image_transport::Subscriber camera_subscriber_;
 
+
     const int kInputImageWidth_  = 1280;
     const int kInputImageHeight_ =  720;
     const Size kInputImageSize_= Size(kInputImageWidth_,kInputImageHeight_);
@@ -70,6 +71,7 @@ private:
     StartOfLinesSearchInitializationParameters start_of_lines_search_init;
     LineFollowerInitializationParameters line_follower_init;
     BirdseyeInitializationParameters birdseye_init;
+    LinePointsReduceInitializationParameters line_points_reduce_init;
     MidLineSearchInitializationParameters mid_line_search_init;
     VanishingPointSearchInitializationParameters vanishing_point_search_init;
     ConnectedComponentsSearchInitializationParameters connected_components_search_init;
@@ -88,11 +90,13 @@ private:
     StartOfLinesSearch *StartOfLinesSearcher_;
 
 
-    LineFollower *LineFollower_;
-    LinePointsReducer *LinePointsReducer_;
+    LineFollow *LineFollower_;
+    LinePointsReduce *LinePointsReducer_;
     MidLineSearch *MidLineSearcher_;
     VanishingPointSearch *VanishingPointSearcher_;
     ConnectedComponentsSearch *ConnectedComponentsSearcher_;
+
+    OnRoadSearch* OnRoadSearcher_;
 
     LineValidationTableCreation LineValidationTableCreator_;
     SafeDriveAreaEvaluation SafeDriveAreaEvaluator_;
@@ -147,6 +151,7 @@ void CheckStartParameters();
     void LoadMidLineSearchInitializationParameters();
     void LoadVanishingPointSearchInitializationParameters();
     void LoadConnectedComponentsSearchInitializationParameters();
+    void LoadLinePointsReduceInitializationParameters();
 
     void     DrawHoughLinesFront(Mat& rgb);
     void    DrawHoughLinesBird(Mat& rgb);

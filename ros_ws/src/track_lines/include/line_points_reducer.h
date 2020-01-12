@@ -26,7 +26,7 @@
 
 using namespace line_points_reducer;
 
-class LinePointsReducer
+class LinePointsReduce
 {
     private:
 
@@ -56,8 +56,8 @@ class LinePointsReducer
         LinePointsReducerReturnInfo GetReturnInfo();
 
     public:
-        LinePointsReducer();
-        LinePointsReducerReturnInfo ReduceLinePoints(vector<line_follower::PointAndDirection> left_line, vector<line_follower::PointAndDirection> right_line, double max_distance);
+        LinePointsReduce(LinePointsReduceInitializationParameters init);
+        LinePointsReducerReturnInfo ReduceLinePoints(vector<line_follower::PointAndDirection> left_line, vector<line_follower::PointAndDirection> right_line);
         void GetLengthAndDirectionFromConsecutiveReducedLinePoints(vector<PointInDirection> &line_points_reduced_length_direction,int line);
         void GetReducedLinePoints(vector<ReducedPoints> &line_points_reduced, int line);
         void DrawReducedLinePoints(Mat &rgb, int line);

@@ -1,7 +1,10 @@
 #include "on_road_search.h"
 
-OnRoadSearch::OnRoadSearch()
+OnRoadSearch::OnRoadSearch(ros::NodeHandle* nh_):it_(*nh_)
 {
+
+    road_sign_image_publisher_  = it_.advertise("road_sign/image", 1);
+
     image_template_10 = imread("/home/tb/gazebo_road_generation/ros_ws/scripts/scenarios/speed_limit_ground/speed_limit_10_ground.png", CV_LOAD_IMAGE_GRAYSCALE);
     image_template_20 = imread("/home/tb/gazebo_road_generation/ros_ws/scripts/scenarios/speed_limit_ground/speed_limit_20_ground.png", CV_LOAD_IMAGE_GRAYSCALE);
     image_template_30 = imread("/home/tb/gazebo_road_generation/ros_ws/scripts/scenarios/speed_limit_ground/speed_limit_30_ground.png", CV_LOAD_IMAGE_GRAYSCALE);
@@ -190,18 +193,29 @@ void OnRoadSearch::SearchOnRoad(vector<LineValidationTable> left_table, vector<L
     SearchGoalLine();
     SearchCrossWalk();
     SearchCrossRoad();
-    SearchRoadObject(left_table, markings, boxes, LEFT_TO_RIGHT, LEFT_IN_RIGHT_LANE);
-    SearchRoadObject(left_table, markings, boxes, LEFT_TO_RIGHT, LEFT_IN_LEFT_LANE);
-    SearchRoadObject(right_table, markings, boxes, RIGHT_TO_LEFT, RIGHT_IN_LEFT_LANE);
-    SearchRoadObject(right_table, markings, boxes, RIGHT_TO_LEFT, RIGHT_IN_RIGHT_LANE);
 
 
 
-    if(markings.size()>1 && boxes.size()==0 && !found_cross_walk_ && !found_crossing_ && !found_goal_line_)TemplateMatchMarking(markings);
-    else if(boxes.size()>1 && !found_cross_walk_ && !found_crossing_ && !found_goal_line_) cout << "box!" << endl;
-    else if(found_crossing_) cout << "CROSSING!" << endl;
-    else if(found_cross_walk_) cout << "CROSSWALK!" << endl;
-    else if(found_goal_line_) cout << "GOALLINE!" << endl;
+    if(!found_cross_walk_ && !found_crossing_ && !found_goal_line_)
+    {
+        SearchRoadObject(left_table, markings, boxes, LEFT_TO_RIGHT, LEFT_IN_RIGHT_LANE);
+        //SearchRoadObject(left_table, markings, boxes, LEFT_TO_RIGHT, LEFT_IN_LEFT_LANE);
+        //SearchRoadObject(right_table, markings, boxes, RIGHT_TO_LEFT, RIGHT_IN_LEFT_LANE);
+        SearchRoadObject(right_table, markings, boxes, RIGHT_TO_LEFT, RIGHT_IN_RIGHT_LANE);
+    }
+    else{
+        found_box_ = false;
+        found_marking_ = false;
+    }
+
+
+    //if(markings.size()>1 && boxes.size()==0 && !found_cross_walk_ && !found_crossing_ && !found_goal_line_)TemplateMatchMarking(markings);
+
+    if(found_marking_){ cout << "MARKING!" << endl; SendMarkingImageToClassifier();}
+    if(found_box_) cout << "BOX!" << endl;
+    if(found_crossing_) cout << "CROSSING!" << endl;
+    if(found_cross_walk_) cout << "CROSSWALK!" << endl;
+    if(found_goal_line_) cout << "GOALLINE!" << endl;
 
    //cout << (boxes.size()>1) << " " << (markings.size()>1) << " " <<  found_goal_line_ << " " << found_cross_walk_ << " " << found_crossing_ << endl;
 
@@ -209,6 +223,30 @@ void OnRoadSearch::SearchOnRoad(vector<LineValidationTable> left_table, vector<L
     //else if(markings.size()>1) cout << "mark!" << endl;
 
 }
+
+void OnRoadSearch::SendMarkingImageToClassifier()
+{
+    /*
+    start_left_x_ = start_parameters.left_x;
+    start_left_y_ = start_parameters.left_y;
+    start_right_x_ = start_parameters.right_x;
+    start_right_y_ = start_parameters.right_y;
+    start_angle_left_= start_parameters.left_angle;
+    start_angle_right_ = start_parameters.right_angle;
+    */
+
+    Mat roi_image = image_(Rect(Point(619,233),Point(656,310)));
+
+    resize(roi_image,roi_image,Size(56,28));
+
+
+    imshow("roi_image",roi_image);
+
+    //sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "mono8", image_).toImageMsg();
+    //road_sign_image_publisher_.publish(msg);
+
+}
+
 
 void OnRoadSearch::TemplateMatchMarking(vector<PointInDirection> markings)
 {
@@ -231,7 +269,30 @@ void OnRoadSearch::TemplateMatchMarking(vector<PointInDirection> markings)
 
      cv::warpAffine(roi_image, warped_roi_image, rotation_mat, bbox.size());
 
-     //imshow("imgg",warped_roi_image);
+     imshow("imgg",warped_roi_image);
+
+     sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "mono8", warped_roi_image).toImageMsg();
+
+
+     road_sign_image_publisher_.publish(msg);
+
+/*
+vector<vector<Point> > contours;
+vector<Vec4i> hierarchy;
+
+findContours( image_, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE );
+
+int idx = 0;
+for( ; idx >= 0; idx = hierarchy[idx][0] )
+{
+    Scalar color( rand()&255, rand()&255, rand()&255 );
+    drawContours( image_, contours, idx, color, CV_FILLED, 8, hierarchy );
+}
+
+
+imshow( "Components", image_ );
+waitKey(0);
+*/
 
      std::vector<double> template_scores;
 
@@ -257,55 +318,204 @@ void OnRoadSearch::TemplateMatchMarking(vector<PointInDirection> markings)
 
 void OnRoadSearch::SearchRoadObject(vector<LineValidationTable> current_table, vector<PointInDirection>& markings, vector<PointInDirection>& boxes, int SEARCH_DIRECTION, int SEARCH_DISTANCE_CODE)
 {
-    int line_distance = 0;
+    int radial_outer_line_offset = 0;
+
+    Point line_iterator_start;
+    Point line_iterator_end;
+
 
 
 
     switch(SEARCH_DISTANCE_CODE)
     {
-        case LEFT_IN_LEFT_LANE:   line_distance = kLeftInLeftLaneDistance;     break;
-        case LEFT_IN_RIGHT_LANE:  line_distance = kLeftInRightLaneDistance;    break;
-        case RIGHT_IN_LEFT_LANE:  line_distance = kRightInLeftLaneDistance;    break;
-        case RIGHT_IN_RIGHT_LANE: line_distance = kRightInRightLaneDistance;   break;
+        case LEFT_IN_LEFT_LANE:   radial_outer_line_offset = kLeftInLeftLaneRadialOuterLineOffset_; break;
+        case LEFT_IN_RIGHT_LANE:  radial_outer_line_offset = kLeftInRightLaneRadialOuterLineOffset_;    break;
+        case RIGHT_IN_LEFT_LANE:  radial_outer_line_offset = kRightInLeftLaneRadialOuterLineOffset_;    break;
+        case RIGHT_IN_RIGHT_LANE: radial_outer_line_offset = kRightInRightLaneRadialOuterLineOffset_;   break;
     }
 
     int current_pos = 0;
 
     while(current_pos < current_table.size() && current_pos < kMaxLaneObjectForsightDistance_)
     {
-        vector<int> radial_vec_1;
-        vector<int> radial_vec_2;
+        vector<uchar> radial_vec_1;
+        //vector<uchar> radial_vec_2;
 
         float direction = current_table[current_pos].GetDirection();
         Point origin    = current_table[current_pos].GetOriginPoint();
         float orthogonal_direction = GetOrthogonalAngle(direction, SEARCH_DIRECTION);
 
 
+        switch(SEARCH_DISTANCE_CODE)
+        {
+            case LEFT_IN_LEFT_LANE:     line_iterator_start = origin;
+                                        line_iterator_end   = Point(origin.x + kLeftInLeftLaneLineIteratorEndOffset_ * cos(orthogonal_direction*PI/180),
+                                                                    origin.y - kLeftInLeftLaneLineIteratorEndOffset_ * sin(orthogonal_direction*PI/180));
+                                        break;
 
-        int current_x  = origin.x + line_distance * cos(orthogonal_direction*PI/180);
-        int current_y  = origin.y - line_distance * sin(orthogonal_direction*PI/180);
+            case LEFT_IN_RIGHT_LANE:    line_iterator_start = Point(origin.x + kLeftInRightLaneLineIteratorStartOffset_ * cos(orthogonal_direction*PI/180),
+                                                                    origin.y - kLeftInRightLaneLineIteratorStartOffset_ * sin(orthogonal_direction*PI/180));
+                                        line_iterator_end   = Point(origin.x + kLeftInRightLaneLineIteratorEndOffset_ * cos(orthogonal_direction*PI/180),
+                                                                    origin.y - kLeftInRightLaneLineIteratorEndOffset_ * sin(orthogonal_direction*PI/180));
+                                        break;
+
+            case RIGHT_IN_LEFT_LANE:    line_iterator_start = Point(origin.x + kRightInLeftLaneLineIteratorStartOffset_ * cos(orthogonal_direction*PI/180),
+                                                                    origin.y - kRightInLeftLaneLineIteratorStartOffset_ * sin(orthogonal_direction*PI/180));
+                                        line_iterator_end   = Point(origin.x + kRightInLeftLaneLineIteratorEndOffset_ * cos(orthogonal_direction*PI/180),
+                                                                    origin.y - kRightInLeftLaneLineIteratorEndOffset_ * sin(orthogonal_direction*PI/180));
+                                        break;
+
+            case RIGHT_IN_RIGHT_LANE:   line_iterator_start = origin;
+                                        line_iterator_end   = Point(origin.x + kRightInRightLaneLineIteratorEndOffset_ * cos(orthogonal_direction*PI/180),
+                                                                    origin.y - kRightInRightLaneLineIteratorEndOffset_ * sin(orthogonal_direction*PI/180));
+                                        break;
+        }
+
+
+        int current_x  = origin.x + radial_outer_line_offset * cos(orthogonal_direction*PI/180);
+        int current_y  = origin.y - radial_outer_line_offset * sin(orthogonal_direction*PI/180);
 
         for(float current_angle=0; current_angle<359; current_angle+=kLaneObjectRadialScanStepSize)
         {
             float angle =  (current_angle*PI)/180;
 
             Point radial_point_1 = GetPolarCoordinate(current_x, current_y, angle, kLaneObjectRadialScanRadius1);
-            Point radial_point_2 = GetPolarCoordinate(current_x, current_y, angle, kLaneObjectRadialScanRadius2);
+            //Point radial_point_2 = GetPolarCoordinate(current_x, current_y, angle, kLaneObjectRadialScanRadius2);
 
-            radial_vec_1.push_back((int)image_.at<uchar>(radial_point_1));
-            radial_vec_2.push_back((int)image_.at<uchar>(radial_point_2));
+
+
+            radial_vec_1.push_back(image_.at<uchar>(radial_point_1));
+            //image_.at<uchar>(radial_point_1) = 255;
+            //radial_vec_2.push_back(image_.at<uchar>(radial_point_2));
 
             //image_rgb_bird_.at<Vec3b>(circle_point_2) = Vec3b(255,255,0);
         }
-        //line( image_rgb_bird_,origin, Point(current_left_x,current_left_y), Scalar(255,255,0), 3, CV_AA);
+
+        //imshow("rad_scan",image_);
+
+        LineIterator line_iterator(image_, line_iterator_start, line_iterator_end, 8);
+
+        vector<uchar> scanned_line;
+
+        for(int i=0; i<line_iterator.count; i++,line_iterator++) scanned_line.push_back(**line_iterator);
+
+
+        //line( image_,line_iterator_start, line_iterator_end, Scalar(255,255,0), 3, CV_AA);
 
 
 
         int radial_px_count_1 = std::count_if(radial_vec_1.begin(), radial_vec_1.end(), [](int i) {return i > 0;});
-        int radial_px_count_2 = std::count_if(radial_vec_2.begin(), radial_vec_2.end(), [](int i) {return i > 0;});
+        //int radial_px_count_2 = std::count_if(radial_vec_2.begin(), radial_vec_2.end(), [](uchar i) {return i > 0;});
+
+        //for(auto it:radial_vec_1) cout << (int)it << " ";
+
+
+        Mat radial_vec_1_mat(radial_vec_1);
+        Mat scanned_line_mat(scanned_line);
+
+        threshold(radial_vec_1_mat, radial_vec_1_mat, kRoadSignIntensityThreshold_, 255, CV_THRESH_BINARY);
+        threshold(scanned_line_mat, scanned_line_mat, kRoadSignIntensityThreshold_, 255, CV_THRESH_BINARY);
+
+        vector<pair<string,int>> black_white_road_segments_radial_vec_1 = GatherBlackAndWhiteRoadSegments(radial_vec_1_mat);
+        vector<pair<string,int>> black_white_road_segments_scanned_line = GatherBlackAndWhiteRoadSegments(scanned_line_mat);
+
+        //for(auto it:black_white_road_segments_radial_vec_1) cout << it.first << " " << it.second << endl;
+        //cout << "-----" << endl;
+        //for(auto it:black_white_road_segments_scanned_line) cout << it.first << " " << it.second << endl;
+        //cout << "###" << endl;
+
+        int box_segments_counter = 0;
+        int marking_segments_counter = 0;
+
+        const int kMinWhitePixelsForBox_ = 40;
+
+
+        for(auto it : black_white_road_segments_radial_vec_1)
+        {
+            if(it.second >= kMinWhitePixelsForBox_ && it.first == "white") box_segments_counter++;
+        }
+
+
+        for(auto it : black_white_road_segments_scanned_line)
+        {
+            if(it.second >= kMinWhitePixelsForBox_ && it.first == "white") box_segments_counter++;
+        }
 
 
 
+        if(box_segments_counter>=1)
+        {
+            found_box_ = true;
+        }
+        else{
+            found_box_ = false;
+        }
+
+        if(!box_segments_counter>=1 && black_white_road_segments_radial_vec_1.size()>=4 && black_white_road_segments_scanned_line.size()>=4)
+        {
+            found_marking_ = true;
+        }
+        else {
+            found_marking_ = false;
+        }
+
+
+        //cout << box_segments_counter << " " << black_white_road_segments_radial_vec_1.size() << " " << black_white_road_segments_scanned_line.size() << endl;
+        //cout << "#############" << endl;
+        //for(auto it:black_white_road_segments_scanned_line) cout << it.first << " " << it.second << endl;
+        //cout << "###" << endl;
+
+        current_pos+= kLaneObjectForsightStepSize;
+    }
+
+
+
+/*
+        if((radial_px_count_1 < kMaxPxCountForLaneMarkingRadialScanRadius1 && radial_px_count_2 < kMaxPxCountForLaneMarkingRadialScanRadius2) &&
+           (radial_px_count_1 > kMinPxCountForLaneMarkingRadialScanRadius1 && radial_px_count_2 > kMinPxCountForLaneMarkingRadialScanRadius2) )
+        {
+            markings.push_back(PointInDirection{current_x,current_y,0,direction});
+        }
+
+        else if (radial_px_count_1 > kMinPxCountForBoxRadialScanRadius1 && radial_px_count_2 > kMinPxCountForBoxRadialScanRadius2)
+        {
+            boxes.push_back(PointInDirection{current_x,current_y,0,direction});
+        }
+        current_pos+= kLaneObjectForsightStepSize;
+
+*/
+
+
+/*
+        Mat radial_vec_2_mat(radial_vec_2);
+        threshold(radial_vec_2_mat, radial_vec_2_mat, kRoadSignIntensityThreshold_, 255, CV_THRESH_BINARY);
+
+        vector<pair<string,int>> black_white_road_segments_radial_vec_2 = GatherBlackAndWhiteRoadSegments(radial_vec_1_mat);
+
+
+        for(auto it: black_white_road_segments_radial_vec_1) cout << it.first << " " << it.second << endl;
+        cout << "-------" << endl;
+        for(auto it: black_white_road_segments_radial_vec_2) cout << it.first << " " << it.second << endl;
+        cout << "####################" << endl;
+
+        */
+/*
+         int goal_line_counter = 0;
+
+         for(auto it : black_white_road_segments_radial_vec_1)
+         {
+             if(it.second >= kMinGoalSegmentWidth_ && it.second <= kMaxGoalSegmentWidth_) goal_line_counter++;
+         }
+
+         if(goal_line_counter >= kMinGoalSegmentsToFind_)
+         {
+             //circle(image_rgb_bird_,Point(start_left_x_,start_left_y_), 5, Scalar(0,255,0),CV_FILLED);
+            found_goal_line_ = true;
+            return true;
+         }
+
+*/
+/*
         if((radial_px_count_1 < kMaxPxCountForLaneMarkingRadialScanRadius1 && radial_px_count_2 < kMaxPxCountForLaneMarkingRadialScanRadius2) &&
            (radial_px_count_1 > kMinPxCountForLaneMarkingRadialScanRadius1 && radial_px_count_2 > kMinPxCountForLaneMarkingRadialScanRadius2) )
         {
@@ -319,7 +529,7 @@ void OnRoadSearch::SearchRoadObject(vector<LineValidationTable> current_table, v
         current_pos+= kLaneObjectForsightStepSize;
 
     }
-
+*/
 }
 
 void OnRoadSearch::ExtractMinMaxLineElements( vector<LineValidationTable>  line,  MinMaxLineElements& line_minmax_elements )

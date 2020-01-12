@@ -319,7 +319,10 @@ DL_INCLUDE_DIRS:PATH=/usr/include
 DL_LIBRARIES:FILEPATH=/usr/lib/x86_64-linux-gnu/libdl.so
 
 //Path to a program.
-DOXYGEN_EXECUTABLE:FILEPATH=DOXYGEN_EXECUTABLE-NOTFOUND
+DOXYGEN_EXECUTABLE:FILEPATH=/usr/bin/doxygen
+
+//Doxygen found
+DOXYGEN_FOUND:BOOL=TRUE
 
 //Path to a program.
 EMPY_EXECUTABLE:FILEPATH=/usr/bin/empy
@@ -687,6 +690,12 @@ SITE:STRING=tbKI
 //Path to a library.
 SWSCALE_LIBRARY_swscale:FILEPATH=/usr/lib/x86_64-linux-gnu/libswscale.so
 
+//Value Computed by CMake
+ScikitLearnSVM_BINARY_DIR:STATIC=/home/tb/gazebo_road_generation/ros_ws/build/ScikitLearnSVM
+
+//Value Computed by CMake
+ScikitLearnSVM_SOURCE_DIR:STATIC=/home/tb/gazebo_road_generation/ros_ws/src/ScikitLearnSVM
+
 //The directory containing a CMake configuration file for Simbody.
 Simbody_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/simbody
 
@@ -783,6 +792,12 @@ cpp_common_DIR:PATH=/opt/ros/melodic/share/cpp_common/cmake
 //The directory containing a CMake configuration file for cv_bridge.
 cv_bridge_DIR:PATH=/opt/ros/melodic/share/cv_bridge/cmake
 
+//Value Computed by CMake
+dnn_EAST_BINARY_DIR:STATIC=/home/tb/gazebo_road_generation/ros_ws/build/dnn_EAST
+
+//Value Computed by CMake
+dnn_EAST_SOURCE_DIR:STATIC=/home/tb/gazebo_road_generation/ros_ws/src/dnn_EAST
+
 //The directory containing a CMake configuration file for dynamic_reconfigure.
 dynamic_reconfigure_DIR:PATH=/opt/ros/melodic/share/dynamic_reconfigure/cmake
 
@@ -876,6 +891,12 @@ gtest_hide_internal_symbols:BOOL=OFF
 
 //Dependencies for the target
 gtest_main_LIB_DEPENDS:STATIC=general;-lpthread;general;gtest;
+
+//Value Computed by CMake
+gtest_ros_example_BINARY_DIR:STATIC=/home/tb/gazebo_road_generation/ros_ws/build/gtest_ros_example
+
+//Value Computed by CMake
+gtest_ros_example_SOURCE_DIR:STATIC=/home/tb/gazebo_road_generation/ros_ws/src/gtest_ros_example
 
 //The directory containing a CMake configuration file for ignition-cmake0.
 ignition-cmake0_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/ignition-cmake0
@@ -1362,7 +1383,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=15
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=18
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

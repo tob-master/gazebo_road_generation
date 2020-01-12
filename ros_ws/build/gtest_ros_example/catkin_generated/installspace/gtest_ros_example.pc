@@ -1,0 +1,8 @@
+prefix=/home/tb/gazebo_road_generation/ros_ws/install
+
+Name: gtest_ros_example
+Description: Description of gtest_ros_example
+Version: 0.0.1
+Cflags: 
+Libs: -L/home/tb/gazebo_road_generation/ros_ws/install/lib 
+Requires: 

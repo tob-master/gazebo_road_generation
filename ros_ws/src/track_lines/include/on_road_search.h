@@ -32,6 +32,9 @@ class OnRoadSearch
 
 private:
 
+    image_transport::Publisher road_sign_image_publisher_;
+    image_transport::ImageTransport it_;
+
     Mat image_;
 
     const int kVelocitySignTemplateHeight_ = 65;
@@ -59,11 +62,11 @@ private:
 
     const int kLeftToLeftMidLaneDistance = 30;
 
-    const int kLeftInLeftLaneDistance  = 30;
-    const int kLeftInRightLaneDistance = 95;
-    const int kRightInLeftLaneDistance = 95;
-    const int kRightInRightLaneDistance = 30;
-    const int kLaneObjectRadialScanStepSize = 2;
+    const int kLeftInLeftLaneRadialOuterLineOffset_  = 30;
+    const int kLeftInRightLaneRadialOuterLineOffset_ = 95;
+    const int kRightInLeftLaneRadialOuterLineOffset_ = 95;
+    const int kRightInRightLaneRadialOuterLineOffset_ = 30;
+    const int kLaneObjectRadialScanStepSize = 1;
     const int kLaneObjectRadialScanRadius1 = 20;
     const int kLaneObjectRadialScanRadius2 =  5;
     const int kLaneObjectForsightStepSize = 40;
@@ -76,6 +79,18 @@ private:
 
     const int kMinPxCountForBoxRadialScanRadius1  = 150;
     const int kMinPxCountForBoxRadialScanRadius2 = 150;
+
+
+    const int kLeftInLeftLaneLineIteratorEndOffset_ = 60;
+    const int kLeftInRightLaneLineIteratorStartOffset_ = 70;
+    const int kLeftInRightLaneLineIteratorEndOffset_ = 125;
+
+
+    const int kRightInLeftLaneLineIteratorStartOffset_ = 70;
+    const int kRightInLeftLaneLineIteratorEndOffset_ = 125;
+
+
+    const int kRightInRightLaneLineIteratorEndOffset_ = 60;
 
     Mat image_template_10;
     Mat image_template_20;
@@ -96,11 +111,10 @@ private:
 
 
     bool found_mid_crossing_ = false;
-       bool found_left_crossing_ = false;
-       bool found_right_crossing_ = false;
-
-
-
+    bool found_left_crossing_ = false;
+    bool found_right_crossing_ = false;
+    bool found_box_ = false;
+    bool found_marking_ = false;
     const int kMinToLeftMidLineDirectionForCrossing_ = 340;
     const int kMaxToLeftMidLineDirectionForCrossing_ = 20;
     const int kMinToRightMidLineDirectionForCrossing_ = 160;
@@ -121,8 +135,8 @@ private:
     const int MaxRightLineSizeForCrossing = 150;
 
 
-    vector<LineValidationTable> left_line_validation_table_;
-    vector<LineValidationTable> mid_line_validation_table_;
+     vector<LineValidationTable> left_line_validation_table_;
+     vector<LineValidationTable> mid_line_validation_table_;
      vector<LineValidationTable> right_line_validation_table_;
 
      vector<LineValidationTable> left_line_points_in_drive_direction_;
@@ -139,10 +153,12 @@ private:
 
      const int kTemplateRoiSizeX_ = 50;
      const int kTemplateRoiSizeY_ = 50;
-
+     const int kRoadSignIntensityThreshold_ = 100;
 public:
-    void LoadImage(Mat image){image_ = image;};
-    OnRoadSearch();
+    void LoadImage(Mat image){image_ = image;
+                              sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "mono8", image_).toImageMsg();
+                              road_sign_image_publisher_.publish(msg);};
+    OnRoadSearch(ros::NodeHandle* nh_);
     void SearchOnRoad(vector<LineValidationTable> left_table,vector<LineValidationTable> right_table);
     vector<pair<string,int>> GatherBlackAndWhiteRoadSegments(Mat scanned_line_mat);
     void SearchRoadObject(vector<LineValidationTable> current_table, vector<PointInDirection>& markings, vector<PointInDirection>& boxes,  int SEARCH_DIRECTION, int SEARCH_DISTANCE_CODE);
@@ -163,6 +179,7 @@ public:
     void LoadInDriveDirectionTables(vector<LineValidationTable> left_line_points_in_drive_direction,vector<LineValidationTable> right_line_points_in_drive_direction);
     void SearchCrossRoad();
     void TemplateMatchMarking(vector<PointInDirection> markings);
+    void SendMarkingImageToClassifier();
 };
 
 #endif // ON_ROAD_SEARCHER_H

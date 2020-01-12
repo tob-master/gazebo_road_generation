@@ -139,11 +139,19 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         cvtColor(image_mono_bird_, image_rgb_bird_, CV_GRAY2BGR);
 
-        vanishing_point_search_return_info_ = VanishingPointSearcher_->FindVanishingPoint(image_mono_);
 
-        start_of_lines_search_return_info_ = StartOfLinesSearcher_->FindStartParameters(image_mono_bird_otsu_);
+        VanishingPointSearcher_->ClearMemory();
+        VanishingPointSearcher_->SetImage(image_mono_);
+        vanishing_point_search_return_info_ = VanishingPointSearcher_->FindVanishingPoint();
 
-        //StartOfLinesSearcher_->DrawStartParameters(image_rgb_bird_);
+
+
+
+        StartOfLinesSearcher_->ClearMemory();
+        StartOfLinesSearcher_->SetImage(image_mono_bird_otsu_);
+        start_of_lines_search_return_info_ = StartOfLinesSearcher_->FindStartParameters();
+
+        StartOfLinesSearcher_->DrawStartParameters(image_rgb_bird_);
         //VanishingPointSearcher_->ShowCannyEdgeImage();
         VanishingPointSearcher_->DrawHoughLines(image_rgb_,LEFT_LINE);
         VanishingPointSearcher_->DrawHoughLines(image_rgb_,RIGHT_LINE);
@@ -177,7 +185,10 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
          if(START_PARAMETERS_SCORE_ != 0)
           {
-                line_follower_return_info_ = LineFollower_->FollowLines(image_mono_bird_,start_parameters_for_line_follower_);
+                LineFollower_->ClearMemory();
+                LineFollower_->SetImage(image_mono_bird_);
+                LineFollower_->SetStartParameters(start_parameters_for_line_follower_);
+                line_follower_return_info_ = LineFollower_->FollowLines();
 
                 left_line_follower_min_iterations_reached_ = line_follower_return_info_.left_line_iterations_counter  >= kMinLineFollowerIterationsCount;
                 right_line_follower_min_iterations_reached_ = line_follower_return_info_.right_line_iterations_counter >= kMinLineFollowerIterationsCount;
@@ -188,7 +199,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
                 //LineFollower_->DrawLinePoints(image_rgb_bird_,LEFT_LINE);
                 //LineFollower_->DrawLinePoints(image_rgb_bird_,RIGHT_LINE);
-                line_points_reducer_return_info_ = LinePointsReducer_->ReduceLinePoints(left_line_from_line_follower_,right_line_from_line_follower_,kMaxDistanceToReducePoints);
+                line_points_reducer_return_info_ = LinePointsReducer_->ReduceLinePoints(left_line_from_line_follower_,right_line_from_line_follower_);
 
                 left_line_is_reduced_  = line_points_reducer_return_info_.left_line_is_reduced;
                 right_line_is_reduced_ = line_points_reducer_return_info_.right_line_is_reduced;
@@ -266,28 +277,28 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         SafeDriveAreaEvaluator_.EvaluateTrackInDriveDirection();
 
-        OnRoadSearch OnRoadSearcher;
-        OnRoadSearcher.LoadImage(image_mono_bird_);
 
-        OnRoadSearcher.LoadValidationTables(left_line_validation_table_,
+        OnRoadSearcher_->LoadImage(image_mono_bird_);
+
+        OnRoadSearcher_->LoadValidationTables(left_line_validation_table_,
                                               mid_line_in_drive_direction_table_,
                                               right_line_validation_table_);
 
 
-        OnRoadSearcher.LoadInDriveDirectionTables(left_line_in_drive_direction_table_,right_line_in_drive_direction_table_);
+        OnRoadSearcher_->LoadInDriveDirectionTables(left_line_in_drive_direction_table_,right_line_in_drive_direction_table_);
 
 
         if(found_start_of_lines_)
         {
 
-            OnRoadSearcher.SetStartParameters(StartOfLinesSearcher_->GetStartParameters());
-            OnRoadSearcher.SearchOnRoad(left_line_in_drive_direction_table_,right_line_in_drive_direction_table_);
+            OnRoadSearcher_->SetStartParameters(StartOfLinesSearcher_->GetStartParameters());
+            OnRoadSearcher_->SearchOnRoad(left_line_in_drive_direction_table_,right_line_in_drive_direction_table_);
         }
         else if (found_vanishing_point_)
         {
 
-            OnRoadSearcher.SetStartParameters(VanishingPointSearcher_->GetLineFollowerStartParameters());
-            OnRoadSearcher.SearchOnRoad(left_line_in_drive_direction_table_,right_line_in_drive_direction_table_);
+            OnRoadSearcher_->SetStartParameters(VanishingPointSearcher_->GetLineFollowerStartParameters());
+            OnRoadSearcher_->SearchOnRoad(left_line_in_drive_direction_table_,right_line_in_drive_direction_table_);
         }
 
 
@@ -392,7 +403,7 @@ void LaneTracker::ReduceLinePoints()
     LineFollower_->GetLine(left_line_from_line_follower_, LEFT_LINE);
     LineFollower_->GetLine(right_line_from_line_follower_, RIGHT_LINE);
 
-    line_points_reducer_return_info_ = LinePointsReducer_->ReduceLinePoints(left_line_from_line_follower_,right_line_from_line_follower_,kMaxDistanceToReducePoints);
+    line_points_reducer_return_info_ = LinePointsReducer_->ReduceLinePoints(left_line_from_line_follower_,right_line_from_line_follower_);
 
     left_line_is_reduced_  = line_points_reducer_return_info_.left_line_is_reduced;
     right_line_is_reduced_ = line_points_reducer_return_info_.right_line_is_reduced;
@@ -694,6 +705,18 @@ void LaneTracker::LoadConnectedComponentsSearchInitializationParameters()
 
 }
 
+void LaneTracker::LoadLinePointsReduceInitializationParameters()
+{
+
+    string str = "rosparam load /home/tb/gazebo_road_generation/ros_ws/src/track_lines/initialization/line_points_reduce_init.yaml";
+    const char *command = str.c_str();
+    system(command);
+
+    n.getParam("/line_points_reduce_init/max_distance_to_reduce_points", line_points_reduce_init.max_distance_to_reduce_points);
+
+
+
+}
 
 
 void LaneTracker::LoadAllInitializationParameters()
@@ -702,6 +725,7 @@ void LaneTracker::LoadAllInitializationParameters()
     LoadStartOfLinesSearchInitializationParameters();
     LoadLineFollowerInitializationParameters();
     LoadBirdseyeInitializationParameters();
+    LoadLinePointsReduceInitializationParameters();
     LoadMidLineSearchInitializationParameters();
     LoadVanishingPointSearchInitializationParameters();
     LoadConnectedComponentsSearchInitializationParameters();
@@ -769,6 +793,7 @@ LaneTracker::LaneTracker(ros::NodeHandle* nh_):n(*nh_),it(*nh_)
   camera_subscriber_ = it.subscribe("/rrbot/camera1/image_raw", 1, &LaneTracker::imageCallback, this);
 
 
+
   namedWindow("bird_rgb", WINDOW_NORMAL);
   setMouseCallback("bird_rgb", mouse_callback);
 
@@ -776,11 +801,13 @@ LaneTracker::LaneTracker(ros::NodeHandle* nh_):n(*nh_),it(*nh_)
   InitializeBirdseyeTransformationMatrix();
 
   StartOfLinesSearcher_ = new StartOfLinesSearch(image_height_,image_width_,start_of_lines_search_init);
-  LineFollower_         = new LineFollower(image_height_,image_width_,line_follower_init);
-  LinePointsReducer_    = new LinePointsReducer;
+  LineFollower_         = new LineFollow(image_height_,image_width_,line_follower_init);
+  LinePointsReducer_    = new LinePointsReduce(line_points_reduce_init);
   MidLineSearcher_       = new MidLineSearch(image_height_,image_width_,mid_line_search_init);
   VanishingPointSearcher_ = new VanishingPointSearch(birdseye_transformation_matrix_,vanishing_point_search_init);
   ConnectedComponentsSearcher_ = new ConnectedComponentsSearch(image_height_, image_width_, connected_components_search_init);
+
+  OnRoadSearcher_ =  new OnRoadSearch(nh_);
 
 };
 

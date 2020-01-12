@@ -1,0 +1,8 @@
+prefix=/home/tb/gazebo_road_generation/ros_ws/devel
+
+Name: dnn_EAST
+Description: Description of dnn_EAST
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/tb/gazebo_road_generation/ros_ws/devel/lib 
+Requires: 

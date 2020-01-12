@@ -98,42 +98,110 @@ class VanishingPointSearch
 
         float car_mid_point_to_vanishing_point_angle_;
 
-        void WarpCarMidPointToBirdsview();
+        void WarpCarMidPointToBirdsview(Mat frontalview_to_birdseye_transformation_matrix,
+                                        Point &warped_car_mid_point,
+                                        const Point kCarMidPoint);
 
-        void SetImage(Mat image);
-        void ClearMemory();
-        void CropImageToRegionOfInterest();
-        void ApplyCannyEdge();
-        void ApplyHoughLines();
-        void AddRegionOfInterestOffsetToHoughLinePoints();
-        void ChangeLinePointsToDriveDirection();
-        void GatherTrueRangeLeftAndRightLines();
-        void RejectFalseLeftAndRightLineAngles();
+
+        void CropImageToRegionOfInterest(Mat current_image,
+                                         Mat &current_image_roi,
+                                         const int kXROIStart,
+                                         const int kYROIStart,
+                                         const int kROIWidth,
+                                         const int kROIHeight);
+
+        void ApplyCannyEdge(Mat current_image_roi,
+                            Mat &canny_image,
+                            const int kCannyLowThreshold,
+                            const int kCannyHighThreshold,
+                            const int kCannyKernelSize);
+
+        void ApplyHoughLines(Mat canny_image ,
+                             vector<Vec4i> &hough_lines,
+                             const int  kHoghLinesRho, const float kHoughLinesTheta,
+                             const int kHoughLinesMinintersections,
+                             const int kHoughLinesMinLineLength,
+                             const int kHoughLinesMaxLineGap);
+
+        void AddRegionOfInterestOffsetToHoughLinePoints(vector<Vec4i> &hough_lines,
+                                                        const int kXROIStart,
+                                                        const int kYROIStart);
+        void ChangeLinePointsToDriveDirection(vector<Vec4i> hough_lines,
+                                              vector<HoughLinesInDriveDirection> &hough_lines_in_drive_direction);
+
+        void GatherTrueRangeLeftAndRightLines(vector<HoughLinesInDriveDirection> hough_lines_in_drive_direction,
+                                              vector<HoughLinesInDriveDirection> &left_hough_lines_in_drive_direction,
+                                              vector<HoughLinesInDriveDirection> &right_hough_lines_in_drive_direction,
+                                              const int kXMinLeftLine,
+                                              const int kXMaxLeftLine,
+                                              const int kXMinRightLine,
+                                              const int kXMaxRightLine);
+
+        void RejectFalseLeftAndRightLineAngles(vector<HoughLinesInDriveDirection> left_hough_lines_in_drive_direction,
+                                               vector<HoughLinesInDriveDirection> right_hough_lines_in_drive_direction,
+                                               vector<HoughLinesPointsAndAngle> &left_hough_lines_points_and_angle,
+                                               vector<HoughLinesPointsAndAngle> &right_hough_lines_points_and_angle,
+                                               const int kMinLeftLineAngle,
+                                               const int kMaxLeftLineAngle,
+                                               const int kMinRightLineAngle,
+                                               const int kMaxRightLineAngle);
 
         std::pair<double, double> ComputeLineIntersection(std::pair<double, double> A, std::pair<double, double> B,
                                                      std::pair<double, double> C, std::pair<double, double> D);
 
-        void ComputeLeftAndRightHoughLineIntersections();
+
         //void ApplyDBScan();
-        void FilterVanishingPoint();
 
-        void CheckFoundLeftAndRightHoughLines();
-        void CheckFoundIntersections();
 
-        void ComputeCarMidPointToVanishingPointAngle();
+        void CheckFoundLeftAndRightHoughLines(vector<HoughLinesPointsAndAngle> left_hough_lines_points_and_angle,
+                                              vector<HoughLinesPointsAndAngle> right_hough_lines_points_and_angle,
+                                              int &left_hough_lines_count,
+                                              int &right_hough_lines_count,
+                                              bool &has_found_left_hough_line,
+                                              bool &has_found_right_hough_line);
+
+        void ComputeLeftAndRightHoughLineIntersections(vector<HoughLinesPointsAndAngle> left_hough_lines_points_and_angle,
+                                                       vector<HoughLinesPointsAndAngle> right_hough_lines_points_and_angle,
+                                                       vector<Intersections> &intersecting_lines);
+
+        void CheckFoundIntersections(vector<Intersections> intersecting_lines,
+                                     int &intersections_count,
+                                     bool &has_found_intersections);
+
+
+        void FilterVanishingPoint(vector<Intersections> intersecting_lines,
+                                  Point &vanishing_point,
+                                  const float kMaxStandardDeviationForValidVanishingPoint);
+
+
+        void ComputeCarMidPointToVanishingPointAngle(const Point kCarMidPoint,
+                                                     const Point vanishing_point,
+                                                     float &car_mid_point_to_vanishing_point_angle);
 
         void TransformHoughLinesToBirdseye();
 
         VanishingPointSearchReturnInfo GetReturnInfo();
 
 
-        void SetLineFollowerStartParameters();
+        void SetLineFollowerStartParameters(vector<Intersections> vanishing_point_intersections,
+                                            vector<HoughLinesPointsAndAngle> left_hough_lines_points_and_angle,
+                                            vector<HoughLinesPointsAndAngle> right_hough_lines_points_and_angle,
+                                            Mat frontalview_to_birdseye_transformation_matrix,
+                                            vector<HoughLinesWarpedPerspektive> &left_hough_lines_warped_perspektive,
+                                            vector<HoughLinesWarpedPerspektive> &right_hough_lines_warped_perspektive,
+                                            StartParameters &line_follower_start_parameters,
+                                            bool has_found_intersections,
+                                            bool has_found_left_hough_line,
+                                            bool has_found_right_hough_line);
 
 
     public:
+        void SetImage(Mat image);
+        void ClearMemory();
+
         VanishingPointSearch(Mat birdseye_transformation_matrix, VanishingPointSearchInitializationParameters init);
 
-        VanishingPointSearchReturnInfo FindVanishingPoint(Mat image);
+        VanishingPointSearchReturnInfo FindVanishingPoint();
 
         StartParameters GetLineFollowerStartParameters();
 

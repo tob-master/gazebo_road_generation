@@ -12,6 +12,13 @@ using namespace std;
 using namespace cv;
 
 
+
+struct SegmentStartIDAndWidth
+{
+    int start_id;
+    int width;
+};
+
 enum {LEFT_LINE, MID_LINE,RIGHT_LINE };
 enum {LEFT_TO_MID, RIGHT_TO_MID, LEFT_TO_RIGHT, RIGHT_TO_LEFT, MID_TO_LEFT, MID_TO_RIGHT};
 
@@ -50,6 +57,13 @@ struct PointInDirection
    int length;
    float angle;
 };
+
+
+struct LinePointsReduceInitializationParameters
+{
+    int max_distance_to_reduce_points;
+};
+
 
 struct BirdseyeInitializationParameters
 {
@@ -408,11 +422,7 @@ namespace line_follower
 }
 
 
-struct SegmentStartIDAndWidth
-{
-    int start_id;
-    int width;
-};
+
 
 
 namespace valid_line_point_search
@@ -600,9 +610,6 @@ namespace valid_line_point_search
 
 namespace start_of_lines_search
 {
-
-
-
 
 
 

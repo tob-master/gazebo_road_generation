@@ -1,6 +1,6 @@
 #include "line_follower.h"
 
-LineFollower::LineFollower(int image_height, int image_width, LineFollowerInitializationParameters init):
+LineFollow::LineFollow(int image_height, int image_width, LineFollowerInitializationParameters init):
 kImageWidth_(image_width),
 kImageHeight_(image_height),
 kMaxIterations_(init.max_iterations),
@@ -18,13 +18,13 @@ kStepFieldOfView_((kFieldOfView_/ 4) * (PI/180))
 }
 
 
-void LineFollower::SetImage(Mat image)
+void LineFollow::SetImage(Mat image)
 {
     image_ = image;
 }
 
 
-void LineFollower::SetStartParameters(StartParameters start_parameters)
+void LineFollow::SetStartParameters(StartParameters start_parameters)
 {
     start_left_x_ = start_parameters.left_x;
     start_left_y_ = start_parameters.left_y;
@@ -38,7 +38,7 @@ void LineFollower::SetStartParameters(StartParameters start_parameters)
 }
 
 
-void LineFollower::ClearMemory()
+void LineFollow::ClearMemory()
 {
     left_line_max_iterations_exceeded_ = false;
     left_line_search_radius_out_of_image_= false;
@@ -65,11 +65,11 @@ void LineFollower::ClearMemory()
 }
 
 
-void LineFollower::ResetCounters()
+void LineFollow::ResetCounters(int &iterations_counter, int &got_stuck_counter, int &walked_backwards_counter)
 {
-    iterations_counter_ = 0;
-    got_stuck_counter_ = 0;
-    walked_backwards_counter_ = 0;
+    iterations_counter = 0;
+    got_stuck_counter = 0;
+    walked_backwards_counter = 0;
 }
 
 
@@ -78,27 +78,37 @@ void LineFollower::ResetCounters()
 
 
 
-int LineFollower::FollowLine(int x, int y, float search_direction, int line)
+int LineFollow::FollowLine(int x, int y, float search_direction, int line_type)
 {
-    if(MaxIterationsExceeded(line) || SearchRadiusIsNotInImage(x, y, line)){ return 0; }
+    if(MaxIterationsExceeded(iterations_counter_,left_line_max_iterations_exceeded_,right_line_max_iterations_exceeded_,kMaxIterations_,line_type)
+    ||
+    SearchRadiusIsNotInImage(x,y,left_line_search_radius_out_of_image_,right_line_search_radius_out_of_image_, kSearchRadius_,kImageWidth_,kImageHeight_,line_type))
+    { return 0; }
 
-    SetSearchDirectionParameters(search_direction);
+    SetSearchDirectionParameters(search_direction,start_of_search_,end_of_search_,kStartAngleFieldOfView_ ,kEndAngleFieldOfView_);
 
-    int otsu_threshold = GetOtsuThreshold(x, y);
+    int otsu_threshold = GetOtsuThreshold(x, y,image_,start_of_search_, end_of_search_,kStepFieldOfView_,kSearchRadius_);
 
-    vector<ScannedMoments> scanned_moments = GetScannedMoments(otsu_threshold, x, y);
+    vector<ScannedMoments> scanned_moments = GetScannedMoments(x,y,image_,otsu_threshold,start_of_search_,end_of_search_,kStepFieldOfView_,kSearchRadius_);
 
     Point center_of_gravity = GetCenterOfGravity(x, y, scanned_moments);
 
-    Point new_start_point = ChangeToBrightestCoordinateWithinReach(center_of_gravity);
+    Point new_start_point = ChangeToBrightestCoordinateWithinReach(image_,center_of_gravity);
 
     float new_angle = GetNewAngle(x, y, new_start_point);
 
-    if(HasGotStuck(x,y,new_start_point,line) || IsWalkingBackwards(y,new_start_point,line)){ return 0; }
+    if(HasGotStuck(x,y,new_start_point,left_line_has_got_stuck_,right_line_has_got_stuck_,got_stuck_counter_,kMinTravelDistanceToNotGotStuck_,kMaxGotStuckCounts_,line_type)
+    ||
+       IsWalkingBackwards(y,new_start_point,left_line_is_walking_backwards_,right_line_is_walking_backwards_,walked_backwards_counter_,kMaxConsecutiveBackSteps_,line_type))
+    { return 0; }
 
-    AddIteration(new_start_point, new_angle, line);
+    AddIteration(new_start_point,left_line_points_and_directions_,right_line_points_and_directions_,iterations_counter_,new_angle,line_type);
 
-    FollowLine(new_start_point.x, new_start_point.y, new_angle, line);
+    FollowLine(new_start_point.x, new_start_point.y, new_angle, line_type);
+
+
+
+
 
     //TODO: check if angle may change only a little is better
     //############################
@@ -118,7 +128,7 @@ int LineFollower::FollowLine(int x, int y, float search_direction, int line)
 
 
 
-Point LineFollower::GetPolarCoordinate(int x, int y, float angle, int radius)
+Point LineFollow::GetPolarCoordinate(int x, int y, float angle, int radius)
 {
     x = x + radius * cos(angle) + 0.5;
     y = y - radius * sin(angle) + 0.5;
@@ -126,17 +136,17 @@ Point LineFollower::GetPolarCoordinate(int x, int y, float angle, int radius)
     return Point(x,y);
 }
 
-Point LineFollower::ChangeToBrightestCoordinateWithinReach(Point center_of_gravity)
+Point LineFollow::ChangeToBrightestCoordinateWithinReach(Mat image,Point center_of_gravity)
 {
 
     int x =  center_of_gravity.x;
     int y =  center_of_gravity.y;
 
-    int left      = GetPixelValue(Point(x-1,y));
-    int right     = GetPixelValue(Point(x+1,y));
-    int mid       = GetPixelValue(Point(x,y));
-    int top       = GetPixelValue(Point(x,y-1));
-    int bottom    = GetPixelValue(Point(x,y+1));
+    int left      = GetPixelValue(image,Point(x-1,y));
+    int right     = GetPixelValue(image,Point(x+1,y));
+    int mid       = GetPixelValue(image,Point(x,y));
+    int top       = GetPixelValue(image,Point(x,y-1));
+    int bottom    = GetPixelValue(image,Point(x,y+1));
 
     int intensities[] = {left,right,mid,top,bottom};
 
@@ -167,22 +177,28 @@ Point LineFollower::ChangeToBrightestCoordinateWithinReach(Point center_of_gravi
 
 }
 
-int LineFollower::GetPixelValue(Point point)
+int LineFollow::GetPixelValue(Mat image, Point point)
 {
-    return (int)image_.at<uchar>(point);
+    return (int)image.at<uchar>(point);
 }
 
 
-vector<int> LineFollower::ScanIntensitiesInSearchDirection(int x, int y)
+vector<int> LineFollow::ScanIntensitiesInSearchDirection(int x,
+                                                         int y,
+                                                         Mat image,
+                                                         const float start_of_search,
+                                                         const float end_of_search,
+                                                         const float kStepFieldOfView,
+                                                         const int kSearchRadius)
 {
     vector<int> scanned_intensities;
 
-    for (float angle=start_of_search_; angle>=end_of_search_; angle-=kStepFieldOfView_)
+    for (float angle=start_of_search; angle>=end_of_search; angle-=kStepFieldOfView)
     {
-        for (int current_search_radius=0; current_search_radius<kSearchRadius_; current_search_radius++)
+        for (int current_search_radius=0; current_search_radius<kSearchRadius; current_search_radius++)
         {
             Point current_point = GetPolarCoordinate(x,y,angle,current_search_radius);
-            int intensity = GetPixelValue(current_point);
+            int intensity = GetPixelValue(image,current_point);
             scanned_intensities.push_back(intensity);
         }
     }
@@ -191,9 +207,21 @@ vector<int> LineFollower::ScanIntensitiesInSearchDirection(int x, int y)
 }
 
 
-int LineFollower::GetOtsuThreshold(int x, int y)
+int LineFollow::GetOtsuThreshold(int x,
+                                 int y,
+                                 Mat image,
+                                 const float start_of_search,
+                                 const float end_of_search,
+                                 const float kStepFieldOfView,
+                                 const int kSearchRadius)
 {
-    vector<int> scanned_intensities = ScanIntensitiesInSearchDirection(x,y);
+    vector<int> scanned_intensities = ScanIntensitiesInSearchDirection(x,
+                                                                       y,
+                                                                       image,
+                                                                       start_of_search,
+                                                                       end_of_search,
+                                                                       kStepFieldOfView,
+                                                                       kSearchRadius);
 
     Mat scanned_intensities_mat( 1,scanned_intensities.size(), CV_32SC1,scanned_intensities.data());
     scanned_intensities_mat.convertTo(scanned_intensities_mat, CV_8UC1);
@@ -203,20 +231,27 @@ int LineFollower::GetOtsuThreshold(int x, int y)
     return otsu_threshold;
 }
 
-vector<ScannedMoments> LineFollower::GetScannedMoments(int otsu_threshold, int x, int y)
+vector<ScannedMoments> LineFollow::GetScannedMoments(int x,
+                                                     int y,
+                                                     Mat image,
+                                                     int otsu_threshold,
+                                                     const float  start_of_search,
+                                                     const float end_of_search,
+                                                     const float kStepFieldOfView,
+                                                     const int kSearchRadius)
 {
     vector<ScannedMoments> scanned_moments;
 
-    for (float angle=start_of_search_; angle>=end_of_search_; angle-=kStepFieldOfView_)
+    for (float angle=start_of_search; angle>=end_of_search; angle-=kStepFieldOfView)
     {
         int intensity_sum = 0;
         bool scan_terminated = false;
 
 
-        for (int current_search_radius=0; current_search_radius<kSearchRadius_; current_search_radius++)
+        for (int current_search_radius=0; current_search_radius<kSearchRadius; current_search_radius++)
         {
             Point current_point = GetPolarCoordinate(x,y,angle,current_search_radius);
-            int intensity = GetPixelValue(current_point);
+            int intensity = GetPixelValue(image,current_point);
 
 
 
@@ -234,7 +269,7 @@ vector<ScannedMoments> LineFollower::GetScannedMoments(int otsu_threshold, int x
 
         if(!scan_terminated)
         {
-            Point current_point = GetPolarCoordinate(x,y,angle,kSearchRadius_-1);
+            Point current_point = GetPolarCoordinate(x,y,angle,kSearchRadius-1);
             scanned_moments.push_back(ScannedMoments{current_point.x,current_point.y,intensity_sum});
         }
     }
@@ -246,7 +281,7 @@ vector<ScannedMoments> LineFollower::GetScannedMoments(int otsu_threshold, int x
 
 
 
-void LineFollower::CoutReturnInfo()
+void LineFollow::CoutReturnInfo()
 {
     LineFollowerReturnInfo info = GetReturnInfo();
 
@@ -273,7 +308,7 @@ void LineFollower::CoutReturnInfo()
 }
 
 
-void LineFollower::SearchMaxWeightMoment(SummedMoments &summed_moments, vector<ScannedMoments> scanned_moments)
+void LineFollow::SearchMaxWeightMoment(SummedMoments &summed_moments, vector<ScannedMoments> scanned_moments)
 {
     for (int id=0; id<scanned_moments.size(); id++)
     {
@@ -285,7 +320,7 @@ void LineFollower::SearchMaxWeightMoment(SummedMoments &summed_moments, vector<S
     }
 }
 
-void LineFollower::SumUpMoments(SummedMoments &summed_moments, vector<ScannedMoments> scanned_moments)
+void LineFollow::SumUpMoments(SummedMoments &summed_moments, vector<ScannedMoments> scanned_moments)
 {
     for (int id=0; id<scanned_moments.size(); id++)
     {
@@ -302,7 +337,7 @@ void LineFollower::SumUpMoments(SummedMoments &summed_moments, vector<ScannedMom
 }
 
 
-Point LineFollower::GetCenterOfGravity(int x, int y, vector<ScannedMoments> scanned_moments)
+Point LineFollow::GetCenterOfGravity(int x, int y, vector<ScannedMoments> scanned_moments)
 {
 
     SummedMoments summed_moments = {};
@@ -329,7 +364,7 @@ Point LineFollower::GetCenterOfGravity(int x, int y, vector<ScannedMoments> scan
 
 }
 
-float LineFollower::GetNewAngle(int x, int y, Point new_start_point)
+float LineFollow::GetNewAngle(int x, int y, Point new_start_point)
 {
 
     int opposite =  y - new_start_point.y;
@@ -339,12 +374,16 @@ float LineFollower::GetNewAngle(int x, int y, Point new_start_point)
 }
 
 
-bool LineFollower::MaxIterationsExceeded(int line)
+bool LineFollow::MaxIterationsExceeded(const int iterations_counter,
+                                         bool &left_line_max_iterations_exceeded,
+                                         bool &right_line_max_iterations_exceeded,
+                                         const int kMaxIterations,
+                                         const int line_type)
 {
-    if(iterations_counter_ >= kMaxIterations_)
+    if(iterations_counter >= kMaxIterations)
     {
-        if(line == LEFT_LINE) left_line_max_iterations_exceeded_ = true;
-        if(line == RIGHT_LINE) right_line_max_iterations_exceeded_ = true;
+        if(line_type == LEFT_LINE) left_line_max_iterations_exceeded = true;
+        if(line_type == RIGHT_LINE) right_line_max_iterations_exceeded = true;
 
         return true;
     }
@@ -354,12 +393,19 @@ bool LineFollower::MaxIterationsExceeded(int line)
     }
 }
 
-bool LineFollower::SearchRadiusIsNotInImage(int x, int y, int line)
+bool LineFollow::SearchRadiusIsNotInImage(int x,
+                                            int y,
+                                            bool &left_line_search_radius_out_of_image,
+                                            bool &right_line_search_radius_out_of_image,
+                                            const int kSearchRadius,
+                                            const int kImageWidth,
+                                            const int kImageHeight,
+                                            int line_type)
 {
-    if(x < kSearchRadius_ || y < kSearchRadius_ ||(kImageWidth_  - kSearchRadius_)  < x || (kImageHeight_ - kSearchRadius_)  < y)
+    if(x < kSearchRadius || y < kSearchRadius ||(kImageWidth  - kSearchRadius)  < x || (kImageHeight - kSearchRadius)  < y)
     {
-        if(line == LEFT_LINE) left_line_search_radius_out_of_image_ = true;
-        if(line == RIGHT_LINE) right_line_search_radius_out_of_image_ = true;
+        if(line_type == LEFT_LINE) left_line_search_radius_out_of_image = true;
+        if(line_type == RIGHT_LINE) right_line_search_radius_out_of_image = true;
 
         return true;
     }
@@ -371,26 +417,36 @@ bool LineFollower::SearchRadiusIsNotInImage(int x, int y, int line)
 }
 
 
-void LineFollower::SetSearchDirectionParameters(float search_direction)
+void LineFollow::SetSearchDirectionParameters(float search_direction,
+                                              float &start_of_search,
+                                              float &end_of_search,
+                                              const float kStartAngleFieldOfView,
+                                              const float kEndAngleFieldOfView)
 {
-    start_of_search_ =  search_direction + kStartAngleFieldOfView_;
-    end_of_search_   =  search_direction - kEndAngleFieldOfView_;
+    start_of_search =  search_direction + kStartAngleFieldOfView;
+    end_of_search   =  search_direction - kEndAngleFieldOfView;
 }
 
-bool LineFollower::IsWalkingBackwards(int y, Point new_start_point, int line)
+bool LineFollow::IsWalkingBackwards(int y,
+                                    Point new_start_point,
+                                    bool &left_line_is_walking_backwards,
+                                    bool &right_line_is_walking_backwards,
+                                    int  &walked_backwards_counter,
+                                    const int kMaxConsecutiveBackSteps,
+                                    const int line_type)
 {
     if(new_start_point.y > y)
     {
-        walked_backwards_counter_++;
+        walked_backwards_counter++;
     }
     else {
-        walked_backwards_counter_ = 0;
+        walked_backwards_counter = 0;
     }
 
-    if(walked_backwards_counter_ > kMaxConsecutiveBackSteps_)
+    if(walked_backwards_counter > kMaxConsecutiveBackSteps)
     {
-        if(line == LEFT_LINE) left_line_is_walking_backwards_ = true;
-        if(line == RIGHT_LINE) right_line_is_walking_backwards_ = true;
+        if(line_type == LEFT_LINE) left_line_is_walking_backwards = true;
+        if(line_type == RIGHT_LINE) right_line_is_walking_backwards = true;
 
         return true;
     }
@@ -400,23 +456,31 @@ bool LineFollower::IsWalkingBackwards(int y, Point new_start_point, int line)
 
 }
 
-bool LineFollower::HasGotStuck(int x, int y, Point new_start_point, int line)
+bool LineFollow::HasGotStuck(int x,
+                             int y,
+                             const Point new_start_point,
+                             bool &left_line_has_got_stuck,
+                             bool &right_line_has_got_stuck,
+                             int &got_stuck_counter,
+                             const int kMinTravelDistanceToNotGotStuck,
+                             const int kMaxGotStuckCounts,
+                             const int line_type)
 {
     int distance = sqrt(pow(x-new_start_point.x,2) + pow(y -new_start_point.y,2));
 
-    if(distance < kMinTravelDistanceToNotGotStuck_)
+    if(distance < kMinTravelDistanceToNotGotStuck)
     {
-        got_stuck_counter_++;
+        got_stuck_counter++;
     }
     else {
 
-        got_stuck_counter_ = 0;
+        got_stuck_counter = 0;
     }
 
-    if(got_stuck_counter_>kMaxGotStuckCounts_){
+    if(got_stuck_counter>kMaxGotStuckCounts){
 
-         if(line == LEFT_LINE) left_line_has_got_stuck_ = true;
-         if(line == RIGHT_LINE) right_line_has_got_stuck_ = true;
+         if(line_type == LEFT_LINE) left_line_has_got_stuck = true;
+         if(line_type == RIGHT_LINE) right_line_has_got_stuck = true;
 
          return true;
     }
@@ -426,19 +490,24 @@ bool LineFollower::HasGotStuck(int x, int y, Point new_start_point, int line)
 }
 
 
-void LineFollower::AddIteration(Point new_start_point, float new_angle, int line)
+void LineFollow::AddIteration(Point new_start_point,
+                              vector<PointAndDirection> &left_line_points_and_directions,
+                              vector<PointAndDirection> &right_line_points_and_directions,
+                              int &iterations_counter,
+                              const float new_angle,
+                              const int line_type)
 {
-    if(line == LEFT_LINE)
-        left_line_points_and_directions_.push_back(PointAndDirection{new_start_point.x,new_start_point.y,new_angle});
+    if(line_type == LEFT_LINE)
+        left_line_points_and_directions.push_back(PointAndDirection{new_start_point.x,new_start_point.y,new_angle});
 
-    if(line == RIGHT_LINE)
-        right_line_points_and_directions_.push_back(PointAndDirection{new_start_point.x,new_start_point.y,new_angle});
+    if(line_type == RIGHT_LINE)
+        right_line_points_and_directions.push_back(PointAndDirection{new_start_point.x,new_start_point.y,new_angle});
 
-    iterations_counter_++;
+    iterations_counter++;
 }
 
 
-void LineFollower::DrawLinePoints(Mat &rgb, int line)
+void LineFollow::DrawLinePoints(Mat &rgb, int line)
 {
     if(line == LEFT_LINE)
     {
@@ -458,25 +527,34 @@ void LineFollower::DrawLinePoints(Mat &rgb, int line)
 }
 
 
-void LineFollower::SaveCounterValuesToReturnInfo(int line)
+void LineFollow::SaveCounterValuesToReturnInfo(const int iterations_counter,
+                                                 const int got_stuck_counter,
+                                                 const int walked_backwards_counter,
+                                                 int &left_line_iterations_counter,
+                                                 int &left_line_got_stuck_counter,
+                                                 int &left_line_walked_backwards_counter,
+                                                 int &right_line_iterations_counter,
+                                                 int &right_line_got_stuck_counter,
+                                                 int &right_line_walked_backwards_counter,
+                                                 int line_type)
 {
-    if(line == LEFT_LINE)
+    if(line_type == LEFT_LINE)
     {
-        left_line_iterations_counter_ = iterations_counter_;
-        left_line_got_stuck_counter_  = got_stuck_counter_;
-        left_line_walked_backwards_counter_ = walked_backwards_counter_;
+        left_line_iterations_counter = iterations_counter;
+        left_line_got_stuck_counter  = got_stuck_counter;
+        left_line_walked_backwards_counter = walked_backwards_counter;
     }
 
-    if(line == RIGHT_LINE)
+    if(line_type == RIGHT_LINE)
     {
-        right_line_iterations_counter_ = iterations_counter_;
-        right_line_got_stuck_counter_  = got_stuck_counter_;
-        right_line_walked_backwards_counter_ = walked_backwards_counter_;
+        right_line_iterations_counter = iterations_counter;
+        right_line_got_stuck_counter  = got_stuck_counter;
+        right_line_walked_backwards_counter = walked_backwards_counter;
     }
 }
 
 
-LineFollowerReturnInfo LineFollower::GetReturnInfo()
+LineFollowerReturnInfo LineFollow::GetReturnInfo()
 {
     return LineFollowerReturnInfo{  left_line_max_iterations_exceeded_,
                                     left_line_search_radius_out_of_image_,
@@ -494,36 +572,47 @@ LineFollowerReturnInfo LineFollower::GetReturnInfo()
                                     right_line_walked_backwards_counter_};
 }
 
-LineFollowerReturnInfo LineFollower::FollowLines(Mat image, StartParameters start_parameters)
+LineFollowerReturnInfo LineFollow::FollowLines()
 {
-
-    SetImage(image);
-    ClearMemory();
-    SetStartParameters(start_parameters);
-
-
-
-    ResetCounters();
+    ResetCounters(iterations_counter_, got_stuck_counter_, walked_backwards_counter_);
 
     if(found_left_line_)
     {
         FollowLine(start_left_x_, start_left_y_, start_angle_left_, LEFT_LINE);
     }
-    SaveCounterValuesToReturnInfo(LEFT_LINE);
+    SaveCounterValuesToReturnInfo(iterations_counter_,
+                                  got_stuck_counter_,
+                                  walked_backwards_counter_,
+                                  left_line_iterations_counter_,
+                                  left_line_got_stuck_counter_,
+                                  left_line_walked_backwards_counter_,
+                                  right_line_iterations_counter_,
+                                  right_line_got_stuck_counter_,
+                                  right_line_walked_backwards_counter_,
+                                  LEFT_LINE);
 
-    ResetCounters();
+    ResetCounters(iterations_counter_, got_stuck_counter_, walked_backwards_counter_);
 
     if(found_right_line_)
     {
         FollowLine(start_right_x_, start_right_y_, start_angle_right_, RIGHT_LINE);
     }
-    SaveCounterValuesToReturnInfo(RIGHT_LINE);
+    SaveCounterValuesToReturnInfo(iterations_counter_,
+                                  got_stuck_counter_,
+                                  walked_backwards_counter_,
+                                  left_line_iterations_counter_,
+                                  left_line_got_stuck_counter_,
+                                  left_line_walked_backwards_counter_,
+                                  right_line_iterations_counter_,
+                                  right_line_got_stuck_counter_,
+                                  right_line_walked_backwards_counter_,
+                                  RIGHT_LINE);
 
 
     return GetReturnInfo();
 }
 
-void LineFollower::GetLine(vector<PointAndDirection> &_line, int line)
+void LineFollow::GetLine(vector<PointAndDirection> &_line, int line)
 {
     if(line == LEFT_LINE)
     {

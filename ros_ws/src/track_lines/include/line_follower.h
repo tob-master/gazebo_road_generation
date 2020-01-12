@@ -26,7 +26,7 @@ using namespace std;
 using namespace cv;
 using namespace line_follower;
 
-class LineFollower
+class LineFollow
 {
 
     private:
@@ -88,35 +88,109 @@ class LineFollower
         vector<PointAndDirection> right_line_points_and_directions_;
 
 
-        void SetImage(Mat image);
-        void SetStartParameters(StartParameters start_parameters);
-        void ClearMemory();
-        void ResetCounters();
+
+        void ResetCounters(int &iterations_counter, int &got_stuck_counter, int &walked_backwards_counter);
         int FollowLine(int x, int y, float search_direction, int line);
-        bool MaxIterationsExceeded(int line);
-        bool SearchRadiusIsNotInImage(int x, int y, int line);
-        void SetSearchDirectionParameters(float search_direction);
-        int GetOtsuThreshold(int x, int y);
-        vector<int> ScanIntensitiesInSearchDirection(int x, int y);
-        int GetPixelValue(Point point);
-        vector<ScannedMoments> GetScannedMoments(int otsu_threshold, int x, int y);
+
+        bool MaxIterationsExceeded(const int iterations_counter,
+                                   bool &left_line_max_iterations_exceeded,
+                                   bool &right_line_max_iterations_exceeded,
+                                   const int kMaxIterations,
+                                   const int line_type);
+
+        bool SearchRadiusIsNotInImage(int x,
+                                      int y,
+                                      bool &left_line_search_radius_out_of_image,
+                                      bool &right_line_search_radius_out_of_image,
+                                      const int kSearchRadius,
+                                      const int kImageWidth,
+                                      const int kImageHeight,
+                                      int line_type);
+
+        void SetSearchDirectionParameters(float search_direction,
+                                          float &start_of_search,
+                                          float &end_of_search,
+                                          const float kStartAngleFieldOfView ,
+                                          const float kEndAngleFieldOfView);
+        int GetOtsuThreshold(int x,
+                             int y,
+                             Mat image,
+                             const float start_of_search,
+                             const float end_of_search,
+                             const float kStepFieldOfView,
+                             const int kSearchRadius);
+
+        vector<int> ScanIntensitiesInSearchDirection(int x,
+                                                     int y,
+                                                     Mat image,
+                                                     const float start_of_search,
+                                                     const float end_of_search,
+                                                     const float kStepFieldOfView,
+                                                     const int kSearchRadius);
+        int GetPixelValue(Mat image, Point point);
+
+        vector<ScannedMoments> GetScannedMoments(int x,
+                                                 int y,
+                                                 Mat image,
+                                                 int otsu_threshold,
+                                                 const float  start_of_search,
+                                                 const float end_of_search,
+                                                 const float kStepFieldOfView,
+                                                 const int kSearchRadius);
+
         Point GetPolarCoordinate(int x, int y, float angle, int radius);
+
         Point GetCenterOfGravity(int x, int y, vector<ScannedMoments> scanned_moments);
         void SearchMaxWeightMoment(SummedMoments &summed_moments, vector<ScannedMoments> scanned_moments);
         void SumUpMoments(SummedMoments &summed_moments, vector<ScannedMoments> scanned_moments);
-        Point ChangeToBrightestCoordinateWithinReach(Point center_of_gravity);
+        Point ChangeToBrightestCoordinateWithinReach(Mat image, Point center_of_gravity);
         float GetNewAngle(int x, int y, Point new_start_point);
-        bool HasGotStuck(int x, int y, Point new_start_point, int line);
-        bool IsWalkingBackwards(int y, Point new_start_point, int line);
-        void AddIteration(Point new_start_point, float new_angle, int line);
 
-        void SaveCounterValuesToReturnInfo(int line);
+        bool HasGotStuck(int x,
+                         int y,
+                         const Point new_start_point,
+                         bool &left_line_has_got_stuck,
+                         bool &right_line_has_got_stuck,
+                         int &got_stuck_counter,
+                         const int kMinTravelDistanceToNotGotStuck,
+                         const int kMaxGotStuckCounts,
+                         const int line_type);
+
+        bool IsWalkingBackwards(int y,
+                                Point new_start_point,
+                                bool &left_line_is_walking_backwards,
+                                bool &right_line_is_walking_backwards,
+                                int  &walked_backwards_counter,
+                                const int kMaxConsecutiveBackSteps,
+                                const int line_type);
+
+        void AddIteration(Point new_start_point,
+                          vector<PointAndDirection> &left_line_points_and_directions,
+                          vector<PointAndDirection> &right_line_points_and_directions,
+                          int &iterations_counter,
+                          const float new_angle,
+                          const int line_type);
+
+        void SaveCounterValuesToReturnInfo(const int iterations_counter,
+                                           const int got_stuck_counter,
+                                           const int walked_backwards_counter,
+                                           int &left_line_iterations_counter,
+                                           int &left_line_got_stuck_counter,
+                                           int &left_line_walked_backwards_counter,
+                                           int &right_line_iterations_counter,
+                                           int &right_line_got_stuck_counter,
+                                           int &right_line_walked_backwards_counter,
+                                           int line_type);
+
         LineFollowerReturnInfo GetReturnInfo();
 
 
 public:
-        LineFollower(int image_height, int image_width, LineFollowerInitializationParameters init);
-        LineFollowerReturnInfo FollowLines(Mat grey, StartParameters start_parameters);
+        void SetImage(Mat image);
+        void SetStartParameters(StartParameters start_parameters);
+        void ClearMemory();
+        LineFollow(int image_height, int image_width, LineFollowerInitializationParameters init);
+        LineFollowerReturnInfo FollowLines();
         void DrawLinePoints(Mat &rgb, int line);
         void GetLine(vector<PointAndDirection> &_line, int line);
         void CoutReturnInfo();

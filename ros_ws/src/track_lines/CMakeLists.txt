@@ -122,6 +122,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   include
+  ${GTEST_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -240,6 +241,25 @@ target_link_libraries(track
 #############
 ## Testing ##
 #############
+
+add_executable(test_start_of_lines_search test/test_start_of_lines_search.cpp
+                                          include/start_of_lines_search.cpp)
+target_link_libraries(test_start_of_lines_search  ${OpenCV_LIBRARIES} ${catkin_LIBRARIES}  ${GTEST_LIBRARIES} pthread)
+
+
+add_executable(test_vanishing_point_search test/test_vanishing_point_search.cpp
+                                           include/vanishing_point_search.cpp)
+target_link_libraries(test_vanishing_point_search  ${OpenCV_LIBRARIES} ${catkin_LIBRARIES}  ${GTEST_LIBRARIES} pthread)
+
+add_executable(test_line_follower test/test_line_follower.cpp
+                                           include/line_follower.cpp)
+target_link_libraries(test_line_follower  ${OpenCV_LIBRARIES} ${catkin_LIBRARIES}  ${GTEST_LIBRARIES} pthread)
+
+add_executable(test_line_points_reducer test/test_line_points_reducer.cpp
+                                           include/line_follower.cpp
+                                           include/line_points_reducer.cpp)
+target_link_libraries(test_line_points_reducer  ${OpenCV_LIBRARIES} ${catkin_LIBRARIES}  ${GTEST_LIBRARIES} pthread)
+
 
 ## Add gtest based cpp test target and GroupClusters libraries
 # catkin_add_gtest(${PROJECT_NAME}-test test/test_te.cpp)
