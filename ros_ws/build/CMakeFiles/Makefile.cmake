@@ -530,6 +530,7 @@ set(CMAKE_DEPEND_INFO_FILES
   "track_lines/CMakeFiles/test_start_of_lines_search.dir/DependInfo.cmake"
   "track_lines/CMakeFiles/track.dir/DependInfo.cmake"
   "track_lines/CMakeFiles/test_vanishing_point_search.dir/DependInfo.cmake"
+  "track_lines/CMakeFiles/test_mid_line_search.dir/DependInfo.cmake"
   "track_lines/CMakeFiles/test_line_follower.dir/DependInfo.cmake"
   "track_lines/CMakeFiles/test_line_points_reducer.dir/DependInfo.cmake"
   "zbar_ros/CMakeFiles/nodelet_generate_messages_lisp.dir/DependInfo.cmake"

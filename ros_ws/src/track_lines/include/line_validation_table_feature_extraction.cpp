@@ -297,14 +297,14 @@ void LineValidationTableFeatureExtraction::ExtractLinePointsInDriveDirection(vec
 
         int tmp_direction = line_validation_table[0].GetDirection();
 
-        if(tmp_direction > kMinStartDirection_ && tmp_direction < kMaxStartDirection_)
+        if(tmp_direction > kMinStartDirectionOfLinePointsInDriveDirection_ && tmp_direction < kMaxStartDirectionOfLinePointsInDriveDirection_)
         {
             for(int i=0; i<line_validation_table.size(); i++)
             {
                 int current_direction =  line_validation_table[i].GetDirection();
                 int direction_difference = abs(current_direction - tmp_direction);
 
-                if(direction_difference > kMaxDirectionDifference_ || (360 - kMaxDirectionDifference_) < direction_difference)
+                if(direction_difference > kMaxDirectionDifferenceOfLinePointsInDriveDirection_ || (360 - kMaxDirectionDifferenceOfLinePointsInDriveDirection_) < direction_difference)
                 {
                     cut_off_id =  i;
                     cut_off = true;

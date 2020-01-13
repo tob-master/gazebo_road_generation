@@ -1533,6 +1533,19 @@ test_vanishing_point_search/fast:
 .PHONY : test_vanishing_point_search/fast
 
 #=============================================================================
+# Target rules for targets named test_mid_line_search
+
+# Build rule for target.
+test_mid_line_search: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_mid_line_search
+.PHONY : test_mid_line_search
+
+# fast build rule for target.
+test_mid_line_search/fast:
+	$(MAKE) -f track_lines/CMakeFiles/test_mid_line_search.dir/build.make track_lines/CMakeFiles/test_mid_line_search.dir/build
+.PHONY : test_mid_line_search/fast
+
+#=============================================================================
 # Target rules for targets named test_line_follower
 
 # Build rule for target.
@@ -1858,6 +1871,7 @@ help:
 	@echo "... test_start_of_lines_search"
 	@echo "... track"
 	@echo "... test_vanishing_point_search"
+	@echo "... test_mid_line_search"
 	@echo "... test_line_follower"
 	@echo "... test_line_points_reducer"
 	@echo "... nodelet_generate_messages_lisp"

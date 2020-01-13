@@ -201,6 +201,68 @@
 					<DistClean command="/usr/bin/make -j12 -f &quot;/home/tb/gazebo_road_generation/ros_ws/build/track_lines/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
+			<Target title="test_mid_line_search">
+				<Option output="/home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/test_mid_line_search" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DROS_BUILD_SHARED_LIBS=1"/>
+					<Add option="-DROS_PACKAGE_NAME=&quot;track_lines&quot;"/>
+					<Add option="-DROSCONSOLE_BACKEND_LOG4CXX"/>
+					<Add directory="/opt/ros/melodic/include"/>
+					<Add directory="/opt/ros/melodic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp"/>
+					<Add directory="/usr/include/opencv"/>
+					<Add directory="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include"/>
+					<Add directory="/usr/src/googletest/googletest/include"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/tb/gazebo_road_generation/ros_ws/build/track_lines/Makefile&quot;  VERBOSE=1 test_mid_line_search"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/tb/gazebo_road_generation/ros_ws/build/track_lines/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/tb/gazebo_road_generation/ros_ws/build/track_lines/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/tb/gazebo_road_generation/ros_ws/build/track_lines/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test_mid_line_search/fast">
+				<Option output="/home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/test_mid_line_search" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DROS_BUILD_SHARED_LIBS=1"/>
+					<Add option="-DROS_PACKAGE_NAME=&quot;track_lines&quot;"/>
+					<Add option="-DROSCONSOLE_BACKEND_LOG4CXX"/>
+					<Add directory="/opt/ros/melodic/include"/>
+					<Add directory="/opt/ros/melodic/share/xmlrpcpp/cmake/../../../include/xmlrpcpp"/>
+					<Add directory="/usr/include/opencv"/>
+					<Add directory="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include"/>
+					<Add directory="/usr/src/googletest/googletest/include"/>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/tb/gazebo_road_generation/ros_ws/build/track_lines/Makefile&quot;  VERBOSE=1 test_mid_line_search/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/tb/gazebo_road_generation/ros_ws/build/track_lines/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/tb/gazebo_road_generation/ros_ws/build/track_lines/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/tb/gazebo_road_generation/ros_ws/build/track_lines/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
 			<Target title="test_line_follower">
 				<Option output="/home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/test_line_follower" prefix_auto="0" extension_auto="0"/>
 				<Option working_dir="/home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines"/>
@@ -340,9 +402,11 @@
 		</Unit>
 		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/depth_first_search.cpp">
 			<Option target="track"/>
+			<Option target="test_mid_line_search"/>
 		</Unit>
 		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/depth_first_search.h">
 			<Option target="track"/>
+			<Option target="test_mid_line_search"/>
 		</Unit>
 		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/lane_tracker.cpp">
 			<Option target="track"/>
@@ -388,9 +452,11 @@
 		</Unit>
 		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/mid_line_search.cpp">
 			<Option target="track"/>
+			<Option target="test_mid_line_search"/>
 		</Unit>
 		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/mid_line_search.h">
 			<Option target="track"/>
+			<Option target="test_mid_line_search"/>
 		</Unit>
 		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/include/on_road_search.cpp">
 			<Option target="track"/>
@@ -434,6 +500,9 @@
 		</Unit>
 		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/test/test_line_points_reducer.cpp">
 			<Option target="test_line_points_reducer"/>
+		</Unit>
+		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/test/test_mid_line_search.cpp">
+			<Option target="test_mid_line_search"/>
 		</Unit>
 		<Unit filename="/home/tb/gazebo_road_generation/ros_ws/src/track_lines/test/test_start_of_lines_search.cpp">
 			<Option target="test_start_of_lines_search"/>

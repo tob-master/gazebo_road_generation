@@ -73,6 +73,7 @@ private:
     BirdseyeInitializationParameters birdseye_init;
     LinePointsReduceInitializationParameters line_points_reduce_init;
     MidLineSearchInitializationParameters mid_line_search_init;
+    LineValidationTableCreationInitializationParameters line_validation_table_creation_init;
     VanishingPointSearchInitializationParameters vanishing_point_search_init;
     ConnectedComponentsSearchInitializationParameters connected_components_search_init;
 
@@ -98,7 +99,7 @@ private:
 
     OnRoadSearch* OnRoadSearcher_;
 
-    LineValidationTableCreation LineValidationTableCreator_;
+    LineValidationTableCreation *LineValidationTableCreator_;
     SafeDriveAreaEvaluation SafeDriveAreaEvaluator_;
     PerceptualGrouping PerceputalGrouper_;
 
@@ -113,7 +114,7 @@ private:
     MidLineSearchReturnInfo mid_line_search_return_info_;
     ConnectedComponentsSearchReturnInfo connected_component_search_return_info_;
     StartOfLinesSearchReturnInfo start_of_lines_search_return_info_;
-
+    LineValidationTableCreationReturnInfo line_validatiohn_table_creation_return_info_;
 
     vector<PointAndDirection> left_line_from_line_follower_,
                               right_line_from_line_follower_;
@@ -149,6 +150,7 @@ void CheckStartParameters();
     void LoadLineFollowerInitializationParameters();
     void LoadBirdseyeInitializationParameters();
     void LoadMidLineSearchInitializationParameters();
+    void LoadLineValidationTableCreationInitializationParameters();
     void LoadVanishingPointSearchInitializationParameters();
     void LoadConnectedComponentsSearchInitializationParameters();
     void LoadLinePointsReduceInitializationParameters();

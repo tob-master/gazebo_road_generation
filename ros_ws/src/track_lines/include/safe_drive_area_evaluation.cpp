@@ -832,7 +832,7 @@ void SafeDriveAreaEvaluation::FindNewSearchDirection(vector<TrackSafetyRect> tra
 
 }
 
-void SafeDriveAreaEvaluation::ClearValidationTables()
+void SafeDriveAreaEvaluation::ClearMemory()
 {
 
     left_lane_drive_points_.clear();

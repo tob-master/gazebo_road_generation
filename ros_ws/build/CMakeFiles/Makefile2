@@ -3740,6 +3740,7 @@ clean: track_annotation/CMakeFiles/pixel_coordinates_node.dir/clean
 track_lines/all: track_lines/CMakeFiles/test_start_of_lines_search.dir/all
 track_lines/all: track_lines/CMakeFiles/track.dir/all
 track_lines/all: track_lines/CMakeFiles/test_vanishing_point_search.dir/all
+track_lines/all: track_lines/CMakeFiles/test_mid_line_search.dir/all
 track_lines/all: track_lines/CMakeFiles/test_line_follower.dir/all
 track_lines/all: track_lines/CMakeFiles/test_line_points_reducer.dir/all
 
@@ -3749,6 +3750,7 @@ track_lines/all: track_lines/CMakeFiles/test_line_points_reducer.dir/all
 track_lines/clean: track_lines/CMakeFiles/test_start_of_lines_search.dir/clean
 track_lines/clean: track_lines/CMakeFiles/track.dir/clean
 track_lines/clean: track_lines/CMakeFiles/test_vanishing_point_search.dir/clean
+track_lines/clean: track_lines/CMakeFiles/test_mid_line_search.dir/clean
 track_lines/clean: track_lines/CMakeFiles/test_line_follower.dir/clean
 track_lines/clean: track_lines/CMakeFiles/test_line_points_reducer.dir/clean
 
@@ -3766,7 +3768,7 @@ track_lines/preinstall:
 track_lines/CMakeFiles/test_start_of_lines_search.dir/all: gtest/googlemock/gtest/CMakeFiles/gtest.dir/all
 	$(MAKE) -f track_lines/CMakeFiles/test_start_of_lines_search.dir/build.make track_lines/CMakeFiles/test_start_of_lines_search.dir/depend
 	$(MAKE) -f track_lines/CMakeFiles/test_start_of_lines_search.dir/build.make track_lines/CMakeFiles/test_start_of_lines_search.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=46,47,48 "Built target test_start_of_lines_search"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=50,51,52 "Built target test_start_of_lines_search"
 .PHONY : track_lines/CMakeFiles/test_start_of_lines_search.dir/all
 
 # Include target in all.
@@ -3803,7 +3805,7 @@ clean: track_lines/CMakeFiles/test_start_of_lines_search.dir/clean
 track_lines/CMakeFiles/track.dir/all:
 	$(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/depend
 	$(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68 "Built target track"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72 "Built target track"
 .PHONY : track_lines/CMakeFiles/track.dir/all
 
 # Include target in all.
@@ -3840,7 +3842,7 @@ clean: track_lines/CMakeFiles/track.dir/clean
 track_lines/CMakeFiles/test_vanishing_point_search.dir/all: gtest/googlemock/gtest/CMakeFiles/gtest.dir/all
 	$(MAKE) -f track_lines/CMakeFiles/test_vanishing_point_search.dir/build.make track_lines/CMakeFiles/test_vanishing_point_search.dir/depend
 	$(MAKE) -f track_lines/CMakeFiles/test_vanishing_point_search.dir/build.make track_lines/CMakeFiles/test_vanishing_point_search.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=49,50,51 "Built target test_vanishing_point_search"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=53,54,55 "Built target test_vanishing_point_search"
 .PHONY : track_lines/CMakeFiles/test_vanishing_point_search.dir/all
 
 # Include target in all.
@@ -3867,6 +3869,43 @@ track_lines/CMakeFiles/test_vanishing_point_search.dir/clean:
 
 # clean rule for target.
 clean: track_lines/CMakeFiles/test_vanishing_point_search.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target track_lines/CMakeFiles/test_mid_line_search.dir
+
+# All Build rule for target.
+track_lines/CMakeFiles/test_mid_line_search.dir/all: gtest/googlemock/gtest/CMakeFiles/gtest.dir/all
+	$(MAKE) -f track_lines/CMakeFiles/test_mid_line_search.dir/build.make track_lines/CMakeFiles/test_mid_line_search.dir/depend
+	$(MAKE) -f track_lines/CMakeFiles/test_mid_line_search.dir/build.make track_lines/CMakeFiles/test_mid_line_search.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles --progress-num=46,47,48,49 "Built target test_mid_line_search"
+.PHONY : track_lines/CMakeFiles/test_mid_line_search.dir/all
+
+# Include target in all.
+all: track_lines/CMakeFiles/test_mid_line_search.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+track_lines/CMakeFiles/test_mid_line_search.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 6
+	$(MAKE) -f CMakeFiles/Makefile2 track_lines/CMakeFiles/test_mid_line_search.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/tb/gazebo_road_generation/ros_ws/build/CMakeFiles 0
+.PHONY : track_lines/CMakeFiles/test_mid_line_search.dir/rule
+
+# Convenience name for target.
+test_mid_line_search: track_lines/CMakeFiles/test_mid_line_search.dir/rule
+
+.PHONY : test_mid_line_search
+
+# clean rule for target.
+track_lines/CMakeFiles/test_mid_line_search.dir/clean:
+	$(MAKE) -f track_lines/CMakeFiles/test_mid_line_search.dir/build.make track_lines/CMakeFiles/test_mid_line_search.dir/clean
+.PHONY : track_lines/CMakeFiles/test_mid_line_search.dir/clean
+
+# clean rule for target.
+clean: track_lines/CMakeFiles/test_mid_line_search.dir/clean
 
 .PHONY : clean
 

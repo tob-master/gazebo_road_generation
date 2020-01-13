@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.9.2, 2020-01-12T17:22:50. -->
+<!-- Written by QtCreator 4.9.2, 2020-01-13T17:32:30. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -111,7 +111,7 @@
      <value type="QString">PWD=/home/tb/gazebo_road_generation/ros_ws</value>
      <value type="QString">ROSLISP_PACKAGE_DIRECTORIES=/home/tb/gazebo_road_generation/ros_ws/devel/share/common-lisp</value>
      <value type="QString">ROS_PACKAGE_PATH=/home/tb/gazebo_road_generation/ros_ws/src:/opt/ros/melodic/share</value>
-     <value type="QString">SHLVL=141</value>
+     <value type="QString">SHLVL=263</value>
      <value type="QString">TERM=xterm</value>
      <value type="QString">_=/usr/bin/env</value>
     </valuelist>
@@ -786,7 +786,20 @@
       <value type="QString" key="ROSProjectManager.ROSGenericStep.Target"></value>
       <value type="QString" key="ROSProjectManager.ROSGenericStep.TargetPath"></value>
      </valuemap>
-     <value type="int" key="ProjectExplorer.RunStepList.StepsCount">1</value>
+     <valuemap type="QVariantMap" key="ProjectExplorer.RunStepList.Step.1">
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName"></value>
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ROSProjectManager.ROSRunStep</value>
+      <value type="bool" key="ProjectExplorer.RunStep.Enabled">true</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.Arguments"></value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.Command">rosrun</value>
+      <value type="bool" key="ROSProjectManager.ROSGenericStep.DebugContinueOnAttach">false</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.Package">track_lines</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.PackagePath">/home/tb/gazebo_road_generation/ros_ws/src/track_lines</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.Target">test_mid_line_search</value>
+      <value type="QString" key="ROSProjectManager.ROSGenericStep.TargetPath">/home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/test_mid_line_search</value>
+     </valuemap>
+     <value type="int" key="ProjectExplorer.RunStepList.StepsCount">2</value>
     </valuemap>
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>

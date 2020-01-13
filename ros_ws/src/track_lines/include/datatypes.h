@@ -58,6 +58,43 @@ struct PointInDirection
    float angle;
 };
 
+struct LineValidationTableCreationInitializationParameters
+{
+    int min_left_to_mid_line_distance;
+    int max_left_to_mid_line_distance;
+    int min_left_to_right_line_distance;
+    int max_left_to_right_line_distance;
+    int min_right_to_mid_line_distance;
+    int max_right_to_mid_line_distance;
+    int min_right_to_left_line_distance;
+    int max_right_to_left_line_distance;
+    int min_mid_to_left_line_distance;
+    int max_mid_to_left_line_distance;
+    int min_mid_to_right_line_distance;
+    int max_mid_to_right_line_distance;
+
+    int min_left_to_mid_pixel_intensity;
+    int min_left_to_right_pixel_intensity;
+    int min_right_to_mid_pixel_intensity;
+    int min_right_to_left_pixel_intensity;
+    int min_mid_to_right_pixel_intensity;
+    int min_mid_to_left_pixel_intensity;
+
+    int min_left_to_mid_line_width;
+    int max_left_to_mid_line_width;
+    int min_left_to_right_line_width;
+    int max_left_to_right_line_width;
+    int min_right_to_mid_line_width;
+    int max_right_to_mid_line_width;
+    int min_right_to_left_line_width;
+    int max_right_to_left_line_width;
+    int min_mid_to_left_line_width;
+    int max_mid_to_left_line_width;
+    int min_mid_to_right_line_width;
+    int max_mid_to_right_line_width;
+};
+
+
 
 struct LinePointsReduceInitializationParameters
 {
@@ -175,7 +212,37 @@ struct VanishingPointSearchInitializationParameters
 
 };
 
+struct LineValidationTableCreationReturnInfo
+{
+    int left_found_both_points_and_predictions;
+    int left_found_both_predictions;
+    int left_found_mid_prediction;
+    int left_found_right_prediction;
+    int left_found_both_points;
+    int left_found_mid_point;
+    int left_found_right_point;
+    int left_line_size;
 
+    int mid_found_both_points_and_predictions;
+    int mid_found_both_predictions;
+    int mid_found_left_prediction;
+    int mid_found_right_prediction;
+    int mid_found_both_points;
+    int mid_found_left_point;
+    int mid_found_right_point;
+    int mid_line_size;
+
+    int right_found_both_points_and_predictions;
+    int right_found_both_predictions;
+    int right_found_left_prediction;
+    int right_found_mid_prediction;
+    int right_found_both_points;
+    int right_found_left_point;
+    int right_found_mid_point;
+    int right_line_size;
+
+    void reset() { *this = {}; }
+};
 
 
 struct MidLineSearchReturnInfo

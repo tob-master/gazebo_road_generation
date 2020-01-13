@@ -117,7 +117,7 @@ public:
     void EvaluateTrackInDriveDirection();
     void DrawEvaluatedSafetyAreasInDriveDirection(Mat& rgb);
 
-    void ClearValidationTables();
+    void ClearMemory();
     //SafeDriveAreaEvaluation();
 };
 

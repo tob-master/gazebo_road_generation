@@ -261,6 +261,11 @@ add_executable(test_line_points_reducer test/test_line_points_reducer.cpp
 target_link_libraries(test_line_points_reducer  ${OpenCV_LIBRARIES} ${catkin_LIBRARIES}  ${GTEST_LIBRARIES} pthread)
 
 
+add_executable(test_mid_line_search test/test_mid_line_search.cpp
+                                           include/mid_line_search.cpp
+                                           include/depth_first_search.cpp)
+target_link_libraries(test_mid_line_search  ${OpenCV_LIBRARIES} ${catkin_LIBRARIES}  ${GTEST_LIBRARIES} pthread)
+
 ## Add gtest based cpp test target and GroupClusters libraries
 # catkin_add_gtest(${PROJECT_NAME}-test test/test_te.cpp)
 # if(TARGET ${PROJECT_NAME}-test)

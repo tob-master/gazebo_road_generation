@@ -53,9 +53,9 @@ private:
             vector<LineValidationTable> left_line_points_in_drive_direction_;
             vector<LineValidationTable> mid_line_points_in_drive_direction_;
             vector<LineValidationTable> right_line_points_in_drive_direction_;
-            const int kMinStartDirection_ =  30;
-            const int kMaxStartDirection_ = 150;
-            const int kMaxDirectionDifference_ = 30;
+            const int kMinStartDirectionOfLinePointsInDriveDirection_ =  30;
+            const int kMaxStartDirectionOfLinePointsInDriveDirection_ = 150;
+            const int kMaxDirectionDifferenceOfLinePointsInDriveDirection_ = 30;
 /*
         void ExtractMinMaxLineElements( vector<LineValidationTable>  line,  MinMaxLineElements& line_minmax_elements );
             MinMaxLineElements left_line_minmax_elements_;

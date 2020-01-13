@@ -213,6 +213,21 @@ test_vanishing_point_search/fast:
 .PHONY : test_vanishing_point_search/fast
 
 # Convenience name for target.
+track_lines/CMakeFiles/test_mid_line_search.dir/rule:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f CMakeFiles/Makefile2 track_lines/CMakeFiles/test_mid_line_search.dir/rule
+.PHONY : track_lines/CMakeFiles/test_mid_line_search.dir/rule
+
+# Convenience name for target.
+test_mid_line_search: track_lines/CMakeFiles/test_mid_line_search.dir/rule
+
+.PHONY : test_mid_line_search
+
+# fast build rule for target.
+test_mid_line_search/fast:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_mid_line_search.dir/build.make track_lines/CMakeFiles/test_mid_line_search.dir/build
+.PHONY : test_mid_line_search/fast
+
+# Convenience name for target.
 track_lines/CMakeFiles/test_line_follower.dir/rule:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f CMakeFiles/Makefile2 track_lines/CMakeFiles/test_line_follower.dir/rule
 .PHONY : track_lines/CMakeFiles/test_line_follower.dir/rule
@@ -303,6 +318,7 @@ include/depth_first_search.o: include/depth_first_search.cpp.o
 # target to build an object file
 include/depth_first_search.cpp.o:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/depth_first_search.cpp.o
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_mid_line_search.dir/build.make track_lines/CMakeFiles/test_mid_line_search.dir/include/depth_first_search.cpp.o
 .PHONY : include/depth_first_search.cpp.o
 
 include/depth_first_search.i: include/depth_first_search.cpp.i
@@ -312,6 +328,7 @@ include/depth_first_search.i: include/depth_first_search.cpp.i
 # target to preprocess a source file
 include/depth_first_search.cpp.i:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/depth_first_search.cpp.i
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_mid_line_search.dir/build.make track_lines/CMakeFiles/test_mid_line_search.dir/include/depth_first_search.cpp.i
 .PHONY : include/depth_first_search.cpp.i
 
 include/depth_first_search.s: include/depth_first_search.cpp.s
@@ -321,6 +338,7 @@ include/depth_first_search.s: include/depth_first_search.cpp.s
 # target to generate assembly for a file
 include/depth_first_search.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/depth_first_search.cpp.s
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_mid_line_search.dir/build.make track_lines/CMakeFiles/test_mid_line_search.dir/include/depth_first_search.cpp.s
 .PHONY : include/depth_first_search.cpp.s
 
 include/lane_tracker.o: include/lane_tracker.cpp.o
@@ -501,6 +519,7 @@ include/mid_line_search.o: include/mid_line_search.cpp.o
 # target to build an object file
 include/mid_line_search.cpp.o:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/mid_line_search.cpp.o
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_mid_line_search.dir/build.make track_lines/CMakeFiles/test_mid_line_search.dir/include/mid_line_search.cpp.o
 .PHONY : include/mid_line_search.cpp.o
 
 include/mid_line_search.i: include/mid_line_search.cpp.i
@@ -510,6 +529,7 @@ include/mid_line_search.i: include/mid_line_search.cpp.i
 # target to preprocess a source file
 include/mid_line_search.cpp.i:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/mid_line_search.cpp.i
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_mid_line_search.dir/build.make track_lines/CMakeFiles/test_mid_line_search.dir/include/mid_line_search.cpp.i
 .PHONY : include/mid_line_search.cpp.i
 
 include/mid_line_search.s: include/mid_line_search.cpp.s
@@ -519,6 +539,7 @@ include/mid_line_search.s: include/mid_line_search.cpp.s
 # target to generate assembly for a file
 include/mid_line_search.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/track.dir/build.make track_lines/CMakeFiles/track.dir/include/mid_line_search.cpp.s
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_mid_line_search.dir/build.make track_lines/CMakeFiles/test_mid_line_search.dir/include/mid_line_search.cpp.s
 .PHONY : include/mid_line_search.cpp.s
 
 include/on_road_search.o: include/on_road_search.cpp.o
@@ -743,6 +764,33 @@ test/test_line_points_reducer.cpp.s:
 	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_line_points_reducer.dir/build.make track_lines/CMakeFiles/test_line_points_reducer.dir/test/test_line_points_reducer.cpp.s
 .PHONY : test/test_line_points_reducer.cpp.s
 
+test/test_mid_line_search.o: test/test_mid_line_search.cpp.o
+
+.PHONY : test/test_mid_line_search.o
+
+# target to build an object file
+test/test_mid_line_search.cpp.o:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_mid_line_search.dir/build.make track_lines/CMakeFiles/test_mid_line_search.dir/test/test_mid_line_search.cpp.o
+.PHONY : test/test_mid_line_search.cpp.o
+
+test/test_mid_line_search.i: test/test_mid_line_search.cpp.i
+
+.PHONY : test/test_mid_line_search.i
+
+# target to preprocess a source file
+test/test_mid_line_search.cpp.i:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_mid_line_search.dir/build.make track_lines/CMakeFiles/test_mid_line_search.dir/test/test_mid_line_search.cpp.i
+.PHONY : test/test_mid_line_search.cpp.i
+
+test/test_mid_line_search.s: test/test_mid_line_search.cpp.s
+
+.PHONY : test/test_mid_line_search.s
+
+# target to generate assembly for a file
+test/test_mid_line_search.cpp.s:
+	cd /home/tb/gazebo_road_generation/ros_ws/build && $(MAKE) -f track_lines/CMakeFiles/test_mid_line_search.dir/build.make track_lines/CMakeFiles/test_mid_line_search.dir/test/test_mid_line_search.cpp.s
+.PHONY : test/test_mid_line_search.cpp.s
+
 test/test_start_of_lines_search.o: test/test_start_of_lines_search.cpp.o
 
 .PHONY : test/test_start_of_lines_search.o
@@ -807,11 +855,12 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... test_start_of_lines_search"
 	@echo "... install/local"
 	@echo "... test"
+	@echo "... test_start_of_lines_search"
 	@echo "... track"
 	@echo "... test_vanishing_point_search"
+	@echo "... test_mid_line_search"
 	@echo "... test_line_follower"
 	@echo "... install/strip"
 	@echo "... test_line_points_reducer"
@@ -869,6 +918,9 @@ help:
 	@echo "... test/test_line_points_reducer.o"
 	@echo "... test/test_line_points_reducer.i"
 	@echo "... test/test_line_points_reducer.s"
+	@echo "... test/test_mid_line_search.o"
+	@echo "... test/test_mid_line_search.i"
+	@echo "... test/test_mid_line_search.s"
 	@echo "... test/test_start_of_lines_search.o"
 	@echo "... test/test_start_of_lines_search.i"
 	@echo "... test/test_start_of_lines_search.s"

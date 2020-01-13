@@ -13,32 +13,36 @@ kMinValuableClusterSize_(init.min_valuable_cluster_size),
 kMinMidLineClusterDistance_(init.min_cluster_distance),
 kMaxMidLineClusterDistance_(init.max_cluster_distance),
 kCarPosition_(init.car_position_x,init.car_position_y ),
-kClusterBinSize((((init.mid_line_length * init.radial_scan_scaling_factor)/2) + 1) * 2),
+kClusterBinSize_((((init.mid_line_length * init.radial_scan_scaling_factor)/2) + 1) * 2),
 kImageBorderPadding_(((init.mid_line_length * init.radial_scan_scaling_factor)/2) + 1),
 kRadialScanRadius1_((init.mid_line_length * init.radial_scan_scaling_factor)/2),
 kRadialScanRadius2_(((init.mid_line_length * init.radial_scan_scaling_factor)/2) + 1)
 {
-   InitRadialScanners();
+   InitRadialScanners(radial_scan1_,
+                      radial_scan2_,
+                      kRadialScanRadius1_,
+                      kRadialScanRadius2_);
 }
 
 
-MidLineSearchReturnInfo MidLineSearch::FindMidLineClusters(Mat image)
+MidLineSearchReturnInfo MidLineSearch::FindMidLineClusters()
 {
-       SetImage(image);
-       ClearMemory();
-       GroupValueablePointsInClusterBins();
-       RejectClustersUnderSizeThreshold();
 
-       if(HasFoundMidLineClusters())
+       GroupValueablePointsInClusterBins(image_,radial_scan1_,radial_scan2_,
+                                         midline_clusters_size_,midline_clusters_xweight_,midline_clusters_yweight_, midline_clusters_coordinates_,
+                                         kImageHeight_, kImageWidth_,kImageBorderPadding_,kMinPixelValueForClustering_,kMaxRadialScanOutOfClusterValue_,kClusterBinSize_);
+
+       RejectClustersUnderSizeThreshold(midline_clusters_size_,midline_clusters_xweight_,midline_clusters_yweight_,midline_clusters_coordinates_,kMinValuableClusterSize_);
+
+       if(HasFoundMidLineClusters(midline_clusters_coordinates_,has_found_mid_line_clusters_))
        {
-           ComputeClustersCentroid();
-           GroupClusters();
+           ComputeClustersCentroid(midline_clusters_size_,midline_clusters_xweight_,midline_clusters_yweight_,cluster_centroids_);
 
-           FindOrientationForSingleClusters();
+           GroupClusters(cluster_centroids_,mid_line_cluster_groups_,kCarPosition_);
 
-           if(HasFoundGroup())
+           if(HasFoundGroup(mid_line_cluster_groups_, has_found_group_))
            {
-              ComputeLengthAndDirectionOfConnectedClusters();
+              ComputeLengthAndDirectionOfConnectedClusters(mid_line_cluster_groups_,grouped_clusters_length_and_direction_);
            }
        }
 
@@ -50,196 +54,12 @@ MidLineSearchReturnInfo MidLineSearch::FindMidLineClusters(Mat image)
 
 
 
-void MidLineSearch::FindOrientationForSingleClusters()
-{
 
-    /* TODO Clean this */
 
-    for(auto group : mid_line_cluster_groups_)
-    {
-        if(group.size() == 1)
-        {
-            int x_center = group[0].x;
-            int y_center = group[0].y;
-
-            Mat roi = current_image_(Rect(x_center-20,y_center-20,40,40));
-
-
-            /*TODO: Check if CCL and Canny give better angle prediction */
-
-            Mat labeled_image_,components_stats_,components_centroids_;
-            int kConnectionCount_ = 8;
-
-            int components_count_ = connectedComponentsWithStats(roi, labeled_image_, components_stats_, components_centroids_, kConnectionCount_, CV_32S);
-
-         //  cout << "count: " << labeled_image_ << endl;
-
-           // cout << "stats: " << components_stats_ << endl;
-
-           // cout << "centroids: " << components_centroids_ << endl;
-
-            Mat unsorted = components_stats_.col(4);
-            Mat sorted;
-            cv::sort(unsorted, sorted, CV_SORT_EVERY_ROW + CV_SORT_ASCENDING);
-
-
-           // cout << unsorted << endl;
-           // cout << sorted << endl;
-
-            Mat true_map  = components_stats_.col(4) == sorted.at<int>(1);
-
-
-           // cout << true_map << endl;
-
-           cv::Point min_loc, max_loc;
-           double min, max;
-           cv::minMaxLoc(true_map, &min, &max, &min_loc, &max_loc);
-
-
-
-
-           int line_label = max_loc.y;
-           // cout <<"line label: "<< line_label << endl;
-
-           Mat line_mat_true = labeled_image_ == line_label;
-          // cout <<"true line mat: "<< line_mat_true << endl;
-
-
-
-            const int kCannyLowThreshold_ = 100;
-          const int kCannyHighThreshold_ = 200;
-            const int kCannyKernelSize_ = 3;
-
-     Canny(line_mat_true, line_mat_true, kCannyLowThreshold_, kCannyHighThreshold_, kCannyKernelSize_);
-
-
-     // cout << line_mat_true << endl;
-
-
-           vector<Vec4i> hough_lines_;
-
-           const int kHoghLinesRho_=1;
-           const float kHoughLinesTheta_=0.01745;
-           const int kHoughLinesMinIntersections_=10;
-           const int kHoughLinesMinLineLength_=10;
-           const int kHoughLinesMaxLineGap_=50;
-
-            HoughLinesP(line_mat_true, hough_lines_, kHoghLinesRho_, kHoughLinesTheta_, kHoughLinesMinIntersections_, kHoughLinesMinLineLength_, kHoughLinesMaxLineGap_ );
-
-            for( size_t i = 0; i < hough_lines_.size(); i++ )
-            {
-              int x1 = hough_lines_[i][0];
-              int y1 = hough_lines_[i][1];
-              int x2 = hough_lines_[i][2];
-              int y2 = hough_lines_[i][3];
-
-              if(y2 > y1)
-              {
-                  int tmp;
-                  tmp = x1;
-                  x1  = x2;
-                  x2  = tmp;
-                  tmp = y1;
-                  y1  = y2;
-                  y2 = tmp;
-              }
-
-              hough_lines_[i][0] = x1;
-              hough_lines_[i][1] = y1;
-              hough_lines_[i][2] = x2;
-              hough_lines_[i][3] = y2;
-            }
-
-            float angle = 0;
-
-            for(int i=0; i<hough_lines_.size();i++)
-            {
-                int xs = hough_lines_[i][0];
-                int ys = hough_lines_[i][1];
-                int xe = hough_lines_[i][2];
-                int ye = hough_lines_[i][3];
-
-                int adjacent = xe - xs;
-                int opposite = ys - ye;
-
-                 angle += CalculateAngle4Quadrants(opposite,adjacent);
-            }
-
-            //cout << "angle: " << angle/hough_lines_.size() << endl;
-
-
-            if(hough_lines_.size()>0)
-            {
-                int mean_angle = angle /= hough_lines_.size();
-                single_clusters_.push_back(SingleCluster{x_center,y_center,mean_angle});
-            }
-            else
-            {
-                continue;
-            }
-               // cout << "hs: " << hough_lines_.size() << endl;
-
-
-            //cout << endl << endl;
-
-
-            /*TODO: Check if CCL and Canny give better angle prediction */
-            /*
-            Mat labeled_image_,components_stats_,components_centroids_;
-            int kConnectionCount_ = 8;
-
-            int components_count_ = connectedComponentsWithStats(roi, labeled_image_, components_stats_, components_centroids_, kConnectionCount_, CV_32S);
-
-           cout << "count: " << labeled_image_ << endl;
-
-           // cout << "stats: " << components_stats_ << endl;
-
-           // cout << "centroids: " << components_centroids_ << endl;
-
-            Mat unsorted = components_stats_.col(4);
-            Mat sorted;
-            cv::sort(unsorted, sorted, CV_SORT_EVERY_ROW + CV_SORT_ASCENDING);
-
-
-           // cout << unsorted << endl;
-           // cout << sorted << endl;
-
-            Mat true_map  = components_stats_.col(4) == sorted.at<int>(1);
-
-
-           // cout << true_map << endl;
-
-           cv::Point min_loc, max_loc;
-           double min, max;
-           cv::minMaxLoc(true_map, &min, &max, &min_loc, &max_loc);
-
-
-
-
-           int line_label = max_loc.y;
-           // cout <<"line label: "<< line_label << endl;
-
-           Mat line_mat_true = labeled_image_ == line_label;
-          // cout <<"true line mat: "<< line_mat_true << endl;
-
-*/
-
-            //const int kCannyLowThreshold_ = 100;
-          //const int kCannyHighThreshold_ = 200;
-            //const int kCannyKernelSize_ = 3;
-
-    // Canny(line_mat_true, line_mat_true, kCannyLowThreshold_, kCannyHighThreshold_, kCannyKernelSize_);
-
-
-     // cout << line_mat_true << endl;
-
-        }
-    }
-
-}
-
-
-void MidLineSearch::InitRadialScanners()
+void MidLineSearch::InitRadialScanners(vector<pair<int,int>> &radial_scan1,
+                                       vector<pair<int,int>> &radial_scan2,
+                                       const int kRadialScanRadius1,
+                                       const int kRadialScanRadius2)
 {
   float start_angle = PI;
   float end_angle   = start_angle+2*PI;
@@ -249,19 +69,19 @@ void MidLineSearch::InitRadialScanners()
     float sin_ = sin(angle);
     float cos_ = cos(angle);
 
-    int x = cos_*kRadialScanRadius1_+0.5;
-    int y = sin_*kRadialScanRadius1_+0.5;
-    int x2 = cos_*kRadialScanRadius2_+0.5;
-    int y2 = sin_*kRadialScanRadius2_+0.5;
+    int x = cos_*kRadialScanRadius1+0.5;
+    int y = sin_*kRadialScanRadius1+0.5;
+    int x2 = cos_*kRadialScanRadius2+0.5;
+    int y2 = sin_*kRadialScanRadius2+0.5;
 
-    if (!(std::find(radial_scan1_.begin(), radial_scan1_.end(), pair<int,int>{x,y}) != radial_scan1_.end()))
+    if (!(std::find(radial_scan1.begin(), radial_scan1.end(), pair<int,int>{x,y}) != radial_scan1.end()))
     {
-      radial_scan1_.push_back({x,y});
+      radial_scan1.push_back({x,y});
     }
 
-    if (!(std::find(radial_scan2_.begin(), radial_scan2_.end(), pair<int,int>{x2,y2}) != radial_scan2_.end()))
+    if (!(std::find(radial_scan2.begin(), radial_scan2.end(), pair<int,int>{x2,y2}) != radial_scan2.end()))
     {
-      radial_scan2_.push_back({x2,y2});
+      radial_scan2.push_back({x2,y2});
     }
 
   }
@@ -269,7 +89,7 @@ void MidLineSearch::InitRadialScanners()
 
 void MidLineSearch::SetImage(Mat image)
 {
-    current_image_ = image;
+    image_ = image;
 }
 
 void MidLineSearch::ClearMemory()
@@ -283,7 +103,6 @@ void MidLineSearch::ClearMemory()
     midline_clusters_coordinates_.clear();
     centers_of_gravity.clear();
     grouped_clusters_length_and_direction_.clear();
-    connected_clusters_length_and_direction_.clear();
 
     //connected_cluster_bin_keys_.clear();
     //grouped_cluster_bin_keys_.clear();
@@ -291,113 +110,171 @@ void MidLineSearch::ClearMemory()
     //sorted_centroid_groups_.clear();
     single_clusters_.clear();
     cluster_centroids_.clear();
-    used_permutations_.clear();
+
     //grouped_mid_line_clusters_.clear();
 
     mid_line_cluster_groups_.clear();
 }
 
-void MidLineSearch::GroupValueablePointsInClusterBins()
+void MidLineSearch::GroupValueablePointsInClusterBins(Mat image,
+                                                      vector<pair<int,int>> radial_scan1,
+                                                      vector<pair<int,int>> radial_scan2,
+                                                      map<pair<int,int>,int> &midline_clusters_size,
+                                                      map<pair<int,int>,int> &midline_clusters_xweight,
+                                                      map<pair<int,int>,int> &midline_clusters_yweight,
+                                                      map<pair<int,int>,vector<pair<int,int>>> &midline_clusters_coordinates,
+                                                      const int kImageHeight,
+                                                      const int kImageWidth,
+                                                      const int kImageBorderPadding,
+                                                      const int kMinPixelValueForClustering,
+                                                      const int kMaxRadialScanOutOfClusterValue,
+                                                      const int kClusterBinSize)
 {
-    for (int y=kImageBorderPadding_; y<kImageHeight_ - kImageBorderPadding_; y++)
+    for (int y=kImageBorderPadding; y<kImageHeight - kImageBorderPadding; y++)
     {
-      for (int x=kImageBorderPadding_; x<kImageWidth_ - kImageBorderPadding_; x++)
+      for (int x=kImageBorderPadding; x<kImageWidth - kImageBorderPadding; x++)
       {
-        if (HasMinPixelValueForClustering(GetPixelValue(x,y)))
+        if (HasMinPixelValueForClustering(GetPixelValue(image,x,y), kMinPixelValueForClustering))
         {
-          if(IsAClusterPoint(x,y))
+          if(IsAClusterPoint(image,x,y,radial_scan1,radial_scan2,kMaxRadialScanOutOfClusterValue))
           {
-            AddPointToClusterBin(x,y);
+            AddPointToClusterBin(x,
+                                 y,
+                                 midline_clusters_size,
+                                 midline_clusters_xweight,
+                                 midline_clusters_yweight,
+                                 midline_clusters_coordinates,
+                                 kClusterBinSize);
           }
         }
       }
     }
 }
 
-int MidLineSearch::GetPixelValue(int x, int y)
+int MidLineSearch::GetPixelValue(Mat image,int x, int y)
 {
-    return (int)current_image_.at<uchar>(Point(x,y));
+    return (int)image.at<uchar>(Point(x,y));
 }
 
-bool MidLineSearch::HasMinPixelValueForClustering(int pixel_value)
+bool MidLineSearch::HasMinPixelValueForClustering(const int pixel_value,const int kMinPixelValueForClustering)
 {
-    return (pixel_value > kMinPixelValueForClustering_);
+    return (pixel_value > kMinPixelValueForClustering);
 }
 
-bool MidLineSearch::IsAClusterPoint(int x, int y)
+bool MidLineSearch::IsAClusterPoint(Mat image,
+                                    const int x,
+                                    const int y,
+                                    vector<pair<int,int>> radial_scan1,
+                                    vector<pair<int,int>> radial_scan2,
+                                    const int kMaxRadialScanOutOfClusterValue )
 {
-    return RadialScanPoint(x,y);
-}
-
-bool MidLineSearch::RadialScanPoint(int x, int y)
-{
-    for (auto &it : radial_scan1_)
+    for (auto &it : radial_scan1)
     {
       int xR = x + it.first;
       int yR = y + it.second;
 
-      if(GetPixelValue(xR, yR) >= kMaxRadialScanOutOfClusterValue_) return false;
+      if(GetPixelValue(image,xR, yR) >= kMaxRadialScanOutOfClusterValue) return false;
     }
 
-    for (auto &it : radial_scan2_)
+    for (auto &it : radial_scan2)
     {
       int xR = y + it.first;
       int yR = y + it.second;
 
-      if(GetPixelValue(xR, yR) >= kMaxRadialScanOutOfClusterValue_) return false;
+      if(GetPixelValue(image,xR, yR) >= kMaxRadialScanOutOfClusterValue) return false;
     }
 
     return true;
 }
 
-void MidLineSearch::AddPointToClusterBin(int x, int y)
+
+
+void MidLineSearch::AddPointToClusterBin(const int x,
+                                         const int y,
+                                         map<pair<int,int>,int> &midline_clusters_size,
+                                         map<pair<int,int>,int> &midline_clusters_xweight,
+                                         map<pair<int,int>,int> &midline_clusters_yweight,
+                                         map<pair<int,int>,vector<pair<int,int>>> &midline_clusters_coordinates,
+                                         const int kClusterBinSize)
 {
     int x_cluster_bin_key = x / kClusterBinSize;
     int y_cluster_bin_key = y / kClusterBinSize;
 
-    if (IsNewKey(x_cluster_bin_key,y_cluster_bin_key))
+    if (IsNewKey(x_cluster_bin_key,y_cluster_bin_key,midline_clusters_size))
     {
-        AddNewClusterBin(x,y,x_cluster_bin_key,y_cluster_bin_key);
+        AddNewClusterBin(x,
+                         y,
+                         x_cluster_bin_key,
+                         y_cluster_bin_key,
+                         midline_clusters_size,
+                         midline_clusters_xweight,
+                         midline_clusters_yweight,
+                         midline_clusters_coordinates);
     }
     else
     {
-        AppendClusterBin(x,y,x_cluster_bin_key,y_cluster_bin_key);
+        AppendClusterBin(x,
+                         y,
+                         x_cluster_bin_key,
+                         y_cluster_bin_key,
+                         midline_clusters_size,
+                         midline_clusters_xweight,
+                         midline_clusters_yweight,
+                         midline_clusters_coordinates);
     }
 }
 
-bool MidLineSearch::IsNewKey(int x_cluster_bin_key, int y_cluster_bin_key)
+bool MidLineSearch::IsNewKey(int x_cluster_bin_key, int y_cluster_bin_key , map<pair<int,int>,int> midline_clusters_size)
 {
-    return midline_clusters_size_.find(make_pair(x_cluster_bin_key,y_cluster_bin_key)) == midline_clusters_size_.end();
+    return midline_clusters_size.find(make_pair(x_cluster_bin_key,y_cluster_bin_key)) == midline_clusters_size.end();
 }
 
-void MidLineSearch::AddNewClusterBin(int x, int y, int x_cluster_bin_key, int y_cluster_bin_key)
+void MidLineSearch::AddNewClusterBin(const int x,
+                                     const int y,
+                                     const int x_cluster_bin_key,
+                                     const int y_cluster_bin_key,
+                                     map<pair<int,int>,int> &midline_clusters_size,
+                                     map<pair<int,int>,int> &midline_clusters_xweight,
+                                     map<pair<int,int>,int> &midline_clusters_yweight,
+                                     map<pair<int,int>,vector<pair<int,int>>> &midline_clusters_coordinates)
 {
-    midline_clusters_size_[make_pair(x_cluster_bin_key,y_cluster_bin_key)] = 1;
+    midline_clusters_size[make_pair(x_cluster_bin_key,y_cluster_bin_key)] = 1;
 
-    midline_clusters_xweight_[make_pair(x_cluster_bin_key,y_cluster_bin_key)] = x;
-    midline_clusters_yweight_[make_pair(x_cluster_bin_key,y_cluster_bin_key)] = y;
+    midline_clusters_xweight[make_pair(x_cluster_bin_key,y_cluster_bin_key)] = x;
+    midline_clusters_yweight[make_pair(x_cluster_bin_key,y_cluster_bin_key)] = y;
 
-    midline_clusters_coordinates_[make_pair(x_cluster_bin_key,y_cluster_bin_key)].push_back(make_pair(x,y));
+    midline_clusters_coordinates[make_pair(x_cluster_bin_key,y_cluster_bin_key)].push_back(make_pair(x,y));
 }
 
-void MidLineSearch::AppendClusterBin(int x, int y, int x_cluster_bin_key, int y_cluster_bin_key)
+void MidLineSearch::AppendClusterBin(const int x,
+                                     const int y,
+                                     const int x_cluster_bin_key,
+                                     const int y_cluster_bin_key,
+                                     map<pair<int,int>,int> &midline_clusters_size,
+                                     map<pair<int,int>,int> &midline_clusters_xweight,
+                                     map<pair<int,int>,int> &midline_clusters_yweight,
+                                     map<pair<int,int>,vector<pair<int,int>>> &midline_clusters_coordinates)
 {
-    int cluster_size = midline_clusters_size_.at(make_pair(x_cluster_bin_key,y_cluster_bin_key)) + 1;
-    midline_clusters_size_.at(make_pair(x_cluster_bin_key,y_cluster_bin_key)) = cluster_size;
+    int cluster_size = midline_clusters_size.at(make_pair(x_cluster_bin_key,y_cluster_bin_key)) + 1;
+    midline_clusters_size.at(make_pair(x_cluster_bin_key,y_cluster_bin_key)) = cluster_size;
 
-    midline_clusters_xweight_[make_pair(x_cluster_bin_key,y_cluster_bin_key)] += x;
-    midline_clusters_yweight_[make_pair(x_cluster_bin_key,y_cluster_bin_key)] += y;
+    midline_clusters_xweight[make_pair(x_cluster_bin_key,y_cluster_bin_key)] += x;
+    midline_clusters_yweight[make_pair(x_cluster_bin_key,y_cluster_bin_key)] += y;
 
-    midline_clusters_coordinates_[make_pair(x_cluster_bin_key,y_cluster_bin_key)].push_back(make_pair(x,y));
+    midline_clusters_coordinates[make_pair(x_cluster_bin_key,y_cluster_bin_key)].push_back(make_pair(x,y));
 }
 
-void MidLineSearch::RejectClustersUnderSizeThreshold()
+void MidLineSearch::RejectClustersUnderSizeThreshold( map<pair<int,int>,int> &midline_clusters_size,
+                                                      map<pair<int,int>,int> &midline_clusters_xweight,
+                                                      map<pair<int,int>,int> &midline_clusters_yweight,
+                                                      map<pair<int,int>,vector<pair<int,int>>> &midline_clusters_coordinates,
+                                                      const int kMinValuableClusterSize)
 {
     vector<pair<int,int>> cluster_ids_to_remove;
 
-    for (auto const& it : midline_clusters_size_)
+    for (auto const& it : midline_clusters_size)
     {
-        if(it.second <= kMinValuableClusterSize_)
+        if(it.second <= kMinValuableClusterSize)
         {
             cluster_ids_to_remove.push_back(it.first);
         }
@@ -405,49 +282,47 @@ void MidLineSearch::RejectClustersUnderSizeThreshold()
 
     for( auto& it: cluster_ids_to_remove)
     {
-        midline_clusters_size_.erase(it);
-        midline_clusters_xweight_.erase(it);
-        midline_clusters_yweight_.erase(it);
-        midline_clusters_coordinates_.erase(it);
+        midline_clusters_size.erase(it);
+        midline_clusters_xweight.erase(it);
+        midline_clusters_yweight.erase(it);
+        midline_clusters_coordinates.erase(it);
     }
 }
 
-void MidLineSearch::ComputeClustersCentroid()
+void MidLineSearch::ComputeClustersCentroid(map<pair<int,int>,int> midline_clusters_size,
+                                            map<pair<int,int>,int> midline_clusters_xweight,
+                                            map<pair<int,int>,int> midline_clusters_yweight,
+                                            vector<Point> &cluster_centroids)
 {
-    for (auto const& it : midline_clusters_size_)
+    for (auto const& it : midline_clusters_size)
     {
+      int x = midline_clusters_xweight.at(it.first) / it.second;
+      int y = midline_clusters_yweight.at(it.first) / it.second;
 
-
-
- //       cout << it.first.first << " , " << it.first.second << endl;
-
-      int x = midline_clusters_xweight_.at(it.first) / it.second;
-      int y = midline_clusters_yweight_.at(it.first) / it.second;
-
-      cluster_centroids_.push_back(Point(x,y));
+      cluster_centroids.push_back(Point(x,y));
 
     }
 }
 
 
-bool MidLineSearch::HasFoundMidLineClusters()
+bool MidLineSearch::HasFoundMidLineClusters(map<pair<int,int>,vector<pair<int,int>>> midline_clusters_coordinates, bool &has_found_mid_line_clusters)
 {
-    has_found_mid_line_clusters_ = (midline_clusters_coordinates_.size() > 0);
-    return (midline_clusters_coordinates_.size() > 0);
+    has_found_mid_line_clusters = (midline_clusters_coordinates.size() > 0);
+    return (midline_clusters_coordinates.size() > 0);
 }
 
-bool MidLineSearch::HasFoundGroup()
+bool MidLineSearch::HasFoundGroup(vector<vector<Point>> mid_line_cluster_groups, bool &has_found_group)
 {
-    for (auto& it: mid_line_cluster_groups_)
+    for (auto& it: mid_line_cluster_groups)
     {
         if(it.size() > 1)
         {
-            has_found_group_ = true;
+            has_found_group = true;
             return true;
         }
     }
 
-    has_found_group_ = false;
+    has_found_group = false;
     return false;
 }
 
@@ -458,9 +333,13 @@ MidLineSearchReturnInfo MidLineSearch::GetReturnInfo()
 }
 
 
- void MidLineSearch::ComputeLengthAndDirectionOfConnectedClusters()
+ void MidLineSearch::ComputeLengthAndDirectionOfConnectedClusters(vector<vector<Point>> mid_line_cluster_groups,
+                                                                  vector<vector<PointInDirection>> &grouped_clusters_length_and_direction)
  {
-     for (auto& it: mid_line_cluster_groups_)
+
+     vector<PointInDirection> connected_clusters_length_and_direction;
+
+     for (auto& it: mid_line_cluster_groups)
      {
          for(int i=0; i<it.size()-1; i++)
          {
@@ -474,13 +353,13 @@ MidLineSearchReturnInfo MidLineSearch::GetReturnInfo()
 
              float angle = CalculateAngle4Quadrants(opposite, adjacent);
 
-             connected_clusters_length_and_direction_.push_back(PointInDirection{current_cluster_center_of_gravity.x,
+             connected_clusters_length_and_direction.push_back(PointInDirection{current_cluster_center_of_gravity.x,
                                                                                                        current_cluster_center_of_gravity.y,
                                                                                                        length,
                                                                                                        angle});
          }
-         grouped_clusters_length_and_direction_.push_back(connected_clusters_length_and_direction_);
-         connected_clusters_length_and_direction_.clear();
+         grouped_clusters_length_and_direction.push_back(connected_clusters_length_and_direction);
+         connected_clusters_length_and_direction.clear();
 
      }
  }
@@ -510,9 +389,6 @@ MidLineSearchReturnInfo MidLineSearch::GetReturnInfo()
 
 
 
-
-
-
 bool MidLineSearch::IsPermuted(int i, int j, vector<string> &used_permutations)
 {
     if(i==j){ return true;}
@@ -535,12 +411,6 @@ bool MidLineSearch::IsPermuted(int i, int j, vector<string> &used_permutations)
 }
 
 
-
-
-
-
-
-
 double MidLineSearch::Distance2d(const Point& lhs, const Point& rhs)
 {
     return sqrt(pow(lhs.x-rhs.x,2) + pow(lhs.y-rhs.y,2));
@@ -552,19 +422,21 @@ bool MidLineSearch::IsConnected(float cluster_distance)
     return cluster_distance > kMinMidLineClusterDistance_ && cluster_distance < kMaxMidLineClusterDistance_;
 }
 
-void MidLineSearch::FindClusterConnections(vector<pair<int,int>> &cluster_connections)
+void MidLineSearch::FindClusterConnections(vector<Point> cluster_centroids, vector<pair<int,int>> &cluster_connections)
 {
-    for(int i=0; i<cluster_centroids_.size(); i++)
+    vector<string> used_permutations;
+
+    for(int i=0; i<cluster_centroids.size(); i++)
     {
-        int clusters_ix = cluster_centroids_[i].x;
-        int clusters_iy = cluster_centroids_[i].y;
+        int clusters_ix = cluster_centroids[i].x;
+        int clusters_iy = cluster_centroids[i].y;
 
-        for(int j=0; j<cluster_centroids_.size(); j++)
+        for(int j=0; j<cluster_centroids.size(); j++)
         {
-            if(IsPermuted(i,j,used_permutations_)) continue;
+            if(IsPermuted(i,j,used_permutations)) continue;
 
-            int clusters_jx = cluster_centroids_[j].x;
-            int clusters_jy = cluster_centroids_[j].y;
+            int clusters_jx = cluster_centroids[j].x;
+            int clusters_jy = cluster_centroids[j].y;
 
             float cluster_distance = sqrt(pow(clusters_jx-clusters_ix,2) + pow(clusters_jy-clusters_iy,2));
 
@@ -576,15 +448,17 @@ void MidLineSearch::FindClusterConnections(vector<pair<int,int>> &cluster_connec
     }
 }
 
-void MidLineSearch::GroupClusters()
+void MidLineSearch::GroupClusters(vector<Point> cluster_centroids,
+                                  vector<vector<Point>> &mid_line_cluster_groups,
+                                  const Point kCarPosition)
 {
 
     vector<pair<int,int>> cluster_connections;
 
-    FindClusterConnections(cluster_connections);
+    FindClusterConnections(cluster_centroids, cluster_connections);
 
 
-    int num_vertices = cluster_centroids_.size();
+    int num_vertices = cluster_centroids.size();
 
     DepthFirstSearch ConnectedMidLineGroupFinder(num_vertices);
 
@@ -600,19 +474,19 @@ void MidLineSearch::GroupClusters()
    {
        for(int j=0; j<connected_mid_line_groups[i].size(); ++j)
        {
-           connected_cluster_centroids.push_back(cluster_centroids_[connected_mid_line_groups[i][j]]);
+           connected_cluster_centroids.push_back(cluster_centroids[connected_mid_line_groups[i][j]]);
        }
 
        std::sort(begin(connected_cluster_centroids),
                  end(connected_cluster_centroids),
-                 [&](const Point& lhs, const Point& rhs){ return Distance2d(kCarPosition_, lhs) < Distance2d(kCarPosition_, rhs); });
+                 [&](const Point& lhs, const Point& rhs){ return Distance2d(kCarPosition, lhs) < Distance2d(kCarPosition, rhs); });
 
 
-       mid_line_cluster_groups_.push_back(connected_cluster_centroids);
+       mid_line_cluster_groups.push_back(connected_cluster_centroids);
        connected_cluster_centroids.clear();
    }
 
-    used_permutations_.clear();
+
 }
 
 
@@ -739,6 +613,108 @@ vector<SingleCluster> MidLineSearch::GetSingleClusters()
 }
 
 
+void MidLineSearch::FindOrientationForSingleClusters()
+{
+
+    /* TODO Clean this */
+
+    for(auto group : mid_line_cluster_groups_)
+    {
+        if(group.size() == 1)
+        {
+            int x_center = group[0].x;
+            int y_center = group[0].y;
+
+            Mat roi = image_(Rect(x_center-20,y_center-20,40,40));
+
+            /*TODO: Check if CCL and Canny give better angle prediction */
+
+            Mat labeled_image_,components_stats_,components_centroids_;
+            int kConnectionCount_ = 8;
+
+            int components_count_ = connectedComponentsWithStats(roi, labeled_image_, components_stats_, components_centroids_, kConnectionCount_, CV_32S);
+
+            Mat unsorted = components_stats_.col(4);
+            Mat sorted;
+            cv::sort(unsorted, sorted, CV_SORT_EVERY_ROW + CV_SORT_ASCENDING);
+
+            Mat true_map  = components_stats_.col(4) == sorted.at<int>(1);
+
+           cv::Point min_loc, max_loc;
+           double min, max;
+           cv::minMaxLoc(true_map, &min, &max, &min_loc, &max_loc);
+
+           int line_label = max_loc.y;
+           Mat line_mat_true = labeled_image_ == line_label;
+
+           const int kCannyLowThreshold_ = 100;
+           const int kCannyHighThreshold_ = 200;
+           const int kCannyKernelSize_ = 3;
+
+           Canny(line_mat_true, line_mat_true, kCannyLowThreshold_, kCannyHighThreshold_, kCannyKernelSize_);
+
+           vector<Vec4i> hough_lines_;
+
+           const int kHoghLinesRho_=1;
+           const float kHoughLinesTheta_=0.01745;
+           const int kHoughLinesMinIntersections_=10;
+           const int kHoughLinesMinLineLength_=10;
+           const int kHoughLinesMaxLineGap_=50;
+
+            HoughLinesP(line_mat_true, hough_lines_, kHoghLinesRho_, kHoughLinesTheta_, kHoughLinesMinIntersections_, kHoughLinesMinLineLength_, kHoughLinesMaxLineGap_ );
+
+            for( size_t i = 0; i < hough_lines_.size(); i++ )
+            {
+              int x1 = hough_lines_[i][0];
+              int y1 = hough_lines_[i][1];
+              int x2 = hough_lines_[i][2];
+              int y2 = hough_lines_[i][3];
+
+              if(y2 > y1)
+              {
+                  int tmp;
+                  tmp = x1;
+                  x1  = x2;
+                  x2  = tmp;
+                  tmp = y1;
+                  y1  = y2;
+                  y2 = tmp;
+              }
+
+              hough_lines_[i][0] = x1;
+              hough_lines_[i][1] = y1;
+              hough_lines_[i][2] = x2;
+              hough_lines_[i][3] = y2;
+            }
+
+            float angle = 0;
+
+            for(int i=0; i<hough_lines_.size();i++)
+            {
+                int xs = hough_lines_[i][0];
+                int ys = hough_lines_[i][1];
+                int xe = hough_lines_[i][2];
+                int ye = hough_lines_[i][3];
+
+                int adjacent = xe - xs;
+                int opposite = ys - ye;
+
+                 angle += CalculateAngle4Quadrants(opposite,adjacent);
+            }
+            if(hough_lines_.size()>0)
+            {
+                int mean_angle = angle /= hough_lines_.size();
+                single_clusters_.push_back(SingleCluster{x_center,y_center,mean_angle});
+            }
+            else
+            {
+                continue;
+            }
+
+        }
+    }
+
+}
 /* TODO: Sorting is not neccessary
  *
  *
