@@ -23,20 +23,15 @@ enum {LEFT_LINE, MID_LINE,RIGHT_LINE };
 enum {LEFT_TO_MID, RIGHT_TO_MID, LEFT_TO_RIGHT, RIGHT_TO_LEFT, MID_TO_LEFT, MID_TO_RIGHT};
 
 // priorities from valid points
-enum {PRIO_0_P1_AND_P2_AND_D1_AND_D2,
-      PRIO_1_P1_AND_P2_AND_D1_OR_D2,
-      PRIO_2_P1_AND_P2,
-      PRIO_3_P1_AND_FP2_AND_D1_AND_D2,
-      PRIO_4_P2_AND_FP1_AND_D1_AND_D2,
-      PRIO_5_P1_AND_FP2_D1_OR_D2,
-      PRIO_6_P2_AND_FP1_D1_OR_D2,
-      PRIO_7_P1_AND_FP2,
-      PRIO_8_P2_AND_FP1,
-      PRIO_9_P1,
-      PRIO_10_P2,
-      PRIO_11_FP1_AND_FP2,
-      PRIO_12_FP1,
-      PRIO_13_FP2
+enum {
+      PRIO_0_P1_AND_P2,
+      PRIO_1_P1_AND_FP2,
+      PRIO_2_P2_AND_FP1,
+      PRIO_3_P1,
+      PRIO_4_P2,
+      PRIO_5_FP1_AND_FP2,
+      PRIO_6_FP1,
+      PRIO_7_FP2
      };
 
 
@@ -57,6 +52,20 @@ struct PointInDirection
    int length;
    float angle;
 };
+
+struct SafeDriveAreaEvaluationInitializationParameters
+{
+    int start_of_rect_safety_x;
+    int start_of_rect_safety_y;
+    int start_search_direction_of_rect_safety;
+    int search_rect_width;
+    int search_rect_height;
+    int rect_border_distance_threshold_for_continous_line;
+    int rect_step_length;
+
+};
+
+
 
 struct LineValidationTableCreationInitializationParameters
 {
@@ -214,31 +223,31 @@ struct VanishingPointSearchInitializationParameters
 
 struct LineValidationTableCreationReturnInfo
 {
-    int left_found_both_points_and_predictions;
-    int left_found_both_predictions;
-    int left_found_mid_prediction;
-    int left_found_right_prediction;
-    int left_found_both_points;
-    int left_found_mid_point;
-    int left_found_right_point;
+    vector<Point> left_found_both_points_and_predictions;
+    vector<Point> left_found_both_predictions;
+    vector<Point> left_found_mid_prediction;
+    vector<Point> left_found_right_prediction;
+    vector<Point> left_found_both_points;
+    vector<Point> left_found_mid_point;
+    vector<Point> left_found_right_point;
     int left_line_size;
 
-    int mid_found_both_points_and_predictions;
-    int mid_found_both_predictions;
-    int mid_found_left_prediction;
-    int mid_found_right_prediction;
-    int mid_found_both_points;
-    int mid_found_left_point;
-    int mid_found_right_point;
+    vector<Point> mid_found_both_points_and_predictions;
+    vector<Point> mid_found_both_predictions;
+    vector<Point> mid_found_left_prediction;
+    vector<Point> mid_found_right_prediction;
+    vector<Point> mid_found_both_points;
+    vector<Point> mid_found_left_point;
+    vector<Point> mid_found_right_point;
     int mid_line_size;
 
-    int right_found_both_points_and_predictions;
-    int right_found_both_predictions;
-    int right_found_left_prediction;
-    int right_found_mid_prediction;
-    int right_found_both_points;
-    int right_found_left_point;
-    int right_found_mid_point;
+    vector<Point> right_found_both_points_and_predictions;
+    vector<Point> right_found_both_predictions;
+    vector<Point> right_found_left_prediction;
+    vector<Point> right_found_mid_prediction;
+    vector<Point> right_found_both_points;
+    vector<Point> right_found_left_point;
+    vector<Point> right_found_mid_point;
     int right_line_size;
 
     void reset() { *this = {}; }
@@ -510,11 +519,7 @@ namespace valid_line_point_search
         float percent_points_with_priority_6;
         float percent_points_with_priority_7;
         float percent_points_with_priority_8;
-        float percent_points_with_priority_9;
-        float percent_points_with_priority_10;
-        float percent_points_with_priority_11;
-        float percent_points_with_priority_12;
-        float percent_points_with_priority_13;
+
 
         float percent_points_in_rect;
 

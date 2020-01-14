@@ -1,0 +1,7 @@
+/safe_drive_area_evaluation_init/start_of_rect_safety_x: 612
+/safe_drive_area_evaluation_init/start_of_rect_safety_y: 360
+/safe_drive_area_evaluation_init/start_search_direction_of_rect_safety: 90
+/safe_drive_area_evaluation_init/search_rect_width: 300
+/safe_drive_area_evaluation_init/search_rect_height: 80
+/safe_drive_area_evaluation_init/rect_border_distance_threshold_for_continous_line: 10
+safe_drive_area_evaluation_init/rect_step_length: 80

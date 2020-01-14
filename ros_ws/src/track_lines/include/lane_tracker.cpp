@@ -223,7 +223,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         {
              mid_line_groups_from_mid_line_searcher_ = MidLineSearcher_->GetGroupedMidLineClustersLengthAndDirection();
 
-             MidLineSearcher_->DrawGroupedMidLineClustersDirections(image_rgb_bird_);
+             //MidLineSearcher_->DrawGroupedMidLineClustersDirections(image_rgb_bird_);
         }
 
 
@@ -246,6 +246,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         if(mid_line_search_return_info_.has_found_group)
         {
+
             LineValidationTableCreator_->FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_LEFT);
             LineValidationTableCreator_->FindValidPointsFromMidLineSearch(mid_line_groups_from_mid_line_searcher_, MID_TO_RIGHT);
         }
@@ -253,21 +254,31 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         line_validatiohn_table_creation_return_info_ = LineValidationTableCreator_->CreateLineValidationTables();
 
-        cout << line_validatiohn_table_creation_return_info_.left_line_size << endl;
-        cout << line_validatiohn_table_creation_return_info_.mid_line_size << endl;
-        cout << line_validatiohn_table_creation_return_info_.right_line_size << endl;
-        cout << "###" << endl;
+        LineValidationTableCreator_->DrawReturnInfo(image_rgb_bird_);
+        //cout << line_validatiohn_table_creation_return_info_.left_found_both_points_and_predictions << endl;
+        //cout << line_validatiohn_table_creation_return_info_.mid_found_both_points_and_predictions << endl;
+        //cout << line_validatiohn_table_creation_return_info_.right_found_both_points_and_predictions << endl;
+        //cout << "###" << endl;
 
         LineValidationTableCreator_->GetLineValidationTables(left_line_validation_table_,mid_line_validation_table_,right_line_validation_table_);
 
         LineValidationTableCreator_->GetLinePointsInDriveDirection(left_line_in_drive_direction_table_,mid_line_in_drive_direction_table_,right_line_in_drive_direction_table_);
 
+        //LineValidationTableCreator_->DrawLinePointsInDriveDirection(image_rgb_bird_);
+
+        SafeDriveAreaEvaluator_->ClearMemory();
+
+        SafeDriveAreaEvaluator_->LoadLinePointsInDriveDirection(left_line_in_drive_direction_table_,mid_line_in_drive_direction_table_,right_line_in_drive_direction_table_);
 
 
-        SafeDriveAreaEvaluator_.LoadLinePointsInDriveDirection(left_line_in_drive_direction_table_,mid_line_in_drive_direction_table_,right_line_in_drive_direction_table_);
+        vector<SafeDriveAreaEvaluationReturnInfo> safe_drive_area_evaluation_return_info_ =  SafeDriveAreaEvaluator_->EvaluateTrackInDriveDirection();
 
+        for(auto it:safe_drive_area_evaluation_return_info_)
+        {
+            cout << it.max_line_type << " " <<  it.max_line_score << " " << it.max_line_is_continous << " " << it.rect_mid_point << " " << it.search_direction << endl;
 
-        SafeDriveAreaEvaluator_.EvaluateTrackInDriveDirection();
+        }
+        cout << "######" << endl;
 
 
         OnRoadSearcher_->LoadImage(image_mono_bird_);
@@ -295,9 +306,9 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
 
 
-        SafeDriveAreaEvaluator_.DrawEvaluatedSafetyAreasInDriveDirection(image_rgb_bird_);
+        SafeDriveAreaEvaluator_->DrawEvaluatedSafetyAreasInDriveDirection(image_rgb_bird_);
 
-        //vector<TrackSafetyRects> track_safety_rects;
+        //vector<TrackSafetyRects> SafeDriveAreaEvaluationReturnInfoVector_;
 
         //LineValidationTableCreator_.ValidateTrack(image_rgb_bird_);
 
@@ -361,7 +372,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         waitKey(1);
 
                 ClearTrackingData();
-SafeDriveAreaEvaluator_.ClearMemory();
+
     }
     catch (cv_bridge::Exception& e)
     {
@@ -738,6 +749,25 @@ void LaneTracker::LoadLinePointsReduceInitializationParameters()
 
 }
 
+void LaneTracker::LoadSafeDriveAreaEvaluationInitializationParameters()
+{
+
+    string str = "rosparam load /home/tb/gazebo_road_generation/ros_ws/src/track_lines/initialization/safe_drive_area_evaluation_init.yaml";
+    const char *command = str.c_str();
+    system(command);
+
+    n.getParam("/safe_drive_area_evaluation_init/start_of_rect_safety_x", safe_drive_area_evaluation_init.start_of_rect_safety_x);
+    n.getParam("/safe_drive_area_evaluation_init/start_of_rect_safety_y", safe_drive_area_evaluation_init.start_of_rect_safety_y);
+    n.getParam("/safe_drive_area_evaluation_init/start_search_direction_of_rect_safety", safe_drive_area_evaluation_init.start_search_direction_of_rect_safety);
+    n.getParam("/safe_drive_area_evaluation_init/search_rect_width", safe_drive_area_evaluation_init.search_rect_width);
+    n.getParam("/safe_drive_area_evaluation_init/search_rect_height", safe_drive_area_evaluation_init.search_rect_height);
+    n.getParam("/safe_drive_area_evaluation_init/rect_border_distance_threshold_for_continous_line", safe_drive_area_evaluation_init.rect_border_distance_threshold_for_continous_line);
+    n.getParam("/safe_drive_area_evaluation_init/rect_step_length", safe_drive_area_evaluation_init.rect_step_length);
+
+}
+
+
+
 
 void LaneTracker::LoadAllInitializationParameters()
 {
@@ -750,6 +780,7 @@ void LaneTracker::LoadAllInitializationParameters()
     LoadLineValidationTableCreationInitializationParameters();
     LoadVanishingPointSearchInitializationParameters();
     LoadConnectedComponentsSearchInitializationParameters();
+    LoadSafeDriveAreaEvaluationInitializationParameters();
 }
 
 
@@ -828,7 +859,7 @@ LaneTracker::LaneTracker(ros::NodeHandle* nh_):n(*nh_),it(*nh_)
   LineValidationTableCreator_ = new LineValidationTableCreation(image_height_,image_width_,line_validation_table_creation_init);
   VanishingPointSearcher_ = new VanishingPointSearch(birdseye_transformation_matrix_,vanishing_point_search_init);
   ConnectedComponentsSearcher_ = new ConnectedComponentsSearch(image_height_, image_width_, connected_components_search_init);
-
+  SafeDriveAreaEvaluator_ = new SafeDriveAreaEvaluation(image_height_, image_width_, safe_drive_area_evaluation_init);
   OnRoadSearcher_ =  new OnRoadSearch(nh_);
 
 };

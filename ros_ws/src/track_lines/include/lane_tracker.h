@@ -76,6 +76,7 @@ private:
     LineValidationTableCreationInitializationParameters line_validation_table_creation_init;
     VanishingPointSearchInitializationParameters vanishing_point_search_init;
     ConnectedComponentsSearchInitializationParameters connected_components_search_init;
+    SafeDriveAreaEvaluationInitializationParameters safe_drive_area_evaluation_init;
 
     Mat birdseye_transformation_matrix_;
 
@@ -100,7 +101,7 @@ private:
     OnRoadSearch* OnRoadSearcher_;
 
     LineValidationTableCreation *LineValidationTableCreator_;
-    SafeDriveAreaEvaluation SafeDriveAreaEvaluator_;
+    SafeDriveAreaEvaluation *SafeDriveAreaEvaluator_;
     PerceptualGrouping PerceputalGrouper_;
 
 
@@ -115,6 +116,8 @@ private:
     ConnectedComponentsSearchReturnInfo connected_component_search_return_info_;
     StartOfLinesSearchReturnInfo start_of_lines_search_return_info_;
     LineValidationTableCreationReturnInfo line_validatiohn_table_creation_return_info_;
+    vector<SafeDriveAreaEvaluationReturnInfo> safe_drive_area_evaluation_return_info_;
+
 
     vector<PointAndDirection> left_line_from_line_follower_,
                               right_line_from_line_follower_;
@@ -154,6 +157,7 @@ void CheckStartParameters();
     void LoadVanishingPointSearchInitializationParameters();
     void LoadConnectedComponentsSearchInitializationParameters();
     void LoadLinePointsReduceInitializationParameters();
+    void LoadSafeDriveAreaEvaluationInitializationParameters();
 
     void     DrawHoughLinesFront(Mat& rgb);
     void    DrawHoughLinesBird(Mat& rgb);

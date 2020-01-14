@@ -115,20 +115,20 @@ class LineValidationTable
 
 
 };
-struct TrackSafetyRect
+struct SafeDriveAreaEvaluationReturnInfo
 {
-    unsigned long long int LSCORE;
-    unsigned long long int MSCORE;
-    unsigned long long int RSCORE;
-    unsigned long long int TRACKSCORE;
+    unsigned long long int left_line_score;
+    unsigned long long int mid_line_score;
+    unsigned long long int right_line_score;
+    unsigned long long int trackscore;
 
-    int MAX_LINE;
-    int MAX_LINE_SCORE;
+    int max_line_type;
+    int max_line_score;
 
-    bool MAX_LINE_CONTINUOUS;
-    bool LEFT_CONTINUOUS;
-    bool MID_CONTINUOUS;
-    bool RIGHT_CONTINUOUS;
+    bool max_line_is_continous;
+    bool left_line_is_continous;
+    bool mid_line_is_continious;
+    bool right_line_is_continous;
 
     vector<LineValidationTable> left_safest_table1;
     vector<LineValidationTable> left_safest_table2;
@@ -139,6 +139,10 @@ struct TrackSafetyRect
 
     int search_direction;
     Point rect_mid_point;
+
+    vector<vector<LineValidationTable>> left_priority_table;
+    vector<vector<LineValidationTable>> mid_priority_table;
+    vector<vector<LineValidationTable>> right_priority_table;
 };
 
 

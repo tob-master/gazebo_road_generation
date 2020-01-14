@@ -78,8 +78,9 @@ void LineValidationTableCreation::FindValidPointsFromLineFollow(vector<PointInDi
 void LineValidationTableCreation::FindValidPointsFromMidLineSearch(vector<vector<PointInDirection>> mid_line_directions_clusters, int SEARCH_LINE_CODE)
 {
 
-   for(auto &line_directions: mid_line_directions_clusters_)
+   for(auto &line_directions: mid_line_directions_clusters)
    {
+
        FindValidPoints(line_directions, SEARCH_LINE_CODE);
 
        if(SEARCH_LINE_CODE == MID_TO_RIGHT)
@@ -502,10 +503,12 @@ LineValidationTableCreationReturnInfo LineValidationTableCreation::CreateLineVal
                                                                   0));
     }
 
+
     for(int i=0; i<mid_to_left_search_info_clusters_.size(); i++)
     {
         for(int j=0; j<mid_to_left_search_info_clusters_[i].size(); j++)
         {
+
             mid_line_validation_table_.emplace_back(LineValidationTable(MID_LINE,
                                                                       mid_to_left_search_info_clusters_[i][j].origin,
                                                                       mid_to_left_search_info_clusters_[i][j].search_direction,
@@ -543,6 +546,7 @@ LineValidationTableCreationReturnInfo LineValidationTableCreation::CreateLineVal
                            kMaxDistanceOfPredictedToAdjacentPoint_,
                            LEFT_TO_RIGHT);
 
+
     CheckDistanceFromPredictedToAdjacentPoint(mid_line_validation_table_,
                            left_line_validation_table_,
                            mid_line_validation_table_,
@@ -576,7 +580,9 @@ LineValidationTableCreationReturnInfo LineValidationTableCreation::CreateLineVal
                            RIGHT_TO_MID);
 
 
-    return GetReturnInfo(left_line_validation_table_,mid_line_validation_table_,right_line_validation_table_);
+    line_validation_table_creation_return_info_ = GetReturnInfo(left_line_validation_table_,mid_line_validation_table_,right_line_validation_table_);
+
+    return line_validation_table_creation_return_info_;
 
 }
 
@@ -728,7 +734,7 @@ double LineValidationTableCreation::Distance2d(const Point p1, const Point p2)
 LineValidationTableCreationReturnInfo LineValidationTableCreation::GetReturnInfo(vector<LineValidationTable> left_line_validation_table,
                                                     vector<LineValidationTable> mid_line_validation_table,
                                                     vector<LineValidationTable> right_line_validation_table)
-{
+{/*
     int left_found_both_points_and_predictions = 0;
     int left_found_both_predictions = 0;
     int left_found_mid_prediction = 0;
@@ -736,39 +742,54 @@ LineValidationTableCreationReturnInfo LineValidationTableCreation::GetReturnInfo
     int left_found_both_points = 0;
     int left_found_mid_point = 0;
     int left_found_right_point = 0;
+*/
+    vector<Point> left_found_both_points_and_predictions;
+    vector<Point> left_found_both_predictions;
+    vector<Point> left_found_mid_prediction;
+    vector<Point> left_found_right_prediction;
+    vector<Point> left_found_both_points;
+    vector<Point> left_found_mid_point;
+    vector<Point> left_found_right_point;
 
     for(auto it: left_line_validation_table)
     {
         if(it.GetFoundMidPoint() && it.GetFoundRightPoint() && it.GetMidPrediction() && it.GetRightPrediction())
         {
-            left_found_both_points_and_predictions++;
+            //left_found_both_points_and_predictions++;
+            left_found_both_points_and_predictions.push_back(it.GetOriginPoint());
         }
-        else if(it.GetMidPrediction() && it.GetRightPrediction())
+        if(it.GetMidPrediction() && it.GetRightPrediction())
         {
-            left_found_both_predictions++;
+            //left_found_both_predictions++;
+            left_found_both_predictions.push_back(it.GetOriginPoint());
         }
-        else if(it.GetMidPrediction())
+        if(it.GetMidPrediction())
         {
-            left_found_mid_prediction++;
+            //left_found_mid_prediction++;
+            left_found_mid_prediction.push_back(it.GetOriginPoint());
         }
-        else if(it.GetRightPrediction())
+        if(it.GetRightPrediction())
         {
-            left_found_right_prediction++;
+            //left_found_right_prediction++;
+            left_found_right_prediction.push_back(it.GetOriginPoint());
         }
-        else if(it.GetFoundMidPoint() && it.GetFoundRightPoint())
+        if(it.GetFoundMidPoint() && it.GetFoundRightPoint())
         {
-            left_found_both_points++;
+            //left_found_both_points++;
+            left_found_both_points.push_back(it.GetOriginPoint());
         }
-        else if(it.GetFoundMidPoint())
+        if(it.GetFoundMidPoint())
         {
-            left_found_mid_point++;
+            //left_found_mid_point++;
+            left_found_mid_point.push_back(it.GetOriginPoint());
         }
-        else if(it.GetFoundRightPoint())
+        if(it.GetFoundRightPoint())
         {
-            left_found_right_point++;
+            //left_found_right_point++;
+            left_found_right_point.push_back(it.GetOriginPoint());
         }
     }
-
+/*
     int mid_found_both_points_and_predictions = 0;
     int mid_found_both_predictions = 0;
     int mid_found_left_prediction = 0;
@@ -776,40 +797,55 @@ LineValidationTableCreationReturnInfo LineValidationTableCreation::GetReturnInfo
     int mid_found_both_points = 0;
     int mid_found_left_point = 0;
     int mid_found_right_point = 0;
+  */
+    vector<Point> mid_found_both_points_and_predictions;
+    vector<Point> mid_found_both_predictions;
+    vector<Point> mid_found_left_prediction;
+    vector<Point> mid_found_right_prediction;
+    vector<Point> mid_found_both_points;
+    vector<Point> mid_found_left_point;
+    vector<Point> mid_found_right_point;
+
 
     for(auto it: mid_line_validation_table)
     {
         if(it.GetFoundLeftPoint() && it.GetFoundRightPoint() && it.GetLeftPrediction() && it.GetRightPrediction())
         {
-            mid_found_both_points_and_predictions++;
+            //mid_found_both_points_and_predictions++;
+            mid_found_both_points_and_predictions.push_back(it.GetOriginPoint());
         }
-        else if(it.GetLeftPrediction() && it.GetRightPrediction())
+        if(it.GetLeftPrediction() && it.GetRightPrediction())
         {
-            mid_found_both_predictions++;
+            //mid_found_both_predictions++;
+            mid_found_both_predictions.push_back(it.GetOriginPoint());
         }
-        else if(it.GetLeftPrediction())
+        if(it.GetLeftPrediction())
         {
-            mid_found_left_prediction++;
+            //mid_found_left_prediction++;
+            mid_found_left_prediction.push_back(it.GetOriginPoint());
         }
-        else if(it.GetRightPrediction())
+        if(it.GetRightPrediction())
         {
-            mid_found_right_prediction++;
+            //mid_found_right_prediction++;
+            mid_found_right_prediction.push_back(it.GetOriginPoint());
         }
-        else if(it.GetFoundLeftPoint() && it.GetFoundRightPoint())
+        if(it.GetFoundLeftPoint() && it.GetFoundRightPoint())
         {
-            mid_found_both_points++;
+            //mid_found_both_points++;
+            mid_found_both_points.push_back(it.GetOriginPoint());
         }
-        else if(it.GetFoundLeftPoint())
+        if(it.GetFoundLeftPoint())
         {
-            mid_found_left_point++;
+            //mid_found_left_point++;
+            mid_found_left_point.push_back(it.GetOriginPoint());
         }
-        else if(it.GetFoundRightPoint())
+        if(it.GetFoundRightPoint())
         {
-            mid_found_right_point++;
+            //mid_found_right_point++;
+            mid_found_right_point.push_back(it.GetOriginPoint());
         }
     }
-
-cout << "xxxx" << mid_line_validation_table.size() << endl;
+/*
     int right_found_both_points_and_predictions = 0;
     int right_found_both_predictions = 0;
     int right_found_left_prediction = 0;
@@ -817,36 +853,52 @@ cout << "xxxx" << mid_line_validation_table.size() << endl;
     int right_found_both_points = 0;
     int right_found_left_point = 0;
     int right_found_mid_point = 0;
+*/
+    vector<Point> right_found_both_points_and_predictions;
+    vector<Point> right_found_both_predictions;
+    vector<Point> right_found_left_prediction;
+    vector<Point> right_found_mid_prediction;
+    vector<Point> right_found_both_points;
+    vector<Point> right_found_left_point;
+    vector<Point> right_found_mid_point;
+
 
     for(auto it: right_line_validation_table)
     {
         if(it.GetFoundLeftPoint() && it.GetFoundMidPoint() && it.GetLeftPrediction() && it.GetMidPrediction())
         {
-            right_found_both_points_and_predictions++;
+            //right_found_both_points_and_predictions++;
+            right_found_both_points_and_predictions.push_back(it.GetOriginPoint());
         }
-        else if(it.GetLeftPrediction() && it.GetMidPrediction())
+        if(it.GetLeftPrediction() && it.GetMidPrediction())
         {
-            right_found_both_predictions++;
+            //right_found_both_predictions++;
+            right_found_both_predictions.push_back(it.GetOriginPoint());
         }
-        else if(it.GetLeftPrediction())
+        if(it.GetLeftPrediction())
         {
-            right_found_left_prediction++;
+            //right_found_left_prediction++;
+            right_found_left_prediction.push_back(it.GetOriginPoint());
         }
-        else if(it.GetMidPrediction())
+        if(it.GetMidPrediction())
         {
-            right_found_mid_prediction++;
+            //right_found_mid_prediction++;
+            right_found_mid_prediction.push_back(it.GetOriginPoint());
         }
-        else if(it.GetFoundLeftPoint() && it.GetFoundMidPoint())
+        if(it.GetFoundLeftPoint() && it.GetFoundMidPoint())
         {
-            right_found_both_points++;
+            //right_found_both_points++;
+            right_found_both_points.push_back(it.GetOriginPoint());
         }
-        else if(it.GetFoundLeftPoint())
+        if(it.GetFoundLeftPoint())
         {
-            right_found_left_point++;
+            //right_found_left_point++;
+            right_found_left_point.push_back(it.GetOriginPoint());
         }
-        else if(it.GetFoundMidPoint())
+        if(it.GetFoundMidPoint())
         {
-            right_found_mid_point++;
+            //right_found_mid_point++;
+            right_found_mid_point.push_back(it.GetOriginPoint());
         }
     }
 
@@ -897,23 +949,26 @@ void LineValidationTableCreation::GetLinePointsInDriveDirection(vector<LineValid
 
 
     ExtractLinePointsInDriveDirection(left_line_validation_table_,
-                                      left_line_points_in_drive_direction,
+                                      left_line_points_in_drive_direction_,
                                       kMinStartDirectionOfLinePointsInDriveDirection_,
                                       kMaxStartDirectionOfLinePointsInDriveDirection_,
                                       kMaxDirectionDifferenceOfLinePointsInDriveDirection_);
 
     ExtractLinePointsInDriveDirection(mid_line_validation_table_,
-                                      mid_line_points_in_drive_direction,
+                                      mid_line_points_in_drive_direction_,
                                       kMinStartDirectionOfLinePointsInDriveDirection_,
                                       kMaxStartDirectionOfLinePointsInDriveDirection_,
                                       kMaxDirectionDifferenceOfLinePointsInDriveDirection_);
 
     ExtractLinePointsInDriveDirection(right_line_validation_table_,
-                                      right_line_points_in_drive_direction,
+                                      right_line_points_in_drive_direction_,
                                       kMinStartDirectionOfLinePointsInDriveDirection_,
                                       kMaxStartDirectionOfLinePointsInDriveDirection_,
                                       kMaxDirectionDifferenceOfLinePointsInDriveDirection_);
 
+    left_line_points_in_drive_direction = left_line_points_in_drive_direction_;
+    mid_line_points_in_drive_direction = mid_line_points_in_drive_direction_;
+    right_line_points_in_drive_direction = right_line_points_in_drive_direction_;
 }
 
 
@@ -959,9 +1014,59 @@ void LineValidationTableCreation::ExtractLinePointsInDriveDirection(vector<LineV
 
 
 
+void LineValidationTableCreation::DrawLinePointsInDriveDirection(Mat &rgb)
+{
+
+
+    for(int i=0; i<left_line_points_in_drive_direction_.size(); i++)
+    {
+
+            circle(rgb, left_line_points_in_drive_direction_[i].GetOriginPoint(), 1, Scalar(0, 255, 255),CV_FILLED );
+
+    }
+
+    for(int i=0; i<mid_line_points_in_drive_direction_.size(); i++)
+    {
+
+            circle(rgb, mid_line_points_in_drive_direction_[i].GetOriginPoint(), 1, Scalar(255, 0, 255),CV_FILLED );
+
+    }
+
+    for(int i=0; i<right_line_points_in_drive_direction_.size(); i++)
+    {
+
+            circle(rgb, right_line_points_in_drive_direction_[i].GetOriginPoint(), 1, Scalar(255, 255, 0),CV_FILLED );
+
+    }
+
+}
+
+void LineValidationTableCreation::DrawReturnInfo(Mat &rgb)
+{
 
 
 
+    for(int i=0; i<line_validation_table_creation_return_info_.left_found_both_predictions.size(); i++)
+    {
+
+            circle(rgb, line_validation_table_creation_return_info_.left_found_both_predictions[i], 4, Scalar(0, 255, 255),CV_FILLED );
+
+    }
+
+    for(int i=0; i<line_validation_table_creation_return_info_.mid_found_both_predictions.size(); i++)
+    {
+
+            circle(rgb, line_validation_table_creation_return_info_.mid_found_both_predictions[i], 4, Scalar(255, 0, 255),CV_FILLED );
+
+    }
+
+    for(int i=0; i<line_validation_table_creation_return_info_.right_found_both_predictions.size(); i++)
+    {
+
+            circle(rgb, line_validation_table_creation_return_info_.right_found_both_predictions[i], 4, Scalar(255, 255, 0),CV_FILLED );
+
+    }
+}
 
 /*
 

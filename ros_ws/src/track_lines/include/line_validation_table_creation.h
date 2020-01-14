@@ -105,6 +105,8 @@ private:
     vector<LineValidationTable> right_line_points_in_drive_direction_;
 
 
+    LineValidationTableCreationReturnInfo line_validation_table_creation_return_info_;
+
     void FindValidPoints(vector<PointInDirection> line_directions, int SEARCH_LINE_CODE);
 
     float GetOrthogonalAngle(float angle, int SEARCH_LINE_CODE);
@@ -311,7 +313,7 @@ void FollowTrack(float search_direction, Point rect_mid_point, Mat &rgb);
 
 
     vector<vector<Point>> GetSearchRect(Point rect_mid, float search_direction);
-            const float kSearchRectLength_ = 300;
+            const float kSearchRectWidth_ = 300;
     void GetLinesPointsInRect( vector<LineValidationTable> line_direction_in_range_, vector<vector<Point>> contours, vector<int>& line_points_in_rect_id,vector<LineValidationTable>& line_points_in_rect_);
         vector<int> left_line_points_in_rect_ids_;
         vector<int> mid_line_points_in_rect_ids_;
@@ -338,16 +340,16 @@ void FollowTrack(float search_direction, Point rect_mid_point, Mat &rgb);
         //void ExtractMinMaxLineElements( vector<LineValidationTableCreation>  line,  MinMaxLineElements& line_minmax_elements );
         const int kMinYDistanceInRect_ = 15;
         const int kMinStraightDifferenceForStraightLineInRect_ = 15;
-        const int kRectBorderDistanceThreshold_ = 10;
+        const int kRectBorderDistanceThresholdForContinousLine_ = 10;
         void EmtpySafetyTable(RectSafetyTable& rect_safety);
 
-    void GatherRectSafetyInfo(vector<TrackSafetyRect>& track_safety_rects_ ,float search_direction, Point rect_mid_point );
+    void GatherSafeDriveAreaEvaluationTableReturInfo(vector<SafeDriveAreaEvaluationReturnInfo>& safe_drive_area_evaluation_return_info_vector_ ,float search_direction, Point rect_mid_point );
         //Include in class
         int CountDigits(unsigned long long int n);
         void GetSafestTables(vector<LineValidationTable>& safest_table1 , vector<LineValidationTable>& safest_table2, vector<vector<LineValidationTable>> priority_table, unsigned long long int SCORE);
-        vector<TrackSafetyRect> track_safety_rects_;
+        vector<SafeDriveAreaEvaluationReturnInfo> safe_drive_area_evaluation_return_info_vector_;
 
-    void FindNewSearchDirection(vector<TrackSafetyRect> track_safety_rects_,float& search_direction);
+    void FindNewSearchDirection(vector<SafeDriveAreaEvaluationReturnInfo> safe_drive_area_evaluation_return_info_vector_,float& search_direction);
         //safest direction questionable
         void GetSafestDirections(vector<LineValidationTable> safest_table1,vector<LineValidationTable> safest_table2, vector<pair<int,float>>& safest_line_directions1, vector<pair<int,float>>& safest_line_directions2);
 
@@ -394,7 +396,8 @@ public:
                                                vector<LineValidationTable> &mid_line_points_in_drive_direction,
                                                vector<LineValidationTable> &right_line_points_in_drive_direction);
 
-
+    void DrawLinePointsInDriveDirection(Mat &rgb);
+    void DrawReturnInfo(Mat &rgb);
 /*
     void ValidateTrack(Mat &rgb);
 

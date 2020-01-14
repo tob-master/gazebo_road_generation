@@ -1,55 +1,226 @@
 #include "safe_drive_area_evaluation.h"
-/*
-SafeDriveAreaEvaluation::SafeDriveAreaEvaluation()
+
+
+
+SafeDriveAreaEvaluation::SafeDriveAreaEvaluation(
+int image_height,
+int image_width,
+SafeDriveAreaEvaluationInitializationParameters init):
+kImageHeight_(image_height),
+kImageWidth_(image_width),
+kSearchRectWidth_(init.search_rect_width),
+kSearchRectHeight_(init.search_rect_height),
+kStartMidPointOfRectSafety_(init.start_of_rect_safety_x,init.start_of_rect_safety_y),
+kStartSearchDirectionOfRectSafety_(init.start_search_direction_of_rect_safety),
+kRectBorderDistanceThresholdForContinousLine_(init.rect_border_distance_threshold_for_continous_line),
+kRectStepLength_(init.rect_step_length)
 {
 
 }
-*/
 
-//FollowTrack(kStartSearchDirectionOfRectSafety_,kStartMidPointOfRectSafety_, rgb);
-
-void SafeDriveAreaEvaluation::ClearAllFollowTrackTables()
-{
-    left_line_points_in_rect_ids_.clear();
-    mid_line_points_in_rect_ids_.clear();
-    right_line_points_in_rect_ids_.clear();
-
-    left_line_points_in_rect_.clear();
-    mid_line_points_in_rect_.clear();
-    right_line_points_in_rect_.clear();
-
-    for(auto &it: left_priority_ids_) it.clear();
-    for(auto &it: mid_priority_ids_) it.clear();
-    for(auto &it: right_priority_ids_) it.clear();
-
-    for(auto &it: left_priority_table_) it.clear();
-    for(auto &it: mid_priority_table_) it.clear();
-    for(auto &it: right_priority_table_) it.clear();
-
-    EmtpySafetyTable(left_line_rect_safety_);
-    EmtpySafetyTable(mid_line_rect_safety_);
-    EmtpySafetyTable(right_line_rect_safety_);
-}
-
-void SafeDriveAreaEvaluation::EvaluateTrackInDriveDirection()
-{
-    FollowTrack(kStartSearchDirectionOfRectSafety_,kStartMidPointOfRectSafety_);
-}
-
-
-
-void SafeDriveAreaEvaluation::LoadLinePointsInDriveDirection(vector<LineValidationTable> left_line_in_drive_direction_table,vector<LineValidationTable>mid_line_in_drive_direction_table,vector<LineValidationTable>right_line_in_drive_direction_table)
+void SafeDriveAreaEvaluation::LoadLinePointsInDriveDirection(
+vector<LineValidationTable> left_line_in_drive_direction_table,
+vector<LineValidationTable>mid_line_in_drive_direction_table,
+vector<LineValidationTable>right_line_in_drive_direction_table)
 {
     left_line_in_drive_direction_table_ = left_line_in_drive_direction_table;
     mid_line_in_drive_direction_table_ = mid_line_in_drive_direction_table;
     right_line_in_drive_direction_table_ = right_line_in_drive_direction_table;
 }
 
-vector<vector<Point>> SafeDriveAreaEvaluation::GetSearchRect(Point rect_mid, float search_direction)
+vector<SafeDriveAreaEvaluationReturnInfo> SafeDriveAreaEvaluation::EvaluateTrackInDriveDirection()
+{
+    FollowTrack(
+    kStartSearchDirectionOfRectSafety_,
+    kStartMidPointOfRectSafety_,
+    kSearchRectWidth_,
+    kSearchRectHeight_);
+
+    return safe_drive_area_evaluation_return_info_vector_;
+}
+
+void SafeDriveAreaEvaluation::FollowTrack(
+float search_direction,
+Point rect_mid_point,
+const int kSearchRectLength,
+const int kSearchRectHeight)
 {
 
-    float rect_length_radius = kSearchRectLength_ / 2;
-    float rect_height_radius = kSearchRectHeight_ / 2;
+    ClearAllFollowTrackTables(
+    left_line_points_in_rect_ids_,
+    mid_line_points_in_rect_ids_,
+    right_line_points_in_rect_ids_,
+    left_line_points_in_rect_,
+    mid_line_points_in_rect_,
+    right_line_points_in_rect_,
+    left_priority_ids_,
+    mid_priority_ids_,
+    right_priority_ids_,
+    left_priority_table_,
+    mid_priority_table_,
+    right_priority_table_,
+    left_line_rect_safety_,
+    mid_line_rect_safety_,
+    right_line_rect_safety_);
+
+    vector<vector<Point>> search_rect = GetSearchRect(
+                                        rect_mid_point,
+                                        search_direction,
+                                        kSearchRectLength,
+                                        kSearchRectHeight);
+
+    GetLinesPointsInRect(
+    left_line_in_drive_direction_table_,
+    search_rect,
+    left_line_points_in_rect_ids_,
+    left_line_points_in_rect_);
+
+    GetLinesPointsInRect(
+    mid_line_in_drive_direction_table_,
+    search_rect,
+    mid_line_points_in_rect_ids_,
+    mid_line_points_in_rect_);
+
+    GetLinesPointsInRect(
+    right_line_in_drive_direction_table_,
+    search_rect,
+    right_line_points_in_rect_ids_,
+    right_line_points_in_rect_);
+
+    FillPriorityTables(
+    left_line_in_drive_direction_table_,
+    left_line_points_in_rect_ids_,
+    mid_line_in_drive_direction_table_,
+    mid_line_points_in_rect_ids_,
+    right_line_in_drive_direction_table_,
+    right_line_points_in_rect_ids_,
+    left_priority_table_,
+    mid_priority_table_,
+    right_priority_table_,
+    left_priority_ids_,
+    mid_priority_ids_,
+    right_priority_ids_);
+
+    CheckRectSafety(
+    search_rect,
+    left_line_points_in_rect_,
+    left_priority_table_,
+    left_line_rect_safety_,
+    kSearchRectHeight,
+    kRectBorderDistanceThresholdForContinousLine_);
+
+    CheckRectSafety(
+    search_rect,
+    mid_line_points_in_rect_,
+    mid_priority_table_,
+    mid_line_rect_safety_,
+    kSearchRectHeight,
+    kRectBorderDistanceThresholdForContinousLine_);
+
+    CheckRectSafety(
+    search_rect,
+    right_line_points_in_rect_,
+    right_priority_table_,
+    right_line_rect_safety_,
+    kSearchRectHeight,
+    kRectBorderDistanceThresholdForContinousLine_);
+
+    GatherSafeDriveAreaEvaluationTableReturInfo(left_priority_table_,
+    mid_priority_table_,
+    right_priority_table_,
+    left_line_rect_safety_,
+    mid_line_rect_safety_,
+    right_line_rect_safety_,
+    safe_drive_area_evaluation_return_info_vector_,
+    search_direction,
+    rect_mid_point,
+    priority_0_multiplier_,
+    priority_1_2_multiplier_,
+    priority_3_4_multiplier_,
+    priority_5_multiplier_,
+    priority_6_7_multiplier_);
+
+    float new_search_direction = -1;
+
+    GetNewSearchDirection(
+    safe_drive_area_evaluation_return_info_vector_,
+    new_search_direction);
+
+    if(new_search_direction == -1)
+    {new_search_direction = search_direction;}
+
+    Point new_rect_mid_point;
+
+    GetNewRectMidPoint(
+    new_search_direction,
+    rect_mid_point,
+    new_rect_mid_point,
+    kRectStepLength_);
+
+    if(RectMidPointOutOfImage(
+      new_rect_mid_point,
+      kImageWidth_,
+      kImageHeight_))
+    {return;}
+
+    FollowTrack(
+    new_search_direction,
+    new_rect_mid_point,
+    kSearchRectLength,
+    kSearchRectHeight);
+
+}
+
+
+
+void SafeDriveAreaEvaluation::ClearAllFollowTrackTables(
+vector<int> &left_line_points_in_rect_ids,
+vector<int> &mid_line_points_in_rect_ids,
+vector<int> &right_line_points_in_rect_ids,
+vector<LineValidationTable> &left_line_points_in_rect,
+vector<LineValidationTable> &mid_line_points_in_rect,
+vector<LineValidationTable> &right_line_points_in_rect,
+vector<vector<int>> &left_priority_ids,
+vector<vector<int>> &mid_priority_ids,
+vector<vector<int>> &right_priority_ids,
+vector<vector<LineValidationTable>> &left_priority_table,
+vector<vector<LineValidationTable>> &mid_priority_table,
+vector<vector<LineValidationTable>> &right_priority_table,
+RectSafetyTable &left_line_rect_safety,
+RectSafetyTable &mid_line_rect_safety,
+RectSafetyTable &right_line_rect_safety)
+{
+    left_line_points_in_rect_ids.clear();
+    mid_line_points_in_rect_ids.clear();
+    right_line_points_in_rect_ids.clear();
+
+    left_line_points_in_rect.clear();
+    mid_line_points_in_rect.clear();
+    right_line_points_in_rect.clear();
+
+    for(auto &it: left_priority_ids) it.clear();
+    for(auto &it: mid_priority_ids) it.clear();
+    for(auto &it: right_priority_ids) it.clear();
+
+    for(auto &it: left_priority_table) it.clear();
+    for(auto &it: mid_priority_table) it.clear();
+    for(auto &it: right_priority_table) it.clear();
+
+    EmtpySafetyTable(left_line_rect_safety);
+    EmtpySafetyTable(mid_line_rect_safety);
+    EmtpySafetyTable(right_line_rect_safety);
+}
+
+
+vector<vector<Point>> SafeDriveAreaEvaluation::GetSearchRect(
+Point rect_mid,
+float search_direction,
+const int kSearchRectLength,
+const int kSearchRectHeight)
+{
+
+    float rect_length_radius = kSearchRectLength / 2;
+    float rect_height_radius = kSearchRectHeight / 2;
 
     int length_to_corner = sqrt(pow(rect_length_radius,2)+pow(rect_height_radius,2));
     int corner_angle = 90 - atan(rect_height_radius/rect_length_radius) * 180/PI;
@@ -92,8 +263,6 @@ vector<vector<Point>> SafeDriveAreaEvaluation::GetSearchRect(Point rect_mid, flo
     int rect_bottom_right_y_offset = -length_to_corner * sin(rect_bottom_right_angle_f);
     Point rect_bottom_right(rect_mid.x + rect_bottom_right_x_offset, rect_mid.y + rect_bottom_right_y_offset);
 
-
-
     vector<vector<Point>> contours(1);
 
     contours[0].push_back(rect_top_left);
@@ -101,24 +270,50 @@ vector<vector<Point>> SafeDriveAreaEvaluation::GetSearchRect(Point rect_mid, flo
     contours[0].push_back(rect_bottom_left);
     contours[0].push_back(rect_bottom_right);
 
-
-
     return contours;
 }
 
-void SafeDriveAreaEvaluation::FillPriorityTables(vector<LineValidationTable>& left_line_in_drive_direction_table_,
-                                              vector<int> left_line_points_in_rect_ids_,
-                                              vector<LineValidationTable>& mid_line_in_drive_direction_table_,
-                                              vector<int> mid_line_points_in_rect_ids_,
-                                              vector<LineValidationTable>& right_line_in_drive_direction_table_,
-                                              vector<int> right_line_points_in_rect_ids_)
+void SafeDriveAreaEvaluation::GetLinesPointsInRect(
+vector<LineValidationTable> line_direction_in_range,
+vector<vector<Point>> contours,
+vector<int>& line_points_in_rect_id,
+vector<LineValidationTable>& line_points_in_rect)
+{
+    for(int i=0; i<line_direction_in_range.size(); i++)
+    {
+        Point origin = line_direction_in_range[i].GetOriginPoint();
+        double res = pointPolygonTest(contours[0], origin, false);
+        if(res>=0)
+        {
+            line_points_in_rect_id.push_back(i);
+
+
+            line_points_in_rect.push_back(line_direction_in_range[i]);
+
+        }
+    }
+}
+
+
+void SafeDriveAreaEvaluation::FillPriorityTables(
+vector<LineValidationTable> left_line_in_drive_direction_table,
+vector<int> left_line_points_in_rect_ids,
+vector<LineValidationTable> mid_line_in_drive_direction_table,
+vector<int> mid_line_points_in_rect_ids,
+vector<LineValidationTable> right_line_in_drive_direction_table,
+vector<int> right_line_points_in_rect_ids,
+vector<vector<LineValidationTable>> &left_priority_table,
+vector<vector<LineValidationTable>> &mid_priority_table,
+vector<vector<LineValidationTable>> &right_priority_table,
+vector<vector<int>> &left_priority_ids,
+vector<vector<int>> &mid_priority_ids,
+vector<vector<int>> &right_priority_ids)
 {
 
 
-    for(int i=0; i<left_line_points_in_rect_ids_.size(); i++)
+    for(int i=0; i<left_line_points_in_rect_ids.size(); i++)
     {
-        LineValidationTable left_table = left_line_in_drive_direction_table_[left_line_points_in_rect_ids_[i]];
-
+        LineValidationTable left_table = left_line_in_drive_direction_table[left_line_points_in_rect_ids[i]];
 
         bool found_mid_point = left_table.GetFoundMidPoint();
         bool mid_prediction  = left_table.GetMidPrediction();
@@ -127,24 +322,24 @@ void SafeDriveAreaEvaluation::FillPriorityTables(vector<LineValidationTable>& le
         bool left_to_mid_directions_in_range = left_table.GetLeftToMidDirectionsInRange();
         bool left_to_right_directions_in_range = left_table.GetLeftToRightDirectionsInRange();
 
-        /*
-        if(found_mid_point) left_to_mid_found_count++;
-        if(mid_prediction) left_to_mid_true_prediction_count++;
-        if(found_right_point) left_to_right_found_count++;
-        if(right_prediction) left_to_right_true_prediction_count++;
-        if(left_to_mid_directions_in_range) left_to_mid_directions_in_range_count++;
-        if(left_to_right_directions_in_range) left_to_right_directions_in_range_count++;
-        */
-
-        FillPriorityTable(left_table,i,found_mid_point,found_right_point,mid_prediction,right_prediction,
-                          left_to_mid_directions_in_range,left_to_right_directions_in_range,left_priority_ids_,left_priority_table_);
+        FillPriorityTable(
+        left_table,
+        i,
+        found_mid_point,
+        found_right_point,
+        mid_prediction,
+        right_prediction,
+        left_to_mid_directions_in_range,
+        left_to_right_directions_in_range,
+        left_priority_ids,
+        left_priority_table);
 
     }
 
-    for(int i=0; i<mid_line_points_in_rect_ids_.size(); i++)
+    for(int i=0; i<mid_line_points_in_rect_ids.size(); i++)
     {
 
-        LineValidationTable mid_table = mid_line_in_drive_direction_table_[mid_line_points_in_rect_ids_[i]];
+        LineValidationTable mid_table = mid_line_in_drive_direction_table[mid_line_points_in_rect_ids[i]];
 
         bool found_left_point = mid_table.GetFoundLeftPoint();
         bool left_prediction  = mid_table.GetLeftPrediction();
@@ -152,21 +347,22 @@ void SafeDriveAreaEvaluation::FillPriorityTables(vector<LineValidationTable>& le
         bool right_prediction = mid_table.GetRightPrediction();
         bool mid_to_left_directions_in_range = mid_table.GetMidToLeftDirectionsInRange();
         bool mid_to_right_directions_in_range = mid_table.GetMidToRightDirectionsInRange();
-        /*
-        if(found_left_point) mid_to_left_found_count++;
-        if(left_prediction) mid_to_left_true_prediction_count++;
-        if(found_right_point) mid_to_right_found_count++;
-        if(right_prediction) mid_to_right_true_prediction_count++;
-        if(mid_to_left_directions_in_range) mid_to_left_directions_in_range_count++;
-        if(mid_to_right_directions_in_range) mid_to_right_directions_in_range_count++;
-        */
 
-        FillPriorityTable(mid_table,i,found_left_point,found_right_point,left_prediction,right_prediction,mid_to_left_directions_in_range,mid_to_right_directions_in_range,mid_priority_ids_,mid_priority_table_);
+        FillPriorityTable(
+        mid_table,
+        i,
+        found_left_point,
+        found_right_point,
+        left_prediction,right_prediction,
+        mid_to_left_directions_in_range,
+        mid_to_right_directions_in_range,
+        mid_priority_ids,
+        mid_priority_table);
     }
 
-    for(int i=0; i<right_line_points_in_rect_ids_.size(); i++)
+    for(int i=0; i<right_line_points_in_rect_ids.size(); i++)
     {
-       LineValidationTable right_table =  right_line_in_drive_direction_table_[right_line_points_in_rect_ids_[i]];
+       LineValidationTable right_table =  right_line_in_drive_direction_table[right_line_points_in_rect_ids[i]];
 
        bool found_left_point = right_table.GetFoundLeftPoint();
        bool left_prediction  = right_table.GetLeftPrediction();
@@ -175,31 +371,38 @@ void SafeDriveAreaEvaluation::FillPriorityTables(vector<LineValidationTable>& le
        bool right_to_left_directions_in_range = right_table.GetRightToLeftDirectionsInRange();
        bool right_to_mid_directions_in_range = right_table.GetRightToMidDirectionsInRange();
 
-       /*
-       if(found_left_point) right_to_left_found_count++;
-       if(left_prediction) right_to_left_true_prediction_count++;
-       if(found_mid_point) right_to_mid_found_count++;
-       if(mid_prediction) right_to_mid_true_prediction_count++;
-       if(right_to_left_directions_in_range) right_to_left_directions_in_range_count++;
-       if(right_to_mid_directions_in_range) right_to_mid_directions_in_range++;
-        */
-       FillPriorityTable(right_table,i,found_left_point,found_mid_point,left_prediction,mid_prediction,right_to_left_directions_in_range,right_to_mid_directions_in_range,right_priority_ids_,right_priority_table_);
+       FillPriorityTable(
+        right_table,
+        i,
+        found_left_point,found_mid_point,
+        left_prediction,
+        mid_prediction,
+        right_to_left_directions_in_range,
+        right_to_mid_directions_in_range,
+        right_priority_ids,
+        right_priority_table);
 
     }
-
-
-
-
 }
 
-void SafeDriveAreaEvaluation::FillPriorityTable(LineValidationTable table, int i, bool found_point1,bool found_point2,bool prediction1,bool prediction2,
-                                             bool directions_in_range1, bool directions_in_range2, vector<vector<int>>& priority_ids,vector<vector<LineValidationTable>>& priority_table)
+
+void SafeDriveAreaEvaluation::FillPriorityTable(
+LineValidationTable table,
+int i,
+bool found_point1,
+bool found_point2,
+bool prediction1,
+bool prediction2,
+bool directions_in_range1,
+bool directions_in_range2,
+vector<vector<int>>& priority_ids,
+vector<vector<LineValidationTable>>& priority_table)
 {
 
     if(prediction1 && prediction2)
     {
-        priority_ids[2].push_back(i);
-        priority_table[2].push_back(table);
+        priority_ids[0].push_back(i);
+        priority_table[0].push_back(table);
         return;
     }
 
@@ -208,14 +411,14 @@ void SafeDriveAreaEvaluation::FillPriorityTable(LineValidationTable table, int i
     {
         if(prediction1 && found_point2 )
         {
-            priority_ids[7].push_back(i);
-            priority_table[7].push_back(table);
+            priority_ids[1].push_back(i);
+            priority_table[1].push_back(table);
         }
 
         if (prediction2 && found_point1)
         {
-            priority_ids[8].push_back(i);
-            priority_table[8].push_back(table);
+            priority_ids[2].push_back(i);
+            priority_table[2].push_back(table);
         }
 
         return;
@@ -226,14 +429,14 @@ void SafeDriveAreaEvaluation::FillPriorityTable(LineValidationTable table, int i
     {
         if(prediction1)
         {
-            priority_ids[9].push_back(i);
-            priority_table[9].push_back(table);
+            priority_ids[3].push_back(i);
+            priority_table[3].push_back(table);
         }
 
         if(prediction2)
         {
-            priority_ids[10].push_back(i);
-            priority_table[10].push_back(table);
+            priority_ids[4].push_back(i);
+            priority_table[4].push_back(table);
         }
 
         return;
@@ -242,8 +445,8 @@ void SafeDriveAreaEvaluation::FillPriorityTable(LineValidationTable table, int i
 
     if(found_point1 && found_point2)
     {
-        priority_ids[11].push_back(i);
-        priority_table[11].push_back(table);
+        priority_ids[5].push_back(i);
+        priority_table[5].push_back(table);
         return;
     }
 
@@ -252,272 +455,629 @@ void SafeDriveAreaEvaluation::FillPriorityTable(LineValidationTable table, int i
     {
         if(found_point1)
         {
-            priority_ids[12].push_back(i);
-            priority_table[12].push_back(table);
+            priority_ids[6].push_back(i);
+            priority_table[6].push_back(table);
         }
 
         if(found_point2)
         {
-            priority_ids[13].push_back(i);
-            priority_table[13].push_back(table);
+            priority_ids[7].push_back(i);
+            priority_table[7].push_back(table);
         }
 
         return;
     }
-
-
-
     return;
-
-
 }
 
 
-void SafeDriveAreaEvaluation::GatherRectSafetyInfo(vector<TrackSafetyRect>& track_safety_rects_,float search_direction, Point rect_mid_point )
+void SafeDriveAreaEvaluation::CheckRectSafety(
+vector<vector<Point>> search_rect,
+vector<LineValidationTable>line_points_in_rect,
+vector<vector<LineValidationTable>> priority_table,
+RectSafetyTable& rect_safety,
+const int kSearchRectHeight,
+const int kRectBorderDistanceThreshold)
 {
-    bool left_too_few_points_in_rect = left_line_rect_safety_.too_few_points_in_rect;
-    bool mid_too_few_points_in_rect = mid_line_rect_safety_.too_few_points_in_rect;
-    bool right_too_few_points_in_rect = right_line_rect_safety_.too_few_points_in_rect;
+    if(line_points_in_rect.size()>0)
+    {
+        float all_percent_found = (line_points_in_rect.size() / kSearchRectHeight) * 100;
 
-    bool left_y_min_in_rect_border_range = left_line_rect_safety_.y_min_in_rect_border_range;
-    bool mid_y_min_in_rect_border_range = mid_line_rect_safety_.y_min_in_rect_border_range;
-    bool right_y_min_in_rect_border_range = right_line_rect_safety_.y_min_in_rect_border_range;
+        float line_points_count = 0;
 
-    bool left_y_max_in_rect_border_range = left_line_rect_safety_.y_max_in_rect_border_range;
-    bool mid_y_max_in_rect_border_range = mid_line_rect_safety_.y_max_in_rect_border_range;
-    bool right_y_max_in_rect_border_range = right_line_rect_safety_.y_max_in_rect_border_range;
+        if(line_points_in_rect.size() > kSearchRectHeight)
+        {
+            line_points_count = line_points_in_rect.size();
+        }
+        else {
+
+            line_points_count = kSearchRectHeight;
+        }
+
+        float prio_0_percent_found = (priority_table[0].size() / line_points_count) * 100;
+        float prio_1_percent_found = (priority_table[1].size() / line_points_count) * 100;
+        float prio_2_percent_found = (priority_table[2].size() / line_points_count) * 100;
+        float prio_3_percent_found = (priority_table[3].size() / line_points_count) * 100;
+        float prio_4_percent_found = (priority_table[4].size() / line_points_count) * 100;
+        float prio_5_percent_found = (priority_table[5].size() / line_points_count) * 100;
+        float prio_6_percent_found = (priority_table[6].size() / line_points_count) * 100;
+        float prio_7_percent_found = (priority_table[7].size() / line_points_count) * 100;
+
+        MinMaxLineElements rect_min_max;
+
+        ExtractMinMaxLineElements(
+        line_points_in_rect,
+        rect_min_max );
+
+        Point x_min = rect_min_max.x_min;
+        Point y_min = rect_min_max.y_min;
+        Point x_max = rect_min_max.x_max;
+        Point y_max = rect_min_max.y_max;
+
+
+        double res = 0;
+
+        bool y_min_in_rect_border_range = false;
+        bool y_max_in_rect_border_range = false;
+
+        res = pointPolygonTest(
+              search_rect[0],
+              y_min,
+              true);
+
+        if(res>=0 && res < kRectBorderDistanceThreshold)
+        {
+            y_min_in_rect_border_range = true;
+        }
+
+        res = pointPolygonTest(
+              search_rect[0],
+              y_max,
+              true);
+
+        if(res>=0 && res < kRectBorderDistanceThreshold)
+        {
+            y_max_in_rect_border_range = true;
+
+        }
+
+        rect_safety.percent_points_with_priority_0 = prio_0_percent_found;
+        rect_safety.percent_points_with_priority_1 = prio_1_percent_found;
+        rect_safety.percent_points_with_priority_2 = prio_2_percent_found;
+        rect_safety.percent_points_with_priority_3 = prio_3_percent_found;
+        rect_safety.percent_points_with_priority_4 = prio_4_percent_found;
+        rect_safety.percent_points_with_priority_5 = prio_5_percent_found;
+        rect_safety.percent_points_with_priority_6 = prio_6_percent_found;
+        rect_safety.percent_points_with_priority_7 = prio_7_percent_found;
+
+        rect_safety.percent_points_in_rect = all_percent_found;
+
+        rect_safety.y_min_in_rect_border_range = y_min_in_rect_border_range;
+        rect_safety.y_max_in_rect_border_range = y_max_in_rect_border_range;
+    }
+    else{
+        EmtpySafetyTable(
+        rect_safety);
+    }
+
+}
+
+void SafeDriveAreaEvaluation::GatherSafeDriveAreaEvaluationTableReturInfo(
+vector<vector<LineValidationTable>> left_priority_table,
+vector<vector<LineValidationTable>> mid_priority_table,
+vector<vector<LineValidationTable>> right_priority_table,
+RectSafetyTable left_line_rect_safety,
+RectSafetyTable mid_line_rect_safety,
+RectSafetyTable right_line_rect_safety,
+vector<SafeDriveAreaEvaluationReturnInfo>& SafeDriveAreaEvaluationReturnInfoVector_,
+const float search_direction,
+const Point rect_mid_point,
+const long int priority_0_multiplier,
+const long int priority_1_2_multiplier,
+const int priority_3_4_multiplier,
+const int priority_5_multiplier,
+const int priority_6_7_multiplier)
+{
+
 
     bool left_line_is_safe = false;
     bool mid_line_is_safe = false;
     bool right_line_is_safe = false;
 
-    if(
-            !left_too_few_points_in_rect &&
-            left_y_min_in_rect_border_range &&
-            left_y_max_in_rect_border_range) left_line_is_safe = true;
+    if(!left_line_rect_safety.too_few_points_in_rect &&
+       left_line_rect_safety.y_min_in_rect_border_range &&
+       left_line_rect_safety.y_max_in_rect_border_range)
+    {
+        left_line_is_safe = true;
+    }
 
-    if(
-            !mid_too_few_points_in_rect &&
-            mid_y_min_in_rect_border_range &&
-            mid_y_max_in_rect_border_range) mid_line_is_safe = true;
+    if(!mid_line_rect_safety.too_few_points_in_rect &&
+       mid_line_rect_safety.y_min_in_rect_border_range &&
+       mid_line_rect_safety.y_max_in_rect_border_range)
+    {
+        mid_line_is_safe = true;
+    }
 
-    if(
-            !right_too_few_points_in_rect &&
-            right_y_min_in_rect_border_range &&
-            right_y_max_in_rect_border_range) right_line_is_safe = true;
+    if(!right_line_rect_safety.too_few_points_in_rect &&
+       right_line_rect_safety.y_min_in_rect_border_range &&
+       right_line_rect_safety.y_max_in_rect_border_range)
+    {
+        right_line_is_safe = true;
+    }
 
+    int left_score_priority_0 = ceil(left_line_rect_safety.percent_points_with_priority_0);
+    int mid_score_priority_0 = ceil(mid_line_rect_safety.percent_points_with_priority_0);
+    int right_score_priority_0 = ceil(right_line_rect_safety.percent_points_with_priority_0);
 
-    int L2 = ceil(left_line_rect_safety_.percent_points_with_priority_2);
-    int M2 = ceil(mid_line_rect_safety_.percent_points_with_priority_2);
-    int R2 = ceil(right_line_rect_safety_.percent_points_with_priority_2);
+    int left_score_priority_1 = ceil(left_line_rect_safety.percent_points_with_priority_1);
+    int mid_score_priority_1 = ceil(mid_line_rect_safety.percent_points_with_priority_1);
+    int right_score_priority_1 = ceil(right_line_rect_safety.percent_points_with_priority_1);
 
-    int L7 = ceil(left_line_rect_safety_.percent_points_with_priority_7);
-    int M7 = ceil(mid_line_rect_safety_.percent_points_with_priority_7);
-    int R7 = ceil(right_line_rect_safety_.percent_points_with_priority_7);
+    int left_score_priority_2 = ceil(left_line_rect_safety.percent_points_with_priority_2);
+    int mid_score_priority_2 = ceil(mid_line_rect_safety.percent_points_with_priority_2);
+    int right_score_priority_2 = ceil(right_line_rect_safety.percent_points_with_priority_2);
 
-    int L8 = ceil(left_line_rect_safety_.percent_points_with_priority_8);
-    int M8 = ceil(mid_line_rect_safety_.percent_points_with_priority_8);
-    int R8 = ceil(right_line_rect_safety_.percent_points_with_priority_8);
+    int left_score_priority_3 =ceil( left_line_rect_safety.percent_points_with_priority_3);
+    int mid_score_priority_3 = ceil(mid_line_rect_safety.percent_points_with_priority_3);
+    int right_score_priority_3 = ceil(right_line_rect_safety.percent_points_with_priority_3);
 
-    int L9 =ceil( left_line_rect_safety_.percent_points_with_priority_9);
-    int M9 = ceil(mid_line_rect_safety_.percent_points_with_priority_9);
-    int R9 = ceil(right_line_rect_safety_.percent_points_with_priority_9);
+    int left_score_priority_4 = ceil(left_line_rect_safety.percent_points_with_priority_4);
+    int mid_score_priority_4 = ceil(mid_line_rect_safety.percent_points_with_priority_4);
+    int right_score_priority_4 = ceil(right_line_rect_safety.percent_points_with_priority_4);
 
-    int L10 = ceil(left_line_rect_safety_.percent_points_with_priority_10);
-    int M10 = ceil(mid_line_rect_safety_.percent_points_with_priority_10);
-    int R10 = ceil(right_line_rect_safety_.percent_points_with_priority_10);
+    int left_score_priority_5 = ceil(left_line_rect_safety.percent_points_with_priority_5);
+    int mid_score_priority_5 = ceil(mid_line_rect_safety.percent_points_with_priority_5);
+    int right_score_priority_5 = ceil(left_line_rect_safety.percent_points_with_priority_5);
 
-    int L11 = ceil(left_line_rect_safety_.percent_points_with_priority_11);
-    int M11 = ceil(mid_line_rect_safety_.percent_points_with_priority_11);
-    int R11 = ceil(left_line_rect_safety_.percent_points_with_priority_11);
+    int left_score_priority_6 = ceil(left_line_rect_safety.percent_points_with_priority_6);
+    int mid_score_priority_6 = ceil(mid_line_rect_safety.percent_points_with_priority_6);
+    int right_score_priority_6 = ceil(right_line_rect_safety.percent_points_with_priority_6);
 
-    int L12 = ceil(left_line_rect_safety_.percent_points_with_priority_12);
-    int M12 = ceil(mid_line_rect_safety_.percent_points_with_priority_12);
-    int R12 = ceil(right_line_rect_safety_.percent_points_with_priority_12);
+    int left_score_priority_7 = ceil(left_line_rect_safety.percent_points_with_priority_7);
+    int mid_score_priority_7 = ceil(mid_line_rect_safety.percent_points_with_priority_7);
+    int right_score_priority_7 = ceil(right_line_rect_safety.percent_points_with_priority_7);
 
-    int L13 = ceil(left_line_rect_safety_.percent_points_with_priority_13);
-    int M13 = ceil(mid_line_rect_safety_.percent_points_with_priority_13);
-    int R13 = ceil(right_line_rect_safety_.percent_points_with_priority_13);
+    unsigned long long int left_line_score = 0;
+    unsigned long long int mid_line_score = 0;
+    unsigned long long int right_line_score = 0;
+    unsigned long long int trackscore = 0;
 
-    unsigned long long int LSCORE = 0;
-    unsigned long long int MSCORE = 0;
-    unsigned long long int RSCORE = 0;
-    unsigned long long int TRACKSCORE = 0;
+    left_line_score += (left_score_priority_0<100)  ?  left_score_priority_0* priority_0_multiplier : 99* priority_0_multiplier;
+    left_line_score += (left_score_priority_1<100)  ?  left_score_priority_1* priority_1_2_multiplier : 99* priority_1_2_multiplier;
+    left_line_score += (left_score_priority_2<100)  ?  left_score_priority_2* priority_1_2_multiplier : 99* priority_1_2_multiplier;
+    left_line_score += (left_score_priority_3<100)  ?  left_score_priority_3* priority_3_4_multiplier : 99* priority_3_4_multiplier;
+    left_line_score += (left_score_priority_4<100) ? left_score_priority_4*priority_3_4_multiplier : 99*priority_3_4_multiplier;
+    left_line_score += (left_score_priority_5<100) ? left_score_priority_5*priority_5_multiplier : 99*priority_5_multiplier;
+    left_line_score += (left_score_priority_6<100) ? left_score_priority_6*priority_6_7_multiplier : 99*priority_6_7_multiplier;
+    left_line_score += (left_score_priority_7<100) ? left_score_priority_7*priority_6_7_multiplier : 99*priority_6_7_multiplier;
 
-    //long long int METRIC_CONTINOUS_VAL = 10000000000;
-    long int METRIC_2_VAL =  100000000;
-    long int METRIC_7_VAL =  1000000;
-    int METRIC_8_VAL =  1000000;
-    int METRIC_9_VAL =  10000;
-    int METRIC_10_VAL = 10000;
-    int METRIC_11_VAL = 100;
-    int METRIC_12_VAL = 1;
-    int METRIC_13_VAL = 1;
+    mid_line_score += (mid_score_priority_0<100)  ?  mid_score_priority_0* priority_0_multiplier : 99* priority_0_multiplier;
+    mid_line_score += (mid_score_priority_1<100)  ?  mid_score_priority_1* priority_1_2_multiplier : 99* priority_1_2_multiplier;
+    mid_line_score += (mid_score_priority_2<100)  ?  mid_score_priority_2* priority_1_2_multiplier : 99* priority_1_2_multiplier;
+    mid_line_score += (mid_score_priority_3<100)  ?  mid_score_priority_3* priority_3_4_multiplier : 99* priority_3_4_multiplier;
+    mid_line_score += (mid_score_priority_4<100) ? mid_score_priority_4*priority_3_4_multiplier : 99*priority_3_4_multiplier;
+    mid_line_score += (mid_score_priority_5<100) ? mid_score_priority_5*priority_5_multiplier : 99*priority_5_multiplier;
+    mid_line_score += (mid_score_priority_6<100) ? mid_score_priority_6*priority_6_7_multiplier : 99*priority_6_7_multiplier;
+    mid_line_score += (mid_score_priority_7<100) ? mid_score_priority_7*priority_6_7_multiplier : 99*priority_6_7_multiplier;
 
-   /* int METRIC_CONTINOUS_VAL_DIGITS = CountDigits(METRIC_CONTINOUS_VAL);
-    int METRIC_2_VAL_DIGITS = CountDigits(METRIC_2_VAL);
-    int METRIC_7_8_VAL_DIGITS = CountDigits(METRIC_7_VAL);
-    int METRIC_9_10_VAL_DIGITS = CountDigits(METRIC_9_VAL);
-    int METRIC_11_VAL_DIGITS = CountDigits(METRIC_11_VAL);
-*/
-    LSCORE += (L2<100)  ?  L2* METRIC_2_VAL : 99* METRIC_2_VAL;
-    LSCORE += (L7<100)  ?  L7* METRIC_7_VAL : 99* METRIC_7_VAL;
-    LSCORE += (L8<100)  ?  L8* METRIC_8_VAL : 99* METRIC_8_VAL;
-    LSCORE += (L9<100)  ?  L9* METRIC_9_VAL : 99* METRIC_9_VAL;
-    LSCORE += (L10<100) ? L10*METRIC_10_VAL : 99*METRIC_10_VAL;
-    LSCORE += (L11<100) ? L11*METRIC_11_VAL : 99*METRIC_11_VAL;
-    LSCORE += (L12<100) ? L12*METRIC_12_VAL : 99*METRIC_12_VAL;
-    LSCORE += (L13<100) ? L13*METRIC_13_VAL : 99*METRIC_13_VAL;
+    right_line_score += (right_score_priority_0<100)  ?  right_score_priority_0* priority_0_multiplier : 99* priority_0_multiplier;
+    right_line_score += (right_score_priority_1<100)  ?  right_score_priority_1* priority_1_2_multiplier : 99* priority_1_2_multiplier;
+    right_line_score += (right_score_priority_2<100)  ?  right_score_priority_2* priority_1_2_multiplier : 99* priority_1_2_multiplier;
+    right_line_score += (right_score_priority_3<100)  ?  right_score_priority_3* priority_3_4_multiplier : 99* priority_3_4_multiplier;
+    right_line_score += (right_score_priority_4<100) ? right_score_priority_4*priority_3_4_multiplier : 99*priority_3_4_multiplier;
+    right_line_score += (right_score_priority_5<100) ? right_score_priority_5*priority_5_multiplier : 99*priority_5_multiplier;
+    right_line_score += (right_score_priority_6<100) ? right_score_priority_6*priority_6_7_multiplier : 99*priority_6_7_multiplier;
+    right_line_score += (right_score_priority_7<100) ? right_score_priority_7*priority_6_7_multiplier : 99*priority_6_7_multiplier;
 
+    unsigned long long int tmp_score = 0;
 
-    MSCORE += (M2<100)  ?  M2* METRIC_2_VAL : 99* METRIC_2_VAL;
-    MSCORE += (M7<100)  ?  M7* METRIC_7_VAL : 99* METRIC_7_VAL;
-    MSCORE += (M8<100)  ?  M8* METRIC_8_VAL : 99* METRIC_8_VAL;
-    MSCORE += (M9<100)  ?  M9* METRIC_9_VAL : 99* METRIC_9_VAL;
-    MSCORE += (M10<100) ? M10*METRIC_10_VAL : 99*METRIC_10_VAL;
-    MSCORE += (M11<100) ? M11*METRIC_11_VAL : 99*METRIC_11_VAL;
-    MSCORE += (M12<100) ? M12*METRIC_12_VAL : 99*METRIC_12_VAL;
-    MSCORE += (M13<100) ? M13*METRIC_13_VAL : 99*METRIC_13_VAL;
+    tmp_score = (left_score_priority_0+mid_score_priority_0+right_score_priority_0)/3;
+    trackscore += (tmp_score<100) ? tmp_score*priority_0_multiplier : 99*priority_0_multiplier;
 
+    tmp_score = (left_score_priority_1+mid_score_priority_1+right_score_priority_1)/3;
+    trackscore += (tmp_score<100) ? tmp_score*priority_1_2_multiplier : 99*priority_1_2_multiplier;
 
-    RSCORE += (R2<100)  ?  R2* METRIC_2_VAL : 99* METRIC_2_VAL;
-    RSCORE += (R7<100)  ?  R7* METRIC_7_VAL : 99* METRIC_7_VAL;
-    RSCORE += (R8<100)  ?  R8* METRIC_8_VAL : 99* METRIC_8_VAL;
-    RSCORE += (R9<100)  ?  R9* METRIC_9_VAL : 99* METRIC_9_VAL;
-    RSCORE += (R10<100) ? R10*METRIC_10_VAL : 99*METRIC_10_VAL;
-    RSCORE += (R11<100) ? R11*METRIC_11_VAL : 99*METRIC_11_VAL;
-    RSCORE += (R12<100) ? R12*METRIC_12_VAL : 99*METRIC_12_VAL;
-    RSCORE += (R13<100) ? R13*METRIC_13_VAL : 99*METRIC_13_VAL;
+    tmp_score = (left_score_priority_2+mid_score_priority_2+right_score_priority_2)/3;
+    trackscore += (tmp_score<100) ? tmp_score*priority_1_2_multiplier : 99*priority_1_2_multiplier;
 
+    tmp_score = (left_score_priority_3+mid_score_priority_3+right_score_priority_3)/3;
+    trackscore += (tmp_score<100) ? tmp_score*priority_3_4_multiplier : 99*priority_3_4_multiplier;
 
-    unsigned long long int TMP_SCORE = 0;
+    tmp_score = (left_score_priority_4+mid_score_priority_4+right_score_priority_4)/3;
+    trackscore += (tmp_score<100) ? tmp_score*priority_3_4_multiplier : 99*priority_3_4_multiplier;
 
-    TMP_SCORE = (L2+M2+R2)/3;
-    TRACKSCORE += (TMP_SCORE<100) ? TMP_SCORE*METRIC_2_VAL : 99*METRIC_2_VAL;
+    tmp_score = (left_score_priority_5+mid_score_priority_5+right_score_priority_5)/3;
+    trackscore += (tmp_score<100) ? tmp_score*priority_5_multiplier : 99*priority_5_multiplier;
 
-    TMP_SCORE = (L7+M7+R7)/3;
-    TRACKSCORE += (TMP_SCORE<100) ? TMP_SCORE*METRIC_7_VAL : 99*METRIC_7_VAL;
+    tmp_score = (left_score_priority_6+mid_score_priority_6+right_score_priority_6)/3;
+    trackscore += (tmp_score<100) ? tmp_score*priority_6_7_multiplier : 99*priority_6_7_multiplier;
 
-    TMP_SCORE = (L8+M8+R8)/3;
-    TRACKSCORE += (TMP_SCORE<100) ? TMP_SCORE*METRIC_8_VAL : 99*METRIC_8_VAL;
-
-    TMP_SCORE = (L9+M9+R9)/3;
-    TRACKSCORE += (TMP_SCORE<100) ? TMP_SCORE*METRIC_9_VAL : 99*METRIC_9_VAL;
-
-    TMP_SCORE = (L10+M10+R10)/3;
-    TRACKSCORE += (TMP_SCORE<100) ? TMP_SCORE*METRIC_10_VAL : 99*METRIC_10_VAL;
-
-    TMP_SCORE = (L11+M11+R11)/3;
-    TRACKSCORE += (TMP_SCORE<100) ? TMP_SCORE*METRIC_11_VAL : 99*METRIC_11_VAL;
-
-    TMP_SCORE = (L12+M12+R12)/3;
-    TRACKSCORE += (TMP_SCORE<100) ? TMP_SCORE*METRIC_12_VAL : 99*METRIC_12_VAL;
-
-    TMP_SCORE = (L13+M13+R13)/3;
-    TRACKSCORE += (TMP_SCORE<100) ? TMP_SCORE*METRIC_13_VAL : 99*METRIC_13_VAL;
+    tmp_score = (left_score_priority_7+mid_score_priority_7+right_score_priority_7)/3;
+    trackscore += (tmp_score<100) ? tmp_score*priority_6_7_multiplier : 99*priority_6_7_multiplier;
 
 
-    //if(left_line_is_safe){ LSCORE += METRIC_CONTINOUS_VAL; TRACKSCORE += METRIC_CONTINOUS_VAL;}
-    //if(mid_line_is_safe) { MSCORE += METRIC_CONTINOUS_VAL; TRACKSCORE += METRIC_CONTINOUS_VAL;}
-    //if(right_line_is_safe) { RSCORE += METRIC_CONTINOUS_VAL; TRACKSCORE += METRIC_CONTINOUS_VAL;}
+    //if(left_line_is_safe){ left_line_score += METRIC_CONTINOUS_VAL; trackscore += METRIC_CONTINOUS_VAL;}
+    //if(mid_line_is_safe) { mid_line_score += METRIC_CONTINOUS_VAL; trackscore += METRIC_CONTINOUS_VAL;}
+    //if(right_line_is_safe) { right_line_score += METRIC_CONTINOUS_VAL; trackscore += METRIC_CONTINOUS_VAL;}
 
 /*
-    cout <<"LSCORE: "   << LSCORE     << " " << CountDigits(LSCORE) <<endl;
-    cout <<"MSCORE: "   << MSCORE     << " " << CountDigits(MSCORE) <<endl;
-    cout <<"RSCORE: "   << RSCORE     << " " << CountDigits(RSCORE) <<endl;
-    cout <<"TRACKS: "   << TRACKSCORE << " " << CountDigits(TRACKSCORE) <<endl;
+    cout <<"left_line_score: "   << left_line_score     << " " << CountDigits(left_line_score) <<endl;
+    cout <<"mid_line_score: "   << mid_line_score     << " " << CountDigits(mid_line_score) <<endl;
+    cout <<"right_line_score: "   << right_line_score     << " " << CountDigits(right_line_score) <<endl;
+    cout <<"TRACKS: "   << trackscore << " " << CountDigits(trackscore) <<endl;
 */
 
-    vector<unsigned long long int> SCORES{LSCORE,MSCORE,RSCORE};
+    vector<unsigned long long int> line_scores{left_line_score,mid_line_score,right_line_score};
 
-    auto max_score_it = std::max_element(SCORES.begin(),SCORES.end());
-    int max_score_id = std::distance(SCORES.begin(), max_score_it);
+    auto max_score_it = std::max_element(line_scores.begin(),line_scores.end());
+    int max_score_id = std::distance(line_scores.begin(), max_score_it);
 
-    int MAX_LINE = -1;
+    int max_line_type = -1;
 
-    int MAX_LINE_SCORE = CountDigits(SCORES[max_score_id]);
-    bool MAX_LINE_CONTINUOUS = false;
+    int max_line_score = CountDigits(line_scores[max_score_id]);
+    bool max_scored_line_is_continous = false;
 
     switch(max_score_id)
     {
         case LEFT_LINE:{
-                            //cout << "LEFT IS SAFEST" << endl;
-                            MAX_LINE_CONTINUOUS = left_line_is_safe;
-                            MAX_LINE = LEFT_LINE;
+                            max_scored_line_is_continous = left_line_is_safe;
+                            max_line_type = LEFT_LINE;
                             break;}
         case MID_LINE:{
-                            //cout << "MID IS SAFEST" << endl;
-                            MAX_LINE_CONTINUOUS = mid_line_is_safe;
-                            MAX_LINE = MID_LINE;
+                            max_scored_line_is_continous = mid_line_is_safe;
+                            max_line_type = MID_LINE;
                             break;}
         case RIGHT_LINE:{
-                            //cout << "RIGHT IS SAFEST" << endl;
-                            MAX_LINE_CONTINUOUS = right_line_is_safe;
-                            MAX_LINE = RIGHT_LINE;
+                            max_scored_line_is_continous = right_line_is_safe;
+                            max_line_type = RIGHT_LINE;
                             break;}
         default:
                             cout << "NO MAX ???" << endl;
                             exit(0);
     }
 
-
-
-
-    //cout << "MAX_LINE_SCORE " << MAX_LINE_SCORE << endl;
-
-
-
     vector<LineValidationTable> left_safest_table1, left_safest_table2,
                                 mid_safest_table1, mid_safest_table2,
                                 right_safest_table1, right_safest_table2;
 
+    GetSafestTables(left_safest_table1,left_safest_table2,left_priority_table,left_line_score);
+    GetSafestTables(mid_safest_table1,mid_safest_table2,mid_priority_table,mid_line_score);
+    GetSafestTables(right_safest_table1,right_safest_table2,right_priority_table,right_line_score);
 
 
-    GetSafestTables(left_safest_table1,left_safest_table2,left_priority_table_,LSCORE);
-    GetSafestTables(mid_safest_table1,mid_safest_table2,mid_priority_table_,MSCORE);
-    GetSafestTables(right_safest_table1,right_safest_table2,right_priority_table_,RSCORE);
-
-
-
-    track_safety_rects_.push_back(TrackSafetyRect{   LSCORE,
-                                                          MSCORE,
-                                                          RSCORE,
-                                                          TRACKSCORE,
-                                                          MAX_LINE,
-                                                          MAX_LINE_SCORE,
-                                                          MAX_LINE_CONTINUOUS,
-                                                          left_line_is_safe,
-                                                          mid_line_is_safe,
-                                                          right_line_is_safe,
-                                                          left_safest_table1,
-                                                          left_safest_table2,
-                                                          mid_safest_table1,
-                                                          mid_safest_table2,
-                                                          right_safest_table1,
-                                                          right_safest_table2,
-                                                          search_direction,
-                                                          rect_mid_point});
+    SafeDriveAreaEvaluationReturnInfoVector_.push_back(SafeDriveAreaEvaluationReturnInfo{
+                                                      left_line_score,
+                                                      mid_line_score,
+                                                      right_line_score,
+                                                      trackscore,
+                                                      max_line_type,
+                                                      max_line_score,
+                                                      max_scored_line_is_continous,
+                                                      left_line_is_safe,
+                                                      mid_line_is_safe,
+                                                      right_line_is_safe,
+                                                      left_safest_table1,
+                                                      left_safest_table2,
+                                                      mid_safest_table1,
+                                                      mid_safest_table2,
+                                                      right_safest_table1,
+                                                      right_safest_table2,
+                                                      (int)search_direction,
+                                                      rect_mid_point,
+                                                      left_priority_table,
+                                                      mid_priority_table,
+                                                      right_priority_table,});
 
 
 }
 
-int SafeDriveAreaEvaluation::CountDigits(unsigned long long int n)
+int SafeDriveAreaEvaluation::CountDigits(
+unsigned long long int n)
 {
     if(n<=0) return 1;
     else     return floor(log10(n) + 1);
 
 }
-bool SafeDriveAreaEvaluation::RectMidPointOutOfImage(Point rect_mid_point)
-{
-    if(rect_mid_point.x >= kImageWidth_ || rect_mid_point.x < 0){ return true;}
 
-    else if(rect_mid_point.y >= kImageHeight_ || rect_mid_point.y < 0){ return true;}
+
+void SafeDriveAreaEvaluation::GetNewSearchDirection(
+vector<SafeDriveAreaEvaluationReturnInfo> safe_drive_area_evaluation_return_info_vector_,
+float& search_direction)
+{
+
+    int max_line_type = safe_drive_area_evaluation_return_info_vector_[safe_drive_area_evaluation_return_info_vector_.size() - 1].max_line_type;
+
+    vector<pair<int,int>> left_safest_directions1, left_safest_directions2,
+                            mid_safest_directions1,  mid_safest_directions2,
+                            right_safest_directions1, right_safest_directions2;
+
+
+
+    GetSafestDirections(safe_drive_area_evaluation_return_info_vector_[safe_drive_area_evaluation_return_info_vector_.size() - 1].left_safest_table1,
+                        safe_drive_area_evaluation_return_info_vector_[safe_drive_area_evaluation_return_info_vector_.size() - 1].left_safest_table2,
+                        left_safest_directions1,left_safest_directions2);
+
+
+    GetSafestDirections(safe_drive_area_evaluation_return_info_vector_[safe_drive_area_evaluation_return_info_vector_.size() - 1].mid_safest_table1,
+                        safe_drive_area_evaluation_return_info_vector_[safe_drive_area_evaluation_return_info_vector_.size() - 1].mid_safest_table2,
+                        mid_safest_directions1,mid_safest_directions2);
+
+
+    GetSafestDirections(safe_drive_area_evaluation_return_info_vector_[safe_drive_area_evaluation_return_info_vector_.size() - 1].right_safest_table1,
+                        safe_drive_area_evaluation_return_info_vector_[safe_drive_area_evaluation_return_info_vector_.size() - 1].right_safest_table2,
+                        right_safest_directions1,right_safest_directions2);
+/*
+    cout << "LEFT DIRS" << endl;
+    for(auto it:left_safest_directions1) cout << it.first << " " << it.second << endl;
+    for(auto it:left_safest_directions2) cout << it.first << " " << it.second << endl;
+
+    cout << "MID DIRS" << endl;
+    for(auto it:mid_safest_directions1) cout << it.first << " " << it.second << endl;
+    for(auto it:mid_safest_directions2) cout << it.first << " " << it.second << endl;
+
+    cout << "RIGHT DIRS" << endl;
+    for(auto it:right_safest_directions1) cout << it.first << " " << it.second << endl;
+    for(auto it:right_safest_directions2) cout << it.first << " " << it.second << endl;
+*/
+    vector<pair<int,int>> safest_directions1, safest_directions2;
+
+    if(max_line_type==LEFT_LINE)
+    {
+        safest_directions1=left_safest_directions1;
+        safest_directions2=left_safest_directions2;
+    }
+    else if(max_line_type==MID_LINE)
+    {
+        safest_directions1=mid_safest_directions1 ;
+        safest_directions2=mid_safest_directions2;
+    }
+    else if(max_line_type==RIGHT_LINE)
+    {
+        safest_directions1=right_safest_directions1;
+        safest_directions2=right_safest_directions2;
+    }
+    else{ cout << "unbelievable value!" << endl; exit(0);}
+
+
+
+    if(safest_directions1.size()>0 && safest_directions2.size()>0)
+    {
+        search_direction = (safest_directions1[safest_directions1.size()-1].first + safest_directions2[safest_directions2.size()-1].first) / 2;
+    }
+    else if(safest_directions1.size()>0)
+    {
+        search_direction = safest_directions1[safest_directions1.size()-1].first;
+    }
+    else if(safest_directions2.size()>0)
+    {
+        search_direction = safest_directions2[safest_directions2.size()-1].first;
+    }
+    else
+    {
+        search_direction = -1;
+    }
+
+}
+
+void SafeDriveAreaEvaluation::GetNewRectMidPoint(
+float new_search_direction,
+Point rect_mid_point,
+Point& new_rect_mid_point,
+const int kRectStepLength)
+{
+    int new_search_direction_i = new_search_direction;
+
+    if(new_search_direction_i > 359) new_search_direction_i %= 360;
+    if(new_search_direction_i < 0)   new_search_direction_i = 360 - abs(new_search_direction_i);
+
+    new_search_direction  = new_search_direction_i * (PI/180);
+    int x_offset = kRectStepLength * cos(new_search_direction);
+    int y_offset = -kRectStepLength * sin(new_search_direction);
+
+    Point point(rect_mid_point.x + x_offset, rect_mid_point.y + y_offset);
+
+    new_rect_mid_point = point;
+
+}
+
+
+bool SafeDriveAreaEvaluation::RectMidPointOutOfImage(
+Point rect_mid_point,
+const int kImageWidth,
+const int kImageHeight)
+{
+    if(rect_mid_point.x >= kImageWidth || rect_mid_point.x < 0){ return true;}
+
+    else if(rect_mid_point.y >= kImageHeight || rect_mid_point.y < 0){ return true;}
 
     else{ return false;}
 
 }
 
-float SafeDriveAreaEvaluation::GetOrthogonalAngle(float angle, int SEARCH_LINE_CODE)
+
+
+
+
+void SafeDriveAreaEvaluation::GetSafestDirections(
+vector<LineValidationTable> safest_table1,
+vector<LineValidationTable> safest_table2,
+vector<pair<int,int>>& safest_line_directions1,
+vector<pair<int,int>>& safest_line_directions2)
+{
+    vector<float> safest_directions1, safest_directions2;
+    vector<int> safest_dircetions1_count;
+    vector<int> safest_dircetions2_count;
+
+
+    for(auto it : safest_table1)  safest_directions1.push_back(it.GetDirection());
+    for(auto it : safest_table2) safest_directions2.push_back(it.GetDirection());
+
+    auto it_1 = std::unique(safest_directions1.begin(),safest_directions1.end());
+    auto it_2 = std::unique(safest_directions2.begin(),safest_directions2.end());
+
+    int unique1_distance = std::distance(safest_directions1.begin(), it_1);
+    int unique2_distance = std::distance(safest_directions2.begin(), it_2);
+
+    for(auto it = safest_directions1.begin(); it != it_1; ++it)
+    {
+        int unique_direction_count = std::count(safest_directions1.begin(), safest_directions1.end(), *it);
+        safest_dircetions1_count.push_back(unique_direction_count);
+    }
+
+    for(auto it = safest_directions2.begin(); it != it_2; ++it)
+    {
+        int unique_direction_count = std::count(safest_directions2.begin(), safest_directions2.end(), *it);
+        safest_dircetions2_count.push_back(unique_direction_count);
+
+    }
+
+    safest_directions1.resize(unique1_distance);
+    safest_directions2.resize(unique2_distance);
+
+
+    for(int i=0; i<safest_directions1.size();i++) safest_line_directions1.push_back(make_pair(safest_directions1[i],safest_dircetions1_count[i]));
+    for(int i=0; i<safest_directions2.size();i++) safest_line_directions2.push_back(make_pair(safest_directions2[i],safest_dircetions2_count[i]));
+}
+
+
+
+void SafeDriveAreaEvaluation::ClearMemory()
+{
+
+    left_lane_drive_points_.clear();
+    right_lane_drive_points_.clear();
+
+    safe_drive_area_evaluation_return_info_vector_.clear();
+
+    left_line_points_in_rect_ids_.clear();
+    mid_line_points_in_rect_ids_.clear();
+    right_line_points_in_rect_ids_.clear();
+
+
+    for(auto &it: left_priority_ids_) it.clear();
+    for(auto &it: mid_priority_ids_) it.clear();
+    for(auto &it: right_priority_ids_) it.clear();
+}
+
+void SafeDriveAreaEvaluation::DrawEvaluatedSafetyAreasInDriveDirection(
+Mat& rgb)
+{
+
+    for(auto it: safe_drive_area_evaluation_return_info_vector_)
+    {
+        Point rect_mid_point   = it.rect_mid_point;
+        float search_direction = it.search_direction;
+
+        vector<vector<Point>> search_rect = GetSearchRect(rect_mid_point,
+                                                          search_direction,
+                                                          kSearchRectWidth_,
+                                                          kSearchRectHeight_);
+
+        string str_score = to_string(it.max_line_score);
+
+
+        drawContours(rgb, search_rect, -1, Scalar(0,255,0), 2, LINE_8);
+        putText(rgb, str_score, rect_mid_point,FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,255,0), 1, CV_AA);
+
+    }
+}
+
+
+void SafeDriveAreaEvaluation::GetSafestTables(
+vector<LineValidationTable>& safest_table1,
+vector<LineValidationTable>& safest_table2,
+vector<vector<LineValidationTable>> priority_table,
+unsigned long long int SCORE)
+{
+    switch(CountDigits(SCORE))
+    {
+
+        case 1:
+        case 2: safest_table1 = priority_table[PRIO_7_FP2];
+                safest_table2 = priority_table[PRIO_6_FP1];
+                break;
+        case 3:
+        case 4: safest_table1 = priority_table[PRIO_5_FP1_AND_FP2];
+                safest_table2 = priority_table[PRIO_5_FP1_AND_FP2];
+                break;
+        case 5:
+        case 6: safest_table1 = priority_table[PRIO_4_P2];
+                safest_table2 = priority_table[PRIO_3_P1];
+                break;
+        case 7:
+        case 8: safest_table1 = priority_table[PRIO_2_P2_AND_FP1];
+                safest_table2 = priority_table[PRIO_1_P1_AND_FP2];
+                break;
+        case 9:
+        case 10: safest_table1 = priority_table[PRIO_0_P1_AND_P2];
+                 safest_table2 = priority_table[PRIO_0_P1_AND_P2];
+                 break;
+        default: cout << "unpossible ???" << endl; exit(0); break;
+    }
+}
+
+
+void SafeDriveAreaEvaluation::EmtpySafetyTable(
+RectSafetyTable& rect_safety)
+{
+    rect_safety.percent_points_with_priority_0 = 0;
+    rect_safety.percent_points_with_priority_1 = 0;
+    rect_safety.percent_points_with_priority_2 = 0;
+    rect_safety.percent_points_with_priority_3 = 0;
+    rect_safety.percent_points_with_priority_4 = 0;
+    rect_safety.percent_points_with_priority_5 = 0;
+    rect_safety.percent_points_with_priority_6 = 0;
+    rect_safety.percent_points_with_priority_7 = 0;
+    rect_safety.percent_points_in_rect = 0;
+
+    rect_safety.too_few_points_in_rect = false;
+    rect_safety.rect_straight = false;
+    rect_safety.rect_left_curve = false;
+    rect_safety.rect_right_curve = false;
+
+    rect_safety.y_min_in_rect_border_range = false;
+    rect_safety.y_max_in_rect_border_range = false;
+}
+
+void SafeDriveAreaEvaluation::ExtractMinMaxLineElements(
+vector<LineValidationTable> line,
+MinMaxLineElements& line_minmax_elements )
+{
+
+    if(line.size() > 0)
+    {
+        auto x_it = minmax_element(begin(line),end(line),
+                                   [&](LineValidationTable& line_point1, LineValidationTable& line_point2)
+                                   {
+                                       return line_point1.GetOriginPoint().x < line_point2.GetOriginPoint().x;
+                                   });
+
+        auto y_it = minmax_element(begin(line),end(line),
+                                   [&](LineValidationTable& line_point1, LineValidationTable& line_point2)
+                                   {
+                                       return line_point1.GetOriginPoint().y < line_point2.GetOriginPoint().y;
+                                   });
+
+        int x_min_id = std::distance(line.begin(), x_it.first);
+        int x_max_id = std::distance(line.begin(), x_it.second);
+        int y_min_id = std::distance(line.begin(), y_it.first);
+        int y_max_id = std::distance(line.begin(), y_it.second);
+
+        line_minmax_elements = MinMaxLineElements{line[x_min_id].GetOriginPoint(),
+                                                  line[x_max_id].GetOriginPoint(),
+                                                  line[y_min_id].GetOriginPoint(),
+                                                  line[y_max_id].GetOriginPoint(),
+                                                  true};
+    }
+}
+
+
+
+
+
+/*
+ *
+ *float SafeDriveAreaEvaluation::GetOrthogonalAngle(float angle, int SEARCH_LINE_CODE)
 {
     int  angle_ = 0;
 
@@ -532,18 +1092,19 @@ float SafeDriveAreaEvaluation::GetOrthogonalAngle(float angle, int SEARCH_LINE_C
     return float(angle_);
 }
 
+ *
 void SafeDriveAreaEvaluation::FindSafePointsForSpline()
 {
 
 
-    for(auto it: track_safety_rects_)
+    for(auto it: safe_drive_area_evaluation_return_info_vector_)
     {
         int  MAX_LINE_SCORE = it.MAX_LINE_SCORE;
-        int  MAX_LINE = it.MAX_LINE;
+        int  max_line_type = it.max_line_type;
 
         if(MAX_LINE_SCORE >= 0)
         {
-            if(MAX_LINE == LEFT_LINE)
+            if(max_line_type == LEFT_LINE)
             {
                 for(auto itt : it.left_safest_table1)
                 {
@@ -585,7 +1146,7 @@ void SafeDriveAreaEvaluation::FindSafePointsForSpline()
                 }
 
             }
-            else if(MAX_LINE == MID_LINE)
+            else if(max_line_type == MID_LINE)
             {
 
                 for(auto itt : it.mid_safest_table1)
@@ -624,7 +1185,7 @@ void SafeDriveAreaEvaluation::FindSafePointsForSpline()
                     left_lane_drive_points_.push_back(Point(left_lane_x,left_lane_y));
                 }
             }
-            else if(MAX_LINE == RIGHT_LINE)
+            else if(max_line_type == RIGHT_LINE)
             {
 
                 for(auto itt : it.right_safest_table1)
@@ -672,611 +1233,4 @@ void SafeDriveAreaEvaluation::FindSafePointsForSpline()
 
 
 }
-
-void SafeDriveAreaEvaluation::GetNewRectMidPoint(float new_search_direction,Point rect_mid_point, Point& new_rect_mid_point)
-{
-    int new_search_direction_i = new_search_direction;
-
-    if(new_search_direction_i > 359) new_search_direction_i %= 360;
-    if(new_search_direction_i < 0)   new_search_direction_i = 360 - abs(new_search_direction_i);
-
-    new_search_direction  = new_search_direction_i * (PI/180);
-    int x_offset = kRectStepLength_ * cos(new_search_direction);
-    int y_offset = -kRectStepLength_ * sin(new_search_direction);
-
-
-    //cout << x_offset <<" " << y_offset<< " " << mean_direction_i << " " << mean_point << endl;
-
-    //Point new_rect_mid_point(mean_point.x + x_offset, mean_point.y + y_offset);
-
-    Point point(rect_mid_point.x + x_offset, rect_mid_point.y + y_offset);
-
-    new_rect_mid_point = point;
-
-}
-
-
-void SafeDriveAreaEvaluation::GetSafestDirections(vector<LineValidationTable> safest_table1,vector<LineValidationTable> safest_table2,
-                    vector<pair<int,float>>& safest_line_directions1, vector<pair<int,float>>& safest_line_directions2)
-{
-    vector<float> safest_directions1, safest_directions2;
-    vector<int> safest_dircetions1_count;
-    vector<int> safest_dircetions2_count;
-
-
-    for(auto it : safest_table1)  safest_directions1.push_back(it.GetDirection());
-    for(auto it : safest_table2) safest_directions2.push_back(it.GetDirection());
-
-    auto it_1 = std::unique(safest_directions1.begin(),safest_directions1.end());
-    auto it_2 = std::unique(safest_directions2.begin(),safest_directions2.end());
-
-    int unique1_distance = std::distance(safest_directions1.begin(), it_1);
-    int unique2_distance = std::distance(safest_directions2.begin(), it_2);
-
-    for(auto it = safest_directions1.begin(); it != it_1; ++it)
-    {
-        int unique_direction_count = std::count(safest_directions1.begin(), safest_directions1.end(), *it);
-        safest_dircetions1_count.push_back(unique_direction_count);
-    }
-
-    for(auto it = safest_directions2.begin(); it != it_2; ++it)
-    {
-        int unique_direction_count = std::count(safest_directions2.begin(), safest_directions2.end(), *it);
-        safest_dircetions2_count.push_back(unique_direction_count);
-
-    }
-
-    safest_directions1.resize(unique1_distance);
-    safest_directions2.resize(unique2_distance);
-
-
-    for(int i=0; i<safest_directions1.size();i++) safest_line_directions1.push_back(make_pair(safest_directions1[i],safest_dircetions1_count[i]));
-    for(int i=0; i<safest_directions2.size();i++) safest_line_directions2.push_back(make_pair(safest_directions2[i],safest_dircetions2_count[i]));
-}
-
-
-void SafeDriveAreaEvaluation::FindNewSearchDirection(vector<TrackSafetyRect> track_safety_rects_, float& search_direction)
-{
-
-    int last_id = track_safety_rects_.size() - 1;
-    int MAX_LINE = track_safety_rects_[last_id].MAX_LINE;
-/*
-    cout << "LSCORE: " <<  track_safety_rects_[last_id].LSCORE << endl;
-    cout << "MSCORE: " << track_safety_rects_[last_id].MSCORE << endl;
-    cout << "RSCORE: " << track_safety_rects_[last_id].RSCORE << endl;
-    cout << "TRACKSCORE: " << track_safety_rects_[last_id].TRACKSCORE << endl;
-    cout << "MAX_LINE: " <<  track_safety_rects_[last_id].MAX_LINE << endl;
-    cout << "MAX_LINE_SCORE: " << track_safety_rects_[last_id].MAX_LINE_SCORE << endl;
-
-    cout << "LEFT_CONTINUOUS: " << track_safety_rects_[last_id].LEFT_CONTINUOUS << endl;
-    cout << "MID_CONTINUOUS: " << track_safety_rects_[last_id].MID_CONTINUOUS << endl;
-    cout << "RIGHT_CONTINUOUS: " << track_safety_rects_[last_id].RIGHT_CONTINUOUS << endl;
-
-    cout << "search_direction: " << track_safety_rects_[last_id].search_direction << endl;
-    cout << "rect_mid_point: " << track_safety_rects_[last_id].rect_mid_point << endl;
 */
-
-    vector<pair<int,float>> left_safest_directions1, left_safest_directions2,
-                            mid_safest_directions1,  mid_safest_directions2,
-                            right_safest_directions1, right_safest_directions2;
-
-
-
-    GetSafestDirections(track_safety_rects_[last_id].left_safest_table1,
-                        track_safety_rects_[last_id].left_safest_table2,
-                        left_safest_directions1,left_safest_directions2);
-
-
-    GetSafestDirections(track_safety_rects_[last_id].mid_safest_table1,
-                        track_safety_rects_[last_id].mid_safest_table2,
-                        mid_safest_directions1,mid_safest_directions2);
-
-
-    GetSafestDirections(track_safety_rects_[last_id].right_safest_table1,
-                        track_safety_rects_[last_id].right_safest_table2,
-                        right_safest_directions1,right_safest_directions2);
-
- /*   //cout << "LEFT DIRS" << endl;
-    for(auto it:left_safest_directions1) cout << it.first << " " << it.second << endl;
-    for(auto it:left_safest_directions2) cout << it.first << " " << it.second << endl;
-
-   // cout << "MID DIRS" << endl;
-    for(auto it:mid_safest_directions1) cout << it.first << " " << it.second << endl;
-    for(auto it:mid_safest_directions2) cout << it.first << " " << it.second << endl;
-
-   // cout << "RIGHT DIRS" << endl;
-    for(auto it:right_safest_directions1) cout << it.first << " " << it.second << endl;
-    for(auto it:right_safest_directions2) cout << it.first << " " << it.second << endl;
-*/
-    vector<pair<int,float>> safest_directions1, safest_directions2;
-
-    if(MAX_LINE==LEFT_LINE)
-    {
-        safest_directions1=left_safest_directions1;
-        safest_directions2=left_safest_directions2;
-    }
-    else if(MAX_LINE==MID_LINE)
-    {
-        safest_directions1=mid_safest_directions1 ;
-        safest_directions2=mid_safest_directions2;
-    }
-    else if(MAX_LINE==RIGHT_LINE)
-    {
-        safest_directions1=right_safest_directions1 ;
-        safest_directions2=right_safest_directions2;
-    }
-    else{ cout << "unbelievable value!" << endl; exit(0);}
-
-
-
-    if(safest_directions1.size()>0 && safest_directions2.size()>0)
-    {
-        //cout << "SAFE1 " << safest_directions1[safest_directions1.size()-1].first << " " << safest_directions2[safest_directions2.size()-1].first << endl;
-        search_direction = (safest_directions1[safest_directions1.size()-1].first + safest_directions2[safest_directions2.size()-1].first) / 2;
-    }
-    else if(safest_directions1.size()>0)
-    {
-        //cout << "SAFE2 " << safest_directions1[safest_directions1.size()-1].first  << endl;
-        search_direction = safest_directions1[safest_directions1.size()-1].first;
-    }
-    else if(safest_directions2.size()>0)
-    {
-        //cout << "SAFE3 " << safest_directions2[safest_directions2.size()-1].first  << endl;
-        search_direction = safest_directions2[safest_directions2.size()-1].first;
-    }
-    else
-    {
-        //cout << "SAFE4 -1"   << endl;
-        search_direction = -1;
-    }
-
-}
-
-void SafeDriveAreaEvaluation::ClearMemory()
-{
-
-    left_lane_drive_points_.clear();
-    right_lane_drive_points_.clear();
-
-    track_safety_rects_.clear();
-
-    left_line_points_in_rect_ids_.clear();
-    mid_line_points_in_rect_ids_.clear();
-    right_line_points_in_rect_ids_.clear();
-
-
-    for(auto &it: left_priority_ids_) it.clear();
-    for(auto &it: mid_priority_ids_) it.clear();
-    for(auto &it: right_priority_ids_) it.clear();
-
-
-
-
-
-
-}
-
-void SafeDriveAreaEvaluation::DrawEvaluatedSafetyAreasInDriveDirection(Mat& rgb)
-{
-/*
-                                                            LSCORE,
-                                                             MSCORE,
-                                                             RSCORE,
-                                                             TRACKSCORE,
-                                                             MAX_LINE,
-                                                             MAX_LINE_SCORE,
-                                                             MAX_LINE_CONTINUOUS,
-                                                             left_line_is_safe,
-                                                             mid_line_is_safe,
-                                                             right_line_is_safe,
-                                                             left_safest_table1,
-                                                             left_safest_table2,
-                                                             mid_safest_table1,
-                                                             mid_safest_table2,
-                                                             right_safest_table1,
-                                                             right_safest_table2,
-                                                             search_direction,
-                                                             rect_mid_point*/
-
-    for(auto it: track_safety_rects_)
-    {
-        Point rect_mid_point   = it.rect_mid_point;
-        float search_direction = it.search_direction;
-
-        vector<vector<Point>> search_rect = GetSearchRect(rect_mid_point,search_direction);
-
-        string str_score = to_string(it.MAX_LINE_SCORE);
-
-
-        drawContours(rgb, search_rect, -1, Scalar(0,255,0), 2, LINE_8);
-        putText(rgb, str_score, rect_mid_point,FONT_HERSHEY_COMPLEX_SMALL, 0.8, cvScalar(0,255,0), 1, CV_AA);
-
-    }
-}
-
-
-void SafeDriveAreaEvaluation::GetSafestTables(vector<LineValidationTable>& safest_table1 , vector<LineValidationTable>& safest_table2,
-                                           vector<vector<LineValidationTable>> priority_table, unsigned long long int SCORE)
-{
-    switch(CountDigits(SCORE))
-    {
-
-        case 1:
-        case 2: safest_table1 = priority_table[PRIO_12_FP1];
-                safest_table2 = priority_table[PRIO_13_FP2];
-                break;
-        case 3:
-        case 4: safest_table1 = priority_table[PRIO_11_FP1_AND_FP2];
-                safest_table2 = priority_table[PRIO_11_FP1_AND_FP2];
-                break;
-        case 5:
-        case 6: safest_table1 = priority_table[PRIO_9_P1];
-                safest_table2 = priority_table[PRIO_10_P2];
-                break;
-        case 7:
-        case 8: safest_table1 = priority_table[PRIO_7_P1_AND_FP2];
-                safest_table2 = priority_table[PRIO_8_P2_AND_FP1];
-                break;
-        case 9:
-        case 10: safest_table1 = priority_table[PRIO_2_P1_AND_P2];
-                 safest_table2 = priority_table[PRIO_2_P1_AND_P2];
-                 break;
-        default: cout << "unpossible ???" << endl; exit(0); break;
-    }
-}
-
-
-void SafeDriveAreaEvaluation::EmtpySafetyTable(RectSafetyTable& rect_safety)
-{
-    rect_safety.percent_points_with_priority_0 = 0;
-    rect_safety.percent_points_with_priority_1 = 0;
-    rect_safety.percent_points_with_priority_2 = 0;
-    rect_safety.percent_points_with_priority_3 = 0;
-    rect_safety.percent_points_with_priority_4 = 0;
-    rect_safety.percent_points_with_priority_5 = 0;
-    rect_safety.percent_points_with_priority_6 = 0;
-    rect_safety.percent_points_with_priority_7 = 0;
-    rect_safety.percent_points_with_priority_8 = 0;
-    rect_safety.percent_points_with_priority_9 = 0;
-    rect_safety.percent_points_with_priority_10 = 0;
-    rect_safety.percent_points_with_priority_11 = 0;
-    rect_safety.percent_points_with_priority_12 = 0;
-    rect_safety.percent_points_with_priority_13 = 0;
-    rect_safety.percent_points_in_rect = 0;
-
-    rect_safety.too_few_points_in_rect = false;
-    rect_safety.rect_straight = false;
-    rect_safety.rect_left_curve = false;
-    rect_safety.rect_right_curve = false;
-
-    rect_safety.y_min_in_rect_border_range = false;
-    rect_safety.y_max_in_rect_border_range = false;
-}
-
-void SafeDriveAreaEvaluation::ExtractMinMaxLineElements( vector<LineValidationTable>  line,  MinMaxLineElements& line_minmax_elements )
-{
-
-    if(line.size() > 0)
-    {
-        auto x_it = minmax_element(begin(line),end(line),
-                                            [&](LineValidationTable& line_point1, LineValidationTable& line_point2)
-                                            {
-                                                return line_point1.GetOriginPoint().x < line_point2.GetOriginPoint().x;
-                                            });
-
-        auto y_it = minmax_element(begin(line),end(line),
-                                           [&](LineValidationTable& line_point1, LineValidationTable& line_point2)
-                                           {
-                                               return line_point1.GetOriginPoint().y < line_point2.GetOriginPoint().y;
-                                           });
-
-        int x_min_id = std::distance(line.begin(), x_it.first);
-        int x_max_id = std::distance(line.begin(), x_it.second);
-        int y_min_id = std::distance(line.begin(), y_it.first);
-        int y_max_id = std::distance(line.begin(), y_it.second);
-
-        line_minmax_elements = MinMaxLineElements{line[x_min_id].GetOriginPoint(),
-                                                  line[x_max_id].GetOriginPoint(),
-                                                  line[y_min_id].GetOriginPoint(),
-                                                  line[y_max_id].GetOriginPoint(),
-                                                  true};
-    }
-}
-
-void SafeDriveAreaEvaluation::CheckRectSafety(vector<vector<Point>> search_rect,vector<LineValidationTable>line_points_in_rect_,vector<vector<LineValidationTable>> priority_table_,
-                                           RectSafetyTable& rect_safety)
-{
-
-
-    if(line_points_in_rect_.size()>0)
-    {
-
-
-        float all_percent_found = (line_points_in_rect_.size() / kSearchRectHeight_) * 100;
-
-        float line_points_count = 0;
-
-        if(line_points_in_rect_.size() > kSearchRectHeight_) line_points_count = line_points_in_rect_.size();
-        else line_points_count = kSearchRectHeight_;
-
-
-        float prio_0_percent_found = (priority_table_[0].size() / line_points_count) * 100;
-        float prio_1_percent_found = (priority_table_[1].size() / line_points_count) * 100;
-        float prio_2_percent_found = (priority_table_[2].size() / line_points_count) * 100;
-        float prio_3_percent_found = (priority_table_[3].size() / line_points_count) * 100;
-        float prio_4_percent_found = (priority_table_[4].size() / line_points_count) * 100;
-        float prio_5_percent_found = (priority_table_[5].size() / line_points_count) * 100;
-        float prio_6_percent_found = (priority_table_[6].size() / line_points_count) * 100;
-        float prio_7_percent_found = (priority_table_[7].size() / line_points_count) * 100;
-        float prio_8_percent_found = (priority_table_[8].size() / line_points_count) * 100;
-        float prio_9_percent_found = (priority_table_[9].size() / line_points_count) * 100;
-        float prio_10_percent_found = (priority_table_[10].size() / line_points_count) * 100;
-        float prio_11_percent_found = (priority_table_[11].size() / line_points_count) * 100;
-        float prio_12_percent_found = (priority_table_[12].size() / line_points_count) * 100;
-        float prio_13_percent_found = (priority_table_[13].size() / line_points_count) * 100;
-
-
-
-
-        MinMaxLineElements rect_min_max;
-
-
-        ExtractMinMaxLineElements(line_points_in_rect_, rect_min_max );
-
-
-        Point x_min = rect_min_max.x_min;
-        Point y_min = rect_min_max.y_min;
-        Point x_max = rect_min_max.x_max;
-        Point y_max = rect_min_max.y_max;
-
-
-
-        //cout << all_percent_found<< "%" <<    endl;
-
-
-
-/*
-
-        bool too_few_points_in_rect_ = false;
-        bool rect_straight_ = false;
-        bool rect_left_curve_ = false;
-        bool rect_right_curve_ = false;
-
-        int yDistance = sqrt(pow(y_max.x-y_min.x,2) + pow(y_max.y -y_min.y,2));
-
-
-
-        if(x_min.x == x_max.x)
-        {
-            if(yDistance > kMinYDistanceInRect_)
-            {
-                //cout << "rect_straight_" << endl;
-                rect_straight_ = true;
-            }
-            else {
-                too_few_points_in_rect_ = true;
-            }
-        }
-        else if( (x_max.y - x_min.y) > 0)
-        {
-            if(yDistance >kMinYDistanceInRect_)
-            {
-                if((x_max.y - x_min.y) > kMinStraightDifferenceForStraightLineInRect_)
-                {
-                    rect_left_curve_ = true;
-                    //cout << "left curve" << endl;
-                }
-                else {
-                    rect_straight_ = true;
-                    //cout << "rect_straight_" << endl;
-                }
-            }
-            else {
-               too_few_points_in_rect_ = true;
-            }
-        }
-        else if((x_min.y - x_max.y) > 0)
-        {
-            if(yDistance >kMinYDistanceInRect_)
-            {
-                if((x_min.y - x_max.y) > kMinStraightDifferenceForStraightLineInRect_)
-                {
-                    rect_right_curve_ = true;
-                    //cout << "right curve" << endl;
-                }
-                else{
-                    rect_straight_ = true;
-                     //cout << "rect_straight_" << endl;
-                }
-            }
-            else {
-                too_few_points_in_rect_ = true;
-            }
-        }
-        else {
-            cout << "wrong44" << endl;
-        }
-
-*/
-        double res = 0;
-
-        bool y_min_in_rect_border_range_ = false;
-        bool y_max_in_rect_border_range_ = false;
-
-
-       /* double res = pointPolygonTest(search_rect[0], x_min, true);
-        if(res>=0)
-        {
-            cout << res << "px  xmin: "<< x_min<< endl;
-        }
-*/
-        res = pointPolygonTest(search_rect[0], y_min, true);
-        if(res>=0 && res < kRectBorderDistanceThreshold_)
-        {
-            y_min_in_rect_border_range_ = true;
-            //cout << res << "px  ymin: "<< y_min<< endl;
-        }
-/*
-        res = pointPolygonTest(search_rect[0], x_max, true);
-        if(res>=0)
-        {
-            cout << res << "px  xmax: "<< x_max<< endl;
-        }
-*/
-        res = pointPolygonTest(search_rect[0], y_max, true);
-        if(res>=0 && res < kRectBorderDistanceThreshold_)
-        {
-            y_max_in_rect_border_range_ = true;
-            //cout << res << "px  ymax: "<< y_max<< endl;
-        }
-
-
-        /*
-        cout << prio_0_percent_found << "%"<< endl;
-        cout << prio_1_percent_found << "%"<< endl;
-        cout << prio_2_percent_found << "%"<< endl;
-        cout << prio_3_percent_found << "%"<< endl;
-        cout << prio_4_percent_found << "%"<< endl;
-        cout << prio_5_percent_found << "%"<< endl;
-        cout << prio_6_percent_found << "%"<< endl;
-        cout << prio_7_percent_found << "%"<< endl;
-        cout << prio_8_percent_found << "%"<< endl;
-        cout << prio_9_percent_found << "%"<< endl;
-        cout << prio_10_percent_found << "%"<< endl;
-        cout << prio_11_percent_found << "%"<< endl;
-        cout << prio_12_percent_found << "%"<< endl;
-        cout << prio_13_percent_found << "%"<< endl;*/
-
-
-        rect_safety.percent_points_with_priority_0 = prio_0_percent_found;
-        rect_safety.percent_points_with_priority_1 = prio_1_percent_found;
-        rect_safety.percent_points_with_priority_2 = prio_2_percent_found;
-        rect_safety.percent_points_with_priority_3 = prio_3_percent_found;
-        rect_safety.percent_points_with_priority_4 = prio_4_percent_found;
-        rect_safety.percent_points_with_priority_5 = prio_5_percent_found;
-        rect_safety.percent_points_with_priority_6 = prio_6_percent_found;
-        rect_safety.percent_points_with_priority_7 = prio_7_percent_found;
-        rect_safety.percent_points_with_priority_8 = prio_8_percent_found;
-        rect_safety.percent_points_with_priority_9 = prio_9_percent_found;
-        rect_safety.percent_points_with_priority_10 = prio_10_percent_found;
-        rect_safety.percent_points_with_priority_11 = prio_11_percent_found;
-        rect_safety.percent_points_with_priority_12 = prio_12_percent_found;
-        rect_safety.percent_points_with_priority_13 = prio_13_percent_found;
-        rect_safety.percent_points_in_rect = all_percent_found;
-/*
-        rect_safety.too_few_points_in_rect = too_few_points_in_rect_;
-        rect_safety.rect_straight = rect_straight_;
-        rect_safety.rect_left_curve = rect_left_curve_;
-        rect_safety.rect_right_curve = rect_right_curve_;
-*/
-        rect_safety.y_min_in_rect_border_range = y_min_in_rect_border_range_;
-        rect_safety.y_max_in_rect_border_range = y_max_in_rect_border_range_;
-
-
-
-    }
-    else{
-        EmtpySafetyTable(rect_safety);
-    }
-
-}
-
-void SafeDriveAreaEvaluation::GetLinesPointsInRect( vector<LineValidationTable> line_direction_in_range_, vector<vector<Point>> contours, vector<int>& line_points_in_rect_id,
-                                                    vector<LineValidationTable>& line_points_in_rect_)
-{
-    for(int i=0; i<line_direction_in_range_.size(); i++)
-    {
-        Point origin = line_direction_in_range_[i].GetOriginPoint();
-        double res = pointPolygonTest(contours[0], origin, false);
-        if(res>=0)
-        {
-            line_points_in_rect_id.push_back(i);
-
-
-            line_points_in_rect_.push_back(line_direction_in_range_[i]);
-
-        }
-    }
-}
-
-void SafeDriveAreaEvaluation::FollowTrack(float search_direction, Point rect_mid_point)
-{
-
-
-            ClearAllFollowTrackTables();
-
-            vector<vector<Point>> search_rect = GetSearchRect(rect_mid_point,search_direction);
-
-            GetLinesPointsInRect(left_line_in_drive_direction_table_,
-                                 search_rect,
-                                 left_line_points_in_rect_ids_,
-                                 left_line_points_in_rect_);
-
-            GetLinesPointsInRect(mid_line_in_drive_direction_table_,
-                                 search_rect,
-                                 mid_line_points_in_rect_ids_,
-                                 mid_line_points_in_rect_);
-
-            GetLinesPointsInRect(right_line_in_drive_direction_table_,
-                                 search_rect,
-                                 right_line_points_in_rect_ids_,
-                                 right_line_points_in_rect_);
-
-
-            FillPriorityTables(left_line_in_drive_direction_table_,
-                               left_line_points_in_rect_ids_,
-                               mid_line_in_drive_direction_table_,
-                               mid_line_points_in_rect_ids_,
-                               right_line_in_drive_direction_table_,
-                               right_line_points_in_rect_ids_);
-
-
-
-            CheckRectSafety(search_rect,
-                            left_line_points_in_rect_,
-                            left_priority_table_,
-                            left_line_rect_safety_);
-
-            CheckRectSafety(search_rect,
-                            mid_line_points_in_rect_,
-                            mid_priority_table_,
-                            mid_line_rect_safety_);
-
-            CheckRectSafety(search_rect,
-                            right_line_points_in_rect_,
-                            right_priority_table_,
-                            right_line_rect_safety_);
-
-
-            //CoutRectSafetyTables();
-
-
-
-
-            GatherRectSafetyInfo(track_safety_rects_,search_direction,rect_mid_point);
-
-            float new_search_direction = -1;
-            FindNewSearchDirection(track_safety_rects_,new_search_direction);
-
-
-            //cout <<"new_search_direction: " << new_search_direction <<endl;
-
-            if(new_search_direction == -1)new_search_direction = search_direction;
-
-
-            Point new_rect_mid_point;
-
-            GetNewRectMidPoint(new_search_direction, rect_mid_point, new_rect_mid_point);
-
-
-            if(RectMidPointOutOfImage(new_rect_mid_point)) return;
-
-
-
-
-            FollowTrack(new_search_direction, new_rect_mid_point);
-
-
-
-}
-
