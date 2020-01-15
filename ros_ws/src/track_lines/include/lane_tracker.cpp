@@ -763,6 +763,12 @@ void LaneTracker::LoadLineValidationTableCreationInitializationParameters()
      n.getParam("/line_validation_table_creation_init/min_mid_to_right_line_width",line_validation_table_creation_init.min_mid_to_right_line_width);
      n.getParam("/line_validation_table_creation_init/max_mid_to_right_line_width",line_validation_table_creation_init.max_mid_to_right_line_width);
 
+     n.getParam("/line_validation_table_creation_init/max_distance_of_predicted_to_adjacent_point",line_validation_table_creation_init.max_distance_of_predicted_to_adjacent_point);
+     n.getParam("/line_validation_table_creation_init/min_start_direction_of_line_points_in_drive_direction",line_validation_table_creation_init.min_start_direction_of_line_points_in_drive_direction);
+     n.getParam("/line_validation_table_creation_init/max_start_direction_of_line_points_in_drive_direction",line_validation_table_creation_init.max_start_direction_of_line_points_in_drive_direction);
+     n.getParam("/line_validation_table_creation_init/max_direction_difference_of_line_points_in_drive_direction",line_validation_table_creation_init.max_direction_difference_of_line_points_in_drive_direction);
+
+
 }
 
 void LaneTracker::LoadLinePointsReduceInitializationParameters()
@@ -777,6 +783,71 @@ void LaneTracker::LoadLinePointsReduceInitializationParameters()
 
 
 }
+
+void LaneTracker::LoadOnRoadSearchInitializationParameters()
+{
+
+    string str = "rosparam load /home/tb/gazebo_road_generation/ros_ws/src/track_lines/initialization/on_road_search_init.yaml";
+    const char *command = str.c_str();
+    system(command);
+
+    n.getParam("/on_road_search_init/goal_line_intensity_threshold", on_road_search_init.goal_line_intensity_threshold);
+    n.getParam("/on_road_search_init/min_goal_segment_width", on_road_search_init.min_goal_segment_width);
+    n.getParam("/on_road_search_init/max_goal_segment_width", on_road_search_init.max_goal_segment_width);
+    n.getParam("/on_road_search_init/min_goal_segments_to_find", on_road_search_init.min_goal_segments_to_find);
+    n.getParam("/on_road_search_init/max_crosswalk_forsight_distance", on_road_search_init.max_crosswalk_forsight_distance);
+    n.getParam("/on_road_search_init/max_crosswalk_forsight_step_size", on_road_search_init.max_crosswalk_forsight_step_size);
+    n.getParam("/on_road_search_init/min_crosswalk_segment_width", on_road_search_init.min_crosswalk_segment_width);
+    n.getParam("/on_road_search_init/max_crosswalk_segment_width", on_road_search_init.max_crosswalk_segment_width);
+    n.getParam("/on_road_search_init/min_crosswalk_segments_to_find", on_road_search_init.min_crosswalk_segments_to_find);
+    n.getParam("/on_road_search_init/min_to_left_mid_line_direction_for_crossing", on_road_search_init.min_to_left_mid_line_direction_for_crossing);
+    n.getParam("/on_road_search_init/max_to_left_mid_line_direction_for_crossing", on_road_search_init.max_to_left_mid_line_direction_for_crossing);
+    n.getParam("/on_road_search_init/min_to_right_mid_line_direction_for_crossing", on_road_search_init.min_to_right_mid_line_direction_for_crossing);
+    n.getParam("/on_road_search_init/max_to_right_mid_line_direction_for_crossing", on_road_search_init.max_to_right_mid_line_direction_for_crossing);
+    n.getParam("/on_road_search_init/min_outline_direction_difference_for_crossing", on_road_search_init.min_outline_direction_difference_for_crossing);
+    n.getParam("/on_road_search_init/max_crossing_forsight_y", on_road_search_init.max_crossing_forsight_y);
+    n.getParam("/on_road_search_init/min_to_left_left_line_direction_difference_for_crossing", on_road_search_init.min_to_left_left_line_direction_difference_for_crossing);
+    n.getParam("/on_road_search_init/max_to_left_left_line_direction_difference_for_crossing", on_road_search_init.max_to_left_left_line_direction_difference_for_crossing);
+    n.getParam("/on_road_search_init/min_to_right_right_line_direction_difference_for_crossing", on_road_search_init.min_to_right_right_line_direction_difference_for_crossing);
+    n.getParam("/on_road_search_init/max_to_right_right_line_direction_difference_for_crossing", on_road_search_init.max_to_right_right_line_direction_difference_for_crossing);
+    n.getParam("/on_road_search_init/max_left_line_height_for_crossing", on_road_search_init.max_left_line_height_for_crossing);
+    n.getParam("/on_road_search_init/max_right_line_height_for_crossing", on_road_search_init.max_right_line_height_for_crossing);
+    n.getParam("/on_road_search_init/max_left_line_size_for_crossing", on_road_search_init.max_left_line_size_for_crossing);
+    n.getParam("/on_road_search_init/max_right_line_size_for_crossing", on_road_search_init.max_right_line_size_for_crossing);
+    n.getParam("/on_road_search_init/max_lane_object_forsight_distance", on_road_search_init.max_lane_object_forsight_distance);
+    n.getParam("/on_road_search_init/lane_object_forsight_step_size", on_road_search_init.lane_object_forsight_step_size);
+    n.getParam("/on_road_search_init/left_in_left_lane_lineiterator_end_offset", on_road_search_init.left_in_left_lane_lineiterator_end_offset);
+    n.getParam("/on_road_search_init/left_in_right_lane_lineiterator_start_offset", on_road_search_init.left_in_right_lane_lineiterator_start_offset);
+    n.getParam("/on_road_search_init/left_in_right_lane_lineiterator_end_offset", on_road_search_init.left_in_right_lane_lineiterator_end_offset);
+    n.getParam("/on_road_search_init/right_in_left_lane_lineiterator_start_offset", on_road_search_init.right_in_left_lane_lineiterator_start_offset);
+    n.getParam("/on_road_search_init/right_in_left_lane_lineiterator_end_offset", on_road_search_init.right_in_left_lane_lineiterator_end_offset);
+    n.getParam("/on_road_search_init/right_in_right_lane_lineiterator_end_offset", on_road_search_init.right_in_right_lane_lineiterator_end_offset);
+    n.getParam("/on_road_search_init/left_in_left_lane_radial_outerline_offset", on_road_search_init.left_in_left_lane_radial_outerline_offset);
+    n.getParam("/on_road_search_init/left_in_right_lane_radial_outerline_offset", on_road_search_init.left_in_right_lane_radial_outerline_offset);
+    n.getParam("/on_road_search_init/right_in_left_lane_radial_outerline_offset", on_road_search_init.right_in_left_lane_radial_outerline_offset);
+    n.getParam("/on_road_search_init/right_in_right_lane_radial_outerline_offset", on_road_search_init.right_in_right_lane_radial_outerline_offset);
+    n.getParam("/on_road_search_init/lane_object_radial_scan_step_size", on_road_search_init.lane_object_radial_scan_step_size);
+    n.getParam("/on_road_search_init/lane_object_radial_scan_radius", on_road_search_init.lane_object_radial_scan_radius);
+    n.getParam("/on_road_search_init/min_marking_segments_threshold", on_road_search_init.min_marking_segments_threshold);
+    n.getParam("/on_road_search_init/min_box_segments_threshold", on_road_search_init.min_box_segments_threshold);
+    n.getParam("/on_road_search_init/min_white_pixels_for_box", on_road_search_init.min_white_pixels_for_box);
+    n.getParam("/on_road_search_init/velocity_sign_template_height", on_road_search_init.velocity_sign_template_height);
+    n.getParam("/on_road_search_init/veloctiy_sign_template_width", on_road_search_init.veloctiy_sign_template_width);
+    n.getParam("/on_road_search_init/goal_line_field_of_view", on_road_search_init.goal_line_field_of_view);
+    n.getParam("/on_road_search_init/rect_top_left_point_for_classifier_roi_x", on_road_search_init.rect_top_left_point_for_classifier_roi_x);
+    n.getParam("/on_road_search_init/rect_top_left_point_for_classifier_roi_y", on_road_search_init.rect_top_left_point_for_classifier_roi_y);
+    n.getParam("/on_road_search_init/rect_bottom_right_point_for_classifier_roi_x", on_road_search_init.rect_bottom_right_point_for_classifier_roi_x);
+    n.getParam("/on_road_search_init/rect_bottom_right_point_for_classifier_roi_y", on_road_search_init.rect_bottom_right_point_for_classifier_roi_y);
+    n.getParam("/on_road_search_init/resize_height_for_classifier_roi", on_road_search_init.resize_height_for_classifier_roi);
+    n.getParam("/on_road_search_init/resize_width_for_classifier_roi", on_road_search_init.resize_width_for_classifier_roi);
+    n.getParam("/on_road_search_init/template_roi_size_x", on_road_search_init.template_roi_size_x);
+    n.getParam("/on_road_search_init/template_roi_size_y", on_road_search_init.template_roi_size_y);
+    n.getParam("/on_road_search_init/road_sign_intensity_threshold", on_road_search_init.road_sign_intensity_threshold);
+
+
+
+}
+
 
 void LaneTracker::LoadSafeDriveAreaEvaluationInitializationParameters()
 {
@@ -810,6 +881,7 @@ void LaneTracker::LoadAllInitializationParameters()
     LoadVanishingPointSearchInitializationParameters();
     LoadConnectedComponentsSearchInitializationParameters();
     LoadSafeDriveAreaEvaluationInitializationParameters();
+    LoadOnRoadSearchInitializationParameters();
 }
 
 
@@ -889,7 +961,7 @@ LaneTracker::LaneTracker(ros::NodeHandle* nh_):n(*nh_),it(*nh_)
   VanishingPointSearcher_ = new VanishingPointSearch(birdseye_transformation_matrix_,vanishing_point_search_init);
   ConnectedComponentsSearcher_ = new ConnectedComponentsSearch(image_height_, image_width_, connected_components_search_init);
   SafeDriveAreaEvaluator_ = new SafeDriveAreaEvaluation(image_height_, image_width_, safe_drive_area_evaluation_init);
-  OnRoadSearcher_ =  new OnRoadSearch(nh_);
+  OnRoadSearcher_ =  new OnRoadSearch(nh_,on_road_search_init);
 
 };
 

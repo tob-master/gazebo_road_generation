@@ -26,97 +26,122 @@
 class LineValidationTable
 {
     private:
-        Point origin_;
-        int line_code_;
-        int label_;
+    Point origin_;
+    int line_code_;
+    int label_;
 
-        float   search_direction_;
-        int     next_direction_distance_;
+    float   search_direction_;
+    int     next_direction_distance_;
 
-        Point left_point_;
-        Point mid_point_;
-        Point right_point_;
+    Point left_point_;
+    Point mid_point_;
+    Point right_point_;
 
-        int left_id_;
-        int mid_id_;
-        int right_id_;
+    int left_id_;
+    int mid_id_;
+    int right_id_;
 
-        bool left_prediction_;
-        bool mid_prediction_;
-        bool right_prediction_;
+    bool left_prediction_;
+    bool mid_prediction_;
+    bool right_prediction_;
 
-        bool left_to_mid_directions_in_range_;
-        bool left_to_right_directions_in_range_;
-        bool mid_to_left_directions_in_range_;
-        bool mid_to_right_directions_in_range_;
-        bool right_to_left_directions_in_range_;
-        bool right_to_mid_directions_in_range_;
+    bool left_to_mid_directions_in_range_;
+    bool left_to_right_directions_in_range_;
+    bool mid_to_left_directions_in_range_;
+    bool mid_to_right_directions_in_range_;
+    bool right_to_left_directions_in_range_;
+    bool right_to_mid_directions_in_range_;
 
-        bool left_to_origin_prediction_;
-        bool mid_to_origin_prediction_;
-        bool right_to_origin_prediction_;
+    bool left_to_origin_prediction_;
+    bool mid_to_origin_prediction_;
+    bool right_to_origin_prediction_;
 
-        bool found_left_point_;
-        bool found_mid_point_;
-        bool found_right_point_;
+    bool found_left_point_;
+    bool found_mid_point_;
+    bool found_right_point_;
 
-        int score_;
+    int score_;
 
 
     public:
 
-        int GetLabel(){return label_;};
-        int GetNextDirectionDistance(){return next_direction_distance_;};
+    int GetLabel(){return label_;};
+    int GetNextDirectionDistance(){return next_direction_distance_;};
 
 
-        LineValidationTable(int line_code,Point origin,float search_direction, int next_direction_distance, Point adjacent_line_point_1, Point adjacent_line_point_2, int label);
-        Point GetAdjacentPointPrediction(int SEARCH_LINE_CODE);
-        void SetAdjacentPointPredictionFound(int SEARCH_LINE_CODE, bool flag);
-        Point GetOriginPoint();
-        int GetDirection();
-        void SetAdjacentPointDirectionInRange(int SEARCH_LINE_CODE, bool flag);
-        Point GetLeftLinePointPrediction();
-        Point GetMidLinePointPrediction();
-        Point GetRightLinePointPrediction();
+    LineValidationTable(
+    int line_code,
+    Point origin,
+    float search_direction,
+    int next_direction_distance,
+    Point adjacent_line_point_1,
+    Point adjacent_line_point_2,
+    int label);
 
-        void SetAdjacentPointPrediction(int SEARCH_LINE_CODE, bool flag);
-        void SetAdjacentPointId(int SEARCH_LINE_CODE,int min_distance_adjacent_point_id);
-        void SetAdjacentPointOriginPrediction(int SEARCH_LINE_CODE, bool flag);
+    Point GetAdjacentPointPrediction(
+    int SEARCH_LINE_CODE);
 
-        bool GetLeftPrediction(){return left_prediction_;};
-        bool GetMidPrediction(){return mid_prediction_;};
-        bool GetRightPrediction(){return right_prediction_;};
+    void SetAdjacentPointPredictionFound(
+    int SEARCH_LINE_CODE,
+    bool flag);
 
-        bool GetFoundLeftPoint(){return found_left_point_;};
-        bool GetFoundMidPoint(){return found_mid_point_;};
-        bool GetFoundRightPoint(){return found_right_point_;};
+    Point GetOriginPoint();
+    int GetDirection();
 
-        Point GetLeftPoint(){return left_point_;};
-        Point GetMidPoint(){return mid_point_;};
-        Point GetRightPoint(){return right_point_;};
+    void SetAdjacentPointDirectionInRange(
+    int SEARCH_LINE_CODE,
+    bool flag);
+
+    Point GetLeftLinePointPrediction();
+    Point GetMidLinePointPrediction();
+    Point GetRightLinePointPrediction();
+
+    void SetAdjacentPointPrediction(
+    int SEARCH_LINE_CODE,
+    bool flag);
+
+    void SetAdjacentPointId(
+    int SEARCH_LINE_CODE,
+    int min_distance_adjacent_point_id);
+
+    void SetAdjacentPointOriginPrediction(
+    int SEARCH_LINE_CODE,
+    bool flag);
+
+    bool GetLeftPrediction(){return left_prediction_;};
+    bool GetMidPrediction(){return mid_prediction_;};
+    bool GetRightPrediction(){return right_prediction_;};
+
+    bool GetFoundLeftPoint(){return found_left_point_;};
+    bool GetFoundMidPoint(){return found_mid_point_;};
+    bool GetFoundRightPoint(){return found_right_point_;};
+
+    Point GetLeftPoint(){return left_point_;};
+    Point GetMidPoint(){return mid_point_;};
+    Point GetRightPoint(){return right_point_;};
 
 
-        bool GetLeftToMidDirectionsInRange(){return left_to_mid_directions_in_range_;};
-        bool GetLeftToRightDirectionsInRange(){return left_to_right_directions_in_range_;};
-        bool GetMidToLeftDirectionsInRange(){return mid_to_left_directions_in_range_;};
-        bool GetMidToRightDirectionsInRange(){return mid_to_right_directions_in_range_;};
-        bool GetRightToLeftDirectionsInRange(){return right_to_left_directions_in_range_;};
-        bool GetRightToMidDirectionsInRange(){return right_to_mid_directions_in_range_;};
+    bool GetLeftToMidDirectionsInRange(){return left_to_mid_directions_in_range_;};
+    bool GetLeftToRightDirectionsInRange(){return left_to_right_directions_in_range_;};
+    bool GetMidToLeftDirectionsInRange(){return mid_to_left_directions_in_range_;};
+    bool GetMidToRightDirectionsInRange(){return mid_to_right_directions_in_range_;};
+    bool GetRightToLeftDirectionsInRange(){return right_to_left_directions_in_range_;};
+    bool GetRightToMidDirectionsInRange(){return right_to_mid_directions_in_range_;};
 
-        int GetLeftPointId(){ return left_id_;};
-        int GetMidPointId(){ return mid_id_;};
-        int GetRightPointId(){ return right_id_;};
+    int GetLeftPointId(){ return left_id_;};
+    int GetMidPointId(){ return mid_id_;};
+    int GetRightPointId(){ return right_id_;};
 
-        int GetAdjacent1Id(int LINE_CODE);
-        int GetAdjacent2Id(int LINE_CODE);
+    int GetAdjacent1Id(int LINE_CODE);
+    int GetAdjacent2Id(int LINE_CODE);
 
-        int GetAdjacent1Prediction(int LINE_CODE);
-        int GetAdjacent2Prediction(int LINE_CODE);
+    int GetAdjacent1Prediction(int LINE_CODE);
+    int GetAdjacent2Prediction(int LINE_CODE);
 
 
-};
-struct SafeDriveAreaEvaluationReturnInfo
-{
+    };
+    struct SafeDriveAreaEvaluationReturnInfo
+    {
     vector<vector<Point>> search_rect;
     unsigned long long int left_line_score;
     unsigned long long int mid_line_score;

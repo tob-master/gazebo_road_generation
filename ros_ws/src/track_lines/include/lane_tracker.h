@@ -77,6 +77,7 @@ private:
     VanishingPointSearchInitializationParameters vanishing_point_search_init;
     ConnectedComponentsSearchInitializationParameters connected_components_search_init;
     SafeDriveAreaEvaluationInitializationParameters safe_drive_area_evaluation_init;
+    OnRoadSearchInitializationParameters on_road_search_init;
 
     Mat birdseye_transformation_matrix_;
 
@@ -158,6 +159,7 @@ void CheckStartParameters();
     void LoadConnectedComponentsSearchInitializationParameters();
     void LoadLinePointsReduceInitializationParameters();
     void LoadSafeDriveAreaEvaluationInitializationParameters();
+    void LoadOnRoadSearchInitializationParameters();
 
     void     DrawHoughLinesFront(Mat& rgb);
     void    DrawHoughLinesBird(Mat& rgb);

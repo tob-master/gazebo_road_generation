@@ -1,6 +1,9 @@
 #include "line_validation_table_creation.h"
 
-LineValidationTableCreation::LineValidationTableCreation(int image_height, int image_width, LineValidationTableCreationInitializationParameters init):
+LineValidationTableCreation::LineValidationTableCreation(
+int image_height,
+int image_width,
+LineValidationTableCreationInitializationParameters init):
 kImageWidth_(image_width),
 kImageHeight_(image_height),
 kMinLeftToRightLineDistance_(init.min_left_to_right_line_distance),
@@ -32,11 +35,14 @@ kMaxRightToMidLineWidth_(init.max_right_to_mid_line_width),
 kMinMidToLeftLineWidth_(init.min_mid_to_left_line_width),
 kMaxMidToLeftLineWidth_(init.max_mid_to_left_line_width),
 kMinMidToRightLineWidth_(init.min_mid_to_right_line_width),
-kMaxMidToRightLineWidth_(init.max_mid_to_right_line_width)
+kMaxMidToRightLineWidth_(init.max_mid_to_right_line_width),
+kMaxDistanceOfPredictedToAdjacentPoint_(init.max_distance_of_predicted_to_adjacent_point),
+kMinStartDirectionOfLinePointsInDriveDirection_(init.min_start_direction_of_line_points_in_drive_direction),
+kMaxStartDirectionOfLinePointsInDriveDirection_(init.max_start_direction_of_line_points_in_drive_direction),
+kMaxDirectionDifferenceOfLinePointsInDriveDirection_(init.max_direction_difference_of_line_points_in_drive_direction)
 {
 
 }
-
 
 void LineValidationTableCreation::ClearMemory()
 {
@@ -64,18 +70,23 @@ void LineValidationTableCreation::ClearMemory()
 
 }
 
-void LineValidationTableCreation::SetImage(Mat image)
+void LineValidationTableCreation::SetImage(
+Mat image)
 {
     image_ = image;
 }
 
-void LineValidationTableCreation::FindValidPointsFromLineFollow(vector<PointInDirection> line_directions, int SEARCH_LINE_CODE)
+void LineValidationTableCreation::FindValidPointsFromLineFollow(
+vector<PointInDirection> line_directions,
+int SEARCH_LINE_CODE)
 {
     FindValidPoints(line_directions, SEARCH_LINE_CODE);
 }
 
 
-void LineValidationTableCreation::FindValidPointsFromMidLineSearch(vector<vector<PointInDirection>> mid_line_directions_clusters, int SEARCH_LINE_CODE)
+void LineValidationTableCreation::FindValidPointsFromMidLineSearch(
+vector<vector<PointInDirection>> mid_line_directions_clusters,
+int SEARCH_LINE_CODE)
 {
 
    for(auto &line_directions: mid_line_directions_clusters)
@@ -100,7 +111,9 @@ void LineValidationTableCreation::FindValidPointsFromMidLineSearch(vector<vector
 
 
 
-void LineValidationTableCreation::FindValidPoints(vector<PointInDirection> line_directions, int SEARCH_LINE_CODE)
+void LineValidationTableCreation::FindValidPoints(
+vector<PointInDirection> line_directions,
+int SEARCH_LINE_CODE)
 {
     for(int i=0; i<line_directions.size(); i++)
     {
@@ -120,57 +133,62 @@ void LineValidationTableCreation::FindValidPoints(vector<PointInDirection> line_
             vector<int> orthogonal_line_activations;
             vector<Point> orthogonal_line_points;
 
-            SearchOrthogonalValues(image_,
-                                   point_in_search_direction_x,
-                                   point_in_search_direction_y,
-                                   orthogonal_angle,
-                                   orthogonal_line_activations,
-                                   orthogonal_line_points,
-                                   kImageWidth_,kImageHeight_,
-                                   kMinLeftToMidLineDistance_,kMaxLeftToMidLineDistance_,kMinLeftToRightLineDistance_,kMaxLeftToRightLineDistance_,kMinRightToMidLineDistance_,kMaxRightToMidLineDistance_,
-                                   kMinRightToLeftLineDistance_,kMaxRightToLeftLineDistance_,kMinMidToLeftLineDistance_,kMaxMidToLeftLineDistance_,kMinMidToRightLineDistance_,kMaxMidToRightLineDistance_,
-                                   kMinLeftToMidPixelIntensity_,kMinLeftToRightPixelIntensity_,kMinRightToMidPixelIntensity_,kMinRightToLeftPixelIntensity_,kMinMidToRightPixelIntensity_,kMinMidToLeftPixelIntensity_,
-                                   SEARCH_LINE_CODE);
+            SearchOrthogonalValues(
+            image_,
+            point_in_search_direction_x,
+            point_in_search_direction_y,
+            orthogonal_angle,
+            orthogonal_line_activations,
+            orthogonal_line_points,
+            kImageWidth_,kImageHeight_,
+            kMinLeftToMidLineDistance_,kMaxLeftToMidLineDistance_,kMinLeftToRightLineDistance_,kMaxLeftToRightLineDistance_,kMinRightToMidLineDistance_,kMaxRightToMidLineDistance_,
+            kMinRightToLeftLineDistance_,kMaxRightToLeftLineDistance_,kMinMidToLeftLineDistance_,kMaxMidToLeftLineDistance_,kMinMidToRightLineDistance_,kMaxMidToRightLineDistance_,
+            kMinLeftToMidPixelIntensity_,kMinLeftToRightPixelIntensity_,kMinRightToMidPixelIntensity_,kMinRightToLeftPixelIntensity_,kMinMidToRightPixelIntensity_,kMinMidToLeftPixelIntensity_,
+            SEARCH_LINE_CODE);
 
             SegmentStartIDAndWidth line_match;
 
-            bool is_matched = CheckLineMatch(orthogonal_line_activations,
-                                             line_match,
-                                             kMinLeftToMidLineWidth_,
-                                             kMaxLeftToMidLineWidth_,
-                                             kMinLeftToRightLineWidth_,
-                                             kMaxLeftToRightLineWidth_,
-                                             kMinRightToMidLineWidth_,
-                                             kMaxRightToMidLineWidth_,
-                                             kMinRightToLeftLineWidth_,
-                                             kMaxRightToLeftLineWidth_,
-                                             kMinMidToRightLineWidth_,
-                                             kMaxMidToRightLineWidth_,
-                                             kMinMidToLeftLineWidth_,
-                                             kMaxMidToLeftLineWidth_,
-                                             SEARCH_LINE_CODE);
+            bool is_matched =   CheckLineMatch(
+                                orthogonal_line_activations,
+                                line_match,
+                                kMinLeftToMidLineWidth_,
+                                kMaxLeftToMidLineWidth_,
+                                kMinLeftToRightLineWidth_,
+                                kMaxLeftToRightLineWidth_,
+                                kMinRightToMidLineWidth_,
+                                kMaxRightToMidLineWidth_,
+                                kMinRightToLeftLineWidth_,
+                                kMaxRightToLeftLineWidth_,
+                                kMinMidToRightLineWidth_,
+                                kMaxMidToRightLineWidth_,
+                                kMinMidToLeftLineWidth_,
+                                kMaxMidToLeftLineWidth_,
+                                SEARCH_LINE_CODE);
 
-            SafeLinePoint(line_match,
-                          orthogonal_line_points,
-                          is_matched,
-                          point_in_search_direction_x,
-                          point_in_search_direction_y,
-                          current_to_next_point_distance,
-                          angle_to_next_point,
-                          left_to_mid_search_info_,
-                          left_to_right_search_info_,
-                          right_to_mid_search_info_,
-                          right_to_left_search_info_,
-                          mid_to_right_search_info_,
-                          mid_to_left_search_info_,
-                          SEARCH_LINE_CODE);
+            SafeLinePoint(
+            line_match,
+            orthogonal_line_points,
+            is_matched,
+            point_in_search_direction_x,
+            point_in_search_direction_y,
+            current_to_next_point_distance,
+            angle_to_next_point,
+            left_to_mid_search_info_,
+            left_to_right_search_info_,
+            right_to_mid_search_info_,
+            right_to_left_search_info_,
+            mid_to_right_search_info_,
+            mid_to_left_search_info_,
+            SEARCH_LINE_CODE);
 
         }
     }
 }
 
 
-float LineValidationTableCreation::GetOrthogonalAngle(float angle, int SEARCH_LINE_CODE)
+float LineValidationTableCreation::GetOrthogonalAngle(
+float angle,
+int SEARCH_LINE_CODE)
 {
     int  angle_ = 0;
 
@@ -186,55 +204,59 @@ float LineValidationTableCreation::GetOrthogonalAngle(float angle, int SEARCH_LI
 }
 
 
-void LineValidationTableCreation::SearchOrthogonalValues( Mat image,
-                                                          const int point_in_search_direction_x,
-                                                          const int point_in_search_direction_y,
-                                                          float orthogonal_angle,
-                                                          vector<int>& orthogonal_line_activations,
-                                                          vector<Point>& orthogonal_line_points,
-                                                          const int kImageWidth,
-                                                          const int kImageHeight,
-                                                          const int kMinLeftToMidLineDistance,
-                                                          const int MaxLeftToMidLineDistance,
-                                                          const int kMinLeftToRightLineDistance,
-                                                          const int kMaxLeftToRightLineDistance,
-                                                          const int kMinRightToMidLineDistance,
-                                                          const int kMaxRightToMidLineDistance,
-                                                          const int kMinRightToLeftLineDistance,
-                                                          const int kMaxRightToLeftLineDistance,
-                                                          const int kMinMidToLeftLineDistance,
-                                                          const int kMaxMidToLeftLineDistance,
-                                                          const int kMinMidToRightLineDistance,
-                                                          const int kMaxMidToRightLineDistance,
-                                                          const int kMinLeftToMidPixelIntensity,
-                                                          const int kMinLeftToRightPixelIntensity,
-                                                          const int kMinRightToMidPixelIntensity,
-                                                          const int kMinRightToLeftPixelIntensity,
-                                                          const int kMinMidToRightPixelIntensity,
-                                                          const int kMinMidToLeftPixelIntensity,
-                                                          const int SEARCH_LINE_CODE)
+void LineValidationTableCreation::SearchOrthogonalValues(
+Mat image,
+const int point_in_search_direction_x,
+const int point_in_search_direction_y,
+float orthogonal_angle,
+vector<int>& orthogonal_line_activations,
+vector<Point>& orthogonal_line_points,
+const int kImageWidth,
+const int kImageHeight,
+const int kMinLeftToMidLineDistance,
+const int MaxLeftToMidLineDistance,
+const int kMinLeftToRightLineDistance,
+const int kMaxLeftToRightLineDistance,
+const int kMinRightToMidLineDistance,
+const int kMaxRightToMidLineDistance,
+const int kMinRightToLeftLineDistance,
+const int kMaxRightToLeftLineDistance,
+const int kMinMidToLeftLineDistance,
+const int kMaxMidToLeftLineDistance,
+const int kMinMidToRightLineDistance,
+const int kMaxMidToRightLineDistance,
+const int kMinLeftToMidPixelIntensity,
+const int kMinLeftToRightPixelIntensity,
+const int kMinRightToMidPixelIntensity,
+const int kMinRightToLeftPixelIntensity,
+const int kMinMidToRightPixelIntensity,
+const int kMinMidToLeftPixelIntensity,
+const int SEARCH_LINE_CODE)
 {
 
-     SearchLineDistanceThresholds search_line_distance_thresholds = GetSearchLineDistanceThresholds(kMinLeftToMidLineDistance,
-                                                                                                    MaxLeftToMidLineDistance,
-                                                                                                    kMinLeftToRightLineDistance,
-                                                                                                    kMaxLeftToRightLineDistance,
-                                                                                                    kMinRightToMidLineDistance,
-                                                                                                    kMaxRightToMidLineDistance,
-                                                                                                    kMinRightToLeftLineDistance,
-                                                                                                    kMaxRightToLeftLineDistance,
-                                                                                                    kMinMidToLeftLineDistance,
-                                                                                                    kMaxMidToLeftLineDistance,
-                                                                                                    kMinMidToRightLineDistance,
-                                                                                                    kMaxMidToRightLineDistance,
-                                                                                                    SEARCH_LINE_CODE);
-     int min_pixel_intensity_threshold = GetMinPixelIntensityThreshold(kMinLeftToMidPixelIntensity,
-                                                                       kMinLeftToRightPixelIntensity,
-                                                                       kMinRightToMidPixelIntensity,
-                                                                       kMinRightToLeftPixelIntensity,
-                                                                       kMinMidToRightPixelIntensity,
-                                                                       kMinMidToLeftPixelIntensity,
-                                                                       SEARCH_LINE_CODE);
+     SearchLineDistanceThresholds search_line_distance_thresholds = GetSearchLineDistanceThresholds(
+                                                                    kMinLeftToMidLineDistance,
+                                                                    MaxLeftToMidLineDistance,
+                                                                    kMinLeftToRightLineDistance,
+                                                                    kMaxLeftToRightLineDistance,
+                                                                    kMinRightToMidLineDistance,
+                                                                    kMaxRightToMidLineDistance,
+                                                                    kMinRightToLeftLineDistance,
+                                                                    kMaxRightToLeftLineDistance,
+                                                                    kMinMidToLeftLineDistance,
+                                                                    kMaxMidToLeftLineDistance,
+                                                                    kMinMidToRightLineDistance,
+                                                                    kMaxMidToRightLineDistance,
+                                                                    SEARCH_LINE_CODE);
+
+     int min_pixel_intensity_threshold =    GetMinPixelIntensityThreshold(
+                                            kMinLeftToMidPixelIntensity,
+                                            kMinLeftToRightPixelIntensity,
+                                            kMinRightToMidPixelIntensity,
+                                            kMinRightToLeftPixelIntensity,
+                                            kMinMidToRightPixelIntensity,
+                                            kMinMidToLeftPixelIntensity,
+                                            SEARCH_LINE_CODE);
 
      for(int current_distance=search_line_distance_thresholds.min; current_distance < search_line_distance_thresholds.max; current_distance++)
      {
@@ -269,19 +291,20 @@ void LineValidationTableCreation::SearchOrthogonalValues( Mat image,
 }
 
 
-SearchLineDistanceThresholds LineValidationTableCreation::GetSearchLineDistanceThresholds(  const int kMinLeftToMidLineDistance,
-                                                                                            const int kMaxLeftToMidLineDistance,
-                                                                                            const int kMinLeftToRightLineDistance,
-                                                                                            const int kMaxLeftToRightLineDistance,
-                                                                                            const int kMinRightToMidLineDistance,
-                                                                                            const int kMaxRightToMidLineDistance,
-                                                                                            const int kMinRightToLeftLineDistance,
-                                                                                            const int kMaxRightToLeftLineDistance,
-                                                                                            const int kMinMidToLeftLineDistance,
-                                                                                            const int kMaxMidToLeftLineDistance,
-                                                                                            const int kMinMidToRightLineDistance,
-                                                                                            const int kMaxMidToRightLineDistance,
-                                                                                            const int SEARCH_LINE_CODE)
+SearchLineDistanceThresholds LineValidationTableCreation::GetSearchLineDistanceThresholds(
+const int kMinLeftToMidLineDistance,
+const int kMaxLeftToMidLineDistance,
+const int kMinLeftToRightLineDistance,
+const int kMaxLeftToRightLineDistance,
+const int kMinRightToMidLineDistance,
+const int kMaxRightToMidLineDistance,
+const int kMinRightToLeftLineDistance,
+const int kMaxRightToLeftLineDistance,
+const int kMinMidToLeftLineDistance,
+const int kMaxMidToLeftLineDistance,
+const int kMinMidToRightLineDistance,
+const int kMaxMidToRightLineDistance,
+const int SEARCH_LINE_CODE)
 {
     if(SEARCH_LINE_CODE == LEFT_TO_MID) return SearchLineDistanceThresholds{kMinLeftToMidLineDistance,kMaxLeftToMidLineDistance};
 
@@ -298,13 +321,14 @@ SearchLineDistanceThresholds LineValidationTableCreation::GetSearchLineDistanceT
 
 
 
-int LineValidationTableCreation::GetMinPixelIntensityThreshold(const int kMinLeftToMidPixelIntensity,
-                                                               const int  kMinLeftToRightPixelIntensity,
-                                                               const int  kMinRightToMidPixelIntensity,
-                                                               const int  kMinRightToLeftPixelIntensity,
-                                                               const int  kMinMidToRightPixelIntensity,
-                                                               const int  kMinMidToLeftPixelIntensity,
-                                                               const int SEARCH_LINE_CODE)
+int LineValidationTableCreation::GetMinPixelIntensityThreshold(
+const int kMinLeftToMidPixelIntensity,
+const int  kMinLeftToRightPixelIntensity,
+const int  kMinRightToMidPixelIntensity,
+const int  kMinRightToLeftPixelIntensity,
+const int  kMinMidToRightPixelIntensity,
+const int  kMinMidToLeftPixelIntensity,
+const int SEARCH_LINE_CODE)
 {
     if(SEARCH_LINE_CODE == LEFT_TO_MID) return kMinLeftToMidPixelIntensity;
 
@@ -320,31 +344,37 @@ int LineValidationTableCreation::GetMinPixelIntensityThreshold(const int kMinLef
 }
 
 
-int LineValidationTableCreation::GetPixelValue(Mat image, int x, int y)
+int LineValidationTableCreation::GetPixelValue(
+Mat image,
+int x,
+int y)
 {
     return (int)image.at<uchar>(Point(x,y));
 }
 
-int LineValidationTableCreation::GetPixelValue(Mat image, Point point)
+int LineValidationTableCreation::GetPixelValue(
+Mat image,
+Point point)
 {
     return (int)image.at<uchar>(point);
 }
 
-bool LineValidationTableCreation::CheckLineMatch(vector<int> orthogonal_line_activations,
-                                                 SegmentStartIDAndWidth& line_match,
-                                                 const int kMinLeftToMidLineWidth,
-                                                 const int kMaxLeftToMidLineWidth,
-                                                 const int kMinLeftToRightLineWidth,
-                                                 const int kMaxLeftToRightLineWidth,
-                                                 const int kMinRightToMidLineWidth,
-                                                 const int kMaxRightToMidLineWidth,
-                                                 const int kMinRightToLeftLineWidth,
-                                                 const int kMaxRightToLeftLineWidth,
-                                                 const int kMinMidToRightLineWidth,
-                                                 const int kMaxMidToRightLineWidth,
-                                                 const int kMinMidToLeftLineWidth,
-                                                 const int kMaxMidToLeftLineWidth,
-                                                 const int SEARCH_LINE_CODE)
+bool LineValidationTableCreation::CheckLineMatch(
+vector<int> orthogonal_line_activations,
+SegmentStartIDAndWidth& line_match,
+const int kMinLeftToMidLineWidth,
+const int kMaxLeftToMidLineWidth,
+const int kMinLeftToRightLineWidth,
+const int kMaxLeftToRightLineWidth,
+const int kMinRightToMidLineWidth,
+const int kMaxRightToMidLineWidth,
+const int kMinRightToLeftLineWidth,
+const int kMaxRightToLeftLineWidth,
+const int kMinMidToRightLineWidth,
+const int kMaxMidToRightLineWidth,
+const int kMinMidToLeftLineWidth,
+const int kMaxMidToLeftLineWidth,
+const int SEARCH_LINE_CODE)
 {
     vector<SegmentStartIDAndWidth> segments;
     int segment_width = 0;
@@ -367,19 +397,20 @@ bool LineValidationTableCreation::CheckLineMatch(vector<int> orthogonal_line_act
         }
     }
     // Check if there are no other segments and if width of midline is correct
-    SearchLineWidthThresholds search_line_width_thresholds = GetSearchLineWidthThresholds(kMinLeftToMidLineWidth,
-                                                                                          kMaxLeftToMidLineWidth,
-                                                                                          kMinLeftToRightLineWidth,
-                                                                                          kMaxLeftToRightLineWidth,
-                                                                                          kMinRightToMidLineWidth,
-                                                                                          kMaxRightToMidLineWidth,
-                                                                                          kMinRightToLeftLineWidth,
-                                                                                          kMaxRightToLeftLineWidth,
-                                                                                          kMinMidToRightLineWidth,
-                                                                                          kMaxMidToRightLineWidth,
-                                                                                          kMinMidToLeftLineWidth,
-                                                                                          kMaxMidToLeftLineWidth,
-                                                                                          SEARCH_LINE_CODE);
+    SearchLineWidthThresholds search_line_width_thresholds =GetSearchLineWidthThresholds(
+                                                            kMinLeftToMidLineWidth,
+                                                            kMaxLeftToMidLineWidth,
+                                                            kMinLeftToRightLineWidth,
+                                                            kMaxLeftToRightLineWidth,
+                                                            kMinRightToMidLineWidth,
+                                                            kMaxRightToMidLineWidth,
+                                                            kMinRightToLeftLineWidth,
+                                                            kMaxRightToLeftLineWidth,
+                                                            kMinMidToRightLineWidth,
+                                                            kMaxMidToRightLineWidth,
+                                                            kMinMidToLeftLineWidth,
+                                                            kMaxMidToLeftLineWidth,
+                                                            SEARCH_LINE_CODE);
 
     if(segments.size() == 1)
     {
@@ -396,19 +427,20 @@ bool LineValidationTableCreation::CheckLineMatch(vector<int> orthogonal_line_act
 
 
 
-SearchLineWidthThresholds LineValidationTableCreation::GetSearchLineWidthThresholds(const int kMinLeftToMidLineWidth,
-                                                                                    const int kMaxLeftToMidLineWidth,
-                                                                                    const int kMinLeftToRightLineWidth,
-                                                                                    const int kMaxLeftToRightLineWidth,
-                                                                                    const int kMinRightToMidLineWidth,
-                                                                                    const int kMaxRightToMidLineWidth,
-                                                                                    const int kMinRightToLeftLineWidth,
-                                                                                    const int kMaxRightToLeftLineWidth,
-                                                                                    const int kMinMidToRightLineWidth,
-                                                                                    const int kMaxMidToRightLineWidth,
-                                                                                    const int kMinMidToLeftLineWidth,
-                                                                                    const int kMaxMidToLeftLineWidth,
-                                                                                    const int SEARCH_LINE_CODE)
+SearchLineWidthThresholds LineValidationTableCreation::GetSearchLineWidthThresholds(
+const int kMinLeftToMidLineWidth,
+const int kMaxLeftToMidLineWidth,
+const int kMinLeftToRightLineWidth,
+const int kMaxLeftToRightLineWidth,
+const int kMinRightToMidLineWidth,
+const int kMaxRightToMidLineWidth,
+const int kMinRightToLeftLineWidth,
+const int kMaxRightToLeftLineWidth,
+const int kMinMidToRightLineWidth,
+const int kMaxMidToRightLineWidth,
+const int kMinMidToLeftLineWidth,
+const int kMaxMidToLeftLineWidth,
+const int SEARCH_LINE_CODE)
 {
     if(SEARCH_LINE_CODE == LEFT_TO_MID) return SearchLineWidthThresholds{kMinLeftToMidLineWidth,kMaxLeftToMidLineWidth};
 
@@ -423,20 +455,21 @@ SearchLineWidthThresholds LineValidationTableCreation::GetSearchLineWidthThresho
     if(SEARCH_LINE_CODE == MID_TO_LEFT) return SearchLineWidthThresholds{kMinMidToLeftLineWidth,kMaxMidToLeftLineWidth};
 }
 
-void LineValidationTableCreation::SafeLinePoint(SegmentStartIDAndWidth line_match,
-                                                vector<Point> orthogonal_line_points,
-                                                const bool is_matched,
-                                                const int point_in_search_direction_x,
-                                                const int point_in_search_direction_y,
-                                                const int current_to_next_point_distance,
-                                                const float angle_to_next_point,
-                                                vector<ValidLinePointSearchInfo> &left_to_mid_search_info,
-                                                vector<ValidLinePointSearchInfo> &left_to_right_search_info,
-                                                vector<ValidLinePointSearchInfo> &right_to_mid_search_info,
-                                                vector<ValidLinePointSearchInfo> &right_to_left_search_info,
-                                                vector<ValidLinePointSearchInfo> &mid_to_right_search_info,
-                                                vector<ValidLinePointSearchInfo> &mid_to_left_search_info,
-                                                const int SEARCH_LINE_CODE)
+void LineValidationTableCreation::SafeLinePoint(
+SegmentStartIDAndWidth line_match,
+vector<Point> orthogonal_line_points,
+const bool is_matched,
+const int point_in_search_direction_x,
+const int point_in_search_direction_y,
+const int current_to_next_point_distance,
+const float angle_to_next_point,
+vector<ValidLinePointSearchInfo> &left_to_mid_search_info,
+vector<ValidLinePointSearchInfo> &left_to_right_search_info,
+vector<ValidLinePointSearchInfo> &right_to_mid_search_info,
+vector<ValidLinePointSearchInfo> &right_to_left_search_info,
+vector<ValidLinePointSearchInfo> &mid_to_right_search_info,
+vector<ValidLinePointSearchInfo> &mid_to_left_search_info,
+const int SEARCH_LINE_CODE)
 {
     Point origin(point_in_search_direction_x,point_in_search_direction_y);
     float search_direction = angle_to_next_point;
@@ -494,14 +527,15 @@ LineValidationTableCreationReturnInfo LineValidationTableCreation::CreateLineVal
 {
     for(int i=0; i<left_to_mid_search_info_.size(); i++)
     {
-        left_line_validation_table_.emplace_back(LineValidationTable(LEFT_LINE,
-                                                                  left_to_mid_search_info_[i].origin,
-                                                                  left_to_mid_search_info_[i].search_direction,
-                                                                  left_to_mid_search_info_[i].next_direction_distance,
-                                                                  left_to_mid_search_info_[i].adjacent_line_point,
-                                                                  left_to_right_search_info_[i].adjacent_line_point,
-                                                                  0));
-    }
+        left_line_validation_table_.emplace_back(LineValidationTable(
+                                                LEFT_LINE,
+                                                left_to_mid_search_info_[i].origin,
+                                                left_to_mid_search_info_[i].search_direction,
+                                                left_to_mid_search_info_[i].next_direction_distance,
+                                                left_to_mid_search_info_[i].adjacent_line_point,
+                                                left_to_right_search_info_[i].adjacent_line_point,
+                                                0));
+                                                }
 
 
     for(int i=0; i<mid_to_left_search_info_clusters_.size(); i++)
@@ -509,90 +543,102 @@ LineValidationTableCreationReturnInfo LineValidationTableCreation::CreateLineVal
         for(int j=0; j<mid_to_left_search_info_clusters_[i].size(); j++)
         {
 
-            mid_line_validation_table_.emplace_back(LineValidationTable(MID_LINE,
-                                                                      mid_to_left_search_info_clusters_[i][j].origin,
-                                                                      mid_to_left_search_info_clusters_[i][j].search_direction,
-                                                                      mid_to_left_search_info_clusters_[i][j].next_direction_distance,
-                                                                      mid_to_left_search_info_clusters_[i][j].adjacent_line_point,
-                                                                      mid_to_right_search_info_clusters_[i][j].adjacent_line_point,
-                                                                      i));
-        }
+            mid_line_validation_table_.emplace_back(LineValidationTable(
+                                                    MID_LINE,
+                                                    mid_to_left_search_info_clusters_[i][j].origin,
+                                                    mid_to_left_search_info_clusters_[i][j].search_direction,
+                                                    mid_to_left_search_info_clusters_[i][j].next_direction_distance,
+                                                    mid_to_left_search_info_clusters_[i][j].adjacent_line_point,
+                                                    mid_to_right_search_info_clusters_[i][j].adjacent_line_point,
+                                                    i));
+                                                    }
     }
 
     for(int i=0; i<right_to_left_search_info_.size(); i++)
     {
-        right_line_validation_table_.emplace_back(LineValidationTable(RIGHT_LINE,
-                                                                                right_to_left_search_info_[i].origin,
-                                                                                right_to_left_search_info_[i].search_direction,
-                                                                                right_to_left_search_info_[i].next_direction_distance,
-                                                                                right_to_left_search_info_[i].adjacent_line_point,
-                                                                                right_to_mid_search_info_[i].adjacent_line_point,
-                                                                                0));
+        right_line_validation_table_.emplace_back(LineValidationTable(
+                                                RIGHT_LINE,
+                                                right_to_left_search_info_[i].origin,
+                                                right_to_left_search_info_[i].search_direction,
+                                                right_to_left_search_info_[i].next_direction_distance,
+                                                right_to_left_search_info_[i].adjacent_line_point,
+                                                right_to_mid_search_info_[i].adjacent_line_point,
+                                                0));
     }
 
-    CheckDistanceFromPredictedToAdjacentPoint(left_line_validation_table_,
-                           left_line_validation_table_,
-                           mid_line_validation_table_,
-                           right_line_validation_table_,
-                           EMPTY_POINT_,
-                           kMaxDistanceOfPredictedToAdjacentPoint_,
-                           LEFT_TO_MID);
+    CheckDistanceFromPredictedToAdjacentPoint(
+    left_line_validation_table_,
+    left_line_validation_table_,
+    mid_line_validation_table_,
+    right_line_validation_table_,
+    EMPTY_POINT_,
+    kMaxDistanceOfPredictedToAdjacentPoint_,
+    LEFT_TO_MID);
 
-    CheckDistanceFromPredictedToAdjacentPoint(left_line_validation_table_,
-                           left_line_validation_table_,
-                           mid_line_validation_table_,
-                           right_line_validation_table_,
-                           EMPTY_POINT_,
-                           kMaxDistanceOfPredictedToAdjacentPoint_,
-                           LEFT_TO_RIGHT);
-
-
-    CheckDistanceFromPredictedToAdjacentPoint(mid_line_validation_table_,
-                           left_line_validation_table_,
-                           mid_line_validation_table_,
-                           right_line_validation_table_,
-                           EMPTY_POINT_,
-                           kMaxDistanceOfPredictedToAdjacentPoint_,
-                           MID_TO_LEFT);
-
-    CheckDistanceFromPredictedToAdjacentPoint(mid_line_validation_table_,
-                           left_line_validation_table_,
-                           mid_line_validation_table_,
-                           right_line_validation_table_,
-                           EMPTY_POINT_,
-                           kMaxDistanceOfPredictedToAdjacentPoint_,
-                           MID_TO_RIGHT);
-
-    CheckDistanceFromPredictedToAdjacentPoint(right_line_validation_table_,
-                           left_line_validation_table_,
-                           mid_line_validation_table_,
-                           right_line_validation_table_,
-                           EMPTY_POINT_,
-                           kMaxDistanceOfPredictedToAdjacentPoint_,
-                           RIGHT_TO_LEFT);
-
-    CheckDistanceFromPredictedToAdjacentPoint(right_line_validation_table_,
-                           left_line_validation_table_,
-                           mid_line_validation_table_,
-                           right_line_validation_table_,
-                           EMPTY_POINT_,
-                           kMaxDistanceOfPredictedToAdjacentPoint_,
-                           RIGHT_TO_MID);
+    CheckDistanceFromPredictedToAdjacentPoint(
+    left_line_validation_table_,
+    left_line_validation_table_,
+    mid_line_validation_table_,
+    right_line_validation_table_,
+    EMPTY_POINT_,
+    kMaxDistanceOfPredictedToAdjacentPoint_,
+    LEFT_TO_RIGHT);
 
 
-    line_validation_table_creation_return_info_ = GetReturnInfo(left_line_validation_table_,mid_line_validation_table_,right_line_validation_table_);
+    CheckDistanceFromPredictedToAdjacentPoint(
+    mid_line_validation_table_,
+    left_line_validation_table_,
+    mid_line_validation_table_,
+    right_line_validation_table_,
+    EMPTY_POINT_,
+    kMaxDistanceOfPredictedToAdjacentPoint_,
+    MID_TO_LEFT);
+
+    CheckDistanceFromPredictedToAdjacentPoint(
+    mid_line_validation_table_,
+    left_line_validation_table_,
+    mid_line_validation_table_,
+    right_line_validation_table_,
+    EMPTY_POINT_,
+    kMaxDistanceOfPredictedToAdjacentPoint_,
+    MID_TO_RIGHT);
+
+    CheckDistanceFromPredictedToAdjacentPoint(
+    right_line_validation_table_,
+    left_line_validation_table_,
+    mid_line_validation_table_,
+    right_line_validation_table_,
+    EMPTY_POINT_,
+    kMaxDistanceOfPredictedToAdjacentPoint_,
+    RIGHT_TO_LEFT);
+
+    CheckDistanceFromPredictedToAdjacentPoint(
+    right_line_validation_table_,
+    left_line_validation_table_,
+    mid_line_validation_table_,
+    right_line_validation_table_,
+    EMPTY_POINT_,
+    kMaxDistanceOfPredictedToAdjacentPoint_,
+    RIGHT_TO_MID);
+
+
+    line_validation_table_creation_return_info_ =   GetReturnInfo(
+                                                    left_line_validation_table_,
+                                                    mid_line_validation_table_,
+                                                    right_line_validation_table_);
 
     return line_validation_table_creation_return_info_;
 
 }
 
-void LineValidationTableCreation::CheckDistanceFromPredictedToAdjacentPoint(vector<LineValidationTable>&table,
-                                                         vector<LineValidationTable> left_line_validation_table,
-                                                         vector<LineValidationTable> mid_line_validation_table,
-                                                         vector<LineValidationTable> right_line_validation_table,
-                                                         Point EMPTY_POINT,
-                                                         const int kMaxPointDistance,
-                                                         int SEARCH_LINE_CODE)
+void LineValidationTableCreation::CheckDistanceFromPredictedToAdjacentPoint(
+vector<LineValidationTable>&table,
+vector<LineValidationTable> left_line_validation_table,
+vector<LineValidationTable> mid_line_validation_table,
+vector<LineValidationTable> right_line_validation_table,
+Point EMPTY_POINT,
+const int kMaxPointDistance,
+int SEARCH_LINE_CODE)
 {
 
 
@@ -603,24 +649,26 @@ void LineValidationTableCreation::CheckDistanceFromPredictedToAdjacentPoint(vect
         if(adjacent_point_prediction == EMPTY_POINT){ continue;}
         else{table[i].SetAdjacentPointPredictionFound(SEARCH_LINE_CODE,true);}
 
-        if(AdjacentValidationTableIsEmpty(left_line_validation_table,
-                                          mid_line_validation_table,
-                                          right_line_validation_table,
-                                          SEARCH_LINE_CODE))
-                                          {continue;}
+        if( AdjacentValidationTableIsEmpty(
+            left_line_validation_table,
+            mid_line_validation_table,
+            right_line_validation_table,
+            SEARCH_LINE_CODE))
+            {continue;}
 
         Point min_distance_adjacent_point;
         int min_distance_adjacent_point_id;
         int min_distance;
 
-        FindMinDistanceFromPredictionToAdjacentPoint(left_line_validation_table,
-                                                     mid_line_validation_table,
-                                                     right_line_validation_table,
-                                                     adjacent_point_prediction,
-                                                     min_distance_adjacent_point,
-                                                     min_distance_adjacent_point_id,
-                                                     min_distance,
-                                                     SEARCH_LINE_CODE);
+        FindMinDistanceFromPredictionToAdjacentPoint(
+        left_line_validation_table,
+        mid_line_validation_table,
+        right_line_validation_table,
+        adjacent_point_prediction,
+        min_distance_adjacent_point,
+        min_distance_adjacent_point_id,
+        min_distance,
+        SEARCH_LINE_CODE);
 
         if(min_distance < kMaxPointDistance)
         {
@@ -658,10 +706,11 @@ void LineValidationTableCreation::CheckDistanceFromPredictedToAdjacentPoint(vect
     }
 }
 
-bool LineValidationTableCreation::AdjacentValidationTableIsEmpty(vector<LineValidationTable> left_line_validation_table,
-                                                                 vector<LineValidationTable> mid_line_validation_table,
-                                                                 vector<LineValidationTable> right_line_validation_table,
-                                                                 const int SEARCH_LINE_CODE)
+bool LineValidationTableCreation::AdjacentValidationTableIsEmpty(
+vector<LineValidationTable> left_line_validation_table,
+vector<LineValidationTable> mid_line_validation_table,
+vector<LineValidationTable> right_line_validation_table,
+const int SEARCH_LINE_CODE)
 {
     if(SEARCH_LINE_CODE == LEFT_TO_MID) return mid_line_validation_table.empty();
 
@@ -677,14 +726,15 @@ bool LineValidationTableCreation::AdjacentValidationTableIsEmpty(vector<LineVali
 }
 
 
-void LineValidationTableCreation::FindMinDistanceFromPredictionToAdjacentPoint(vector<LineValidationTable> left_line_validation_table,
-                                                                                vector<LineValidationTable> mid_line_validation_table,
-                                                                                vector<LineValidationTable> right_line_validation_table,
-                                                                                Point adjacent_point_prediction,
-                                                                                Point &min_distance_adjacent_point,
-                                                                                int &min_distance_adjacent_point_id,
-                                                                                int &min_distance,
-                                                                                const int SEARCH_LINE_CODE)
+void LineValidationTableCreation::FindMinDistanceFromPredictionToAdjacentPoint(
+vector<LineValidationTable> left_line_validation_table,
+vector<LineValidationTable> mid_line_validation_table,
+vector<LineValidationTable> right_line_validation_table,
+Point adjacent_point_prediction,
+Point &min_distance_adjacent_point,
+int &min_distance_adjacent_point_id,
+int &min_distance,
+const int SEARCH_LINE_CODE)
 {
 
      vector<LineValidationTable> table;
@@ -721,19 +771,24 @@ void LineValidationTableCreation::FindMinDistanceFromPredictionToAdjacentPoint(v
 }
 
 
-double LineValidationTableCreation::Distance2d(const Point& p, LineValidationTable  hs)
+double LineValidationTableCreation::Distance2d(
+const Point& p,
+LineValidationTable  hs)
 {
     return sqrt(pow(p.x-hs.GetOriginPoint().x,2) + pow(p.y-hs.GetOriginPoint().y,2));
 }
 
-double LineValidationTableCreation::Distance2d(const Point p1, const Point p2)
+double LineValidationTableCreation::Distance2d(
+const Point p1,
+const Point p2)
 {
     return sqrt(pow(p1.x-p2.x,2) + pow(p1.y-p2.y,2));
 }
 
-LineValidationTableCreationReturnInfo LineValidationTableCreation::GetReturnInfo(vector<LineValidationTable> left_line_validation_table,
-                                                    vector<LineValidationTable> mid_line_validation_table,
-                                                    vector<LineValidationTable> right_line_validation_table)
+LineValidationTableCreationReturnInfo LineValidationTableCreation::GetReturnInfo(
+                                      vector<LineValidationTable> left_line_validation_table,
+                                      vector<LineValidationTable> mid_line_validation_table,
+                                      vector<LineValidationTable> right_line_validation_table)
 {/*
     int left_found_both_points_and_predictions = 0;
     int left_found_both_predictions = 0;
@@ -903,68 +958,72 @@ LineValidationTableCreationReturnInfo LineValidationTableCreation::GetReturnInfo
     }
 
 
-    return LineValidationTableCreationReturnInfo{   left_found_both_points_and_predictions,
-                                                    left_found_both_predictions,
-                                                    left_found_mid_prediction,
-                                                    left_found_right_prediction,
-                                                    left_found_both_points,
-                                                    left_found_mid_point,
-                                                    left_found_right_point,
-                                                    (int)left_line_validation_table.size(),
-                                                    mid_found_both_points_and_predictions,
-                                                    mid_found_both_predictions,
-                                                    mid_found_left_prediction,
-                                                    mid_found_right_prediction,
-                                                    mid_found_both_points,
-                                                    mid_found_left_point,
-                                                    mid_found_right_point,
-                                                    (int)mid_line_validation_table.size(),
-                                                    right_found_both_points_and_predictions,
-                                                    right_found_both_predictions,
-                                                    right_found_left_prediction,
-                                                    right_found_mid_prediction,
-                                                    right_found_both_points,
-                                                    right_found_left_point,
-                                                    right_found_mid_point,
-                                                    (int)right_line_validation_table.size()
-                                                };
+    return  LineValidationTableCreationReturnInfo{
+            left_found_both_points_and_predictions,
+            left_found_both_predictions,
+            left_found_mid_prediction,
+            left_found_right_prediction,
+            left_found_both_points,
+            left_found_mid_point,
+            left_found_right_point,
+            (int)left_line_validation_table.size(),
+            mid_found_both_points_and_predictions,
+            mid_found_both_predictions,
+            mid_found_left_prediction,
+            mid_found_right_prediction,
+            mid_found_both_points,
+            mid_found_left_point,
+            mid_found_right_point,
+            (int)mid_line_validation_table.size(),
+            right_found_both_points_and_predictions,
+            right_found_both_predictions,
+            right_found_left_prediction,
+            right_found_mid_prediction,
+            right_found_both_points,
+            right_found_left_point,
+            right_found_mid_point,
+            (int)right_line_validation_table.size()};
 
 }
 
 
-void LineValidationTableCreation::GetLineValidationTables(vector<LineValidationTable> &left_line_validation_table, vector<LineValidationTable> &mid_line_validation_table, vector<LineValidationTable>& right_line_validation_table)
+void LineValidationTableCreation::GetLineValidationTables(
+vector<LineValidationTable> &left_line_validation_table,
+vector<LineValidationTable> &mid_line_validation_table,
+vector<LineValidationTable>& right_line_validation_table)
 {
 
     left_line_validation_table = left_line_validation_table_;
     mid_line_validation_table  = mid_line_validation_table_;
     right_line_validation_table = right_line_validation_table_;
-
 }
 
 
-void LineValidationTableCreation::GetLinePointsInDriveDirection(vector<LineValidationTable> &left_line_points_in_drive_direction,
-                                                                vector<LineValidationTable> &mid_line_points_in_drive_direction,
-                                                                vector<LineValidationTable> &right_line_points_in_drive_direction)
+void LineValidationTableCreation::GetLinePointsInDriveDirection(
+vector<LineValidationTable> &left_line_points_in_drive_direction,
+vector<LineValidationTable> &mid_line_points_in_drive_direction,
+vector<LineValidationTable> &right_line_points_in_drive_direction)
 {
+    ExtractLinePointsInDriveDirection(
+    left_line_validation_table_,
+    left_line_points_in_drive_direction_,
+    kMinStartDirectionOfLinePointsInDriveDirection_,
+    kMaxStartDirectionOfLinePointsInDriveDirection_,
+    kMaxDirectionDifferenceOfLinePointsInDriveDirection_);
 
+    ExtractLinePointsInDriveDirection(
+    mid_line_validation_table_,
+    mid_line_points_in_drive_direction_,
+    kMinStartDirectionOfLinePointsInDriveDirection_,
+    kMaxStartDirectionOfLinePointsInDriveDirection_,
+    kMaxDirectionDifferenceOfLinePointsInDriveDirection_);
 
-    ExtractLinePointsInDriveDirection(left_line_validation_table_,
-                                      left_line_points_in_drive_direction_,
-                                      kMinStartDirectionOfLinePointsInDriveDirection_,
-                                      kMaxStartDirectionOfLinePointsInDriveDirection_,
-                                      kMaxDirectionDifferenceOfLinePointsInDriveDirection_);
-
-    ExtractLinePointsInDriveDirection(mid_line_validation_table_,
-                                      mid_line_points_in_drive_direction_,
-                                      kMinStartDirectionOfLinePointsInDriveDirection_,
-                                      kMaxStartDirectionOfLinePointsInDriveDirection_,
-                                      kMaxDirectionDifferenceOfLinePointsInDriveDirection_);
-
-    ExtractLinePointsInDriveDirection(right_line_validation_table_,
-                                      right_line_points_in_drive_direction_,
-                                      kMinStartDirectionOfLinePointsInDriveDirection_,
-                                      kMaxStartDirectionOfLinePointsInDriveDirection_,
-                                      kMaxDirectionDifferenceOfLinePointsInDriveDirection_);
+    ExtractLinePointsInDriveDirection(
+    right_line_validation_table_,
+    right_line_points_in_drive_direction_,
+    kMinStartDirectionOfLinePointsInDriveDirection_,
+    kMaxStartDirectionOfLinePointsInDriveDirection_,
+    kMaxDirectionDifferenceOfLinePointsInDriveDirection_);
 
     left_line_points_in_drive_direction = left_line_points_in_drive_direction_;
     mid_line_points_in_drive_direction = mid_line_points_in_drive_direction_;
@@ -972,11 +1031,12 @@ void LineValidationTableCreation::GetLinePointsInDriveDirection(vector<LineValid
 }
 
 
-void LineValidationTableCreation::ExtractLinePointsInDriveDirection(vector<LineValidationTable> line_validation_table,
-                                                                    vector<LineValidationTable>& line_points_in_drive_direction,
-                                                                    const int kMinStartDirection,
-                                                                    const int kMaxStartDirection,
-                                                                    const int kMaxDirectionDifference)
+void LineValidationTableCreation::ExtractLinePointsInDriveDirection(
+vector<LineValidationTable> line_validation_table,
+vector<LineValidationTable>& line_points_in_drive_direction,
+const int kMinStartDirection,
+const int kMaxStartDirection,
+const int kMaxDirectionDifference)
 {
     if(line_validation_table.size()>0)
     {

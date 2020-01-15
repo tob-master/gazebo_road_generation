@@ -101,9 +101,85 @@ struct LineValidationTableCreationInitializationParameters
     int max_mid_to_left_line_width;
     int min_mid_to_right_line_width;
     int max_mid_to_right_line_width;
+
+    int max_distance_of_predicted_to_adjacent_point;
+    int min_start_direction_of_line_points_in_drive_direction;
+    int max_start_direction_of_line_points_in_drive_direction;
+    int max_direction_difference_of_line_points_in_drive_direction;
 };
 
 
+struct OnRoadSearchInitializationParameters
+{
+    int goal_line_intensity_threshold;
+    int min_goal_segment_width;
+    int max_goal_segment_width;
+    int min_goal_segments_to_find;
+
+    int max_crosswalk_forsight_distance;
+    int max_crosswalk_forsight_step_size;
+    int min_crosswalk_segment_width;
+    int max_crosswalk_segment_width;
+    int min_crosswalk_segments_to_find;
+
+    int min_to_left_mid_line_direction_for_crossing;
+    int max_to_left_mid_line_direction_for_crossing;
+    int min_to_right_mid_line_direction_for_crossing;
+    int max_to_right_mid_line_direction_for_crossing;
+    int min_outline_direction_difference_for_crossing;
+    int max_crossing_forsight_y;
+    int min_to_left_left_line_direction_difference_for_crossing;
+    int max_to_left_left_line_direction_difference_for_crossing;
+    int min_to_right_right_line_direction_difference_for_crossing;
+    int max_to_right_right_line_direction_difference_for_crossing;
+    int max_left_line_height_for_crossing;
+    int max_right_line_height_for_crossing;
+    int max_left_line_size_for_crossing;
+    int max_right_line_size_for_crossing;
+
+   int max_lane_object_forsight_distance;
+   int lane_object_forsight_step_size;
+
+   int left_in_left_lane_lineiterator_end_offset;
+   int left_in_right_lane_lineiterator_start_offset;
+
+   int left_in_right_lane_lineiterator_end_offset;
+
+   int right_in_left_lane_lineiterator_start_offset;
+   int right_in_left_lane_lineiterator_end_offset;
+   int right_in_right_lane_lineiterator_end_offset;
+
+
+   int left_in_left_lane_radial_outerline_offset;
+   int left_in_right_lane_radial_outerline_offset;
+   int right_in_left_lane_radial_outerline_offset;
+   int right_in_right_lane_radial_outerline_offset;
+
+    int lane_object_radial_scan_step_size;
+    int lane_object_radial_scan_radius;
+
+    int min_marking_segments_threshold;
+
+    int min_box_segments_threshold;
+    int  min_white_pixels_for_box;
+
+    int velocity_sign_template_height;
+    int veloctiy_sign_template_width;
+    int goal_line_field_of_view;
+
+    int rect_top_left_point_for_classifier_roi_x;
+    int rect_top_left_point_for_classifier_roi_y;
+
+    int rect_bottom_right_point_for_classifier_roi_x;
+    int rect_bottom_right_point_for_classifier_roi_y;
+
+    int resize_height_for_classifier_roi;
+    int resize_width_for_classifier_roi;
+
+    int template_roi_size_x;
+    int template_roi_size_y;
+    int road_sign_intensity_threshold;
+};
 
 struct LinePointsReduceInitializationParameters
 {

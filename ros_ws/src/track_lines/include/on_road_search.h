@@ -43,7 +43,7 @@ private:
     int start_right_y_ = 0;
     float start_angle_left_= 0;
     float start_angle_right_ =0;
-
+/*
     const int kGoalLineIntensityThreshold_ = 100;
     const int kMinGoalSegmentWidth_ = 2;
     const int kMaxGoalSegmentWidth_ = 4;
@@ -136,7 +136,98 @@ private:
     const int kTemplateRoiSizeY_ = 50;
     const int kRoadSignIntensityThreshold_ = 100;
 
+*/
+    const int kGoalLineIntensityThreshold_;
+    const int kMinGoalSegmentWidth_;
+    const int kMaxGoalSegmentWidth_;
+    const int kMinGoalSegmentsToFind_;
 
+    const int kMaxCrossWalkForsightDistance_;
+    const int kMaxCrossWalkForsightStepSize_;
+    const int kMinCrossWalkSegmentWidth_;
+    const int kMaxCrossWalkSegmentWidth_;
+    const int kMinCrossWalkSegmentsToFind_;
+
+    const int kMinToLeftMidLineDirectionForCrossing_;
+    const int kMaxToLeftMidLineDirectionForCrossing_;
+    const int kMinToRightMidLineDirectionForCrossing_;
+    const int kMaxToRightMidLineDirectionForCrossing_;
+    const int kMinOutLineDirectionDifferenceForCrossing_;
+    const int kMaxCrossingForsightY_;
+    const int kMinToLeftLeftLineDirectionForCrossing_;
+    const int kMaxToLeftLeftLineDirectionForCrossing_;
+    const int kMinToRightRightLineDirectionForCrossing_;
+    const int kMaxToRightRightLineDirectionForCrossing_;
+    const int MaxLeftLineYHeightForCrossing_;
+    const int MaxRightLineYHeightForCrossing_;
+    const int MaxLeftLineSizeForCrossing_;
+    const int MaxRightLineSizeForCrossing_;
+
+    bool left_line_in_crossing_height_ = false;
+    bool right_line_in_crossing_height_ = false;
+    bool left_line_in_crossing_size_ = false;
+    bool right_line_in_crossing_size_ = false;
+
+    const int kMaxLaneObjectForsightDistance_;
+    const int kLaneObjectForsightStepSize_;
+
+    const int kLeftInLeftLaneLineIteratorEndOffset_;
+    const int kLeftInRightLaneLineIteratorStartOffset_;
+    const int kLeftInRightLaneLineIteratorEndOffset_;
+    const int kRightInLeftLaneLineIteratorStartOffset_;
+    const int kRightInLeftLaneLineIteratorEndOffset_;
+    const int kRightInRightLaneLineIteratorEndOffset_;
+
+    const int kLeftInLeftLaneRadialOuterLineOffset_;
+    const int kLeftInRightLaneRadialOuterLineOffset_;
+    const int kRightInLeftLaneRadialOuterLineOffset_;
+    const int kRightInRightLaneRadialOuterLineOffset_;
+
+    const int kLaneObjectRadialScanStepSize_;
+    const int kLaneObjectRadialScanRadius_;
+
+    const int kMinMarkingSegmentsThreshold_;
+
+    const int kMinBoxSegmentsThreshold_;
+    const int kMinWhitePixelsForBox_;
+
+    bool found_mid_crossing_pattern_ = false;
+    bool found_left_crossing_pattern_ = false;
+    bool found_right_crossing_pattern_ = false;
+
+    bool found_cross_walk_ = false;
+    bool found_goal_line_ = false;
+    bool found_crossing_ = false;
+    bool found_box_ = false;
+    bool found_marking_ = false;
+
+    Point cross_walk_mid_point_ = Point(-1,-1);
+    Point crossing_mid_point_ = Point(-1,-1);
+    Point road_object_mid_point_ = Point(-1,-1);
+    Point goal_line_mid_point_ = Point(-1,-1);
+
+    const int kVelocitySignTemplateHeight_;
+    const int kVelocitySignTemplateWidth_;
+    const int kGoalLineFieldOfView_;
+
+    Mat image_template_10;
+    Mat image_template_20;
+    Mat image_template_30;
+    Mat image_template_40;
+    Mat image_template_50;
+    Mat image_template_60;
+    Mat image_template_70;
+    Mat image_template_80;
+    Mat image_template_90;
+
+    Point kRectTopLeftPointForClassifierRoi_;
+    Point kRectBottomRightPointForClassifierRoi_;
+    const int kResizeHeightForClassifierRoi_;
+    const int kResizeWidthForClassifierRoi_;
+
+    const int kTemplateRoiSizeX_;
+    const int kTemplateRoiSizeY_;
+    const int kRoadSignIntensityThreshold_;
     vector<LineValidationTable> left_line_validation_table_;
     vector<LineValidationTable> mid_line_validation_table_;
     vector<LineValidationTable> right_line_validation_table_;
@@ -293,7 +384,8 @@ public:
 
 
     OnRoadSearch(
-    ros::NodeHandle* nh_);
+    ros::NodeHandle* nh_,
+    OnRoadSearchInitializationParameters init);
 
     void SetImage(
     Mat image)

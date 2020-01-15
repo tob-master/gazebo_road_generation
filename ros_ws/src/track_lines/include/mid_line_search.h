@@ -38,200 +38,191 @@ class MidLineSearch
 {
     private:
 
-        Mat image_;
-        const int kImageWidth_;
-        const int kImageHeight_;
+    Mat image_;
+    const int kImageWidth_;
+    const int kImageHeight_;
 
 
-        int kRadialScanRadius1_;
-        int kRadialScanRadius2_;
-        vector<pair<int,int>> radial_scan1_, radial_scan2_;
+    int kRadialScanRadius1_;
+    int kRadialScanRadius2_;
+    vector<pair<int,int>> radial_scan1_, radial_scan2_;
 
-        const int kImageBorderPadding_;
+    const int kImageBorderPadding_;
 
-        const int kMidLineLength_;
-        const float kRadialScanScalingFactor_;
+    const int kMidLineLength_;
+    const float kRadialScanScalingFactor_;
 
-        const int kMinPixelValueForClustering_;
-        const int kMinValuableClusterSize_;
+    const int kMinPixelValueForClustering_;
+    const int kMinValuableClusterSize_;
 
-        const int kMaxRadialScanOutOfClusterValue_;
-        const int kClusterBinSize_;
+    const int kMaxRadialScanOutOfClusterValue_;
+    const int kClusterBinSize_;
 
-        //const int kMaxConnectedClusterDistance_;
+    const int kMinMidLineClusterDistance_;
+    const int kMaxMidLineClusterDistance_;
 
-        const int kMinMidLineClusterDistance_;
-        const int kMaxMidLineClusterDistance_;
+    const Point kCarPosition_;
 
-        const Point kCarPosition_;
+    bool has_found_mid_line_clusters_ ;
+    bool has_found_group_;
 
-        //const int kEndOfGroupClustersageMarker_ = -1;
+    map<pair<int,int>,int> midline_clusters_size_;
+    map<pair<int,int>,int> midline_clusters_xweight_;
+    map<pair<int,int>,int> midline_clusters_yweight_;
+    map<pair<int,int>,vector<pair<int,int>>> midline_clusters_coordinates_;
+    map<pair<int,int>,vector<pair<int,int>>> centers_of_gravity;
 
+    vector<Point> cluster_centroids_;
 
-        bool has_found_mid_line_clusters_ ;
-        bool has_found_group_;
+    vector<SingleCluster> single_clusters_;
+    vector<vector<PointInDirection>> grouped_clusters_length_and_direction_;
 
+    vector<vector<Point>> mid_line_cluster_groups_;
 
+    void InitRadialScanners(
+    vector<pair<int,int>> &radial_scan1,
+    vector<pair<int,int>> &radial_scan2,
+    const int kRadialScanRadius1,
+    const int kRadialScanRadius2);
 
-        map<pair<int,int>,int> midline_clusters_size_;
-        map<pair<int,int>,int> midline_clusters_xweight_;
-        map<pair<int,int>,int> midline_clusters_yweight_;
-        map<pair<int,int>,vector<pair<int,int>>> midline_clusters_coordinates_;
-        map<pair<int,int>,vector<pair<int,int>>> centers_of_gravity;
+    void GroupValueablePointsInClusterBins(
+    Mat image,
+    vector<pair<int,int>> radial_scan1,
+    vector<pair<int,int>> radial_scan2,
+    map<pair<int,int>,int> &midline_clusters_size,
+    map<pair<int,int>,int> &midline_clusters_xweight,
+    map<pair<int,int>,int> &midline_clusters_yweight,
+    map<pair<int,int>,vector<pair<int,int>>> &midline_clusters_coordinates,
+    const int kImageHeight,
+    const int kImageWidth,
+    const int kImageBorderPadding,
+    const int kMinPixelValueForClustering,
+    const int kMaxRadialScanOutOfClusterValue,
+    const int kClusterBinSize);
 
+    int  GetPixelValue(
+    Mat image,
+    int x,
+    int y);
 
-        //vector<ClusterBinKey> connected_cluster_bin_keys_;
-        //vector<vector<ClusterBinKey>> grouped_cluster_bin_keys_;
+    bool HasMinPixelValueForClustering(
+    const int pixel_value,
+    const int kMinPixelValueForClustering);
 
+    bool IsAClusterPoint(
+    Mat image,
+    const int x,
+    const int y,
+    vector<pair<int,int>> radial_scan1,
+    vector<pair<int,int>> radial_scan2,
+    const int kMaxRadialScanOutOfClusterValue);
 
-        //vector<vector<int>> grouped_mid_line_clusters_;
+    void AddPointToClusterBin(
+    const int x,
+    const int y,
+    map<pair<int,int>,int> &midline_clusters_size,
+    map<pair<int,int>,int> &midline_clusters_xweight,
+    map<pair<int,int>,int> &midline_clusters_yweight,
+    map<pair<int,int>,vector<pair<int,int>>> &midline_clusters_coordinates,
+    const int kClusterBinSize);
 
-        //vector<vector<Point>> sorted_centroid_groups_;
-        vector<Point> cluster_centroids_;
+    bool IsNewKey(
+    int x_cluster_bin_key,
+    int y_cluster_bin_key ,
+    map<pair<int,int>,int> midline_clusters_size);
 
-        vector<SingleCluster> single_clusters_;
-        vector<vector<PointInDirection>> grouped_clusters_length_and_direction_;
+    void AddNewClusterBin(
+    const int x,
+    const int y,
+    const int x_cluster_bin_key,
+    const int y_cluster_bin_key,
+    map<pair<int,int>,int> &midline_clusters_size,
+    map<pair<int,int>,int> &midline_clusters_xweight,
+    map<pair<int,int>,int> &midline_clusters_yweight,
+    map<pair<int,int>,vector<pair<int,int>>> &midline_clusters_coordinates);
 
+    void AppendClusterBin(
+    const int x,
+    const int y,
+    const int x_cluster_bin_key,
+    const int y_cluster_bin_key,
+    map<pair<int,int>,int> &midline_clusters_size,
+    map<pair<int,int>,int> &midline_clusters_xweight,
+    map<pair<int,int>,int> &midline_clusters_yweight,
+    map<pair<int,int>,vector<pair<int,int>>> &midline_clusters_coordinates);
 
+    void RejectClustersUnderSizeThreshold(
+    map<pair<int,int>,int> &midline_clusters_size,
+    map<pair<int,int>,int> &midline_clusters_xweight,
+    map<pair<int,int>,int> &midline_clusters_yweight,
+    map<pair<int,int>,vector<pair<int,int>>> &midline_clusters_coordinates,
+    const int kMinValuableClusterSize);
 
-       vector<vector<Point>> mid_line_cluster_groups_;
+    void ComputeClustersCentroid(
+    map<pair<int,int>,int> midline_clusters_size,
+    map<pair<int,int>,int> midline_clusters_xweight,
+    map<pair<int,int>,int> midline_clusters_yweight,
+    vector<Point> &cluster_centroids);
 
+    double Distance2d(
+    const Point& lhs,
+    const Point& rhs);
 
+    bool HasFoundMidLineClusters(
+    map<pair<int,int>,
+    vector<pair<int,int>>> midline_clusters_coordinates,
+    bool &has_found_mid_line_clusters);
 
+    bool HasFoundGroup(
+    vector<vector<Point>> mid_line_cluster_groups,
+    bool &has_found_group);
 
+    MidLineSearchReturnInfo GetReturnInfo();
 
-        void InitRadialScanners(vector<pair<int,int>> &radial_scan1,
-                                vector<pair<int,int>> &radial_scan2,
-                                const int kRadialScanRadius1,
-                                const int kRadialScanRadius2);
+    void ComputeLengthAndDirectionOfConnectedClusters(
+    vector<vector<Point>> mid_line_cluster_groups,
+    vector<vector<PointInDirection>> &grouped_clusters_length_and_direction);
 
-        void GroupValueablePointsInClusterBins(Mat image,
-                                               vector<pair<int,int>> radial_scan1,
-                                               vector<pair<int,int>> radial_scan2,
-                                               map<pair<int,int>,int> &midline_clusters_size,
-                                               map<pair<int,int>,int> &midline_clusters_xweight,
-                                               map<pair<int,int>,int> &midline_clusters_yweight,
-                                               map<pair<int,int>,vector<pair<int,int>>> &midline_clusters_coordinates,
-                                               const int kImageHeight,
-                                               const int kImageWidth,
-                                               const int kImageBorderPadding,
-                                               const int kMinPixelValueForClustering,
-                                               const int kMaxRadialScanOutOfClusterValue,
-                                               const int kClusterBinSize);
+    bool IsPermuted(
+    int i,
+    int j,
+    vector<string> &used_permutations);
 
-        int  GetPixelValue(Mat image,int x, int y);
-        bool HasMinPixelValueForClustering(const int pixel_value, const int kMinPixelValueForClustering);
+    void GroupClusters(
+    vector<Point> cluster_centroids,
+    vector<vector<Point>> &mid_line_cluster_groups,
+    const Point kCarPosition);
 
-        bool IsAClusterPoint(Mat image,
-                             const int x,
-                             const int y,
-                             vector<pair<int,int>> radial_scan1,
-                             vector<pair<int,int>> radial_scan2,
-                             const int kMaxRadialScanOutOfClusterValue);
+    bool IsConnected(float cluster_distance);
 
-        void AddPointToClusterBin(const int x,
-                                  const int y,
-                                  map<pair<int,int>,int> &midline_clusters_size,
-                                  map<pair<int,int>,int> &midline_clusters_xweight,
-                                  map<pair<int,int>,int> &midline_clusters_yweight,
-                                  map<pair<int,int>,vector<pair<int,int>>> &midline_clusters_coordinates,
-                                  const int kClusterBinSize);
+    void FindClusterConnections(
+    vector<Point> cluster_centroids,
+    vector<pair<int,int>> &cluster_connections);
 
-        bool IsNewKey(int x_cluster_bin_key, int y_cluster_bin_key , map<pair<int,int>,int> midline_clusters_size);
-
-        void AddNewClusterBin(const int x,
-                              const int y,
-                              const int x_cluster_bin_key,
-                              const int y_cluster_bin_key,
-                              map<pair<int,int>,int> &midline_clusters_size,
-                              map<pair<int,int>,int> &midline_clusters_xweight,
-                              map<pair<int,int>,int> &midline_clusters_yweight,
-                              map<pair<int,int>,vector<pair<int,int>>> &midline_clusters_coordinates);
-
-        void AppendClusterBin(const int x,
-                              const int y,
-                              const int x_cluster_bin_key,
-                              const int y_cluster_bin_key,
-                              map<pair<int,int>,int> &midline_clusters_size,
-                              map<pair<int,int>,int> &midline_clusters_xweight,
-                              map<pair<int,int>,int> &midline_clusters_yweight,
-                              map<pair<int,int>,vector<pair<int,int>>> &midline_clusters_coordinates);
-
-        void RejectClustersUnderSizeThreshold(map<pair<int,int>,int> &midline_clusters_size,
-                                              map<pair<int,int>,int> &midline_clusters_xweight,
-                                              map<pair<int,int>,int> &midline_clusters_yweight,
-                                              map<pair<int,int>,vector<pair<int,int>>> &midline_clusters_coordinates,
-                                              const int kMinValuableClusterSize);
-
-        void ComputeClustersCentroid(map<pair<int,int>,int> midline_clusters_size,
-                                     map<pair<int,int>,int> midline_clusters_xweight,
-                                     map<pair<int,int>,int> midline_clusters_yweight,
-                                     vector<Point> &cluster_centroids);
-
-        double Distance2d(const Point& lhs, const Point& rhs);
-
-
-        //Point GetStartPointOfCurrentCluster(ReverseMidLineCoordinatesIterator it);
-        //Point GetEndPointOfNextCluster(ReverseMidLineCoordinatesIterator it);
-        //float GetCurrentStartToNextEndClusterDistance(Point start_point_of_current_cluster, Point end_point_of_next_cluster);
-        //bool  ClustersAreConnected(float distance);
-        //ClusterBinKey GetClusterBinKeyOfCurrentClusterFromIterator(ReverseMidLineCoordinatesIterator it);
-        //ClusterBinKey GetClusterBinKeyOfNextClusterFromIterator(ReverseMidLineCoordinatesIterator it);
-        //bool IsNewGroup();
-
-        //void AddClusterBinKeyToGroup(ClusterBinKey cluster_bin_key);
-        //void SafeGroup();
-        //void NewGroup();
-        //bool IsGroupAble();
-        //bool HasSingleCluster();
-        //ClusterBinKey GetSingleClusterBinKey();
-        //Point GetCenterOfGravityPointFromClusterBinKey(ClusterBinKey cluster_bin_key);
-        //void GroupClusters();
-        //void ComputeLengthAndDirectionOfConnectedClustersNearest();
-
-        bool HasFoundMidLineClusters(map<pair<int,int>,vector<pair<int,int>>> midline_clusters_coordinates, bool &has_found_mid_line_clusters);
-        bool HasFoundGroup(vector<vector<Point>> mid_line_cluster_groups, bool &has_found_group);
-        MidLineSearchReturnInfo GetReturnInfo();
-        //void SortClusterGroupCentroids();
-        //void ComputeLengthAndDirectionOfConnectedClustersBottomToTop();
-
-        //void GroupMidLineClusters();
-
-
-        void ComputeLengthAndDirectionOfConnectedClusters(vector<vector<Point>> mid_line_cluster_groups,
-                                                          vector<vector<PointInDirection>> &grouped_clusters_length_and_direction);
-        //vector<int> GroupClustersConnectedClusters();
-        bool IsPermuted(int i, int j, vector<string> &used_permutations);
-        //bool IdAlreadyConnected(int id);
-
-
-        void GroupClusters(vector<Point> cluster_centroids,
-                           vector<vector<Point>> &mid_line_cluster_groups,
-                           const Point kCarPosition);
-        bool IsConnected(float cluster_distance);
-        void FindClusterConnections(vector<Point> cluster_centroids, vector<pair<int,int>> &cluster_connections);
-        void FindOrientationForSingleClusters();
+    void FindOrientationForSingleClusters();
 
 
     public:
 
-        void SetImage(Mat image);
-        void ClearMemory();
-      MidLineSearch(int image_height, int image_width, MidLineSearchInitializationParameters init);
-      MidLineSearchReturnInfo  FindMidLineClusters();
-      void CoutLengthAndDirectionOfConnectedClusters();
+    void SetImage(Mat image);
+    void ClearMemory();
 
-      vector<vector<PointInDirection>> GetGroupedMidLineClustersLengthAndDirection();
-      vector<SingleCluster> GetSingleClusters();
+    MidLineSearch(
+    int image_height,
+    int image_width,
+    MidLineSearchInitializationParameters init);
 
-      void DrawClusters(Mat &rgb);
-      void DrawConnectedClusters(Mat &rgb);
-      void DrawGroupedMidLineClustersDirections(Mat &rgb);
-      void DrawGroupedMidLineClusters(Mat &rgb);
-      void DrawSingleClusters(Mat &rgb);
+    MidLineSearchReturnInfo  FindMidLineClusters();
+    void CoutLengthAndDirectionOfConnectedClusters();
 
-      //float CalculateAngle(int opposite, int adjacent);
-      //void SortClusters();
+    vector<vector<PointInDirection>> GetGroupedMidLineClustersLengthAndDirection();
+    vector<SingleCluster> GetSingleClusters();
+
+    void DrawClusters(Mat &rgb);
+    void DrawConnectedClusters(Mat &rgb);
+    void DrawGroupedMidLineClustersDirections(Mat &rgb);
+    void DrawGroupedMidLineClusters(Mat &rgb);
+    void DrawSingleClusters(Mat &rgb);
 
 };
 
