@@ -125,7 +125,9 @@ const int kSearchRectHeight)
     kSearchRectHeight,
     kRectBorderDistanceThresholdForContinousLine_);
 
-    GatherSafeDriveAreaEvaluationTableReturInfo(left_priority_table_,
+    GatherSafeDriveAreaEvaluationTableReturInfo(
+    search_rect,
+    left_priority_table_,
     mid_priority_table_,
     right_priority_table_,
     left_line_rect_safety_,
@@ -563,6 +565,7 @@ const int kRectBorderDistanceThreshold)
 }
 
 void SafeDriveAreaEvaluation::GatherSafeDriveAreaEvaluationTableReturInfo(
+vector<vector<Point>> search_rect,
 vector<vector<LineValidationTable>> left_priority_table,
 vector<vector<LineValidationTable>> mid_priority_table,
 vector<vector<LineValidationTable>> right_priority_table,
@@ -746,6 +749,7 @@ const int priority_6_7_multiplier)
 
 
     SafeDriveAreaEvaluationReturnInfoVector_.push_back(SafeDriveAreaEvaluationReturnInfo{
+                                                      search_rect,
                                                       left_line_score,
                                                       mid_line_score,
                                                       right_line_score,
@@ -766,8 +770,12 @@ const int priority_6_7_multiplier)
                                                       rect_mid_point,
                                                       left_priority_table,
                                                       mid_priority_table,
-                                                      right_priority_table,});
-
+                                                      right_priority_table,
+                                                      false,
+                                                      false,
+                                                      false,
+                                                      false,
+                                                      false});
 
 }
 

@@ -30,39 +30,64 @@ class LinePointsReduce
 {
     private:
 
+    vector<RamerDouglasPeuckerTypePoint> left_line_points_;
+    vector<RamerDouglasPeuckerTypePoint> right_line_points_;
 
+    vector<RamerDouglasPeuckerTypePoint> left_line_points_reduced_;
+    vector<RamerDouglasPeuckerTypePoint> right_line_points_reduced_;
 
-        vector<RamerDouglasPeuckerTypePoint> left_line_points_;
-        vector<RamerDouglasPeuckerTypePoint> right_line_points_;
+    vector<PointInDirection> left_line_points_reduced_length_direction_;
+    vector<PointInDirection> right_line_points_reduced_length_direction_;
 
-        vector<RamerDouglasPeuckerTypePoint> left_line_points_reduced_;
-        vector<RamerDouglasPeuckerTypePoint> right_line_points_reduced_;
+    double max_distance_;
 
-        vector<PointInDirection> left_line_points_reduced_length_direction_;
-        vector<PointInDirection> right_line_points_reduced_length_direction_;
+    bool left_line_is_reduced_;
+    bool right_line_is_reduced_;
 
+    void ClearMemory();
 
-        double max_distance_;
+    void SetContainers(
+    vector<line_follower::PointAndDirection> left_line,
+    vector<line_follower::PointAndDirection> right_line);
 
-        bool left_line_is_reduced_;
-        bool right_line_is_reduced_;
+    void SetMaxDistance(
+    double max_distance);
 
-        void ClearMemory();
-        void SetContainers(vector<line_follower::PointAndDirection> left_line, vector<line_follower::PointAndDirection> right_line);
-        void SetMaxDistance(double max_distance);
-        void ApplyRamerDouglasPeucker(const vector<RamerDouglasPeuckerTypePoint> &pointList, double epsilon, vector<RamerDouglasPeuckerTypePoint> &out);
-        double GetPerpendicularDistance(const RamerDouglasPeuckerTypePoint &pt, const RamerDouglasPeuckerTypePoint &lineStart, const RamerDouglasPeuckerTypePoint &lineEnd);
-        void ComputeLengthAndDirectionFromConsecutiveReducedLinePoints(int line);
-        LinePointsReducerReturnInfo GetReturnInfo();
+    void ApplyRamerDouglasPeucker(
+    const vector<RamerDouglasPeuckerTypePoint> &pointList,
+    double epsilon, vector<RamerDouglasPeuckerTypePoint> &out);
+
+    double GetPerpendicularDistance(
+    const RamerDouglasPeuckerTypePoint &pt,
+    const RamerDouglasPeuckerTypePoint &lineStart,
+    const RamerDouglasPeuckerTypePoint &lineEnd);
+
+    void ComputeLengthAndDirectionFromConsecutiveReducedLinePoints(
+    int line);
+
+    LinePointsReducerReturnInfo GetReturnInfo();
 
     public:
-        LinePointsReduce(LinePointsReduceInitializationParameters init);
-        LinePointsReducerReturnInfo ReduceLinePoints(vector<line_follower::PointAndDirection> left_line, vector<line_follower::PointAndDirection> right_line);
-        void GetLengthAndDirectionFromConsecutiveReducedLinePoints(vector<PointInDirection> &line_points_reduced_length_direction,int line);
-        void GetReducedLinePoints(vector<ReducedPoints> &line_points_reduced, int line);
-        void DrawReducedLinePoints(Mat &rgb, int line);
 
-        void CoutLengthAndDirectionFromConsecutiveReducedLinePoints();
+    LinePointsReduce(LinePointsReduceInitializationParameters init);
+
+    LinePointsReducerReturnInfo ReduceLinePoints(
+    vector<line_follower::PointAndDirection> left_line,
+    vector<line_follower::PointAndDirection> right_line);
+
+    void GetLengthAndDirectionFromConsecutiveReducedLinePoints(
+    vector<PointInDirection> &line_points_reduced_length_direction,
+    int line);
+
+    void GetReducedLinePoints(
+    vector<ReducedPoints> &line_points_reduced,
+    int line);
+
+    void DrawReducedLinePoints(
+    Mat &rgb,
+    int line);
+
+    void CoutLengthAndDirectionFromConsecutiveReducedLinePoints();
 };
 
 #endif // LINE_POINTS_REDUCER_H

@@ -1,12 +1,16 @@
 #include "line_points_reducer.h"
 
-LinePointsReduce::LinePointsReduce(LinePointsReduceInitializationParameters init):
+LinePointsReduce::LinePointsReduce(
+LinePointsReduceInitializationParameters init):
 max_distance_(init.max_distance_to_reduce_points)
 {
 
 }
 
-double LinePointsReduce::GetPerpendicularDistance(const RamerDouglasPeuckerTypePoint &pt, const RamerDouglasPeuckerTypePoint &lineStart, const RamerDouglasPeuckerTypePoint &lineEnd)
+double LinePointsReduce::GetPerpendicularDistance(
+const RamerDouglasPeuckerTypePoint &pt,
+const RamerDouglasPeuckerTypePoint &lineStart,
+const RamerDouglasPeuckerTypePoint &lineEnd)
 {
     double dx = lineEnd.first - lineStart.first;
     double dy = lineEnd.second - lineStart.second;
@@ -35,7 +39,10 @@ double LinePointsReduce::GetPerpendicularDistance(const RamerDouglasPeuckerTypeP
     return pow(pow(ax,2.0)+pow(ay,2.0),0.5);
 }
 
-void LinePointsReduce::ApplyRamerDouglasPeucker(const vector<RamerDouglasPeuckerTypePoint> &pointList, double epsilon, vector<RamerDouglasPeuckerTypePoint> &out)
+void LinePointsReduce::ApplyRamerDouglasPeucker(
+const vector<RamerDouglasPeuckerTypePoint> &pointList,
+double epsilon,
+vector<RamerDouglasPeuckerTypePoint> &out)
 {
     if(pointList.size()<2)
         throw invalid_argument("Not enough points to simplify");
@@ -80,12 +87,15 @@ void LinePointsReduce::ApplyRamerDouglasPeucker(const vector<RamerDouglasPeucker
     }
 }
 
-void LinePointsReduce::SetMaxDistance(double max_distance)
+void LinePointsReduce::SetMaxDistance(
+double max_distance)
 {
     max_distance_ = max_distance;
 }
 
-void LinePointsReduce::SetContainers(vector<line_follower::PointAndDirection>left_line, vector<line_follower::PointAndDirection>right_line)
+void LinePointsReduce::SetContainers(
+vector<line_follower::PointAndDirection>left_line,
+vector<line_follower::PointAndDirection>right_line)
 {
     for(auto &it: left_line)
     {
@@ -113,7 +123,9 @@ void LinePointsReduce::ClearMemory()
     right_line_points_reduced_length_direction_.clear();
 }
 
-void LinePointsReduce::DrawReducedLinePoints(Mat &rgb, int line)
+void LinePointsReduce::DrawReducedLinePoints(
+Mat &rgb,
+int line)
 {
     if(line == LEFT_LINE)
     {
@@ -135,20 +147,20 @@ void LinePointsReduce::DrawReducedLinePoints(Mat &rgb, int line)
 
 LinePointsReducerReturnInfo LinePointsReduce::GetReturnInfo()
 {
-    return LinePointsReducerReturnInfo{left_line_is_reduced_,
-                                       left_line_points_reduced_.size(),
-                                       right_line_is_reduced_,
-                                       right_line_points_reduced_.size()};
+    return LinePointsReducerReturnInfo{
+           left_line_is_reduced_,
+           left_line_points_reduced_.size(),
+           right_line_is_reduced_,
+           right_line_points_reduced_.size()};
 }
 
-LinePointsReducerReturnInfo LinePointsReduce::ReduceLinePoints(vector<line_follower::PointAndDirection> left_line, vector<line_follower::PointAndDirection> right_line)
+LinePointsReducerReturnInfo LinePointsReduce::ReduceLinePoints(
+vector<line_follower::PointAndDirection> left_line,
+vector<line_follower::PointAndDirection> right_line)
 {
 
     ClearMemory();
     SetContainers(left_line,right_line);
-
-
-
 
     if(left_line_points_.size() >= 2)
     {
@@ -177,7 +189,9 @@ LinePointsReducerReturnInfo LinePointsReduce::ReduceLinePoints(vector<line_follo
 
 }
 
-void LinePointsReduce::GetReducedLinePoints(vector<ReducedPoints> &line_points_reduced, int line)
+void LinePointsReduce::GetReducedLinePoints(
+vector<ReducedPoints> &line_points_reduced,
+int line)
 {
     if(line == LEFT_LINE)
     {
@@ -196,7 +210,9 @@ void LinePointsReduce::GetReducedLinePoints(vector<ReducedPoints> &line_points_r
     }
 }
 
-void LinePointsReduce::GetLengthAndDirectionFromConsecutiveReducedLinePoints(vector<PointInDirection> &line_points_reduced_length_direction, int line)
+void LinePointsReduce::GetLengthAndDirectionFromConsecutiveReducedLinePoints(
+vector<PointInDirection> &line_points_reduced_length_direction,
+int line)
 {
     if(line == LEFT_LINE)
     {
@@ -215,7 +231,8 @@ void LinePointsReduce::GetLengthAndDirectionFromConsecutiveReducedLinePoints(vec
     }
 }
 
-void LinePointsReduce::ComputeLengthAndDirectionFromConsecutiveReducedLinePoints(int line)
+void LinePointsReduce::ComputeLengthAndDirectionFromConsecutiveReducedLinePoints(
+int line)
 {
 
     if(line == LEFT_LINE)

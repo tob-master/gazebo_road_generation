@@ -37,60 +37,85 @@ private:
 
     Mat image_;
 
-    const int kVelocitySignTemplateHeight_ = 65;
-    const int kVelocitySignTemplateWidth_ = 30;
-    const int kGoalLineFieldOfView_ = 10;
+    int start_left_x_ = 0;
+    int start_right_x_ = 0;
+    int start_left_y_ = 0;
+    int start_right_y_ = 0;
+    float start_angle_left_= 0;
+    float start_angle_right_ =0;
 
-    const int GoalLineIntesitiyThreshold_ = 100;
-
+    const int kGoalLineIntensityThreshold_ = 100;
     const int kMinGoalSegmentWidth_ = 2;
     const int kMaxGoalSegmentWidth_ = 4;
     const int kMinGoalSegmentsToFind_ = 20;
 
     const int kMaxCrossWalkForsightDistance_ = 150;
     const int kMaxCrossWalkForsightStepSize_ = 5;
-
-
     const int kMinCrossWalkSegmentWidth_ = 6;
     const int kMaxCrossWalkSegmentWidth_ = 8;
     const int kMinCrossWalkSegmentsToFind_ = 15;
 
-    bool found_goal_line_ = false;
-    bool found_cross_walk_ = false;
+    const int kMinToLeftMidLineDirectionForCrossing_ = 340;
+    const int kMaxToLeftMidLineDirectionForCrossing_ = 20;
+    const int kMinToRightMidLineDirectionForCrossing_ = 160;
+    const int kMaxToRightMidLineDirectionForCrossing_ = 200;
+    const int kMinOutLineDirectionDifferenceForCrossing_ = 80;
+    const int kMaxCrossingForsightY_ = 220;
+    const int kMinToLeftLeftLineDirectionForCrossing_ = 140;
+    const int kMaxToLeftLeftLineDirectionForCrossing_ = 220;
+    const int kMinToRightRightLineDirectionForCrossing_ = 320;
+    const int kMaxToRightRightLineDirectionForCrossing_ = 40;
+    const int MaxLeftLineYHeightForCrossing_ = 250;
+    const int MaxRightLineYHeightForCrossing_ = 250;
+    const int MaxLeftLineSizeForCrossing_ = 150;
+    const int MaxRightLineSizeForCrossing_ = 150;
 
-    const int kMaxRoadSignForsightDistance_ = 125;
+    bool left_line_in_crossing_height_;
+    bool right_line_in_crossing_height_;
+    bool left_line_in_crossing_size_;
+    bool right_line_in_crossing_size_;
 
-    const int kLeftToLeftMidLaneDistance = 30;
+    const int kMaxLaneObjectForsightDistance_ = 125;
+    const int kLaneObjectForsightStepSize_ = 40;
+
+    const int kLeftInLeftLaneLineIteratorEndOffset_ = 60;
+    const int kLeftInRightLaneLineIteratorStartOffset_ = 70;
+    const int kLeftInRightLaneLineIteratorEndOffset_ = 125;
+    const int kRightInLeftLaneLineIteratorStartOffset_ = 70;
+    const int kRightInLeftLaneLineIteratorEndOffset_ = 125;
+    const int kRightInRightLaneLineIteratorEndOffset_ = 60;
 
     const int kLeftInLeftLaneRadialOuterLineOffset_  = 30;
     const int kLeftInRightLaneRadialOuterLineOffset_ = 95;
     const int kRightInLeftLaneRadialOuterLineOffset_ = 95;
     const int kRightInRightLaneRadialOuterLineOffset_ = 30;
-    const int kLaneObjectRadialScanStepSize = 1;
-    const int kLaneObjectRadialScanRadius1 = 20;
-    const int kLaneObjectRadialScanRadius2 =  5;
-    const int kLaneObjectForsightStepSize = 40;
-    const int kMaxPxCountForLaneMarkingRadialScanRadius1 = 120;
-    const int kMaxPxCountForLaneMarkingRadialScanRadius2 = 120;
-    const int kMinPxCountForLaneMarkingRadialScanRadius1 = 30;
-    const int kMinPxCountForLaneMarkingRadialScanRadius2 = 20;
 
-    const int kMaxLaneObjectForsightDistance_ = 125;
+    const int kLaneObjectRadialScanStepSize_ = 1;
+    const int kLaneObjectRadialScanRadius_ = 20;
 
-    const int kMinPxCountForBoxRadialScanRadius1  = 150;
-    const int kMinPxCountForBoxRadialScanRadius2 = 150;
+    const int kMinMarkingSegmentsThreshold_ = 4;
 
+    const int kMinBoxSegmentsThreshold_ = 1;
+    const int kMinWhitePixelsForBox_ = 40;
 
-    const int kLeftInLeftLaneLineIteratorEndOffset_ = 60;
-    const int kLeftInRightLaneLineIteratorStartOffset_ = 70;
-    const int kLeftInRightLaneLineIteratorEndOffset_ = 125;
+    bool found_mid_crossing_pattern_ = false;
+    bool found_left_crossing_pattern_ = false;
+    bool found_right_crossing_pattern_ = false;
 
+    bool found_cross_walk_ = false;
+    bool found_goal_line_ = false;
+    bool found_crossing_ = false;
+    bool found_box_ = false;
+    bool found_marking_ = false;
 
-    const int kRightInLeftLaneLineIteratorStartOffset_ = 70;
-    const int kRightInLeftLaneLineIteratorEndOffset_ = 125;
+    Point cross_walk_mid_point_ = Point(-1,-1);
+    Point crossing_mid_point_ = Point(-1,-1);
+    Point road_object_mid_point_ = Point(-1,-1);
+    Point goal_line_mid_point_ = Point(-1,-1);
 
-
-    const int kRightInRightLaneLineIteratorEndOffset_ = 60;
+    const int kVelocitySignTemplateHeight_ = 65;
+    const int kVelocitySignTemplateWidth_ = 30;
+    const int kGoalLineFieldOfView_ = 10;
 
     Mat image_template_10;
     Mat image_template_20;
@@ -102,84 +127,199 @@ private:
     Mat image_template_80;
     Mat image_template_90;
 
-    int start_left_x_ = 0;
-    int start_right_x_ = 0;
-    int start_left_y_ = 0;
-    int start_right_y_ = 0;
-    float start_angle_left_= 0;
-    float start_angle_right_ =0;
+    Point kRectTopLeftPointForClassifierRoi_ = Point(619,233);
+    Point kRectBottomRightPointForClassifierRoi_ = Point(656,310);
+    const int kResizeHeightForClassifierRoi_ = 56;
+    const int kResizeWidthForClassifierRoi_ = 28;
+
+    const int kTemplateRoiSizeX_ = 50;
+    const int kTemplateRoiSizeY_ = 50;
+    const int kRoadSignIntensityThreshold_ = 100;
 
 
-    bool found_mid_crossing_ = false;
-    bool found_left_crossing_ = false;
-    bool found_right_crossing_ = false;
-    bool found_box_ = false;
-    bool found_marking_ = false;
-    const int kMinToLeftMidLineDirectionForCrossing_ = 340;
-    const int kMaxToLeftMidLineDirectionForCrossing_ = 20;
-    const int kMinToRightMidLineDirectionForCrossing_ = 160;
-    const int kMaxToRightMidLineDirectionForCrossing_ = 200;
+    vector<LineValidationTable> left_line_validation_table_;
+    vector<LineValidationTable> mid_line_validation_table_;
+    vector<LineValidationTable> right_line_validation_table_;
+
+    vector<LineValidationTable> left_line_points_in_drive_direction_;
+    vector<LineValidationTable> right_line_points_in_drive_direction_;
+
+    vector<SafeDriveAreaEvaluationReturnInfo> safe_drive_area_evaluation_;
 
 
-    const int kMinOutLineDirectionDifferenceForCrossing_ = 80;
-    const int kMaxCrossingForsightY_ = 220;
+    bool SearchGoalLine(
+    Mat image,
+    const int start_left_x,
+    const int start_left_y,
+    const float start_angle_left,
+    const int kGoalLineFieldOfView,
+    const int kGoalLineIntensityThreshold,
+    const int kMinGoalSegmentWidth,
+    const int kMaxGoalSegmentWidth,
+    const int kMinGoalSegmentsToFind,
+    bool &found_goal_line,
+    Point &goal_line_mid_point);
 
-    const int kMinToLeftLeftLineDirectionForCrossing_ = 140;
-    const int kMaxToLeftLeftLineDirectionForCrossing_ = 220;
-    const int kMinToRightRightLineDirectionForCrossing_ = 320;
-    const int kMaxToRightRightLineDirectionForCrossing_ = 40;
+    float GetOrthogonalAngle(
+    float angle,
+    int SEARCH_LINE_CODE);
 
-    const int MaxLeftLineYHeightForCrossing = 250;
-    const int MaxRightLineYHeightForCrossing = 250;
-    const int MaxLeftLineSizetForCrossing = 150;
-    const int MaxRightLineSizeForCrossing = 150;
+    Point GetPolarCoordinate(
+    int x,
+    int y,
+    float angle,
+    int radius);
+
+    vector<pair<string,int>> GatherBlackAndWhiteRoadSegments(
+    Mat scanned_line_mat);
+
+    bool SearchCrossWalk(
+    Mat image,
+    bool &found_cross_walk,
+    Point &cross_walk_mid_point,
+    const int start_left_x,
+    const int start_left_y,
+    const float start_angle_left,
+    const int start_right_x,
+    const int start_right_y,
+    const float start_angle_right,
+    const int kMinCrossWalkSegmentWidth,
+    const int kMaxCrossWalkSegmentWidth,
+    const int kMinCrossWalkSegmentsToFind,
+    const int kMaxCrossWalkForsightDistance,
+    const int kMaxCrossWalkForsightStepSize);
+
+    void SearchCrossRoad(
+    vector<LineValidationTable> left_line_validation_table,
+    vector<LineValidationTable>mid_line_validation_table,
+    vector<LineValidationTable>right_line_validation_table,
+    vector<LineValidationTable> left_line_points_in_drive_direction,
+    vector<LineValidationTable> right_line_points_in_drive_direction,
+    Point &crossing_mid_point,
+    bool &found_left_crossing_pattern,
+    bool &found_mid_crossing_pattern,
+    bool &found_right_crossing_pattern,
+    bool &left_line_in_crossing_height,
+    bool &right_line_in_crossing_height,
+    bool &left_line_in_crossing_size,
+    bool &right_line_in_crossing_size,
+    bool &found_crossing,
+    const int kMinToLeftMidLineDirectionForCrossing,
+    const int kMaxToLeftMidLineDirectionForCrossing,
+    const int kMaxToRightMidLineDirectionForCrossing,
+    const int kMinToRightMidLineDirectionForCrossing,
+    const int kMinOutLineDirectionDifferenceForCrossing,
+    const int kMaxCrossingForsightY,
+    const int kMinToLeftLeftLineDirectionForCrossing,
+    const int kMaxToLeftLeftLineDirectionForCrossing,
+    const int kMinToRightRightLineDirectionForCrossing,
+    const int kMaxToRightRightLineDirectionForCrossing,
+    const int MaxLeftLineYHeightForCrossing,
+    const int MaxRightLineYHeightForCrossing,
+    const int MaxLeftLineSizeForCrossing,
+    const int MaxRightLineSizeForCrossing);
+
+    void SearchForStrongDirectionDifferencesInValidationtables(
+    vector<LineValidationTable> left_line_validation_table,
+    vector<LineValidationTable>mid_line_validation_table,
+    vector<LineValidationTable>right_line_validation_table,
+    Point & crossing_left_line_point,
+    Point & crossing_right_line_point,
+    bool &found_mid_crossing_pattern,
+    bool &found_left_crossing_pattern,
+    bool &found_right_crossing_pattern,
+    const int kMinToLeftMidLineDirectionForCrossing,
+    const int kMaxToLeftMidLineDirectionForCrossing,
+    const int kMaxToRightMidLineDirectionForCrossing,
+    const int kMinToRightMidLineDirectionForCrossing,
+    const int kMinOutLineDirectionDifferenceForCrossing,
+    const int kMaxCrossingForsightY,
+    const int kMinToLeftLeftLineDirectionForCrossing,
+    const int kMaxToLeftLeftLineDirectionForCrossing,
+    const int kMinToRightRightLineDirectionForCrossing,
+    const int kMaxToRightRightLineDirectionForCrossing);
+
+    void ExtractMinMaxLineElements(
+    vector<LineValidationTable> line,
+    MinMaxLineElements& line_minmax_elements);
+
+    void SearchRoadObject(
+    Mat image,
+    vector<LineValidationTable> current_table,
+    int search_direction,
+    int search_distance_code,
+    Point &road_object_mid_point,
+    bool &found_box,
+    bool &found_marking,
+    const int kLeftInLeftLaneRadialOuterLineOffset,
+    const int kLeftInRightLaneRadialOuterLineOffset,
+    const int kRightInLeftLaneRadialOuterLineOffset,
+    const int kRightInRightLaneRadialOuterLineOffset,
+    const int kMaxLaneObjectForsightDistance,
+    const int kLeftInLeftLaneLineIteratorEndOffset,
+    const int kLeftInRightLaneLineIteratorStartOffset,
+    const int kLeftInRightLaneLineIteratorEndOffset,
+    const int kRightInLeftLaneLineIteratorStartOffset,
+    const int kRightInLeftLaneLineIteratorEndOffset,
+    const int kRightInRightLaneLineIteratorEndOffset,
+    const int kLaneObjectRadialScanStepSize,
+    const int kLaneObjectRadialScanRadius1,
+    const int kMinWhitePixelsForBox,
+    const int kRoadSignIntensityThreshold,
+    const int kMinBoxSegmentsThreshold,
+    const int kMinMarkingSegmentsThreshold,
+    const int kLaneObjectForsightStepSize);
+
+    void SendMarkingImageToClassifier(
+    Mat image,
+    Point kRectTopLeftPointForClassifierRoi,
+    Point kRectBottomRightPointForClassifierRoi,
+    const int kResizeHeightForClassifierRoi,
+    const int kResizeWidthForClassifierRoi);
+
+    void TemplateMatchMarking(
+    vector<PointInDirection> markings);
+
+    double MatchTemplateCCOEFF(
+    Mat image,
+    Mat template_image);
+
+    double MatchTemplateSQDIFF(
+    Mat image,
+    Mat template_image);
 
 
-     vector<LineValidationTable> left_line_validation_table_;
-     vector<LineValidationTable> mid_line_validation_table_;
-     vector<LineValidationTable> right_line_validation_table_;
-
-     vector<LineValidationTable> left_line_points_in_drive_direction_;
-     vector<LineValidationTable> right_line_points_in_drive_direction_;
-
-
-     bool left_line_in_crossing_height_;
-     bool right_line_in_crossing_height_;
-     bool left_line_in_crossing_size_;
-     bool right_line_in_crossing_size_;
-
-     bool found_crossing_ = false;
-
-
-     const int kTemplateRoiSizeX_ = 50;
-     const int kTemplateRoiSizeY_ = 50;
-     const int kRoadSignIntensityThreshold_ = 100;
 public:
-    void LoadImage(Mat image){image_ = image;
-                              sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "mono8", image_).toImageMsg();
-                              road_sign_image_publisher_.publish(msg);};
-    OnRoadSearch(ros::NodeHandle* nh_);
-    void SearchOnRoad(vector<LineValidationTable> left_table,vector<LineValidationTable> right_table);
-    vector<pair<string,int>> GatherBlackAndWhiteRoadSegments(Mat scanned_line_mat);
-    void SearchRoadObject(vector<LineValidationTable> current_table, vector<PointInDirection>& markings, vector<PointInDirection>& boxes,  int SEARCH_DIRECTION, int SEARCH_DISTANCE_CODE);
-    double MatchTemplateCCOEFF(Mat image, Mat template_image);
-    double MatchTemplateSQDIFF(Mat image, Mat template_image);
-    float GetOrthogonalAngle(float angle, int SEARCH_LINE_CODE);
-    Point GetPolarCoordinate(int x, int y, float angle, int radius);
-    bool SearchGoalLine();
-    bool SearchCrossWalk();
-    bool SearchRoadSigns();
-    void SetStartParameters(StartParameters start_parameters);
-    void ExtractMinMaxLineElements( vector<LineValidationTable>  line,  MinMaxLineElements& line_minmax_elements );
-    void LoadValidationTables(vector<LineValidationTable> left_line_validation_table,
-                              vector<LineValidationTable> mid_line_validation_table,
-                              vector<LineValidationTable> right_line_validation_table);
 
-    void SearchForStrongDirectionDifferencesInValidationtables();
-    void LoadInDriveDirectionTables(vector<LineValidationTable> left_line_points_in_drive_direction,vector<LineValidationTable> right_line_points_in_drive_direction);
-    void SearchCrossRoad();
-    void TemplateMatchMarking(vector<PointInDirection> markings);
-    void SendMarkingImageToClassifier();
+
+    OnRoadSearch(
+    ros::NodeHandle* nh_);
+
+    void SetImage(
+    Mat image)
+    {image_ = image;}
+
+    void LoadSafeDriveAreaEvaluation(
+    vector<SafeDriveAreaEvaluationReturnInfo> safe_drive_area_evaluation);
+
+    void LoadValidationTables(
+    vector<LineValidationTable> left_line_validation_table,
+    vector<LineValidationTable> mid_line_validation_table,
+    vector<LineValidationTable> right_line_validation_table);
+
+    void LoadInDriveDirectionTables(
+    vector<LineValidationTable> left_line_points_in_drive_direction,
+    vector<LineValidationTable> right_line_points_in_drive_direction);
+
+    void SetStartParameters(
+    StartParameters start_parameters);
+
+    void SearchOnRoad();
+
+    void DrawEvaluatedSafetyAreas(
+    Mat& rgb);
+
 };
+
 
 #endif // ON_ROAD_SEARCHER_H

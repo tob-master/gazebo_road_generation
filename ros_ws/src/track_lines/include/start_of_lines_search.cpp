@@ -2,47 +2,42 @@
 
 
 
-StartOfLinesSearch::StartOfLinesSearch(int image_height,int image_width,StartOfLinesSearchInitializationParameters init):
-  kImageHeight_(image_height),
-  kImageWidth_(image_width),
-  kBottomRow_(init.bottom_row),
-  kMidRow_(init.mid_row),
-  kTopRow_(init.top_row),
-  kMinLineWidth_(init.min_line_width),
-  kMaxLineWidth_(init.max_line_width),
-  kMinTrackWidth_(init.min_track_width),
-  kMaxTrackWidth_(init.max_track_width),
-  kWindowSizeForLineSearch_(init.window_size_for_line_search),
-  kLineThreshold_(init.line_threshold),
-  kMidLineThreshold_(init.mid_line_threshold),
-  kWindowSizeForMidLineSearch_(init.window_size_for_mid_line_search),
-  kMaxDistanceBetweenAdjacentRowPairs_(init.max_distance_between_adjacent_row_pairs),
-  kCarPositionInFrame_(init.car_position_in_frame),
-  kRoadModelLeftLine_(init.road_model_left_line),
-  kRoadModelRightLine_(init.road_model_right_line),
-  kLineToCarDistanceThreshold_(init.line_to_car_distance_threshold),
-  kLeftLineToCarDistance_(kCarPositionInFrame_ - kRoadModelLeftLine_),
-  kRightLineToCarDistance_(kRoadModelRightLine_ - kCarPositionInFrame_),
-  kMinLeftLineToCarDistance_(kLeftLineToCarDistance_ - kLineToCarDistanceThreshold_),
-  kMaxLeftLineToCarDistance_(kLeftLineToCarDistance_ + kLineToCarDistanceThreshold_),
-  kMinRightLineToCarDistance_(kRightLineToCarDistance_ - kLineToCarDistanceThreshold_),
-  kMaxRightLineToCarDistance_(kRightLineToCarDistance_ + kLineToCarDistanceThreshold_)
-
-
-
-
+StartOfLinesSearch::StartOfLinesSearch(
+int image_height,
+int image_width,
+StartOfLinesSearchInitializationParameters init):
+kImageHeight_(image_height),
+kImageWidth_(image_width),
+kBottomRow_(init.bottom_row),
+kMidRow_(init.mid_row),
+kTopRow_(init.top_row),
+kMinLineWidth_(init.min_line_width),
+kMaxLineWidth_(init.max_line_width),
+kMinTrackWidth_(init.min_track_width),
+kMaxTrackWidth_(init.max_track_width),
+kWindowSizeForLineSearch_(init.window_size_for_line_search),
+kLineThreshold_(init.line_threshold),
+kMidLineThreshold_(init.mid_line_threshold),
+kWindowSizeForMidLineSearch_(init.window_size_for_mid_line_search),
+kMaxDistanceBetweenAdjacentRowPairs_(init.max_distance_between_adjacent_row_pairs),
+kCarPositionInFrame_(init.car_position_in_frame),
+kRoadModelLeftLine_(init.road_model_left_line),
+kRoadModelRightLine_(init.road_model_right_line),
+kLineToCarDistanceThreshold_(init.line_to_car_distance_threshold),
+kLeftLineToCarDistance_(kCarPositionInFrame_ - kRoadModelLeftLine_),
+kRightLineToCarDistance_(kRoadModelRightLine_ - kCarPositionInFrame_),
+kMinLeftLineToCarDistance_(kLeftLineToCarDistance_ - kLineToCarDistanceThreshold_),
+kMaxLeftLineToCarDistance_(kLeftLineToCarDistance_ + kLineToCarDistanceThreshold_),
+kMinRightLineToCarDistance_(kRightLineToCarDistance_ - kLineToCarDistanceThreshold_),
+kMaxRightLineToCarDistance_(kRightLineToCarDistance_ + kLineToCarDistanceThreshold_)
 {
 row_filter_activations_.insert(make_pair(kBottomRow_,vector<int>(kImageWidth_)));
 row_filter_activations_.insert(make_pair(kMidRow_,vector<int>(kImageWidth_)));
 row_filter_activations_.insert(make_pair(kTopRow_,vector<int>(kImageWidth_)));
 
-
-
-
 mid_row_is_matched_ = false;
 pattern_matches_count_ = 0;
 pattern_to_car_matches_count_ = 0;
-
 }
 
 /*! returns if start parameters were found */
@@ -100,23 +95,21 @@ StartOfLinesSearchReturnInfo StartOfLinesSearch::FindStartParameters()
 }
 
 
-void StartOfLinesSearch::SetImage(Mat image)
+void StartOfLinesSearch::SetImage(
+Mat image)
 {
     image_ = image;
-
 }
 
 /*! Slides a Kernel (1xkWindowSizeForLineSearch_) over 3 image rows and searches for white pixels*/
-void StartOfLinesSearch::FilterRowsForActivations(Mat image,
-                                                  vector<int> rows_to_search_for_lines,
-                                                  map<int,vector<int>> &row_filter_activations,
-                                                  const int kImageWidth,
-                                                  const int kWindowSizeForLineSearch,
-                                                  const int kLineThreshold
-                                                  )
+void StartOfLinesSearch::FilterRowsForActivations(
+Mat image,
+vector<int> rows_to_search_for_lines,
+map<int,vector<int>> &row_filter_activations,
+const int kImageWidth,
+const int kWindowSizeForLineSearch,
+const int kLineThreshold)
 {
-
-
     int filtering_start = ((kWindowSizeForLineSearch-1)/2);
     int filtering_end   = kImageWidth-((kWindowSizeForLineSearch-1)/2);
 
@@ -142,10 +135,11 @@ void StartOfLinesSearch::FilterRowsForActivations(Mat image,
   }
 
 /*! Searches for the found white pixels and meassures their length*/
-void StartOfLinesSearch::FindStartAndWidthOfRowSegments(vector<int> rows_to_search_for_lines,
-                                                        map<int,vector<int>> row_filter_activations,
-                                                        multimap<int,SegmentStartIDAndWidth> &row_segments_raw,
-                                                        const int kImageWidth)
+void StartOfLinesSearch::FindStartAndWidthOfRowSegments(
+vector<int> rows_to_search_for_lines,
+map<int,vector<int>> row_filter_activations,
+multimap<int,SegmentStartIDAndWidth> &row_segments_raw,
+const int kImageWidth)
 {
     for ( auto &row : rows_to_search_for_lines )
     {
@@ -204,11 +198,12 @@ void StartOfLinesSearch::RejectFalseLineWidth(vector<int> rows_to_search_for_lin
 }
 
 /*! Combines row_ids per row which together have a correct track distance and rejects false segments*/
-void StartOfLinesSearch::RejectFalseTrackWidth(vector<int> rows_to_search_for_lines,
-                                               multimap<int,TrueLineWidthRowId> row_segments_true_line_width,
-                                               multimap<int,TrueTrackWidthRowPairIds> &row_segments_true_track_width,
-                                               const int kMinTrackWidth,
-                                               const int kMaxTrackWidth)
+void StartOfLinesSearch::RejectFalseTrackWidth(
+vector<int> rows_to_search_for_lines,
+multimap<int,TrueLineWidthRowId> row_segments_true_line_width,
+multimap<int,TrueTrackWidthRowPairIds> &row_segments_true_track_width,
+const int kMinTrackWidth,
+const int kMaxTrackWidth)
 {
     for ( auto &row : rows_to_search_for_lines )
     {
@@ -241,42 +236,52 @@ void StartOfLinesSearch::RejectFalseTrackWidth(vector<int> rows_to_search_for_li
 }
 
 /*! Checks if row segments on distinct rows (bottom and mid) are aligned (form a line together)*/
-void StartOfLinesSearch::RejectFalseAlignedAdjacentRowPairs(multimap<int,TrueTrackWidthRowPairIds> row_segments_true_track_width,
-                                                            vector<TrueAdjacentTrackWidthRowPairIds> &row_segments_true_adjacent_track_width,
-                                                            const int kBottomRow,
-                                                            const int kMidRow,
-                                                            const int kMaxDistanceBetweenAdjacentRowPairs)
+void StartOfLinesSearch::RejectFalseAlignedAdjacentRowPairs(
+multimap<int,TrueTrackWidthRowPairIds> row_segments_true_track_width,
+vector<TrueAdjacentTrackWidthRowPairIds> &row_segments_true_adjacent_track_width,
+const int kBottomRow,
+const int kMidRow,
+const int kMaxDistanceBetweenAdjacentRowPairs)
 {
 
-        auto ret_bottom_row = row_segments_true_track_width.equal_range(kBottomRow);
-        auto ret_mid_row = row_segments_true_track_width.equal_range(kMidRow);
+    auto ret_bottom_row = row_segments_true_track_width.equal_range(kBottomRow);
+    auto ret_mid_row = row_segments_true_track_width.equal_range(kMidRow);
 
-        for (auto itb=ret_bottom_row.first; itb!=ret_bottom_row.second; ++itb)
+    for (auto itb=ret_bottom_row.first; itb!=ret_bottom_row.second; ++itb)
+    {
+        for (auto itm=ret_mid_row.first; itm!=ret_mid_row.second; ++itm)
         {
-            for (auto itm=ret_mid_row.first; itm!=ret_mid_row.second; ++itm)
+            int bottom_row_left_id = itb->second.row_id1;
+            int bottom_row_right_id = itb->second.row_id2;
+
+            int mid_row_left_id = itm->second.row_id1;
+            int mid_row_right_id = itm->second.row_id2;
+
+            if(HasCorrectAlignment(
+               bottom_row_left_id,
+               bottom_row_right_id,
+               mid_row_left_id,
+               mid_row_right_id,
+               kMaxDistanceBetweenAdjacentRowPairs))
             {
-                int bottom_row_left_id = itb->second.row_id1;
-                int bottom_row_right_id = itb->second.row_id2;
-
-                int mid_row_left_id = itm->second.row_id1;
-                int mid_row_right_id = itm->second.row_id2;
-
-                if(HasCorrectAlignment(bottom_row_left_id,bottom_row_right_id,mid_row_left_id,mid_row_right_id,kMaxDistanceBetweenAdjacentRowPairs))
-                {
-                    row_segments_true_adjacent_track_width.push_back(TrueAdjacentTrackWidthRowPairIds{bottom_row_left_id,
-                                                                                                       bottom_row_right_id,
-                                                                                                       mid_row_left_id,
-                                                                                                       mid_row_right_id});
-                }
+                row_segments_true_adjacent_track_width.push_back(TrueAdjacentTrackWidthRowPairIds{
+                                                                 bottom_row_left_id,
+                                                                 bottom_row_right_id,
+                                                                 mid_row_left_id,
+                                                                 mid_row_right_id});
             }
         }
+    }
 
 }
 
 /*! Checks if the given pattern has white pixels in the mid of the mid row and black pixels in the mid of bottom and top row
     this is the pattern to look for
 */
-void StartOfLinesSearch::CheckPatternMatch(Mat image, vector<TrueAdjacentTrackWidthRowPairIds> row_segments_true_adjacent_track_width,vector<PatternMatchIds> &pattern_matches)
+void StartOfLinesSearch::CheckPatternMatch(
+Mat image,
+vector<TrueAdjacentTrackWidthRowPairIds> row_segments_true_adjacent_track_width,
+vector<PatternMatchIds> &pattern_matches)
 {
     for ( auto &pattern_it : row_segments_true_adjacent_track_width )
     {
@@ -292,13 +297,14 @@ void StartOfLinesSearch::CheckPatternMatch(Mat image, vector<TrueAdjacentTrackWi
 
        if(PatternHasMatched(image, bottom_row_mid_id,mid_row_mid_id,top_row_mid_id))
        {
-          pattern_matches.push_back(PatternMatchIds{bottom_row_left_id,
-                                                      bottom_row_right_id,
-                                                      mid_row_left_id,
-                                                      mid_row_right_id,
-                                                      bottom_row_mid_id,
-                                                      mid_row_mid_id,
-                                                      top_row_mid_id});
+          pattern_matches.push_back(PatternMatchIds{
+                                    bottom_row_left_id,
+                                    bottom_row_right_id,
+                                    mid_row_left_id,
+                                    mid_row_right_id,
+                                    bottom_row_mid_id,
+                                    mid_row_mid_id,
+                                    top_row_mid_id});
 
        }
     }
@@ -306,21 +312,23 @@ void StartOfLinesSearch::CheckPatternMatch(Mat image, vector<TrueAdjacentTrackWi
 
 }
 
-void StartOfLinesSearch::CountPatternMatches(vector<PatternMatchIds> pattern_matches, int &pattern_matches_count)
+void StartOfLinesSearch::CountPatternMatches(
+vector<PatternMatchIds> pattern_matches,
+int &pattern_matches_count)
 {
     pattern_matches_count = pattern_matches.size();
-
 }
 
 
 /*! collects correct patterns which have the wright distance to the camera mid point of the car */
-void StartOfLinesSearch::CheckPatternToCarMatch(vector<PatternMatchIds> pattern_matches,
-                                                vector<PatternMatchIds> &pattern_to_car_matches,
-                                                const int kCarPositionInFrame,
-                                                const int kMinLeftLineToCarDistance,
-                                                const int kMaxLeftLineToCarDistance,
-                                                const int kMinRightLineToCarDistance,
-                                                const int kMaxRightLineToCarDistance)
+void StartOfLinesSearch::CheckPatternToCarMatch(
+vector<PatternMatchIds> pattern_matches,
+vector<PatternMatchIds> &pattern_to_car_matches,
+const int kCarPositionInFrame,
+const int kMinLeftLineToCarDistance,
+const int kMaxLeftLineToCarDistance,
+const int kMinRightLineToCarDistance,
+                                            const int kMaxRightLineToCarDistance)
 {
 
     for ( auto &match_it : pattern_matches)
@@ -329,14 +337,14 @@ void StartOfLinesSearch::CheckPatternToCarMatch(vector<PatternMatchIds> pattern_
         int bottom_row_left_id  = match_it.bottom_row_left_id;
         int bottom_row_right_id = match_it.bottom_row_right_id;
 
-        if(HasCorrectPatternToCarDistance(bottom_row_left_id,
-                                          bottom_row_right_id,
-                                          kCarPositionInFrame,
-                                          kMinLeftLineToCarDistance,
-                                          kMaxLeftLineToCarDistance,
-                                          kMinRightLineToCarDistance,
-                                          kMaxRightLineToCarDistance
-                                          ))
+        if(HasCorrectPatternToCarDistance(
+           bottom_row_left_id,
+           bottom_row_right_id,
+           kCarPositionInFrame,
+           kMinLeftLineToCarDistance,
+           kMaxLeftLineToCarDistance,
+           kMinRightLineToCarDistance,
+           kMaxRightLineToCarDistance))
         {
             pattern_to_car_matches.push_back(match_it);
         }
@@ -347,14 +355,21 @@ void StartOfLinesSearch::CheckPatternToCarMatch(vector<PatternMatchIds> pattern_
 
 }
 
-void StartOfLinesSearch::CountPatternToCarMatches(vector<PatternMatchIds> pattern_to_car_matches, int &pattern_to_car_matches_count)
+void StartOfLinesSearch::CountPatternToCarMatches(
+vector<PatternMatchIds> pattern_to_car_matches,
+int &pattern_to_car_matches_count)
 {
     pattern_to_car_matches_count = pattern_to_car_matches.size();
 }
 
 
 /*! Sets the found pattern as the start parameters for other algorithms */
-void StartOfLinesSearch::SetStartParameters(vector<PatternMatchIds> pattern_to_car_matches,StartParameters &start_parameters, int pattern_matches_count, const int kBottomRow, const int kMidRow)
+void StartOfLinesSearch::SetStartParameters(
+vector<PatternMatchIds> pattern_to_car_matches,
+StartParameters &start_parameters,
+int pattern_matches_count,
+const int kBottomRow,
+const int kMidRow)
 {
 
     if(pattern_matches_count == 1)
@@ -373,14 +388,15 @@ void StartOfLinesSearch::SetStartParameters(vector<PatternMatchIds> pattern_to_c
         float left_angle = CalculateAngle4Quadrants(opposite, left_adjacent);
         float right_angle = CalculateAngle4Quadrants(opposite, right_adjacent);
 
-        start_parameters = StartParameters{bottom_row_left_id,
-                                            kBottomRow,
-                                            left_angle,
-                                            true,
-                                            bottom_row_right_id,
-                                            kBottomRow,
-                                            right_angle,
-                                            true};
+        start_parameters =  StartParameters{
+                            bottom_row_left_id,
+                            kBottomRow,
+                            left_angle,
+                            true,
+                            bottom_row_right_id,
+                            kBottomRow,
+                            right_angle,
+                            true};
     }
     //else { /* TODO: implement a case for more than one match */
     //    cout << "pattern_matches_count_ > 1" << endl;}
@@ -404,7 +420,8 @@ void StartOfLinesSearch::ClearMemory()
 }
 
 
-void StartOfLinesSearch::DrawStartParameters(Mat &rgb)
+void StartOfLinesSearch::DrawStartParameters(
+Mat &rgb)
 {
 
     circle(rgb, Point(start_parameters_.left_x,start_parameters_.left_y), 7, Scalar(255, 0, 0),CV_FILLED);
@@ -419,7 +436,9 @@ StartParameters StartOfLinesSearch::GetStartParameters()
 }
 
 
-void StartOfLinesSearch::ClearRowFilterActivations(vector<int> rows_to_search_for_lines, map<int,vector<int>> &row_filter_activations)
+void StartOfLinesSearch::ClearRowFilterActivations(
+vector<int> rows_to_search_for_lines,
+map<int,vector<int>> &row_filter_activations)
 {
     for ( auto &row : rows_to_search_for_lines )
     {
@@ -427,25 +446,40 @@ void StartOfLinesSearch::ClearRowFilterActivations(vector<int> rows_to_search_fo
     }
 }
 
-int StartOfLinesSearch::GetPixelValue(Mat image, int x, int y)
+int StartOfLinesSearch::GetPixelValue(
+Mat image,
+int x,
+int y)
 {
     return (int)image.at<uchar>(Point(x,y));
 }
 
 
-void StartOfLinesSearch::SetRowFilterActivation(map<int,vector<int>> &row_filter_activations,int row, int index)
+void StartOfLinesSearch::SetRowFilterActivation(
+map<int,vector<int>> &row_filter_activations,
+int row,
+int index)
 {
     row_filter_activations[row].at(index) = 1;
 }
 
-bool StartOfLinesSearch::RowFilterIndexActivated(map<int,vector<int>> row_filter_activations,int row, int index)
+bool StartOfLinesSearch::RowFilterIndexActivated(
+map<int,vector<int>> row_filter_activations,
+int row,
+int index)
 {
     if(row_filter_activations[row].at(index)==1) return true;
     else return false;
 }
 
 
-void StartOfLinesSearch::MeasureSegment(map<int,vector<int>> row_filter_activations, const int kImageWidth, int row, int &index, int &start_id, int &width)
+void StartOfLinesSearch::MeasureSegment(
+map<int,vector<int>> row_filter_activations,
+const int kImageWidth,
+int row,
+int &index,
+int &start_id,
+int &width)
 {
    start_id = index;
 
@@ -456,13 +490,19 @@ void StartOfLinesSearch::MeasureSegment(map<int,vector<int>> row_filter_activati
     }
 }
 
-bool StartOfLinesSearch::HasCorrectLineWidth(int width, const int kMinLineWidth,const int kMaxLineWidth)
+bool StartOfLinesSearch::HasCorrectLineWidth(
+int width,
+const int kMinLineWidth,
+const int kMaxLineWidth)
 {
    if(width >= kMinLineWidth && width <= kMaxLineWidth) return true;
     else return false;
 }
 
-bool StartOfLinesSearch::IsPermuted(int it1_pos, int &it2_pos, vector<string> &used_permutations)
+bool StartOfLinesSearch::IsPermuted(
+int it1_pos,
+int &it2_pos,
+vector<string> &used_permutations)
 {
     if(it1_pos==it2_pos){ it2_pos++; return true;}
 
@@ -484,23 +524,33 @@ bool StartOfLinesSearch::IsPermuted(int it1_pos, int &it2_pos, vector<string> &u
     }
 }
 
-bool StartOfLinesSearch::HasCorrectTrackWidth(int id1, int id2, const int kMinTrackWidth, const int kMaxTrackWidth)
+bool StartOfLinesSearch::HasCorrectTrackWidth(
+int id1,
+int id2,
+const int kMinTrackWidth,
+const int kMaxTrackWidth)
 {
     int distance = abs(id2 - id1);
     if(distance>=kMinTrackWidth && distance<=kMaxTrackWidth) return true;
     else return false;
 }
 
-bool StartOfLinesSearch::CheckIfFoundAdjacentRowPairs(multimap<int,TrueTrackWidthRowPairIds> row_segments_true_track_width,
-                                                      bool &found_adjacent_row_pairs,
-                                                      const int kBottomRow,
-                                                      const int kMidRow)
+bool StartOfLinesSearch::CheckIfFoundAdjacentRowPairs(
+multimap<int,TrueTrackWidthRowPairIds> row_segments_true_track_width,
+bool &found_adjacent_row_pairs,
+const int kBottomRow,
+const int kMidRow)
 {
     if(row_segments_true_track_width.count(kBottomRow)>0 && row_segments_true_track_width.count(kMidRow)>0){ found_adjacent_row_pairs = true; return true; }
     else{ found_adjacent_row_pairs = false; return false; }
 }
 
-bool StartOfLinesSearch::HasCorrectAlignment(int bottom_row_left_id, int bottom_row_right_id, int mid_row_left_id, int mid_row_right_id, const int kMaxDistanceBetweenAdjacentRowPairs)
+bool StartOfLinesSearch::HasCorrectAlignment(
+int bottom_row_left_id,
+int bottom_row_right_id,
+int mid_row_left_id,
+int mid_row_right_id,
+const int kMaxDistanceBetweenAdjacentRowPairs)
 {
     int distance_left  = bottom_row_left_id - mid_row_left_id;
     int distance_right = bottom_row_right_id - mid_row_right_id;
@@ -510,12 +560,16 @@ bool StartOfLinesSearch::HasCorrectAlignment(int bottom_row_left_id, int bottom_
 
 }
 
-int StartOfLinesSearch::GetMidId(int left_row_id, int right_row_id)
+int StartOfLinesSearch::GetMidId(
+int left_row_id,
+int right_row_id)
 {
     return (left_row_id + right_row_id)/2;
 }
 
-int StartOfLinesSearch::GetTopRowMidId(int bottom_row_mid_id, int mid_row_mid_id)
+int StartOfLinesSearch::GetTopRowMidId(
+int bottom_row_mid_id,
+int mid_row_mid_id)
 {
     int top_offset = mid_row_mid_id - bottom_row_mid_id;
 
@@ -529,7 +583,11 @@ int StartOfLinesSearch::GetTopRowMidId(int bottom_row_mid_id, int mid_row_mid_id
 }
 
 
-bool StartOfLinesSearch::PatternHasMatched(Mat image, int bottom_row_mid_id, int mid_row_mid_id, int top_row_mid_id)
+bool StartOfLinesSearch::PatternHasMatched(
+Mat image,
+int bottom_row_mid_id,
+int mid_row_mid_id,
+int top_row_mid_id)
 {
 
     bool bottom_row_matched = false;
@@ -552,13 +610,14 @@ bool StartOfLinesSearch::PatternHasMatched(Mat image, int bottom_row_mid_id, int
 
 }
 
-bool StartOfLinesSearch::HasCorrectPatternToCarDistance(int bottom_row_left_id,
-                                                        int bottom_row_right_id,
-                                                        const int kCarPositionInFrame,
-                                                        const int kMinLeftLineToCarDistance,
-                                                        const int kMaxLeftLineToCarDistance,
-                                                        const int kMinRightLineToCarDistance,
-                                                        const int kMaxRightLineToCarDistance)
+bool StartOfLinesSearch::HasCorrectPatternToCarDistance(
+int bottom_row_left_id,
+int bottom_row_right_id,
+const int kCarPositionInFrame,
+const int kMinLeftLineToCarDistance,
+const int kMaxLeftLineToCarDistance,
+const int kMinRightLineToCarDistance,
+const int kMaxRightLineToCarDistance)
 {
 
     /* TODO: implement driving on other side of track */

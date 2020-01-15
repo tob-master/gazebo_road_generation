@@ -117,6 +117,7 @@ class LineValidationTable
 };
 struct SafeDriveAreaEvaluationReturnInfo
 {
+    vector<vector<Point>> search_rect;
     unsigned long long int left_line_score;
     unsigned long long int mid_line_score;
     unsigned long long int right_line_score;
@@ -143,6 +144,13 @@ struct SafeDriveAreaEvaluationReturnInfo
     vector<vector<LineValidationTable>> left_priority_table;
     vector<vector<LineValidationTable>> mid_priority_table;
     vector<vector<LineValidationTable>> right_priority_table;
+
+    bool crossing;
+    bool crosswalk;
+    bool goalline;
+    bool box;
+    bool marking;
+
 };
 
 

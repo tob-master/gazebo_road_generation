@@ -1,6 +1,13 @@
 #include "line_validation_table.h"
 
-LineValidationTable::LineValidationTable(int line_code,Point origin,float search_direction, int next_direction_distance, Point adjacent_point_1, Point adjacent_point_2, int label)
+LineValidationTable::LineValidationTable(
+int line_code,
+Point origin,
+float search_direction,
+int next_direction_distance,
+Point adjacent_point_1,
+Point adjacent_point_2,
+int label)
 {
     origin_    = origin;
     line_code_ = line_code;
@@ -8,7 +15,6 @@ LineValidationTable::LineValidationTable(int line_code,Point origin,float search
 
     search_direction_        = search_direction;
     next_direction_distance_ = next_direction_distance;
-
 
     switch(line_code)
     {
@@ -55,7 +61,8 @@ LineValidationTable::LineValidationTable(int line_code,Point origin,float search
     score_ = 0;
 }
 
-Point LineValidationTable::GetAdjacentPointPrediction(int SEARCH_LINE_CODE)
+Point LineValidationTable::GetAdjacentPointPrediction(
+int SEARCH_LINE_CODE)
 {
     if(SEARCH_LINE_CODE == LEFT_TO_MID) return mid_point_;
 
@@ -71,7 +78,9 @@ Point LineValidationTable::GetAdjacentPointPrediction(int SEARCH_LINE_CODE)
  }
 
 
-void LineValidationTable::SetAdjacentPointPredictionFound(int SEARCH_LINE_CODE, bool flag)
+void LineValidationTable::SetAdjacentPointPredictionFound(
+int SEARCH_LINE_CODE,
+bool flag)
 {
    if(SEARCH_LINE_CODE == LEFT_TO_MID) found_mid_point_ = flag;
 
@@ -107,7 +116,9 @@ Point LineValidationTable::GetRightLinePointPrediction()
     return right_point_;
 }
 
-void LineValidationTable::SetAdjacentPointPrediction(int SEARCH_LINE_CODE, bool flag)
+void LineValidationTable::SetAdjacentPointPrediction(
+int SEARCH_LINE_CODE,
+bool flag)
 {
     if(SEARCH_LINE_CODE == LEFT_TO_MID) mid_prediction_ = flag;
 
@@ -124,7 +135,9 @@ void LineValidationTable::SetAdjacentPointPrediction(int SEARCH_LINE_CODE, bool 
 
 
 
-void LineValidationTable::SetAdjacentPointId(int SEARCH_LINE_CODE,int min_distance_adjacent_point_id)
+void LineValidationTable::SetAdjacentPointId(
+int SEARCH_LINE_CODE,
+int min_distance_adjacent_point_id)
 {
     if(SEARCH_LINE_CODE == LEFT_TO_MID) mid_id_ = min_distance_adjacent_point_id;
 
@@ -145,7 +158,9 @@ int LineValidationTable::GetDirection()
 }
 
 
-void LineValidationTable::SetAdjacentPointDirectionInRange(int SEARCH_LINE_CODE, bool flag)
+void LineValidationTable::SetAdjacentPointDirectionInRange(
+int SEARCH_LINE_CODE,
+bool flag)
 {
 
     if(SEARCH_LINE_CODE == LEFT_TO_MID) left_to_mid_directions_in_range_ = flag;
@@ -162,7 +177,8 @@ void LineValidationTable::SetAdjacentPointDirectionInRange(int SEARCH_LINE_CODE,
 }
 
 
-int LineValidationTable::GetAdjacent1Id(int LINE_CODE)
+int LineValidationTable::GetAdjacent1Id(
+int LINE_CODE)
 {
     if(LINE_CODE == LEFT_LINE) return mid_id_;
     if(LINE_CODE == MID_LINE) return left_id_;
@@ -171,31 +187,34 @@ int LineValidationTable::GetAdjacent1Id(int LINE_CODE)
 
 
 
-int LineValidationTable::GetAdjacent2Id(int LINE_CODE)
+int LineValidationTable::GetAdjacent2Id(
+int LINE_CODE)
 {
     if(LINE_CODE == LEFT_LINE) return right_id_;
     if(LINE_CODE == MID_LINE) return right_id_;
     if(LINE_CODE == RIGHT_LINE) return mid_id_;
 }
 
-int LineValidationTable::GetAdjacent1Prediction(int LINE_CODE)
+int LineValidationTable::GetAdjacent1Prediction(
+int LINE_CODE)
 {
     if(LINE_CODE == LEFT_LINE) return mid_prediction_;
     if(LINE_CODE == MID_LINE) return left_prediction_;
     if(LINE_CODE == RIGHT_LINE) return left_prediction_;
 }
 
-int LineValidationTable::GetAdjacent2Prediction(int LINE_CODE)
+int LineValidationTable::GetAdjacent2Prediction(
+int LINE_CODE)
 {
     if(LINE_CODE == LEFT_LINE) return right_prediction_;
     if(LINE_CODE == MID_LINE) return right_prediction_;
     if(LINE_CODE == RIGHT_LINE) return mid_prediction_;
 }
 
-void LineValidationTable::SetAdjacentPointOriginPrediction(int SEARCH_LINE_CODE, bool flag)
+void LineValidationTable::SetAdjacentPointOriginPrediction(
+int SEARCH_LINE_CODE,
+bool flag)
 {
-
-
 
     if(SEARCH_LINE_CODE == LEFT_TO_MID) mid_to_origin_prediction_ = flag;
 

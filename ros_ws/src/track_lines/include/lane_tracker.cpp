@@ -254,7 +254,7 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         line_validatiohn_table_creation_return_info_ = LineValidationTableCreator_->CreateLineValidationTables();
 
-        LineValidationTableCreator_->DrawReturnInfo(image_rgb_bird_);
+        //LineValidationTableCreator_->DrawReturnInfo(image_rgb_bird_);
         //cout << line_validatiohn_table_creation_return_info_.left_found_both_points_and_predictions << endl;
         //cout << line_validatiohn_table_creation_return_info_.mid_found_both_points_and_predictions << endl;
         //cout << line_validatiohn_table_creation_return_info_.right_found_both_points_and_predictions << endl;
@@ -273,15 +273,44 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 
         vector<SafeDriveAreaEvaluationReturnInfo> safe_drive_area_evaluation_return_info_ =  SafeDriveAreaEvaluator_->EvaluateTrackInDriveDirection();
 
+
+
+    /*
+
         for(auto it:safe_drive_area_evaluation_return_info_)
         {
-            cout << it.max_line_type << " " <<  it.max_line_score << " " << it.max_line_is_continous << " " << it.rect_mid_point << " " << it.search_direction << endl;
+            //cout << it.max_line_type << " " <<  it.max_line_score << " " << it.max_line_is_continous << endl;
+
+            int line_type = it.max_line_type;
+
+            vector<LineValidationTable> safest_table1;
+            vector<LineValidationTable> safest_table2;
+
+            if(line_type == LEFT_LINE)
+            {
+                safest_table1 = it.left_safest_table1;
+                safest_table2 = it.left_safest_table2;
+            }
+            else if(line_type == MID_LINE)
+            {
+                safest_table1 = it.mid_safest_table1;
+                safest_table2 = it.mid_safest_table2;
+            }
+            else if(line_type == RIGHT_LINE)
+            {
+                safest_table1 = it.right_safest_table1;
+                safest_table2 = it.right_safest_table2;
+            }
+
+            //for(auto hh: safest_table1) cout << hh.GetOriginPoint() << endl;
+
 
         }
         cout << "######" << endl;
+*/
 
-
-        OnRoadSearcher_->LoadImage(image_mono_bird_);
+        OnRoadSearcher_->SetImage(image_mono_bird_);
+        OnRoadSearcher_->LoadSafeDriveAreaEvaluation(safe_drive_area_evaluation_return_info_);
 
         OnRoadSearcher_->LoadValidationTables(left_line_validation_table_,
                                               mid_line_in_drive_direction_table_,
@@ -295,18 +324,18 @@ void LaneTracker::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         {
 
             OnRoadSearcher_->SetStartParameters(StartOfLinesSearcher_->GetStartParameters());
-            OnRoadSearcher_->SearchOnRoad(left_line_in_drive_direction_table_,right_line_in_drive_direction_table_);
+            OnRoadSearcher_->SearchOnRoad();
         }
         else if (found_vanishing_point_)
         {
 
             OnRoadSearcher_->SetStartParameters(VanishingPointSearcher_->GetLineFollowerStartParameters());
-            OnRoadSearcher_->SearchOnRoad(left_line_in_drive_direction_table_,right_line_in_drive_direction_table_);
+            OnRoadSearcher_->SearchOnRoad();
         }
 
 
 
-        SafeDriveAreaEvaluator_->DrawEvaluatedSafetyAreasInDriveDirection(image_rgb_bird_);
+        OnRoadSearcher_->DrawEvaluatedSafetyAreas(image_rgb_bird_);
 
         //vector<TrackSafetyRects> SafeDriveAreaEvaluationReturnInfoVector_;
 

@@ -143,6 +143,7 @@ RectSafetyTable mid_line_rect_safety_;
 RectSafetyTable right_line_rect_safety_;
 
 void GatherSafeDriveAreaEvaluationTableReturInfo(
+vector<vector<Point>> search_rect,
 vector<vector<LineValidationTable>> left_priority_table,
 vector<vector<LineValidationTable>> mid_priority_table,
 vector<vector<LineValidationTable>> right_priority_table,

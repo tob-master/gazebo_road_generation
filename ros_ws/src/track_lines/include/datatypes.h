@@ -415,20 +415,14 @@ namespace vanishing_point_search
 
 namespace mid_line_search
 {
-
-
-
-
     typedef std::reverse_iterator<std::_Rb_tree_iterator<pair<pair<int, int> const, vector<pair<int, int>,allocator<pair<int, int>>>>>> ReverseMidLineCoordinatesIterator;
     //typedef std::reverse_iterator<std::_Rb_tree_iterator<pair<pair<int, int> const, vector<pair<int, int>,allocator<pair<int, int>>>>>> ReverseMidLineCoordinatesIterator;
-
 
     struct ClusterBinKey
     {
         int x_cluster_bin_key;
         int y_cluster_bin_key;
     };
-
 
     struct TwoConnectedClustersCentersOfGravity
     {
@@ -438,9 +432,6 @@ namespace mid_line_search
         int y_bottom_center_of_gravity;
 
     };
-
-
-
 
     struct SingleCluster
     {
@@ -503,11 +494,6 @@ namespace line_follower
 
 namespace valid_line_point_search
 {
-
-
-
-
-
     struct RectSafetyTable
     {
         float percent_points_with_priority_0;
@@ -520,17 +506,13 @@ namespace valid_line_point_search
         float percent_points_with_priority_7;
         float percent_points_with_priority_8;
 
-
         float percent_points_in_rect;
-
         bool too_few_points_in_rect;
         bool rect_straight;
         bool rect_left_curve;
         bool rect_right_curve;
         bool y_min_in_rect_border_range;
         bool y_max_in_rect_border_range;
-
-
 
     };
 
