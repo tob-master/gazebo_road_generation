@@ -228,6 +228,10 @@ vector<SafeDriveAreaEvaluationReturnInfo> EvaluateTrackInDriveDirection();
 void DrawEvaluatedSafetyAreasInDriveDirection(
 Mat& rgb);
 
+void DrawPriorityPoints(
+Mat &rgb,
+vector<int> priority_ids);
+
 void ClearMemory();
 
 };

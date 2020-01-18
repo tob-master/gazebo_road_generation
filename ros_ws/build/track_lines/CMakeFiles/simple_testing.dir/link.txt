@@ -1,1 +1,0 @@
-/usr/bin/c++  -g  -rdynamic CMakeFiles/simple_testing.dir/src/simple_test.cpp.o  -o /home/tb/gazebo_road_generation/ros_ws/devel/lib/track_lines/simple_testing -Wl,-rpath,/home/tb/gazebo_road_generation/ros_ws/build/gtest/googlemock/gtest ../gtest/googlemock/gtest/libgtest.so -lpthread -lpthread 

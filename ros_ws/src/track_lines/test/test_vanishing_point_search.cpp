@@ -118,30 +118,69 @@ VanishingPointSearchInitializationParameters GetVanishingPointInitializationPara
      return A2 * (T * (R * A1));
  }
 
+
+ Mat GetImageFromCamera(ros::NodeHandle &n)
+ {
+     sensor_msgs::Image::ConstPtr ros_image;
+     ros_image = ros::topic::waitForMessage<sensor_msgs::Image>("/rrbot/camera1/image_raw", n, ros::Duration(0.5));
+     cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(ros_image, "mono8");
+     ros::spinOnce();
+
+     circle(cv_ptr->image, Point(709,454),35, Scalar(0,0,0),CV_FILLED, 8,0);
+     circle(cv_ptr->image, Point(574,454),35, Scalar(0,0,0),CV_FILLED, 8,0);
+
+    return cv_ptr->image;
+ }
+
+ Mat GetImageColor(Mat image)
+ {
+    Mat color;
+    cvtColor(image, color, CV_GRAY2BGR);
+    return color;
+ }
+
+ Mat GetBirdseyeViewImage(ros::NodeHandle &n, Mat image)
+ {
+     Mat bird;
+     Mat birdseye_transformation_matrix = GetBirdseyeTransformationMatrix(image, n);
+     warpPerspective(image, bird, birdseye_transformation_matrix, image.size(), INTER_CUBIC | WARP_INVERSE_MAP);
+     bird = bird(Rect(0,0,1280,417));
+     return bird;
+ }
 TEST(BooleanCmpTest, ShouldPass){
 
      ros::NodeHandle n;
 
-     Mat image = imread("/home/tb/gazebo_road_generation/ros_ws/src/track_lines/test/test_images/start_of_lines_search_test_images/crossroad.png",
-                        CV_LOAD_IMAGE_GRAYSCALE);
+     Mat image = GetImageFromCamera(n);
+     Mat image_color= GetImageColor(image);
+     Mat image_bird = GetBirdseyeViewImage(n,image);
+     Mat image_bird_color = GetImageColor(image_bird);
 
-    Mat birdseye_transformation_matrix = GetBirdseyeTransformationMatrix(image, n);
+
+
+     //Mat image = imread("/home/tb/gazebo_road_generation/ros_ws/src/track_lines/test/test_images/start_of_lines_search_test_images/crossroad.png",
+     //                   CV_LOAD_IMAGE_GRAYSCALE);
+
+
     VanishingPointSearchInitializationParameters init = GetVanishingPointInitializationParameters(n);
 
-
-    clock_t begin = clock();
-    VanishingPointSearch *VanishingPointSearcher   = new VanishingPointSearch(birdseye_transformation_matrix,init);
+    //clock_t begin = clock();
+    VanishingPointSearch *VanishingPointSearcher   = new VanishingPointSearch(GetBirdseyeTransformationMatrix(image, n),init);
 
 
     VanishingPointSearcher->SetImage(image);
     VanishingPointSearcher->ClearMemory();
     VanishingPointSearchReturnInfo r_info =  VanishingPointSearcher->FindVanishingPoint();
 
-    clock_t end = clock();
-    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-    cout << "fps: " << 1/elapsed_secs << endl;
+    VanishingPointSearcher->DrawHoughLines(image_color,LEFT_LINE);
+    VanishingPointSearcher->DrawHoughLines(image_color,RIGHT_LINE);
+    VanishingPointSearcher->DrawVanishingPoint(image_color);
 
-    ASSERT_EQ(true, r_info.has_found_right_hough_line);
+
+    imwrite("/home/tb/gazebo_road_generation/ros_ws/src/track_lines/test/test_images/vanishing_point_search/results/vanishing_point_search.png",image_color);
+
+
+    ASSERT_EQ(true, true);
 }
 
 

@@ -990,6 +990,31 @@ Mat& rgb)
     }
 }
 
+void SafeDriveAreaEvaluation::DrawPriorityPoints(Mat &rgb, vector<int> priority_ids)
+{
+
+    for(auto rect : safe_drive_area_evaluation_return_info_vector_)
+    {
+
+        for(auto id : priority_ids)
+        {
+            for(int i=0; i<rect.left_priority_table[id].size(); i++)
+            {
+                circle(rgb, rect.left_priority_table[id][i].GetOriginPoint(), 2, Scalar(0, 255, 255),CV_FILLED );
+            }
+            for(int i=0; i<rect.mid_priority_table[id].size(); i++)
+            {
+                circle(rgb, rect.mid_priority_table[id][i].GetOriginPoint(), 2, Scalar(255, 0, 255),CV_FILLED );
+            }
+            for(int i=0; i<rect.right_priority_table[id].size(); i++)
+            {
+                circle(rgb, rect.right_priority_table[id][i].GetOriginPoint(), 2, Scalar(255, 255, 0),CV_FILLED );
+            }
+
+        }
+    }
+}
+
 
 void SafeDriveAreaEvaluation::GetSafestTables(
 vector<LineValidationTable>& safest_table1,

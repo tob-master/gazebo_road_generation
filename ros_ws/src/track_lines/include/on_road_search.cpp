@@ -347,10 +347,11 @@ Point &goal_line_mid_point)
 
         LineIterator line_iterator(image, Point(start_left_x,start_left_y),line_iterator_end , 8);
 
-        //line( image, Point(start_left_x_,start_left_y_),line_iterator_end, Scalar(255,0,0), 1, CV_AA);
+        line( image, Point(start_left_x_,start_left_y_),line_iterator_end, Scalar(255,255,255), 1, CV_AA);
         vector<uchar> scanned_line;
 
         for(int i=0; i<line_iterator.count; i++,line_iterator++)  scanned_line.push_back(**line_iterator);
+
 
         Mat scanned_line_mat(scanned_line);
         threshold(scanned_line_mat, scanned_line_mat, kGoalLineIntensityThreshold, 255, CV_THRESH_BINARY);
@@ -373,9 +374,15 @@ Point &goal_line_mid_point)
 
              goal_line_mid_point = Point(line_mid_x,line_mid_y);
              found_goal_line = true;
-            return true;
+          //   return true;
          }
+
+
       }
+
+    imwrite("dddeee.png",image);
+    imshow("image",image);
+    waitKey(0);
     found_goal_line = false;
     goal_line_mid_point = Point(-1,-1);
     return false;
@@ -844,6 +851,7 @@ const int kLaneObjectForsightStepSize)
         //imshow("rad_scan",image);
 
         LineIterator line_iterator(image, line_iterator_start, line_iterator_end, 8);
+        //line( image,line_iterator_start,  line_iterator_end, Scalar(255,255,255), 1, CV_AA);
 
         vector<uchar> scanned_line;
 
@@ -895,6 +903,10 @@ const int kLaneObjectForsightStepSize)
         current_pos+= kLaneObjectForsightStepSize;
     }
     road_object_mid_point = Point(-1,-1);
+
+    //imwrite("ddkk.png",image);
+    //imshow("k",image);
+    //waitKey(0);
 }
 
 

@@ -1494,6 +1494,45 @@ pixel_coordinates_node/fast:
 .PHONY : pixel_coordinates_node/fast
 
 #=============================================================================
+# Target rules for targets named test_on_road_search
+
+# Build rule for target.
+test_on_road_search: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_on_road_search
+.PHONY : test_on_road_search
+
+# fast build rule for target.
+test_on_road_search/fast:
+	$(MAKE) -f track_lines/CMakeFiles/test_on_road_search.dir/build.make track_lines/CMakeFiles/test_on_road_search.dir/build
+.PHONY : test_on_road_search/fast
+
+#=============================================================================
+# Target rules for targets named test_safe_drive_area_evaluation
+
+# Build rule for target.
+test_safe_drive_area_evaluation: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_safe_drive_area_evaluation
+.PHONY : test_safe_drive_area_evaluation
+
+# fast build rule for target.
+test_safe_drive_area_evaluation/fast:
+	$(MAKE) -f track_lines/CMakeFiles/test_safe_drive_area_evaluation.dir/build.make track_lines/CMakeFiles/test_safe_drive_area_evaluation.dir/build
+.PHONY : test_safe_drive_area_evaluation/fast
+
+#=============================================================================
+# Target rules for targets named test_line_validation_table_creation
+
+# Build rule for target.
+test_line_validation_table_creation: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_line_validation_table_creation
+.PHONY : test_line_validation_table_creation
+
+# fast build rule for target.
+test_line_validation_table_creation/fast:
+	$(MAKE) -f track_lines/CMakeFiles/test_line_validation_table_creation.dir/build.make track_lines/CMakeFiles/test_line_validation_table_creation.dir/build
+.PHONY : test_line_validation_table_creation/fast
+
+#=============================================================================
 # Target rules for targets named test_start_of_lines_search
 
 # Build rule for target.
@@ -1868,6 +1907,9 @@ help:
 	@echo "... annotate_bag"
 	@echo "... birdseye_image_test"
 	@echo "... pixel_coordinates_node"
+	@echo "... test_on_road_search"
+	@echo "... test_safe_drive_area_evaluation"
+	@echo "... test_line_validation_table_creation"
 	@echo "... test_start_of_lines_search"
 	@echo "... track"
 	@echo "... test_vanishing_point_search"
