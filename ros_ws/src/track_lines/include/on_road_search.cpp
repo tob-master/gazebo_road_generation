@@ -47,7 +47,7 @@ kMinWhitePixelsForBox_(init.min_white_pixels_for_box),
 kVelocitySignTemplateHeight_(init.velocity_sign_template_height),
 kVelocitySignTemplateWidth_(init.veloctiy_sign_template_width),
 kGoalLineFieldOfView_(init.goal_line_field_of_view),
-kRectTopLeftPointForClassifierRoi_(init.rect_top_left_point_for_classifier_roi_x,init.rect_top_left_point_for_classifier_roi_x),
+kRectTopLeftPointForClassifierRoi_(init.rect_top_left_point_for_classifier_roi_x,init.rect_top_left_point_for_classifier_roi_y),
 kRectBottomRightPointForClassifierRoi_(init.rect_bottom_right_point_for_classifier_roi_x,init.rect_bottom_right_point_for_classifier_roi_y),
 kResizeHeightForClassifierRoi_(init.resize_height_for_classifier_roi),
 kResizeWidthForClassifierRoi_(init.resize_width_for_classifier_roi),
@@ -56,9 +56,9 @@ kTemplateRoiSizeY_(init.template_roi_size_y),
 kRoadSignIntensityThreshold_(init.road_sign_intensity_threshold)
 {
 
-    /* // use for classifying speed markings in lane
+     // use for classifying speed markings in lane
     road_sign_image_publisher_  = it_.advertise("road_sign/image", 1);
-
+    /*
     image_template_10 = imread("/home/tb/gazebo_road_generation/ros_ws/scripts/scenarios/speed_limit_ground/speed_limit_10_ground.png", CV_LOAD_IMAGE_GRAYSCALE);
     image_template_20 = imread("/home/tb/gazebo_road_generation/ros_ws/scripts/scenarios/speed_limit_ground/speed_limit_20_ground.png", CV_LOAD_IMAGE_GRAYSCALE);
     image_template_30 = imread("/home/tb/gazebo_road_generation/ros_ws/scripts/scenarios/speed_limit_ground/speed_limit_30_ground.png", CV_LOAD_IMAGE_GRAYSCALE);
@@ -246,12 +246,12 @@ void OnRoadSearch::SearchOnRoad()
 
     if(found_marking_)
     {
-        /*SendMarkingImageToClassifier(
+        SendMarkingImageToClassifier(
         image_,
         kRectTopLeftPointForClassifierRoi_,
         kRectBottomRightPointForClassifierRoi_,
         kResizeHeightForClassifierRoi_,
-        kResizeWidthForClassifierRoi_);*/
+        kResizeWidthForClassifierRoi_);
 
         for(auto &iter: safe_drive_area_evaluation_)
         {
@@ -347,7 +347,7 @@ Point &goal_line_mid_point)
 
         LineIterator line_iterator(image, Point(start_left_x,start_left_y),line_iterator_end , 8);
 
-        line( image, Point(start_left_x_,start_left_y_),line_iterator_end, Scalar(255,255,255), 1, CV_AA);
+        //line( image, Point(start_left_x_,start_left_y_),line_iterator_end, Scalar(255,255,255), 1, CV_AA);
         vector<uchar> scanned_line;
 
         for(int i=0; i<line_iterator.count; i++,line_iterator++)  scanned_line.push_back(**line_iterator);
@@ -374,15 +374,15 @@ Point &goal_line_mid_point)
 
              goal_line_mid_point = Point(line_mid_x,line_mid_y);
              found_goal_line = true;
-          //   return true;
+             return true;
          }
 
 
       }
 
-    imwrite("dddeee.png",image);
-    imshow("image",image);
-    waitKey(0);
+    //imwrite("dddeee.png",image);
+    //imshow("image",image);
+    //waitKey(0);
     found_goal_line = false;
     goal_line_mid_point = Point(-1,-1);
     return false;
@@ -969,11 +969,12 @@ const int kResizeHeightForClassifierRoi,
 const int kResizeWidthForClassifierRoi)
 {
 
+    //cout << kRectTopLeftPointForClassifierRoi << kRectBottomRightPointForClassifierRoi << endl;
     Mat roi_image = image(Rect(kRectTopLeftPointForClassifierRoi,kRectBottomRightPointForClassifierRoi));
 
     resize(roi_image,roi_image,Size(kResizeHeightForClassifierRoi,kResizeWidthForClassifierRoi));
 
-    //imshow("roi_image",roi_image);
+    imshow("roi_image",roi_image);
 
     sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "mono8", roi_image).toImageMsg();
     road_sign_image_publisher_.publish(msg);
