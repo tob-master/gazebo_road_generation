@@ -2,51 +2,229 @@
 %% Kapitel: Kapitel 4
 %%======================================================================
 
-\chapter{Startliniensuche mit dem Vanishing-Point Algorithmus}
-\label{cha:Startliniensuche mit dem Vanishing-Point Algorithmus}\index{Startliniensuche mit dem Vanishing-Point Algorithmus}
+\chapter{Suche von Bodenmarkierungen und Objekten in den Fahrspuren}
+\label{cha:Suche von Bodenmarkierungen und Objekten in den Fahrspuren}
+\index{Suche und Klassifizierung von Bodenmarkierungen und Objekten in den Fahrspuren}
 %
 %
-Der Vanishing-Point-Algorithmus dient dazu sichere Startpunkte der linken und rechten Außenlinie zu finden. Er wurde nach der Beschreibung des Papers [X] implementiert.
+dddd
 
-Das Verfahren liefert Punkte mit zugehörigem Winkel nahe dem Fahrzeug, nach denen gefahren werden kann. Zudem liefert es Informationen über fehlende Außenlinien.
-Der Vanishing-Point-Algorithmus wird auf dem Graustufenbild in Frontalsicht ausgeführt.
-Der Algorithmus führt die Liniensuche im unteren Bildbereich genau vor dem Fahrzeug aus.
-Auf diesen Bildbereich wird zuerst eine Kantenextraktion angewandt.
-Dies wird durch den Canny-Edge-Algorithmus erreicht.
-Canny nutzt Sobel-Operatoren in X- und Y- Richtung, die mit dem Bild an jeder Position gefaltet werden. Der Operator liefert eine hohe Filterantwort bei einem abrupten Übergang von niedrigen zu hohen Pixelintensitäten, welche als Kanten wahrgenommen werden. Zudem wird durch die beiden Sobel-Operatoren die Richtung, in welche die Kante zeigt, ermittelt. 
-Unter Berücksichtigung der Orientierung der Kante, werden lokale Maxima der Filterantwort extrahiert um Kantenübergänge auszudünnen.
+\section{Startboxschrankenerkennung}
+\label{sec:Startboxschrankenerkennung}
 
-Die Extrahierten Merkmale werden im nächsten Schritt durch einen Hysterese-Schwellwert gefiltert. Dieser besteht aus zwei Schwellwerten S1 und S2.
-Alle Filterantworten, welche unter S1 und S2 liegen werden als Rauschen betrachtet und verworfen. Liegt eine Filterwort über S1 und S2 dann ist diese Position eine valide Kante. Werte die zwischen S1 und S2 liegen, werden nur als valide Kanten betrachten, wenn Sie mit Filterantworten verbunden sind, die über S1 und S2 liegen. Ansonsten werden diese auch als Rauschen verworfen.
+Die Startboxschrankenerkennung nutzt die Softwarebibliothek Zbar.
+ZBar ist eine Open-Source-Bibliothek zum Lesen von C-Barcodes und QR-Codes.
+Es wurde sich dazu entschieden den QR-Code der Startboxschranke zu erkennen, da dieser nur einmal auf der gesamten Fahrstrecke vorkommt. Zbar ist rechenintensiv jedoch kann der Algorithmus einfach nach dem Öffnen der Schranke ausgeschalten werden und fällt dadurch nicht mehr ins Gewicht.
+Um das Erkennen der Startboxschranke testen zu können, wurde mit Qt/QML eine Grafische Benutzeroberfläche implementiert.
 
-[Bild nach Canny]
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/gui}% keine extention: wählt jpg für DVI
+  \caption[Grafische Benutzeroberfläche]%
+           {\label{fig:Grafische Benutzeroberfläche}%
+           Grafische Benutzeroberfläche}
+\end{center}
+\end{figure}
 
-Darauf aufbauend, werden durch das Hough-Lines-Verfahren Linien im Bildbreich gesucht. Durch die Reduktion des Bildbereichs auf relevante Punkte, werden durch Hough-Lines weniger redundante Linien gefunden.
-Das Ziel von Hough-Lines ist es Pixel-Gruppen zu finden welche miteinander Linien formen. Hough-Lines transformiert dafür Pixel, beschrieben durch die Koordinaten X und Y, in einen anderen Merkmals-Raum den Hough-Raum. 
+Mit dieser kann das Modell der Startboxschranke in der Simulation erzeugt und wieder gelöscht werden.
+Außerdem besitzt die GUI einen Subscriber auf die QR-Code Topic /barcode und zeigt bei Erkennen der Startboxschranke in der GUI den erkannten Text an.
+Um dafür zu sorgen, dass die GUI nicht einfriert und jederzeit auf Signale reagieren kann, wurde die GUI in einem separaten Thread nebenläufig zu ROS implementiert.
 
-Der Hough-Raum beschreibt alle Geraden, die durch ein Pixel laufen können über die hessesche Normalform D  = x *cos(alpha) + y* sin(alpha). Die neue Ordinate D beschreibt die euklidische Distanz zum Lotfußpunkt. Und die neue Abszisse alpha steht für den Winkel zwischen dem Lot der Geraden hin zur Abszisse. Nachdem jedes Pixel des Bildraums in den Hough-Raum transformiert wurde, ergibt sich eine Voting-Matrix deren Häufigkeitspunkte mögliche geraden im Bildraum beschreiben. Durch das Setzen eines Schwellwertes, werden nur geraden über einer gewissen Anzahl von Häufigkeitspunkten gefunden, welche nach Rücktransformation die zu suchenden Außenlinien darstellen.
-
-[Hough Raum Bild]
-
-Die OpenCV-Funktion Hough-Lines liefert die Anfangs- und Endpunkte der gefundenen Linien zurück.
-Darauf folgt das Drehen der Linien. in die Fahrtrichtung des Fahrzeugs, im Bild.
-Nun werden die Linien aussortiert, welche nicht in den Bildbereichen liegen, in denen die Außenlinien vorkommen. Dabei wird davon ausgegangen, dass sich das Fahrzeug in der rechten Fahrspur befindet. Da der Algorithmus auf der Frontalansicht arbeitet, können die Hough-Linien weiter durch ihre Winkel validiert werden. Alle Linien im linken und rechten Bereich werden darauf hin überprüft, ob sie zwischen einem minimalen und maximalen Winkel liegen. Falls dies nicht der Fall ist, werden diese auch verworfen.
-Wenn nur eine oder keine Außenlinie aufzufinden ist, terminiert der Algorithmus.
-Werden beide Außenlinien gefunden, wird untersucht ob die linken und rechten Hough-Linien einen gemeinsamen Schnittpunkt haben. Dieser Schnittpunkt wird auch Vanishing-Point genannt und gibt die Fahrtrichtung des Fahrzeugs an.
-Es werden alle Permutation von Schnittpunkten der Linien berechnet.
-Hier kommt wieder die in [XX] beschriebene Funktion isPertmuted zum Einsatz.
-Um nun den besten Vanishing-Point zu finden, nach dem gefahren werden kann, wird der Mittelwert und die Standardabweichung der Punkte berechnet.
-In einer While-Schleife werden nur Punkte in Betracht gezogen, welche unter einen maximalen Standardabweichung liegen. Aus diesen wird dann ein neuer Mittelwert berechnet. Liegen keine Punkte unter der maximalen Standardabweichung vor, erhöht diese sich immer weiter um eins, bis Punkte gefunden werden, aus welchen der neue Mittelwert berechnet werden kann. 
-Ist die Berechnung abgeschlossen, terminiert der Algorithmus und es werden Folgende Parameter zurückgegeben.
-
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1.0\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/startbox}% keine extention: wählt jpg für DVI
+  \caption[Startboxschranke]%
+           {\label{fig:Startboxschranke}%
+           Startboxschranke.}
+\end{center}
+\end{figure}
 
 
+\section{Zebrastreifen- und Ziellinienerkennung}
+\label{sec:Zebrastreifen- und Ziellinienerkennung}
+
+Um Zebrastreifen und Ziellinien im aktuellen Bild zu erkennen, wird nach einer festgelegten Anzahl von aufeinanderfolgenden weißen und schwarzen Pixelsegmenten mit einer definierten breite gesucht.
+Das Verfahren arbeitet auf dem Graustufenbild in der Birdseye-Perspektive.
+Der Algorithmus setzt dabei auf die Startparameter [XXX] der start\_of\_lines und vanishing\_point Algorithmen auf. Die Startparameter von start\_of\_lines werden präferiert.
+Es wird eine zu vorausschauende Distanz und eine Schrittweite definiert, in der vor dem Fahrzeug nach dem Muster der Fahrbahnmarkierungen gesucht wird.
+Die Zebrastreifensuche iteriert orthogonal zu dem Startwinkel aus Startparameters. Es wird dafür die OpenCV-Funktion Lineiterator genutzt.
+Diese iteriert von einem Startpunkt hin zu einem Endpunkt durch das Bild und liest die darunter liegenden Pixel aus. Wird eine gewisse Anzahl weißer und schwarzer Segmente mit der entsprechenden breite gefunden, ist der Zebrastreifen erkannt.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/crosswalk}% keine extention: wählt jpg für DVI
+  \caption[Zebrastreifensuche]%
+           {\label{fig:Zebrastreifensuche}%
+           Zebrastreifensuche}
+\end{center}
+\end{figure}
+
+Die Ziellinienerkennung sucht von der linken Außenlinie orthogonal zu dem Startwinkel von Startparameters nach Segmenten mit der entsprechenden Breite. Auch sie nutzt die OpenCV-Funktion Lineiterator.
+Da die Ziellinie im CaroloCup häufig nach einer Kurve erkannt werden muss, wird ein Sichtfeld durch einen Winkel definiert welches durch wiederholtes Aufrufen von Lineiterator in einer festgelegten Schrittweite durchsucht wird. 
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/goalline_search}% keine extention: wählt jpg für DVI
+  \caption[Zielliniensuche]%
+           {\label{fig:Zielliniensuche}%
+           Zielliniensuche}
+\end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/goalline}% keine extention: wählt jpg für DVI
+  \caption[Zielliniensuche]%
+           {\label{fig:Zielliniensuche}%
+           Zielliniensuche}
+\end{center}
+\end{figure}
+
+
+
+Das Verfahren wird mit Folgenden Parametern initialisiert.
+
+\begin{enumerate}
+
+\item[] \textbf{min\_goal\_segment\_width}\hfill \\
+Die minimale Segmentbreite der Ziellinie.
+
+\item[] \textbf{max\_goal\_segment\_width}\hfill \\
+Die maximale Segmentbreite der Ziellinie.
+
+\item[] \textbf{min\_goal\_segments\_to\_find}\hfill \\
+Die minimale Anzahl von Segmenten die gefunden werden müssen um eine Ziellinie zu erkennen.
+
+\item[] \textbf{goal\_line\_field\_of\_view}\hfill \\
+Der Winkel der Sichtfelds in dem nach der Ziellinie gesucht wird.
+
+\item[] \textbf{max\_crosswalk\_forsight\_distance}\hfill \\
+Die Sichtweite in Pixel  in der vor dem Fahrzeug nach dem Zebrastreifen gesucht wird.
+
+\item[] \textbf{max\_crosswalk\_forsight\_step\_size}\hfill \\
+Die Schrittweite in der vor dem Fahrzeug nach Zebrastreifen gesucht wird.
+
+\item[] \textbf{min\_crosswalk\_segment\_width}\hfill \\
+Die minimale Segmentbreite des Zebrastreifens.
+
+\item[] \textbf{max\_crosswalk\_segment\_width}\hfill \\
+Die maximale Segmentbreite des Zebrastreifens.
+
+\item[] \textbf{min\_crosswalk\_segments\_to\_find}\hfill \\
+Die minimale Anzahl von Segmenten die gefunden werden müssen um einen Zebrastreifen zu erkennen.
+
+
+
+\end{enumerate}
+
+
+\section{Bodenmarkierung- und Hinderniserkennung}
+\label{sec:Bodenmarkierung- und Hinderniserkennung}
+
+Wird im Bild keine Kreuzung ,Ziellinie und kein Zebrastreifen erkannt dann wird das Verfahren der Bodenmarkierung und Hinderniserkennung ausgeführt.
+Das Verfahren arbeitet auf dem Graustufenbild in Birdseye-Perspektive.
+Der Algorithmus setzt auf die gefundenen Außenlinienpunkte des LineValidationTablesCreation in Fahrtrichtung [XXX] auf.
+Orthogonal zu den Richtungswinkeln der Außenlinienpunkte wird ein Muster bestehenden aus einem Kreis und einer den Kreis in der Mitte durchlaufenden Linie in beiden Fahrspuren Ausgelesen.
+Für das Auslesen der Linie wird die OpenCV-Funktion Lineiterator verwendet.
+Das Auslesen des Kreises wird mit der Funktion Radial-Scan realisiert.
+Von beiden Außenlinien aus, kann in beiden Fahrspuren nach Hindernissen und Bodenmarkierungen gesucht werden. Eine definierte Suchweite mit zugehöriger Schrittweite legt fest, wie weit für vor dem Fahrzeug gesucht werden soll.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/marking_box_search}% keine extention: wählt jpg für DVI
+  \caption[Das Suchmuster der Bodenmarkierung- und Hinderniserkennung]%
+           {\label{fig:Das Suchmuster der Bodenmarkierung- und Hinderniserkennung}%
+           Das Suchmuster der Bodenmarkierung- und Hinderniserkennung.}
+\end{center}
+\end{figure}
+
+
+Wie auch bei der Ziellinien- und Zebrastreifensuche wird nach dem Auftauchen eines bestimmten Segmenten-Musters gesucht.
+Um ein Hindernis zu erkennen, muss ein Segment in der Suchlinie gefunden werden welches über einer festgelegten breite liegt. Dies gilt auch für die radiale Suche.
+Werden viele kleinere Segmente in der entsprechenden Fahrspur gefunden deutet dies auf eine Bodenmarkierung hin.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/box}% keine extention: wählt jpg für DVI
+  \caption[Erkennung eines Hindernisses]%
+           {\label{fig:Erkennung eines Hindernisses}%
+           Erkennung eines Hindernisses.}
+\end{center}
+\end{figure}
+
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/marking}% keine extention: wählt jpg für DVI
+  \caption[Erkennung einer Bodenmarkierung]%
+           {\label{fig:Erkennung einer Bodenmarkierung}%
+           Erkennung einer Bodenmarkierung.}
+\end{center}
+\end{figure}
+
+
+Der Algorithmus wird mit Folgenden Parametern initialisiert
+
+
+\begin{enumerate}
+
+\item[] \textbf{max\_lane\_object\_forsight\_distance}\hfill \\
+Die Distanz in Pixel in der vor dem Fahrzeug nach Bodenmarkierungen und Hindernissen gesucht wird.
+
+\item[] \textbf{lane\_object\_forsight\_step\_size}\hfill \\
+Die Schwittweite in Pixel in der die Suche voranschreitet.
+
+\item[] \textbf{left\_in\_left\_lane\_lineiterator\_end\_offset}\hfill \\
+Der Offset von der linken Außenlinie zur Mittellinie in der linken Fahrspur für den Lineiterator.
+
+\item[] \textbf{left\_in\_right\_lane\_lineiterator\_start\_offset}\hfill \\
+Der Offset von der linken Außenlinie zur Mittellinie in der rechten Fahrspur für den Lineiterator.
+
+\item[] \textbf{left\_in\_right\_lane\_lineiterator\_end\_offset}\hfill \\
+Der Offset von der linken Außenlinie zur Rechtenaußenlinie in der rechten Fahrspur für den Lineiterator.
+
+\item[] \textbf{right\_in\_left\_lane\_lineiterator\_start\_offset}\hfill \\
+Der Offset von der rechten Außenlinie zur Mittellinie in der linken Fahrspur
+für den Lineiterator.
+
+\item[] \textbf{right\_in\_left\_lane\_lineiterator\_end\_offset}\hfill \\
+Der Offset von der rechten Außenlinie zur linken außenlinie in der linken Fahrspur für den Lineiterator.
+
+
+\item[] \textbf{right\_in\_right\_lane\_lineiterator\_end\_offset}\hfill \\
+Der Offset von der rechten Außenlinie zur Mittellinie in der rechten Fahrspur
+für den Lineiterator.
+
+\item[] \textbf{left\_in\_left\_lane\_radial\_outerline\_offset}\hfill \\
+Der Offset von der linken Außenlinie in die Mitte der linken Fahrspur für den Mittepunkt der radialen Suche.
+
+\item[] \textbf{left\_in\_right\_lane\_radial\_outerline\_offset}\hfill \\
+Der Offset von der linken Außenlinie in die Mitte der rechten Fahrspur für den Mittelpunkt der radialen Suche.
+
+\item[] \textbf{right\_in\_left\_lane\_radial\_outerline\_offset}\hfill \\
+Der Offset von der rechten Außenlinie in die Mitte der linken Fahrspur für den Mittelpunkt der radialen Suche.
+
+\item[] \textbf{right\_in\_right\_lane\_radial\_outerline\_offset}\hfill \\
+Der Offset von der rechten Außenlinie in die Mitte der rechten Fahrspur für den Mittelpunkt der radialen Suche.
+
+\item[] \textbf{lane\_object\_radial\_scan\_step\_size}\hfill \\
+Die Winkelschrittweite für die radiale Suche.
+
+\item[] \textbf{lane\_object\_radial\_scan\_radius}\hfill \\
+Der Radius der radialen Suche in der Fahrspur.
+
+\item[] \textbf{min\_marking\_segments\_threshold}\hfill \\
+Die minimale Anzahl von Segmenten die in der Fahrpur gefunden werden muss um eine Bodenmarkierung zu erkennen.
+
+\item[] \textbf{min\_box\_segments\_threshold}\hfill \\
+Die minimale Anzahl von Segmenten die in der Fahrspur gefunden werden muss um ein Hindernis zu erkennen.
+
+\item[] \textbf{min\_white\_pixels\_for\_box}\hfill \\
+Die miniemale Pixelanzahl eines Segments das das in der Fahrspur gefunden werden muss um eine Hindernis zu erkennen.
 
 
 
 
 
-
-
-
+\end{enumerate}
 

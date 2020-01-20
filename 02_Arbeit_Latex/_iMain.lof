@@ -37,3 +37,20 @@
 \contentsline {figure}{\numberline {\relax 6.11}{\ignorespaces ExtrahierteLinienpunkte}}{37}{figure.6.11}
 \contentsline {figure}{\numberline {\relax 6.12}{\ignorespaces RectSafety}}{39}{figure.6.12}
 \contentsline {figure}{\numberline {\relax 6.13}{\ignorespaces SafetyRectKreuzung}}{40}{figure.6.13}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 7.1}{\ignorespaces Grafische Benutzeroberfl\"ache}}{41}{figure.7.1}
+\contentsline {figure}{\numberline {\relax 7.2}{\ignorespaces Startboxschranke}}{42}{figure.7.2}
+\contentsline {figure}{\numberline {\relax 7.3}{\ignorespaces Zebrastreifensuche}}{43}{figure.7.3}
+\contentsline {figure}{\numberline {\relax 7.4}{\ignorespaces Zielliniensuche}}{43}{figure.7.4}
+\contentsline {figure}{\numberline {\relax 7.5}{\ignorespaces Zielliniensuche}}{44}{figure.7.5}
+\contentsline {figure}{\numberline {\relax 7.6}{\ignorespaces Das Suchmuster der Bodenmarkierung- und Hinderniserkennung}}{45}{figure.7.6}
+\contentsline {figure}{\numberline {\relax 7.7}{\ignorespaces Erkennung eines Hindernisses}}{46}{figure.7.7}
+\contentsline {figure}{\numberline {\relax 7.8}{\ignorespaces Erkennung einer Bodenmarkierung}}{46}{figure.7.8}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 8.1}{\ignorespaces Geschwindigkeitsmarkierungstemplates}}{51}{figure.8.1}
+\contentsline {figure}{\numberline {\relax 8.2}{\ignorespaces SQDIFF}}{51}{figure.8.2}
+\contentsline {figure}{\numberline {\relax 8.3}{\ignorespaces CCORR}}{51}{figure.8.3}
+\contentsline {figure}{\numberline {\relax 8.4}{\ignorespaces Aufbereitete Features des MNIST-Datensatzes}}{52}{figure.8.4}
+\contentsline {figure}{\numberline {\relax 8.5}{\ignorespaces Aufbau eines Entscheidungsbaums}}{53}{figure.8.5}
+\contentsline {figure}{\numberline {\relax 8.6}{\ignorespaces Formel zur Berechnung des Gini-Unreinheitsmass}}{53}{figure.8.6}
+\contentsline {figure}{\numberline {\relax 8.7}{\ignorespaces Ein Random Forest Modell}}{55}{figure.8.7}

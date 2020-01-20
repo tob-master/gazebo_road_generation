@@ -41,4 +41,14 @@
 \BOOKMARK [1][]{section.6.6}{6.6 Linien-Validierungs-Tablle Erzeugung}{chapter.6}% 41
 \BOOKMARK [1][]{section.6.7}{6.7 Merkmal Extraktion aus den Validierungs-Tabellen}{chapter.6}% 42
 \BOOKMARK [1][]{section.6.8}{6.8 Bewerten sicherer Fahrbereiche}{chapter.6}% 43
-\BOOKMARK [0][]{figure.6.13}{Literaturverzeichnis}{}% 44
+\BOOKMARK [0][]{chapter.7}{7 Suche von Bodenmarkierungen und Objekten in den Fahrspuren}{}% 44
+\BOOKMARK [1][]{section.7.1}{7.1 Startboxschrankenerkennung}{chapter.7}% 45
+\BOOKMARK [1][]{section.7.2}{7.2 Zebrastreifen- und Ziellinienerkennung}{chapter.7}% 46
+\BOOKMARK [1][]{section.7.3}{7.3 Bodenmarkierung- und Hinderniserkennung}{chapter.7}% 47
+\BOOKMARK [0][]{chapter.8}{8 Klassifikation von Geschwindigkeitsbodenmarkierungen}{}% 48
+\BOOKMARK [1][]{section.8.1}{8.1 Aufbau des Machine-Learning Frameworks}{chapter.8}% 49
+\BOOKMARK [1][]{section.8.2}{8.2 Klassifikation durch Template Matching}{chapter.8}% 50
+\BOOKMARK [1][]{section.8.3}{8.3 Aufbereitung des MNIST-Trainingsdatensatzes}{chapter.8}% 51
+\BOOKMARK [1][]{section.8.4}{8.4 Klassifikation durch Random Forest}{chapter.8}% 52
+\BOOKMARK [2][]{subsection.8.4.1}{8.4.1 Aufbau eines Entscheidungsbaums}{section.8.4}% 53
+\BOOKMARK [0][]{figure.8.7}{Literaturverzeichnis}{}% 54

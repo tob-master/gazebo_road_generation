@@ -1,5 +1,5 @@
 \babel@toc {ngerman}{}
-\contentsline {chapter}{Nomenklatur}{x}{chapter*.7}
+\contentsline {chapter}{Nomenklatur}{xi}{chapter*.7}
 \contentsline {chapter}{\numberline {1}Einleitung}{1}{chapter.1}
 \contentsline {section}{\numberline {1.1}Aufgabenstellung}{1}{section.1.1}
 \contentsline {section}{\numberline {1.2}Gliederung}{1}{section.1.2}
@@ -42,4 +42,14 @@
 \contentsline {section}{\numberline {6.6}Linien-Validierungs-Tablle Erzeugung}{35}{section.6.6}
 \contentsline {section}{\numberline {6.7}Merkmal Extraktion aus den Validierungs-Tabellen}{36}{section.6.7}
 \contentsline {section}{\numberline {6.8}Bewerten sicherer Fahrbereiche}{37}{section.6.8}
-\contentsline {chapter}{Literaturverzeichnis}{41}{figure.6.13}
+\contentsline {chapter}{\numberline {7}Suche von Bodenmarkierungen und Objekten in den Fahrspuren}{41}{chapter.7}
+\contentsline {section}{\numberline {7.1}Startboxschrankenerkennung}{41}{section.7.1}
+\contentsline {section}{\numberline {7.2}Zebrastreifen- und Ziellinienerkennung}{42}{section.7.2}
+\contentsline {section}{\numberline {7.3}Bodenmarkierung- und Hinderniserkennung}{45}{section.7.3}
+\contentsline {chapter}{\numberline {8}Klassifikation von Geschwindigkeitsbodenmarkierungen}{49}{chapter.8}
+\contentsline {section}{\numberline {8.1}Aufbau des Machine-Learning Frameworks}{49}{section.8.1}
+\contentsline {section}{\numberline {8.2}Klassifikation durch Template Matching}{50}{section.8.2}
+\contentsline {section}{\numberline {8.3}Aufbereitung des MNIST-Trainingsdatensatzes}{51}{section.8.3}
+\contentsline {section}{\numberline {8.4}Klassifikation durch Random Forest}{52}{section.8.4}
+\contentsline {subsection}{\numberline {8.4.1}Aufbau eines Entscheidungsbaums}{52}{subsection.8.4.1}
+\contentsline {chapter}{Literaturverzeichnis}{56}{figure.8.7}
