@@ -35,21 +35,21 @@
 \contentsline {section}{\numberline {5.2}Erstellung des Fahrzeugs}{23}{section.5.2}
 \contentsline {chapter}{\numberline {6}Implementierte Bildverarbeitungsalgorithmen}{25}{chapter.6}
 \contentsline {section}{\numberline {6.1}Startliniensuche mit dem Start-Of-Lines-Search Algorithmus}{25}{section.6.1}
-\contentsline {section}{\numberline {6.2}Startliniensuche mit dem Vanishing-Point Algorithmus}{26}{section.6.2}
-\contentsline {section}{\numberline {6.3}Aussenlinienverfolgung mit dem Line-Follower Algorithmus}{28}{section.6.3}
-\contentsline {section}{\numberline {6.4}Linienpunktereduzierung mit dem Douglas-Peucker-Algorithmus}{30}{section.6.4}
-\contentsline {section}{\numberline {6.5}Mittelliniensuche und Grapherzeugung}{32}{section.6.5}
-\contentsline {section}{\numberline {6.6}Linien-Validierungs-Tablle Erzeugung}{35}{section.6.6}
-\contentsline {section}{\numberline {6.7}Merkmal Extraktion aus den Validierungs-Tabellen}{36}{section.6.7}
-\contentsline {section}{\numberline {6.8}Bewerten sicherer Fahrbereiche}{37}{section.6.8}
-\contentsline {chapter}{\numberline {7}Suche von Bodenmarkierungen und Objekten in den Fahrspuren}{41}{chapter.7}
-\contentsline {section}{\numberline {7.1}Startboxschrankenerkennung}{41}{section.7.1}
-\contentsline {section}{\numberline {7.2}Zebrastreifen- und Ziellinienerkennung}{42}{section.7.2}
-\contentsline {section}{\numberline {7.3}Bodenmarkierung- und Hinderniserkennung}{45}{section.7.3}
-\contentsline {chapter}{\numberline {8}Klassifikation von Geschwindigkeitsbodenmarkierungen}{49}{chapter.8}
-\contentsline {section}{\numberline {8.1}Aufbau des Machine-Learning Frameworks}{49}{section.8.1}
-\contentsline {section}{\numberline {8.2}Klassifikation durch Template Matching}{50}{section.8.2}
-\contentsline {section}{\numberline {8.3}Aufbereitung des MNIST-Trainingsdatensatzes}{51}{section.8.3}
-\contentsline {section}{\numberline {8.4}Klassifikation durch Random Forest}{52}{section.8.4}
-\contentsline {subsection}{\numberline {8.4.1}Aufbau eines Entscheidungsbaums}{52}{subsection.8.4.1}
-\contentsline {chapter}{Literaturverzeichnis}{56}{figure.8.7}
+\contentsline {section}{\numberline {6.2}Startliniensuche mit dem Vanishing-Point Algorithmus}{27}{section.6.2}
+\contentsline {section}{\numberline {6.3}Aussenlinienverfolgung mit dem Line-Follower Algorithmus}{31}{section.6.3}
+\contentsline {section}{\numberline {6.4}Linienpunktereduzierung mit dem Douglas-Peucker-Algorithmus}{33}{section.6.4}
+\contentsline {section}{\numberline {6.5}Mittelliniensuche und Grapherzeugung}{35}{section.6.5}
+\contentsline {section}{\numberline {6.6}Linien-Validierungs-Tablle Erzeugung}{38}{section.6.6}
+\contentsline {section}{\numberline {6.7}Merkmal Extraktion aus den Validierungs-Tabellen}{42}{section.6.7}
+\contentsline {section}{\numberline {6.8}Bewerten sicherer Fahrbereiche}{43}{section.6.8}
+\contentsline {chapter}{\numberline {7}Suche von Bodenmarkierungen und Objekten in den Fahrspuren}{48}{chapter.7}
+\contentsline {section}{\numberline {7.1}Startboxschrankenerkennung}{48}{section.7.1}
+\contentsline {section}{\numberline {7.2}Zebrastreifen- und Ziellinienerkennung}{49}{section.7.2}
+\contentsline {section}{\numberline {7.3}Bodenmarkierung- und Hinderniserkennung}{52}{section.7.3}
+\contentsline {chapter}{\numberline {8}Klassifikation von Geschwindigkeitsbodenmarkierungen}{56}{chapter.8}
+\contentsline {section}{\numberline {8.1}Aufbau des Machine-Learning Frameworks}{56}{section.8.1}
+\contentsline {section}{\numberline {8.2}Klassifikation durch Template Matching}{57}{section.8.2}
+\contentsline {section}{\numberline {8.3}Aufbereitung des MNIST-Trainingsdatensatzes}{58}{section.8.3}
+\contentsline {section}{\numberline {8.4}Klassifikation durch Random Forest}{59}{section.8.4}
+\contentsline {subsection}{\numberline {8.4.1}Aufbau eines Entscheidungsbaums}{59}{subsection.8.4.1}
+\contentsline {chapter}{Literaturverzeichnis}{63}{figure.8.7}
