@@ -118,6 +118,72 @@ Die minimale Anzahl von Segmenten die gefunden werden müssen um einen Zebrastrei
 \end{enumerate}
 
 
+\section{Kreuzungserkennung}
+\label{sec:Kreuzungserkennung}
+
+Um eine Kreuzung zu erkennen werden die aus LineValidationTableCreator erzeugten Bewertungstabellen analysiert. Die linke Linie wird nach einer Winkeldifferenz von einem Punkt zum nächsten durchsucht die zwischen 160 und 200 Grad liegt. Die rechte Linie wird nach einer Winkeldifferenz durchsucht die zwischen 340 und 20 Grad liegt. Auch die Mittelliniengruppen werden darauf überprüft ob sie horizontal zwischen bestimmten Winkelwerten orientiert sind. 
+Zudem werden die Bewertungstabellen in Fahrtrichtung daraufhin überprüft ob eine gewisse Länge nicht überschreiten. Umso mehr markante Merkmale gefunden werden umso höher ist wie Wahrscheinlichkeit das sich im aktuellen Frame eine Kreuzung befindet.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/crossing}% keine extention: wählt jpg für DVI
+  \caption[Kreuzungserkennung]%
+           {\label{fig:Kreuzungserkennung}%
+           Kreuzungserkennung.}
+\end{center}
+\end{figure}
+
+Der Algorithmus wird mit Folgenden Parametern initialisiert:
+
+
+\begin{enumerate}
+
+\item[] \textbf{min\_to\_left\_mid\_line\_direction\_for\_crossing}\hfill \\
+Der minimale Winkel einer Mittellinie die nach links orientiert ist um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{max\_to\_left\_mid\_line\_direction\_for\_crossing}\hfill \\
+Der maximale Winkel einer Mittellinie die nach links orientiert ist um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{min\_to\_right\_mid\_line\_direction\_for\_crossing}\hfill \\
+Der minimale Winkel einer Mittellinie die nach rechts orientiert ist um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{max\_to\_right\_mid\_line\_direction\_for\_crossing}\hfill \\
+Der maximale Winkel einer Mittellinie die nach rechts orientiert ist um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{min\_outline\_direction\_difference\_for\_crossing}\hfill \\
+Die minimale Winkeländerung einer Außenlinie um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+
+\item[] \textbf{min\_to\_left\_left\_line\_direction\_difference\_for\_crossing}\hfill \\
+Der minimale Winkel der linken Linie um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{max\_to\_left\_left\_line\_direction\_difference\_for\_crossing}\hfill \\
+Der maximale Winkel der linken Linie um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{min\_to\_right\_right\_line\_direction\_difference\_for\_crossing}\hfill \\
+Der minimale Winkel der rechten Linie um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{max\_to\_right\_right\_line\_direction\_difference\_for\_crossing}\hfill \\
+Der maximale Winkel der rechten Linie um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{max\_left\_line\_height\_for\_crossing}\hfill \\
+Die maximale Zeilenhöhe in Y welche die linke Bewertungstabelle in Fahrtrichtung haben darf um als Kreuzungsmerkmal wahrgenommen zu werden. 
+
+\item[] \textbf{max\_right\_line\_height\_for\_crossing}\hfill \\
+Die maximale Zeilenhöhe in Y welche die rechte Bewertungstabelle in Fahrtrichtung haben darf um als Kreuzungsmerkmal wahrgenommen zu werden. 
+
+\item[] \textbf{max\_left\_line\_size\_for\_crossing}\hfill \\
+Die maximale Punktanzahl welche die linke Bewertungstabelle in Fahrtrichtung haben darf um als Kreuzungsmerkmal wahrgenommen zu werden. 
+
+\item[] \textbf{max\_right\_line\_size\_for\_crossing}\hfill \\
+Die maximale Punktanzahl welche die rechte Bewertungstabelle in Fahrtrichtung haben darf um als Kreuzungsmerkmal wahrgenommen zu werden. 
+
+
+\end{enumerate}
+
+
+
+
 \section{Bodenmarkierung- und Hinderniserkennung}
 \label{sec:Bodenmarkierung- und Hinderniserkennung}
 

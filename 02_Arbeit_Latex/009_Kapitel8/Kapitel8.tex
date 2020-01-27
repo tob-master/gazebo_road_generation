@@ -92,6 +92,8 @@ Berechnet die euklidische Distanz nach folgender Formel:
 \end{figure}
 
 
+
+
 \item[] \textbf{CV\_TM\_CCORR}\hfill \\
 Berechnet die Korrelation nach folgender Formel:
 
@@ -105,7 +107,14 @@ Berechnet die Korrelation nach folgender Formel:
 \end{center}
 \end{figure}
 
+
 \end{enumerate}
+
+
+$$R(x,y) = \sum_{x',y'} (T(x',y')-I(x+x',y+y'))^2$$  
+
+$$R(x,y) = \sum_{x',y'} (T(x',y') \cdot I(x+x',y+y'))$$  
+
 
 Die Ausgabe von MatchTemplate ist eine OpenCV-Matrix mit den Werten der Aktivierungen durch das Falten mit dem entsprechenden Template.
 Bei der Methode CV\_TM\_SQDIFF gibt der minimale Wert in der Matrix den besten Score an. Bei der Methode CV\_TM\_CORR gibt der maximale Wert den besten Score an. Diese werden mit der OpenCV-Funktion minMaxLoc ermittelt.
@@ -118,7 +127,7 @@ Das Template mit dem besten Score steht f{\"u}r die klassifizierte Geschwindigke
 \label{sec:Aufbereitung des MNIST-Trainingsdatensatzes}
 
 F{\"u}r das training der Machine-Learning Modelle zur Klassfikation der Geschwindigkeitsbodenmarkierungen wurde der MNIST-Datensatz verwendet.
-Dieser Besteht aus einem Trainingsdatensatz mit 60000 Handgeschriebenen einstelligen Ziffern von null bis neun mit einer Dimension von 28x28. Und einem zugeh{\"o}rigen Testdatensatz mit 10000 Ziffern.
+Dieser Besteht aus einem Trainingsdatensatz mit 54077 Handgeschriebenen einstelligen Ziffern von null bis neun mit einer Dimension von 28x28. Und einem zugeh{\"o}rigen Testdatensatz mit 9020 Ziffern.
 Da die Geschwindigkeitsmarkierungen beim Carolo-Cup nur zweistellige Zahlen beeinhalten wurden die nullen aus dem Datensatz zuf{\"a}llig an die Zahlen eins bis neun angeh{\"a}ngt. Dadurch ergibt sich eine Bilddimension von 28x56 mit dem die verschiedenen Machine-Learning Modelle trainiert wurden.
 
 \begin{figure}[H]
@@ -179,6 +188,9 @@ Der Weg der {\"u}er die Kanten und inneren Knoten durchlaufen wird ist abh{\"a}n
 \end{center}
 \end{figure}
 
+\subsection{Training von Random-Forest durch den CART-Algorithmus}
+\label{subsec:Training von Random-Forest durch den CART-Algorithmus}
+
 Der CART-Algorithmus (Classification and Regression Tree) ist ein Verfahren um die logischen Tests der Knoten zur korrekten Klassifikation zu lernen. Die Modellstruktor des Entscheidungsbaumes ist dabei nicht von vorneherin festgelegt sondern wird durch die Daten bestimmt. 
 Beim training des Algorithmus werden N Samples von Observationen mit Merkmals-Vektoren und bekannten Labeln zuf{\"a}llig aus dem gesamten Datensatz mit der selben gr{\"o}{\ss}e N  ausgew{\"a}hlt. Bei der Auswahl kann auch die selbe Observation mehrmals gezogen werden. Dies Wird  Bootstrapping genannt. 
 F{\"u}r jeden Entscheidungsbaum des Random Forest Algorithmus wird ein zuf{\"a}lliges Subset von Merkmalen ausgew{\"a}hlt. Bei M Input-Merkmalen also m<M Merkmale die f{\"u}r jeden einzelnen Entscheidungsbaum konstant gehalten werden. Bei der Klassifikation wird meist die Wurzel aus der Anzahl der gesamten Merkmale genommen m = sqrt(M) [vgl. Hastie et al., S. 592 [16]]. Dies ist ein weiterer Trick um dem Algorithmus eine bessere Generalisierung zu verschaffen da dadurch die Entscheidungsb{\"a}ume weniger miteinander korrelieren.
@@ -196,13 +208,15 @@ Hat man J verschiedene Klassen ist  p(i) die Wahrscheinlichkeit einen Datenpunkt
            }
 \end{center}
 \end{figure}
+  
+$$ I_{G}(p)  = \sum_{i=1}^{J} p_{i} \sum_{k \neq i} p_{k} = \sum_{i=1}^{J} p_{i}(1-p_{i}) = \sum_{i=1}^{J} (p_{i} - p_{i}^2) = \sum_{i=1}^{J} p_{i} - \sum_{i=1}^{J} p_{i}^2 = 1 - \sum_{i=1}^{J} p_{i}^2 $$
 
 Die Berechnung eines Splits wird folgend an einem Beispiel veranschaulicht.
 Angenommen man habe drei verschiedene Klassen mit insgesamt 80 Observationen welche Merkmale und zugeh{\"o}rige Klassen in sich vereinen.
 Davon befinden sich 19 Observationen in der Klasse eins, 21 Observationen in der Klasse zwei und 40 Observationen in der Klasse drei. Das Gini-Unreinheitsma{\ss) berechnet sich nun zu:
 
 
-$1- [ (\frac{19}{80})^2 + (\frac{21}{80})^2 + (\frac{40}{80})^2] = 0,6247$
+${ \displaystyle 1- [ (\frac{19}{80})^2 + (\frac{21}{80})^2 + (\frac{40}{80})^2] = 0,6247 }$
 
 
 Um den logischen Test f{\"u}r den besten bin{\"a}ren Split {\"u}ber ein Merkmal der Observationen zu finden werden die Gini-Unreinheitsma{\ss)e f{\"u}r alle m{\"o}glichen Werte durchgetestet.
@@ -213,17 +227,17 @@ Rechte Kante : 3, 12, 40
 
 Dann errechnet sich das Gini-Unreinheitsma{\ss} zu:
 
-Linke Kante:   $1 - [ (\frac{16}{25})^2 + (\frac{9}{25})^2] = 0,4608$\\
-Rechte Kante: $1 - [ (\frac{3}{55})^2 + (\frac{12}{55})^2+ (\frac{40}{55})^2] = 0,4205$
+Linke Kante:   ${ \displaystyle 1 - [ (\frac{16}{25})^2 + (\frac{9}{25})^2] = 0,4608}$\\
+Rechte Kante: ${ \displaystyle 1 - [ (\frac{3}{55})^2 + (\frac{12}{55})^2+ (\frac{40}{55})^2] = 0,4205}$
 
 Um die Qualit{\"a}t des Splits zu beurteilen werden die Unreinheitsma{\ss)e je Kante mit der Anzahl in Sie hinfeinfallender Observationen Gewichtet und die Werte gemittelt. 
 Dies ergibt das mittlere Gewichtete Unreinheitsma{\ss) f{\"u}r den Split X1 > 2.
 
-$\frac{25}{80} * Gini Linke Kante + \frac{55}{80} * Gini Rechte Kante = 0,4331$
+${ \displaystyle \frac{25}{80} * Gini Linke Kante + \frac{55}{80} * Gini Rechte Kante = 0,4331}$
 
 Der Gewinn des Splits kann nun berechnet werden indem das Gini-Unreinheitsma{\ss) nach dem Split von dem Gini-Unreinheitsma{\ss) vor dem Split subtrahiert wird. Dieser Wert wird auch Gini-Gain genannt. 
 
-$0,6247 - 0,4331 = 0,1916$
+$ {\displaystyle 0,6247 - 0,4331 = 0,1916}$
 
 Der Split der die Observationen mit dem gr{\"o}{\ss)ten Gewinn aufteilt wird anschlie{\ss)end im Entscheidungsbaum verwendet und es findet ein neuer Split f{\"u}r jede Kante statt.
 Dies wird wiederholt bis ein festgelegtes Stoppkriterium erreicht ist oder in eine Kante nurnoch eine Observation f{\"a}llt. Alle Knoten die nichtmehr gesplittet werden, werden zu Bl{\"a}ttern.
@@ -238,3 +252,110 @@ Ein Blatt steht am Ende des durch Trainings gewachsenen Baumes f{\"u}r jene Klas
            }
 \end{center}
 \end{figure}
+
+\subsection{Auswertung von Random-Forest}
+\label{subsec:Auswertung von Random-Forest}
+
+
+F\"ur das Training und die Auswertung des Random Forest Models wurden die Bildsamples von der Dimension 28x56 in die Dimension 1x1568 umtransformiert.
+Das Training dauerte ungef{\"a}hr zehn Sekunden.
+Die Auswertung auf den Testdatensatz ergab eine Genauigkeit von 94,1\%.
+Da die Bewertung über die Genauigkeit bei einem multinomialen Klassifikatior nicht genügt ist in folgender Abbildung die Auswertung auf den Testdatensatz über eine Verwirrungsmatrix gegeben.
+
+\begin{center}
+
+
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\hline
+    & \textbf{10} & \textbf{20} & \textbf{30} & \textbf{40} & \textbf{50} & \textbf{60} & \textbf{70} & \textbf{80} & \textbf{90} \\
+\hline
+\textbf{10} & 1117 &  3 &  2 &  1 &  1 &  2 &  0 &  9 &  0 \\
+\hline
+\textbf{20} &  5  & 989 &   8 &   3 &   3 &   2 &   6 &  15 &   1 \\
+\hline
+\textbf{30} & 0  & 21 & 935  &  0 &  19 &   1 &   8 &  21 &   5 \\
+\hline 
+\textbf{40} &  2 &   7 &   2 & 924  &  3  &  2 &   4  &  5 &  33 \\
+\hline 
+\textbf{50} &  3 &   6 &  38 &   9 & 816 &  10 &   1 &   8 &   1 \\
+\hline 
+\textbf{60} &  4  &  2 &   0 &   6 &  12 & 928 &   0  &  5 &   1 \\
+\hline 
+\textbf{70} &  9  & 20 &   9 &   7 &   0  &  1 & 965  &  7 &  10 \\
+\hline 
+\textbf{80} &  2  &  6 &  19 &  15 &  17 &   9  &  3 & 894  &  9 \\
+\hline
+\textbf{90} &  8  &  4 &  23 &  30 &   7 &   1 &  11 &   9 & 916 \\
+\hline
+\end{tabular}
+
+\end{center}
+
+
+\section{Klassifikation durch Convolutional Neural Networks}
+\label{sec:Klassifikation durch Convolutional Neural Networks}
+
+Ein CNN ist eine Art Künstliches Neuronales Netz. Sie sind sehr gut da-
+für geeignet Bilder zu klassifizieren. Inspiriert wurden CNNs durch den visuellen Kortex Gehirns. Dieser besitzt Zell-Regionen die auf unterschiedliche Bereiche des Blickfelds reagie-
+ren. Durch das einsetzen einer Mikroelektrode in den prim\"aren visuellen Kortex einer Katze,
+konnten Hubel und Wiesel 1961 beweisen, dass einzelne neuronale Zellen im Gehirn nur auf die
+Pr\"asenz von Linien und Kanten in spezieller Orientierung reagieren [31]. Manche reagierten
+zum Beispiel nur auf horizontale, andere auf vertikale Linen oder Kanten. Au{\ss}erdem fanden sie
+heraus, dass diese Nervenzellen in einer S\"aulen-Architektur aufgebaut sind. Untersuchungen
+deuteten darauf hin, dass diese Informationsverarbeitung in den höheren Schichten fortgef\"uhrt
+wird, so dass Nervenzellen auf komplexe Formen wie etwa Buchstaben und Gesichter reagie-
+ren. CNNs ahmen diese Struktur im mathematischen Sinne nach. Sie versuchen bestimmte
+Charakteristiken, von einem Objekt in einem Bild, durch Faltungen mit speziellen Filtern zu
+extrahieren und daraus die Objektklasse abzuleiten. Sie sind aus verschiedene Lagen aufge-
+baut. Um eine CNN-Architektur zu erschaffen, wird eine Kombination aus drei Hauptlagen
+verwendet, dies sind das Convolutional Layer, das Pooling Layer und das Fully-Connected
+Layer. Für tiefere Informationen zu CNN verweise ich auf meine Bachelorarbeit.
+
+
+\subsection{Aufbau und Training der CNN Architektur}
+\label{subsec:Aufbau und Training der CNN Architektur}
+
+Das CNN-Model wurde durch Keras mit dem Tensorflow als Backend implementiert und trainiert. Das Model besitzt im Eingangslayer eine Convolutional-Layer mit 32 Kernel der Gr\"o{\ss}e  3x3 und der Rectified Linear Unit als Aktivierungsfunktion. Es nimmt ein Eingangsbild der Dimension 28x56 entgegen welche der Gr\"o{\ss}e der vorverarbeiteten MNIST-Daten entspricht.
+Es folgt ein weiteres Convolutional-Layer mit 64 Kernel der Gr\"o{\ss}e 3x3 wieder gefolgt von der gleichen Aktivierungsfunktion. Es folgt ein Max-Pooling-Layer mit einem Kernel der Dimension 2x2. Darauf schlie{\ss}t sich ein Dropout-Layer mit 75\% Haltungsrate an um bessere Generalisierung auf nicht gesehene Daten zu erm\"oglichen.
+Das n\"achste Layer ist ein Feed-Forward-Layer mit 128 Neuronen mit anschlie{\ss}ender Relu-Aktivierungsfunktion. Es folgt wieder ein Dropout-Layer mit einer Haltungsrate von 50\%. Das letzte Layer ist das Ausgangs-Layer mit einer Softmax-Aktivierungsfunktion.
+Als Optimierungsalgorithmus wurde Adadelta verwendet. Trainiert wurde das Netz über 12 Epochen mit einer Batch-Size von 128.
+
+
+\subsection{Auswertung der trainierten CNN-Architektur}
+\label{subsec:Auswertung der trainierten CNN-Architektur}
+
+Das Training des CNNs dauerte ungef\"ahr f\"unf Minuten auf einer Nvidia Titan X Grafikkarte. Bei der Auswertung auf den Testdatensatz ergab sich eine Genauigkeit von 98,4\%. Im folgenden ist die Verwirrungsmatrix für die Auswertung auf den Testdatensatz gegeben.
+
+
+\begin{center}
+
+
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\hline
+    & \textbf{10} & \textbf{20} & \textbf{30} & \textbf{40} & \textbf{50} & \textbf{60} & \textbf{70} & \textbf{80} & \textbf{90} \\
+\hline
+\textbf{10} & 1124 &  1 &  3 &    0 &   1 &    4 &    0 &  2 &    0  \\
+\hline
+\textbf{20} &  6 & 1007 &  1 &    3 &    0 &    2 &    9 &  4 &  0 \\
+\hline
+\textbf{30} & 0&    1&  998&    0&    3&    0&    2&    5&    1 \\
+\hline 
+\textbf{40} &  0&    0&    0&  968&    0&    5&    0&    2&    7 \\
+\hline 
+\textbf{50} &  1&    0&    7&    0&  878&    3&    0&    2 &    1 \\
+\hline 
+\textbf{60} &  2&    0&    1&    2&    3&  948&    0&    2&    0 \\
+\hline 
+\textbf{70} &  3&    4&    0&    0&    0&    0& 1018&    1&    2 \\
+\hline 
+\textbf{80} &  0&    0&    2&    3&    3&    4&    3&  955 &  4 \\
+\hline
+\textbf{90} & 5&    0&    2&    8&    4&    0&   7&   3& 980 \\
+\hline
+\end{tabular}
+
+\end{center}
+
+
+
+
