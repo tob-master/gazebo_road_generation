@@ -82,40 +82,6 @@ Da die Ziellinie im CaroloCup häufig nach einer Kurve erkannt werden muss, wird 
 
 
 
-Das Verfahren wird mit Folgenden Parametern initialisiert.
-
-\begin{enumerate}
-
-\item[] \textbf{min\_goal\_segment\_width}\hfill \\
-Die minimale Segmentbreite der Ziellinie.
-
-\item[] \textbf{max\_goal\_segment\_width}\hfill \\
-Die maximale Segmentbreite der Ziellinie.
-
-\item[] \textbf{min\_goal\_segments\_to\_find}\hfill \\
-Die minimale Anzahl von Segmenten die gefunden werden müssen um eine Ziellinie zu erkennen.
-
-\item[] \textbf{goal\_line\_field\_of\_view}\hfill \\
-Der Winkel der Sichtfelds in dem nach der Ziellinie gesucht wird.
-
-\item[] \textbf{max\_crosswalk\_forsight\_distance}\hfill \\
-Die Sichtweite in Pixel  in der vor dem Fahrzeug nach dem Zebrastreifen gesucht wird.
-
-\item[] \textbf{max\_crosswalk\_forsight\_step\_size}\hfill \\
-Die Schrittweite in der vor dem Fahrzeug nach Zebrastreifen gesucht wird.
-
-\item[] \textbf{min\_crosswalk\_segment\_width}\hfill \\
-Die minimale Segmentbreite des Zebrastreifens.
-
-\item[] \textbf{max\_crosswalk\_segment\_width}\hfill \\
-Die maximale Segmentbreite des Zebrastreifens.
-
-\item[] \textbf{min\_crosswalk\_segments\_to\_find}\hfill \\
-Die minimale Anzahl von Segmenten die gefunden werden müssen um einen Zebrastreifen zu erkennen.
-
-
-
-\end{enumerate}
 
 
 \section{Kreuzungserkennung}
@@ -133,53 +99,7 @@ Zudem werden die Bewertungstabellen in Fahrtrichtung daraufhin überprüft ob eine
 \end{center}
 \end{figure}
 
-Der Algorithmus wird mit Folgenden Parametern initialisiert:
 
-
-\begin{enumerate}
-
-\item[] \textbf{min\_to\_left\_mid\_line\_direction\_for\_crossing}\hfill \\
-Der minimale Winkel einer Mittellinie die nach links orientiert ist um als Kreuzungsmerkmal wahrgenommen zu werden.
-
-\item[] \textbf{max\_to\_left\_mid\_line\_direction\_for\_crossing}\hfill \\
-Der maximale Winkel einer Mittellinie die nach links orientiert ist um als Kreuzungsmerkmal wahrgenommen zu werden.
-
-\item[] \textbf{min\_to\_right\_mid\_line\_direction\_for\_crossing}\hfill \\
-Der minimale Winkel einer Mittellinie die nach rechts orientiert ist um als Kreuzungsmerkmal wahrgenommen zu werden.
-
-\item[] \textbf{max\_to\_right\_mid\_line\_direction\_for\_crossing}\hfill \\
-Der maximale Winkel einer Mittellinie die nach rechts orientiert ist um als Kreuzungsmerkmal wahrgenommen zu werden.
-
-\item[] \textbf{min\_outline\_direction\_difference\_for\_crossing}\hfill \\
-Die minimale Winkeländerung einer Außenlinie um als Kreuzungsmerkmal wahrgenommen zu werden.
-
-
-\item[] \textbf{min\_to\_left\_left\_line\_direction\_difference\_for\_crossing}\hfill \\
-Der minimale Winkel der linken Linie um als Kreuzungsmerkmal wahrgenommen zu werden.
-
-\item[] \textbf{max\_to\_left\_left\_line\_direction\_difference\_for\_crossing}\hfill \\
-Der maximale Winkel der linken Linie um als Kreuzungsmerkmal wahrgenommen zu werden.
-
-\item[] \textbf{min\_to\_right\_right\_line\_direction\_difference\_for\_crossing}\hfill \\
-Der minimale Winkel der rechten Linie um als Kreuzungsmerkmal wahrgenommen zu werden.
-
-\item[] \textbf{max\_to\_right\_right\_line\_direction\_difference\_for\_crossing}\hfill \\
-Der maximale Winkel der rechten Linie um als Kreuzungsmerkmal wahrgenommen zu werden.
-
-\item[] \textbf{max\_left\_line\_height\_for\_crossing}\hfill \\
-Die maximale Zeilenhöhe in Y welche die linke Bewertungstabelle in Fahrtrichtung haben darf um als Kreuzungsmerkmal wahrgenommen zu werden. 
-
-\item[] \textbf{max\_right\_line\_height\_for\_crossing}\hfill \\
-Die maximale Zeilenhöhe in Y welche die rechte Bewertungstabelle in Fahrtrichtung haben darf um als Kreuzungsmerkmal wahrgenommen zu werden. 
-
-\item[] \textbf{max\_left\_line\_size\_for\_crossing}\hfill \\
-Die maximale Punktanzahl welche die linke Bewertungstabelle in Fahrtrichtung haben darf um als Kreuzungsmerkmal wahrgenommen zu werden. 
-
-\item[] \textbf{max\_right\_line\_size\_for\_crossing}\hfill \\
-Die maximale Punktanzahl welche die rechte Bewertungstabelle in Fahrtrichtung haben darf um als Kreuzungsmerkmal wahrgenommen zu werden. 
-
-
-\end{enumerate}
 
 
 
@@ -229,68 +149,4 @@ Werden viele kleinere Segmente in der entsprechenden Fahrspur gefunden deutet di
 \end{figure}
 
 
-Der Algorithmus wird mit Folgenden Parametern initialisiert
-
-
-\begin{enumerate}
-
-\item[] \textbf{max\_lane\_object\_forsight\_distance}\hfill \\
-Die Distanz in Pixel in der vor dem Fahrzeug nach Bodenmarkierungen und Hindernissen gesucht wird.
-
-\item[] \textbf{lane\_object\_forsight\_step\_size}\hfill \\
-Die Schwittweite in Pixel in der die Suche voranschreitet.
-
-\item[] \textbf{left\_in\_left\_lane\_lineiterator\_end\_offset}\hfill \\
-Der Offset von der linken Außenlinie zur Mittellinie in der linken Fahrspur für den Lineiterator.
-
-\item[] \textbf{left\_in\_right\_lane\_lineiterator\_start\_offset}\hfill \\
-Der Offset von der linken Außenlinie zur Mittellinie in der rechten Fahrspur für den Lineiterator.
-
-\item[] \textbf{left\_in\_right\_lane\_lineiterator\_end\_offset}\hfill \\
-Der Offset von der linken Außenlinie zur Rechtenaußenlinie in der rechten Fahrspur für den Lineiterator.
-
-\item[] \textbf{right\_in\_left\_lane\_lineiterator\_start\_offset}\hfill \\
-Der Offset von der rechten Außenlinie zur Mittellinie in der linken Fahrspur
-für den Lineiterator.
-
-\item[] \textbf{right\_in\_left\_lane\_lineiterator\_end\_offset}\hfill \\
-Der Offset von der rechten Außenlinie zur linken außenlinie in der linken Fahrspur für den Lineiterator.
-
-
-\item[] \textbf{right\_in\_right\_lane\_lineiterator\_end\_offset}\hfill \\
-Der Offset von der rechten Außenlinie zur Mittellinie in der rechten Fahrspur
-für den Lineiterator.
-
-\item[] \textbf{left\_in\_left\_lane\_radial\_outerline\_offset}\hfill \\
-Der Offset von der linken Außenlinie in die Mitte der linken Fahrspur für den Mittepunkt der radialen Suche.
-
-\item[] \textbf{left\_in\_right\_lane\_radial\_outerline\_offset}\hfill \\
-Der Offset von der linken Außenlinie in die Mitte der rechten Fahrspur für den Mittelpunkt der radialen Suche.
-
-\item[] \textbf{right\_in\_left\_lane\_radial\_outerline\_offset}\hfill \\
-Der Offset von der rechten Außenlinie in die Mitte der linken Fahrspur für den Mittelpunkt der radialen Suche.
-
-\item[] \textbf{right\_in\_right\_lane\_radial\_outerline\_offset}\hfill \\
-Der Offset von der rechten Außenlinie in die Mitte der rechten Fahrspur für den Mittelpunkt der radialen Suche.
-
-\item[] \textbf{lane\_object\_radial\_scan\_step\_size}\hfill \\
-Die Winkelschrittweite für die radiale Suche.
-
-\item[] \textbf{lane\_object\_radial\_scan\_radius}\hfill \\
-Der Radius der radialen Suche in der Fahrspur.
-
-\item[] \textbf{min\_marking\_segments\_threshold}\hfill \\
-Die minimale Anzahl von Segmenten die in der Fahrpur gefunden werden muss um eine Bodenmarkierung zu erkennen.
-
-\item[] \textbf{min\_box\_segments\_threshold}\hfill \\
-Die minimale Anzahl von Segmenten die in der Fahrspur gefunden werden muss um ein Hindernis zu erkennen.
-
-\item[] \textbf{min\_white\_pixels\_for\_box}\hfill \\
-Die miniemale Pixelanzahl eines Segments das das in der Fahrspur gefunden werden muss um eine Hindernis zu erkennen.
-
-
-
-
-
-\end{enumerate}
 

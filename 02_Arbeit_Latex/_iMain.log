@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.5.18)  27 JAN 2020 16:49
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2019.5.18)  28 JAN 2020 16:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1059,7 +1059,8 @@ Package csquotes Info: ... found 'babel' package.
 
 LaTeX Warning: Label `fig:Zielliniensuche' multiply defined.
 
-) (./009_Kapitel8/Kapitel8.aux))
+) (./009_Kapitel8/Kapitel8.aux) (./010_Kapitel9/Kapitel9.aux)
+(./011_Kapitel10/Kapitel10.aux))
 \openout1 = `_iMain.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 33.
@@ -1574,7 +1575,7 @@ Package babel Info: Redefining ngerman shorthand "|
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 180.
 </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/003_Kapitel2/Bilder/ros_communic
-ation.jpeg, id=568, 1197.47375pt x 532.99126pt>
+ation.jpeg, id=670, 1197.47375pt x 532.99126pt>
 File: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/003_Kapitel2/Bilder/ros_com
 munication.jpeg Graphic file (type jpg)
 <use /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/003_Kapitel2/Bilder/ros_comm
@@ -1654,7 +1655,7 @@ Package babel Info: Redefining ngerman shorthand "|
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 5.
 </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/004_Kapitel3/Bilder/paarweiser_v
-ergleich_ide.jpg, id=601, 670.00313pt x 344.41171pt>
+ergleich_ide.jpg, id=702, 670.00313pt x 344.41171pt>
 File: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/004_Kapitel3/Bilder/paarwei
 ser_vergleich_ide.jpg Graphic file (type jpg)
 <use /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/004_Kapitel3/Bilder/paarweis
@@ -1663,7 +1664,7 @@ Package pdftex.def Info: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/004_Kapi
 tel3/Bilder/paarweiser_vergleich_ide.jpg  used on input line 20.
 (pdftex.def)             Requested size: 446.13928pt x 229.33572pt.
 </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/004_Kapitel3/Bilder/nutzwertanal
-yse_ide.jpg, id=602, 455.301pt x 230.2785pt>
+yse_ide.jpg, id=703, 455.301pt x 230.2785pt>
 File: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/004_Kapitel3/Bilder/nutzwer
 tanalyse_ide.jpg Graphic file (type jpg)
 <use /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/004_Kapitel3/Bilder/nutzwert
@@ -1719,7 +1720,7 @@ Package babel Info: Redefining ngerman shorthand "|
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 5.
 </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/005_Kapitel4/Bilder/paarweiser_v
-ergleich_sim.jpg, id=612, 672.63797pt x 347.04657pt>
+ergleich_sim.jpg, id=713, 672.63797pt x 347.04657pt>
 File: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/005_Kapitel4/Bilder/paarwei
 ser_vergleich_sim.jpg Graphic file (type jpg)
 <use /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/005_Kapitel4/Bilder/paarweis
@@ -1728,7 +1729,7 @@ Package pdftex.def Info: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/005_Kapi
 tel4/Bilder/paarweiser_vergleich_sim.jpg  used on input line 19.
 (pdftex.def)             Requested size: 446.13928pt x 230.18468pt.
 </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/005_Kapitel4/Bilder/nutzwertanal
-yse_sim.jpg, id=613, 575.52516pt x 288.3272pt>
+yse_sim.jpg, id=714, 575.52516pt x 288.3272pt>
 File: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/005_Kapitel4/Bilder/nutzwer
 tanalyse_sim.jpg Graphic file (type jpg)
 <use /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/005_Kapitel4/Bilder/nutzwert
@@ -1832,7 +1833,7 @@ Package babel Info: Redefining ngerman shorthand "|
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 11.
 </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/straight_1m.
-png, id=631, 501.875pt x 501.875pt>
+png, id=733, 501.875pt x 501.875pt>
 File: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/straigh
 t_1m.png Graphic file (type png)
 <use /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/straight
@@ -1857,7 +1858,7 @@ Package babel Info: Redefining ngerman shorthand "~
 
 ]
 </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/Kurve.jpg, i
-d=636, 1003.75pt x 1003.75pt>
+d=738, 1003.75pt x 1003.75pt>
 File: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/Kurve.j
 pg Graphic file (type jpg)
 <use /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/Kurve.jp
@@ -1866,7 +1867,7 @@ Package pdftex.def Info: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapi
 tel5/Bilder/Kurve.jpg  used on input line 40.
 (pdftex.def)             Requested size: 133.84314pt x 133.83096pt.
 </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/ziel.jpg, id
-=637, 451.6875pt x 20.075pt>
+=739, 451.6875pt x 20.075pt>
 File: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/ziel.jp
 g Graphic file (type jpg)
 <use /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/ziel.jpg
@@ -1875,7 +1876,7 @@ Package pdftex.def Info: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapi
 tel5/Bilder/ziel.jpg  used on input line 55.
 (pdftex.def)             Requested size: 223.06964pt x 9.91432pt.
 </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/roadspeedsig
-ngs.jpg, id=638, 5610.9625pt x 568.1225pt>
+ngs.jpg, id=740, 5610.9625pt x 568.1225pt>
 File: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/roadspe
 edsigngs.jpg Graphic file (type jpg)
 <use /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/roadspee
@@ -1922,7 +1923,7 @@ urve.jpg> </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/zi
 el.jpg> </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/road
 speedsigngs.jpg>]
 </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/crosswalk.jp
-g, id=643, 451.6875pt x 200.75pt>
+g, id=745, 451.6875pt x 200.75pt>
 File: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/crosswa
 lk.jpg Graphic file (type jpg)
 <use /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/crosswal
@@ -1931,7 +1932,7 @@ Package pdftex.def Info: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapi
 tel5/Bilder/crosswalk.jpg  used on input line 81.
 (pdftex.def)             Requested size: 223.06964pt x 99.14334pt.
 </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/crossings.jp
-g, id=644, 2265.46375pt x 3386.6525pt>
+g, id=746, 2265.46375pt x 3386.6525pt>
 File: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/crossin
 gs.jpg Graphic file (type jpg)
 <use /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/crossing
@@ -1963,7 +1964,7 @@ l.103
 walk.jpg> </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/cr
 ossings.jpg>]
 </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/start_of_tra
-ck.jpg, id=649, 5520.625pt x 1505.625pt>
+ck.jpg, id=751, 5520.625pt x 1505.625pt>
 File: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/start_o
 f_track.jpg Graphic file (type jpg)
 <use /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/start_of
@@ -1972,7 +1973,7 @@ Package pdftex.def Info: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapi
 tel5/Bilder/start_of_track.jpg  used on input line 106.
 (pdftex.def)             Requested size: 446.13928pt x 121.67007pt.
 </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/islands.jpg,
- id=650, 2265.46375pt x 1128.215pt>
+ id=752, 2265.46375pt x 1128.215pt>
 File: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/islands
 .jpg Graphic file (type jpg)
 <use /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/islands.
@@ -1980,7 +1981,7 @@ jpg>
 Package pdftex.def Info: /home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapi
 tel5/Bilder/islands.jpg  used on input line 119.
 (pdftex.def)             Requested size: 223.06964pt x 111.08937pt.
-</home/tb/Desktop/Master/Bilder/alleSchilder.jpg, id=651, 3840.84938pt x 2134.2
+</home/tb/Desktop/Master/Bilder/alleSchilder.jpg, id=753, 3840.84938pt x 2134.2
 2343pt>
 File: /home/tb/Desktop/Master/Bilder/alleSchilder.jpg Graphic file (type jpg)
 <use /home/tb/Desktop/Master/Bilder/alleSchilder.jpg>
@@ -2013,7 +2014,7 @@ l.140
        </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/start
 _of_track.jpg> </home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bild
 er/islands.jpg>]
-</home/tb/Desktop/Master/Bilder/abbiegepfeil.jpg, id=656, 187.099pt x 400.697pt
+</home/tb/Desktop/Master/Bilder/abbiegepfeil.jpg, id=758, 187.099pt x 400.697pt
 >
 File: /home/tb/Desktop/Master/Bilder/abbiegepfeil.jpg Graphic file (type jpg)
 <use /home/tb/Desktop/Master/Bilder/abbiegepfeil.jpg>
@@ -2042,7 +2043,7 @@ l.166
 l.166 
        </home/tb/Desktop/Master/Bilder/alleSchilder.jpg> </home/tb/Desktop/Mast
 er/Bilder/abbiegepfeil.jpg>]
-</home/tb/Desktop/Master/Bilder/rotateFahrbahn.png, id=662, 552.0625pt x 424.58
+</home/tb/Desktop/Master/Bilder/rotateFahrbahn.png, id=764, 552.0625pt x 424.58
 624pt>
 File: /home/tb/Desktop/Master/Bilder/rotateFahrbahn.png Graphic file (type png)
 
@@ -2050,7 +2051,7 @@ File: /home/tb/Desktop/Master/Bilder/rotateFahrbahn.png Graphic file (type png)
 Package pdftex.def Info: /home/tb/Desktop/Master/Bilder/rotateFahrbahn.png  use
 d on input line 169.
 (pdftex.def)             Requested size: 446.13928pt x 343.13553pt.
-</home/tb/Desktop/Master/Bilder/box.png, id=664, 944.52875pt x 683.55376pt>
+</home/tb/Desktop/Master/Bilder/box.png, id=766, 944.52875pt x 683.55376pt>
 File: /home/tb/Desktop/Master/Bilder/box.png Graphic file (type png)
 <use /home/tb/Desktop/Master/Bilder/box.png>
 Package pdftex.def Info: /home/tb/Desktop/Master/Bilder/box.png  used on input 
@@ -2074,7 +2075,7 @@ Package babel Info: Redefining ngerman shorthand "~
                                                   \fi \fi 
 l.189 
        </home/tb/Desktop/Master/Bilder/rotateFahrbahn.png>]
-</home/tb/Desktop/Master/Bilder/driveTrack.png, id=670, 782.925pt x 833.1125pt>
+</home/tb/Desktop/Master/Bilder/driveTrack.png, id=772, 782.925pt x 833.1125pt>
 
 File: /home/tb/Desktop/Master/Bilder/driveTrack.png Graphic file (type png)
 <use /home/tb/Desktop/Master/Bilder/driveTrack.png>
@@ -2118,7 +2119,7 @@ Package babel Info: Redefining ngerman shorthand "~
                                                   \fi \fi 
 l.211 
        </home/tb/Desktop/Master/Bilder/driveTrack.png>]
-</home/tb/Desktop/Master/Bilder/car.png, id=681, 1219.55624pt x 797.98125pt>
+</home/tb/Desktop/Master/Bilder/car.png, id=783, 1219.55624pt x 797.98125pt>
 File: /home/tb/Desktop/Master/Bilder/car.png Graphic file (type png)
 <use /home/tb/Desktop/Master/Bilder/car.png>
 Package pdftex.def Info: /home/tb/Desktop/Master/Bilder/car.png  used on input 
@@ -2153,7 +2154,7 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 11.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 11.
-</home/tb/Desktop/Master/Bilder/sof_muster.jpg, id=687, 711.65875pt x 501.875pt
+</home/tb/Desktop/Master/Bilder/sof_muster.jpg, id=789, 711.65875pt x 501.875pt
 >
 File: /home/tb/Desktop/Master/Bilder/sof_muster.jpg Graphic file (type jpg)
 <use /home/tb/Desktop/Master/Bilder/sof_muster.jpg>
@@ -2173,503 +2174,518 @@ Package babel Info: Redefining ngerman shorthand "~
 
 
 ]
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 82.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 82.
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 82.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 82.
- [26pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
-1}) has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.82 
-      </home/tb/Desktop/Master/Bilder/sof_muster.jpg>]
 
 pdfTeX warning: pdflatex (file /home/tb/gazebo_road_generation/02_Arbeit_Latex/
 007_Kapitel6/Bilder/Start_of_Lines_Diagram_finish.pdf): PDF inclusion: found PD
 F version <1.7>, but at most version <1.5> allowed
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Start_of_L
-ines_Diagram_finish.pdf, id=697, 844.65562pt x 1720.17656pt>
+ines_Diagram_finish.pdf, id=794, 844.65562pt x 1720.17656pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Start
 _of_Lines_Diagram_finish.pdf Graphic file (type pdf)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Start_
 of_Lines_Diagram_finish.pdf>
 Package pdftex.def Info: /home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Ka
-pitel6/Bilder/Start_of_Lines_Diagram_finish.pdf  used on input line 95.
+pitel6/Bilder/Start_of_Lines_Diagram_finish.pdf  used on input line 50.
 (pdftex.def)             Requested size: 312.29613pt x 636.00916pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 101.
+(babel)             in language  on input line 56.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 101.
+(babel)             in language  on input line 56.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 101.
+(babel)             in language  on input line 56.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 101.
- [27]
+(babel)             in language  on input line 56.
+ [26pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
+1}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.56 
+      </home/tb/Desktop/Master/Bilder/sof_muster.jpg>]
 Overfull \vbox (22.92891pt too high) has occurred while \output is active []
 
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 101.
+(babel)             in language  on input line 56.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 101.
+(babel)             in language  on input line 56.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 101.
+(babel)             in language  on input line 56.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 101.
+(babel)             in language  on input line 56.
 
-[28pdfTeX warning (ext4): destination with the same identifier (name{figure.6.2
+[27pdfTeX warning (ext4): destination with the same identifier (name{figure.6.2
 }) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.101 
-       </home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Sta
-rt_of_Lines_Diagram_finish.pdf>]
+l.56 
+      </home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Star
+t_of_Lines_Diagram_finish.pdf>]
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 105.
+(babel)             in language  on input line 60.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 105.
-</home/tb/Desktop/Master/Bilder/canny.png, id=722, 642.4pt x 63.23625pt>
+(babel)             in language  on input line 60.
+</home/tb/Desktop/Master/Bilder/canny.png, id=819, 642.4pt x 63.23625pt>
 File: /home/tb/Desktop/Master/Bilder/canny.png Graphic file (type png)
 <use /home/tb/Desktop/Master/Bilder/canny.png>
 Package pdftex.def Info: /home/tb/Desktop/Master/Bilder/canny.png  used on inpu
-t line 125.
+t line 80.
 (pdftex.def)             Requested size: 446.13928pt x 43.9177pt.
-</home/tb/Desktop/Master/Bilder/houghraum.jpg, id=723, 311.66437pt x 135.50626p
+</home/tb/Desktop/Master/Bilder/houghraum.jpg, id=820, 311.66437pt x 135.50626p
 t>
 File: /home/tb/Desktop/Master/Bilder/houghraum.jpg Graphic file (type jpg)
 <use /home/tb/Desktop/Master/Bilder/houghraum.jpg>
 Package pdftex.def Info: /home/tb/Desktop/Master/Bilder/houghraum.jpg  used on 
-input line 140.
+input line 95.
 (pdftex.def)             Requested size: 446.13928pt x 193.97714pt.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 146.
+(babel)             in language  on input line 101.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 146.
+(babel)             in language  on input line 101.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 146.
+(babel)             in language  on input line 101.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 146.
- [29pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
+(babel)             in language  on input line 101.
+ [28pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
 3}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.146 
+l.101 
        </home/tb/Desktop/Master/Bilder/canny.png>]
-</home/tb/Desktop/Master/Bilder/vanishingPoint.png, id=729, 625.33624pt x 282.0
+</home/tb/Desktop/Master/Bilder/vanishingPoint.png, id=826, 625.33624pt x 282.0
 5376pt>
 File: /home/tb/Desktop/Master/Bilder/vanishingPoint.png Graphic file (type png)
 
 <use /home/tb/Desktop/Master/Bilder/vanishingPoint.png>
 Package pdftex.def Info: /home/tb/Desktop/Master/Bilder/vanishingPoint.png  use
-d on input line 161.
+d on input line 116.
 (pdftex.def)             Requested size: 446.13928pt x 201.23221pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 167.
+(babel)             in language  on input line 122.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 167.
+(babel)             in language  on input line 122.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 167.
+(babel)             in language  on input line 122.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 167.
- [30pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
+(babel)             in language  on input line 122.
+ [29pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
 4}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.167 
+l.122 
        </home/tb/Desktop/Master/Bilder/houghraum.jpg>]
+</home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vp1.png, i
+d=831, 727.7589pt x 453.8556pt>
+File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vp1.p
+ng Graphic file (type png)
+<use /home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vp1.pn
+g>
+Package pdftex.def Info: /home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Ka
+pitel6/Bilder/vp1.png  used on input line 128.
+(pdftex.def)             Requested size: 892.27856pt x 556.45929pt.
+
+Overfull \hbox (446.13928pt too wide) in paragraph at lines 128--131
+ [][] 
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 207.
+(babel)             in language  on input line 134.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 207.
+(babel)             in language  on input line 134.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 207.
+(babel)             in language  on input line 134.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 207.
- [31pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
+(babel)             in language  on input line 134.
+ [30pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
 5}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.207 \item[]
-              \textbf{roi\_width} \hfill \\ </home/tb/Desktop/Master/Bilder/van
-ishingPoint.png>]
+l.134 
+       </home/tb/Desktop/Master/Bilder/vanishingPoint.png>]
+</home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vp2.png, i
+d=837, 826.0461pt x 507.3354pt>
+File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vp2.p
+ng Graphic file (type png)
+<use /home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vp2.pn
+g>
+Package pdftex.def Info: /home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Ka
+pitel6/Bilder/vp2.png  used on input line 137.
+(pdftex.def)             Requested size: 446.13928pt x 274.00348pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 254.
+(babel)             in language  on input line 143.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 254.
+(babel)             in language  on input line 143.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 261.
+(babel)             in language  on input line 143.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 261.
+(babel)             in language  on input line 143.
+ [31pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
+6}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.143 
+       </home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vp1
+.png>]
+</home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vp3.png, i
+d=843, 533.3526pt x 255.1131pt>
+File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vp3.p
+ng Graphic file (type png)
+<use /home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vp3.pn
+g>
+Package pdftex.def Info: /home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Ka
+pitel6/Bilder/vp3.png  used on input line 146.
+(pdftex.def)             Requested size: 446.13928pt x 213.39821pt.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 261.
+(babel)             in language  on input line 154.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 261.
- [32]
-</home/tb/Desktop/Master/Bilder/line_follower_directions.jpg, id=744, 414.54875
+(babel)             in language  on input line 154.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 161.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 161.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 161.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 161.
+ [32pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
+7}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.161 
+      pdfTeX warning (ext4): destination with the same identifier (name{figure.
+6.8}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.161 
+       </home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vp2
+.png> </home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vp3.
+png>]
+</home/tb/Desktop/Master/Bilder/line_follower_directions.jpg, id=851, 414.54875
 pt x 398.48875pt>
 File: /home/tb/Desktop/Master/Bilder/line_follower_directions.jpg Graphic file 
 (type jpg)
 <use /home/tb/Desktop/Master/Bilder/line_follower_directions.jpg>
 Package pdftex.def Info: /home/tb/Desktop/Master/Bilder/line_follower_direction
-s.jpg  used on input line 267.
+s.jpg  used on input line 167.
 (pdftex.def)             Requested size: 223.06964pt x 214.42674pt.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 287.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 287.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 287.
+(babel)             in language  on input line 187.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 287.
+(babel)             in language  on input line 187.
  [33pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
-6}) has been already used, duplicate ignored
+9}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.287 
+l.187 
        </home/tb/Desktop/Master/Bilder/line_follower_directions.jpg>]
-</home/tb/Desktop/Master/Bilder/linefollower.png, id=749, 423.5825pt x 376.4062
+</home/tb/Desktop/Master/Bilder/linefollower.png, id=857, 423.5825pt x 376.4062
 5pt>
 File: /home/tb/Desktop/Master/Bilder/linefollower.png Graphic file (type png)
 <use /home/tb/Desktop/Master/Bilder/linefollower.png>
 Package pdftex.def Info: /home/tb/Desktop/Master/Bilder/linefollower.png  used 
-on input line 302.
+on input line 202.
 (pdftex.def)             Requested size: 223.06964pt x 198.22504pt.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 322.
+(babel)             in language  on input line 211.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 322.
+(babel)             in language  on input line 211.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 322.
+(babel)             in language  on input line 218.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 322.
+(babel)             in language  on input line 218.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 218.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 218.
  [34pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
-7}) has been already used, duplicate ignored
+10}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.322 \item[]
-              \textbf{max\_consecutive\_back\_steps} \hfill \\ </home/tb/Deskto
-p/Master/Bilder/linefollower.png>]
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 331.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 331.
-</home/tb/Desktop/Master/Bilder/Douglas_Peucker.png, id=755, 613.29124pt x 853.
+l.218 
+       </home/tb/Desktop/Master/Bilder/linefollower.png>]
+</home/tb/Desktop/Master/Bilder/Douglas_Peucker.png, id=863, 613.29124pt x 853.
 1875pt>
 File: /home/tb/Desktop/Master/Bilder/Douglas_Peucker.png Graphic file (type png
 )
 <use /home/tb/Desktop/Master/Bilder/Douglas_Peucker.png>
 Package pdftex.def Info: /home/tb/Desktop/Master/Bilder/Douglas_Peucker.png  us
-ed on input line 341.
+ed on input line 221.
 (pdftex.def)             Requested size: 223.06964pt x 310.32379pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 347.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 347.
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 347.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 347.
- [35]
-</home/tb/Desktop/Master/Bilder/rdp.png, id=760, 414.54875pt x 398.48875pt>
+</home/tb/Desktop/Master/Bilder/rdp.png, id=864, 414.54875pt x 398.48875pt>
 File: /home/tb/Desktop/Master/Bilder/rdp.png Graphic file (type png)
 <use /home/tb/Desktop/Master/Bilder/rdp.png>
 Package pdftex.def Info: /home/tb/Desktop/Master/Bilder/rdp.png  used on input 
-line 356.
+line 236.
 (pdftex.def)             Requested size: 223.06964pt x 214.42674pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 362.
+(babel)             in language  on input line 242.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 362.
+(babel)             in language  on input line 242.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 362.
+(babel)             in language  on input line 242.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 362.
- [36pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
-8}) has been already used, duplicate ignored
+(babel)             in language  on input line 242.
+ [35pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
+11}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.362 
+l.242 
        </home/tb/Desktop/Master/Bilder/Douglas_Peucker.png>]
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 376.
+(babel)             in language  on input line 248.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 376.
-</home/tb/Desktop/Master/Bilder/rasterierung_small.jpg, id=765, 392.46625pt x 3
+(babel)             in language  on input line 248.
+</home/tb/Desktop/Master/Bilder/rasterierung_small.jpg, id=869, 392.46625pt x 3
 96.48125pt>
 File: /home/tb/Desktop/Master/Bilder/rasterierung_small.jpg Graphic file (type 
 jpg)
 <use /home/tb/Desktop/Master/Bilder/rasterierung_small.jpg>
 Package pdftex.def Info: /home/tb/Desktop/Master/Bilder/rasterierung_small.jpg 
- used on input line 389.
+ used on input line 261.
 (pdftex.def)             Requested size: 356.91278pt x 360.58675pt.
+
+Underfull \vbox (badness 2119) has occurred while \output is active []
+
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 395.
+(babel)             in language  on input line 267.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 395.
+(babel)             in language  on input line 267.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 395.
+(babel)             in language  on input line 267.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 395.
- [37pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
-9}) has been already used, duplicate ignored
+(babel)             in language  on input line 267.
+ [36pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
+12}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.395 
+l.267 
        </home/tb/Desktop/Master/Bilder/rdp.png>]
-Overfull \hbox (0.98221pt too wide) in paragraph at lines 400--401
+Overfull \hbox (0.98221pt too wide) in paragraph at lines 272--273
 []\T1/lmr/m/n/10.95 Im nächs-ten Schritt wird die An-zahl von PP für je-den Be-
 reichs-schlüs-sel im Multimap-Container
  []
 
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 404.
+(babel)             in language  on input line 276.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 404.
+(babel)             in language  on input line 276.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 404.
+(babel)             in language  on input line 276.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 404.
-[38pdfTeX warning (ext4): destination with the same identifier (name{figure.6.1
-0}) has been already used, duplicate ignored
+(babel)             in language  on input line 276.
+[37pdfTeX warning (ext4): destination with the same identifier (name{figure.6.1
+3}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.404 
+l.276 
        </home/tb/Desktop/Master/Bilder/rasterierung_small.jpg>]
-</home/tb/Desktop/Master/Bilder/midlinesearch_cluster.png, id=776, 577.15625pt 
+</home/tb/Desktop/Master/Bilder/midlinesearch_cluster.png, id=879, 577.15625pt 
 x 388.45125pt>
 File: /home/tb/Desktop/Master/Bilder/midlinesearch_cluster.png Graphic file (ty
 pe png)
 <use /home/tb/Desktop/Master/Bilder/midlinesearch_cluster.png>
 Package pdftex.def Info: /home/tb/Desktop/Master/Bilder/midlinesearch_cluster.p
-ng  used on input line 416.
+ng  used on input line 288.
 (pdftex.def)             Requested size: 356.91278pt x 240.22676pt.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 426.
+(babel)             in language  on input line 298.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 426.
+(babel)             in language  on input line 298.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 426.
+(babel)             in language  on input line 298.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 426.
- [39pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
-11}) has been already used, duplicate ignored
+(babel)             in language  on input line 298.
+ [38pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
+14}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.426 
+l.298 
        </home/tb/Desktop/Master/Bilder/midlinesearch_cluster.png>]
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 476.
+(babel)             in language  on input line 309.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 476.
+(babel)             in language  on input line 309.
+
+Underfull \hbox (badness 10000) in paragraph at lines 321--322
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 322--323
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 324--325
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 325--326
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 327--328
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 328--329
+
+ []
+
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 484.
+(babel)             in language  on input line 335.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 484.
+(babel)             in language  on input line 335.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 484.
+(babel)             in language  on input line 335.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 484.
- [40]
-Underfull \hbox (badness 10000) in paragraph at lines 488--489
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 489--490
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 491--492
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 492--493
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 494--495
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 495--496
-
- []
-
-
-Overfull \hbox (28.09392pt too wide) in paragraph at lines 504--508
+(babel)             in language  on input line 335.
+[39]
+Overfull \hbox (28.09392pt too wide) in paragraph at lines 337--341
 \T1/lmr/m/n/10.95 Li-ne-Va-lid-ti-on-Ta-ble, un-ter-ein-an-der ver-gli-chen. Da
 -durch wird je-der Linien-Punkt (LineValidtionTable-
  []
 
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 516.
+(babel)             in language  on input line 347.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 516.
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 516.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 516.
-[41]
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 567.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 567.
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 567.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 567.
- [42]
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 605.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 605.
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 605.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 605.
- [43]
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 624.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 624.
-</home/tb/Desktop/Master/Bilder/indrivedir.png, id=798, 416.55624pt x 399.4925p
+(babel)             in language  on input line 347.
+</home/tb/Desktop/Master/Bilder/indrivedir.png, id=890, 416.55624pt x 399.4925p
 t>
 File: /home/tb/Desktop/Master/Bilder/indrivedir.png Graphic file (type png)
 <use /home/tb/Desktop/Master/Bilder/indrivedir.png>
 Package pdftex.def Info: /home/tb/Desktop/Master/Bilder/indrivedir.png  used on
- input line 635.
+ input line 358.
 (pdftex.def)             Requested size: 356.91278pt x 342.30722pt.
 
-Underfull \vbox (badness 3792) has occurred while \output is active []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 642.
+(babel)             in language  on input line 365.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 642.
+(babel)             in language  on input line 365.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 642.
+(babel)             in language  on input line 365.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 642.
- [44]
+(babel)             in language  on input line 365.
+ [40]
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 645.
+(babel)             in language  on input line 368.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 645.
+(babel)             in language  on input line 368.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 660.
+(babel)             in language  on input line 383.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 660.
+(babel)             in language  on input line 383.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 660.
+(babel)             in language  on input line 383.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 660.
+(babel)             in language  on input line 383.
 
-[45pdfTeX warning (ext4): destination with the same identifier (name{figure.6.1
-2}) has been already used, duplicate ignored
+[41pdfTeX warning (ext4): destination with the same identifier (name{figure.6.1
+5}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.660 
+l.383 
        </home/tb/Desktop/Master/Bilder/indrivedir.png>]
-</home/tb/Desktop/Master/Bilder/safetytrack2.png, id=809, 454.69875pt x 409.53p
+</home/tb/Desktop/Master/Bilder/safetytrack2.png, id=900, 454.69875pt x 409.53p
 t>
 File: /home/tb/Desktop/Master/Bilder/safetytrack2.png Graphic file (type png)
 <use /home/tb/Desktop/Master/Bilder/safetytrack2.png>
 Package pdftex.def Info: /home/tb/Desktop/Master/Bilder/safetytrack2.png  used 
-on input line 677.
+on input line 400.
 (pdftex.def)             Requested size: 356.91278pt x 321.463pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 684.
+(babel)             in language  on input line 407.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 684.
+(babel)             in language  on input line 407.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 684.
+(babel)             in language  on input line 407.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 684.
- [46]
-</home/tb/Desktop/Master/Bilder/safetytrack.png, id=814, 477.785pt x 410.53375p
+(babel)             in language  on input line 407.
+ [42]
+</home/tb/Desktop/Master/Bilder/safetytrack.png, id=905, 477.785pt x 410.53375p
 t>
 File: /home/tb/Desktop/Master/Bilder/safetytrack.png Graphic file (type png)
 <use /home/tb/Desktop/Master/Bilder/safetytrack.png>
 Package pdftex.def Info: /home/tb/Desktop/Master/Bilder/safetytrack.png  used o
-n input line 691.
+n input line 414.
 (pdftex.def)             Requested size: 356.91278pt x 306.67177pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 698.
+(babel)             in language  on input line 421.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 698.
+(babel)             in language  on input line 421.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 698.
+(babel)             in language  on input line 421.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 698.
- [47pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
-13}) has been already used, duplicate ignored
+(babel)             in language  on input line 421.
+ [43pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
+16}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.698 
-       </home/tb/Desktop/Master/Bilder/safetytrack2.png>]
+l.421 
+       </home/tb/Desktop/Master/Bilder/safetytrack2.png>])
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 726.
+(babel)             in language  on input line 85.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 726.
+(babel)             in language  on input line 85.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 726.
+(babel)             in language  on input line 85.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 726.
- [48pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
-14}) has been already used, duplicate ignored
+(babel)             in language  on input line 85.
+ [44pdfTeX warning (ext4): destination with the same identifier (name{figure.6.
+17}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.726 \end{enumerate}
-                      </home/tb/Desktop/Master/Bilder/safetytrack.png>])
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 85.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 85.
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 85.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 85.
-
-[49]
+l.85 \include{007_Kapitel6/Kapitel6}
+                                     </home/tb/Desktop/Master/Bilder/safetytrac
+k.png>]
 \openout2 = `008_Kapitel7/Kapitel7.aux'.
 
  (./008_Kapitel7/Kapitel7.tex
@@ -2689,7 +2705,7 @@ blio-thek Zbar. ZBar ist ei-ne Open-Source-
  []
 
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/gui.png, i
-d=829, 373.395pt x 325.215pt>
+d=917, 373.395pt x 325.215pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/gui.p
 ng Graphic file (type png)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/gui.pn
@@ -2698,7 +2714,7 @@ Package pdftex.def Info: /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Ka
 pitel7/Bilder/gui.png  used on input line 22.
 (pdftex.def)             Requested size: 223.06964pt x 194.2869pt.
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/startbox.p
-ng, id=830, 701.62125pt x 404.51125pt>
+ng, id=918, 701.62125pt x 404.51125pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/start
 box.png Graphic file (type png)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/startb
@@ -2714,7 +2730,7 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 41.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 41.
-[50
+[45
 
 
 
@@ -2731,7 +2747,7 @@ Package babel Info: Redefining ngerman shorthand "|
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 43.
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/crosswalk.
-png, id=838, 328.22626pt x 418.56375pt>
+png, id=924, 328.22626pt x 418.56375pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/cross
 walk.png Graphic file (type png)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/crossw
@@ -2750,7 +2766,7 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 61.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 61.
- [51pdfTeX warning (ext4): destination with the same identifier (name{figure.7.
+ [46pdfTeX warning (ext4): destination with the same identifier (name{figure.7.
 2}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
@@ -2759,7 +2775,7 @@ l.61
       </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/star
 tbox.png>]
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/goalline_s
-earch.png, id=844, 258.9675pt x 132.495pt>
+earch.png, id=930, 258.9675pt x 132.495pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/goall
 ine_search.png Graphic file (type png)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/goalli
@@ -2768,7 +2784,7 @@ Package pdftex.def Info: /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Ka
 pitel7/Bilder/goalline_search.png  used on input line 67.
 (pdftex.def)             Requested size: 223.06964pt x 114.1335pt.
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/goalline.p
-ng, id=845, 450.68375pt x 418.56375pt>
+ng, id=931, 450.68375pt x 418.56375pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/goall
 ine.png Graphic file (type png)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/goalli
@@ -2787,7 +2803,7 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 82.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 82.
- [52pdfTeX warning (ext4): destination with the same identifier (name{figure.7.
+ [47pdfTeX warning (ext4): destination with the same identifier (name{figure.7.
 3}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
@@ -2803,153 +2819,130 @@ l.82
 swalk.png> </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder
 /goalline_search.png>]
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 121.
+(babel)             in language  on input line 87.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 121.
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 126.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 126.
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 126.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 126.
- [53pdfTeX warning (ext4): destination with the same identifier (name{figure.7.
-5}) has been already used, duplicate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.126 
-       </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/goa
-lline.png>]
+(babel)             in language  on input line 87.
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/crossing.p
-ng, id=854, 320.19624pt x 418.56375pt>
+ng, id=936, 320.19624pt x 418.56375pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/cross
 ing.png Graphic file (type png)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/crossi
 ng.png>
 Package pdftex.def Info: /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Ka
-pitel7/Bilder/crossing.png  used on input line 129.
+pitel7/Bilder/crossing.png  used on input line 95.
 (pdftex.def)             Requested size: 223.06964pt x 291.6003pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 150.
+(babel)             in language  on input line 101.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 150.
+(babel)             in language  on input line 101.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 150.
+(babel)             in language  on input line 101.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 150.
- [54pdfTeX warning (ext4): destination with the same identifier (name{figure.7.
-6}) has been already used, duplicate ignored
+(babel)             in language  on input line 101.
+ [48pdfTeX warning (ext4): destination with the same identifier (name{figure.7.
+5}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.150 \item[]
-              \textbf{max\_to\_right\_mid\_line\_direction\_for\_crossing}\h...
- </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/crossing.
-png>]
+l.101 
+       </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/goa
+lline.png>]
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 187.
+(babel)             in language  on input line 107.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 187.
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 197.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 197.
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 197.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 197.
- [55]
+(babel)             in language  on input line 107.
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/marking_bo
-x_search.png, id=863, 206.7725pt x 236.885pt>
+x_search.png, id=941, 206.7725pt x 236.885pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/marki
 ng_box_search.png Graphic file (type png)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/markin
 g_box_search.png>
 Package pdftex.def Info: /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Ka
-pitel7/Bilder/marking_box_search.png  used on input line 200.
+pitel7/Bilder/marking_box_search.png  used on input line 120.
 (pdftex.def)             Requested size: 223.06964pt x 255.56088pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 126.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 126.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 126.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 126.
+ [49pdfTeX warning (ext4): destination with the same identifier (name{figure.7.
+6}) has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.126 
+       </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/cro
+ssing.png>]
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/box.png, i
-d=864, 329.23pt x 418.56375pt>
+d=946, 329.23pt x 418.56375pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/box.p
 ng Graphic file (type png)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/box.pn
 g>
 Package pdftex.def Info: /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Ka
-pitel7/Bilder/box.png  used on input line 214.
+pitel7/Bilder/box.png  used on input line 134.
 (pdftex.def)             Requested size: 223.06964pt x 283.60408pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 220.
+(babel)             in language  on input line 140.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 220.
+(babel)             in language  on input line 140.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 220.
+(babel)             in language  on input line 140.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 220.
- [56pdfTeX warning (ext4): destination with the same identifier (name{figure.7.
+(babel)             in language  on input line 140.
+ [50pdfTeX warning (ext4): destination with the same identifier (name{figure.7.
 7}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.220 
+l.140 
        </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/mar
 king_box_search.png>]
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/marking.pn
-g, id=870, 346.29375pt x 418.56375pt>
+g, id=952, 346.29375pt x 418.56375pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/marki
 ng.png Graphic file (type png)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/markin
 g.png>
 Package pdftex.def Info: /home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Ka
-pitel7/Bilder/marking.png  used on input line 224.
+pitel7/Bilder/marking.png  used on input line 144.
 (pdftex.def)             Requested size: 223.06964pt x 269.62985pt.
+)
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 237.
+(babel)             in language  on input line 86.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 237.
+(babel)             in language  on input line 86.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 237.
+(babel)             in language  on input line 86.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 237.
- [57pdfTeX warning (ext4): destination with the same identifier (name{figure.7.
+(babel)             in language  on input line 86.
+ [51pdfTeX warning (ext4): destination with the same identifier (name{figure.7.
 8}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.237 \item[]
-              \textbf{max\_lane\_object\_forsight\_distance}\hfill \\pdfTeX war
-ning (ext4): destination with the same identifier (name{figure.7.9}) has been a
-lready used, duplicate ignored
+l.86 \include{008_Kapitel7/Kapitel7}
+                                    pdfTeX warning (ext4): destination with the
+ same identifier (name{figure.7.9}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.237 \item[]
-              \textbf{max\_lane\_object\_forsight\_distance}\hfill \\ </home/tb
-/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/box.png> </home/tb/
-gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/marking.png>]
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 284.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 284.
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 284.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 284.
-
-[58])
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 86.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 86.
-Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 86.
-Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 86.
- [59]
+l.86 \include{008_Kapitel7/Kapitel7}
+                                     </home/tb/gazebo_road_generation/02_Arbeit
+_Latex/008_Kapitel7/Bilder/box.png> </home/tb/gazebo_road_generation/02_Arbeit_
+Latex/008_Kapitel7/Bilder/marking.png>]
 \openout2 = `009_Kapitel8/Kapitel8.aux'.
 
  (./009_Kapitel8/Kapitel8.tex
@@ -2970,7 +2963,7 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 37.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 37.
-[60
+[52
 
 
 
@@ -2980,7 +2973,7 @@ Package babel Info: Redefining ngerman shorthand "|
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 59.
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/roadspeeds
-igngs.jpg, id=887, 5054.885pt x 568.1225pt>
+igngs.jpg, id=961, 5054.885pt x 568.1225pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/roads
 peedsigngs.jpg Graphic file (type jpg)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/roadsp
@@ -2996,9 +2989,9 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 75.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 75.
- [61]
+ [53]
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/sqdiff.png
-, id=892, 255.20343pt x 31.61812pt>
+, id=966, 255.20343pt x 31.61812pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/sqdif
 f.png Graphic file (type png)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/sqdiff
@@ -3007,7 +3000,7 @@ Package pdftex.def Info: /home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Ka
 pitel8/Bilder/sqdiff.png  used on input line 86.
 (pdftex.def)             Requested size: 356.91278pt x 44.22162pt.
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/ccorr.png,
- id=893, 243.15843pt x 31.61812pt>
+ id=967, 243.15843pt x 31.61812pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/ccorr
 .png Graphic file (type png)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/ccorr.
@@ -3027,7 +3020,7 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 132.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 132.
- [62pdfTeX warning (ext4): destination with the same identifier (name{figure.8.
+ [54pdfTeX warning (ext4): destination with the same identifier (name{figure.8.
 1}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
@@ -3050,7 +3043,7 @@ dspeedsigngs.jpg> </home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8
 /Bilder/sqdiff.png> </home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapite
 l8/Bilder/ccorr.png>]
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/mnist.png,
- id=907, 370.0224pt x 20.2356pt>
+ id=980, 370.0224pt x 20.2356pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/mnist
 .png Graphic file (type png)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/mnist.
@@ -3074,7 +3067,7 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 171.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 171.
- [63pdfTeX warning (ext4): destination with the same identifier (name{figure.8.
+ [55pdfTeX warning (ext4): destination with the same identifier (name{figure.8.
 4}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
@@ -3083,7 +3076,7 @@ l.171 \item[]
               \textbf{Kanten}\hfill \\ </home/tb/gazebo_road_generation/02_Arbe
 it_Latex/009_Kapitel8/Bilder/mnist.png>]
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/tree.png, 
-id=913, 2040.62375pt x 1086.0575pt>
+id=987, 2040.62375pt x 1086.0575pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/tree.
 png Graphic file (type png)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/tree.p
@@ -3096,7 +3089,7 @@ Package babel Info: Redefining ngerman shorthand "|
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 191.
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/gini.png, 
-id=914, 772.8875pt x 71.26625pt>
+id=988, 772.8875pt x 71.26625pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/gini.
 png Graphic file (type png)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/gini.p
@@ -3112,7 +3105,7 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 211.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 211.
- [64pdfTeX warning (ext4): destination with the same identifier (name{figure.8.
+ [56pdfTeX warning (ext4): destination with the same identifier (name{figure.8.
 5}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
@@ -3121,7 +3114,7 @@ l.211
        </home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/tre
 e.png>]
 </home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/rfm.png, i
-d=920, 594.22pt x 445.665pt>
+d=995, 594.22pt x 445.665pt>
 File: /home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/rfm.p
 ng Graphic file (type png)
 <use /home/tb/gazebo_road_generation/02_Arbeit_Latex/009_Kapitel8/Bilder/rfm.pn
@@ -3137,7 +3130,7 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 255.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 255.
- [65pdfTeX warning (ext4): destination with the same identifier (name{figure.8.
+ [57pdfTeX warning (ext4): destination with the same identifier (name{figure.8.
 6}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
@@ -3160,7 +3153,7 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 292.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 292.
- [66pdfTeX warning (ext4): destination with the same identifier (name{figure.8.
+ [58pdfTeX warning (ext4): destination with the same identifier (name{figure.8.
 7}) has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
@@ -3188,7 +3181,7 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 328.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 328.
- [67])
+ [59])
 Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 87.
 Package babel Info: Redefining ngerman shorthand "~
@@ -3197,15 +3190,97 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 87.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 87.
- [68]
+ [60]
+\openout2 = `010_Kapitel9/Kapitel9.aux'.
+
+ (./010_Kapitel9/Kapitel9.tex
+chapter 9.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 5.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 5.
+)
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 88.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 88.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 88.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 88.
+ [61
+
+
+
+]
+\openout2 = `011_Kapitel10/Kapitel10.aux'.
+
+ (./011_Kapitel10/Kapitel10.tex
+chapter 10.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 5.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 5.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 13.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 13.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 23.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 23.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 30.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 30.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 35.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 35.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 35.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 35.
+[62
+
+
+
+]
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 37.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 37.
+
+Overfull \hbox (30.36714pt too wide) in paragraph at lines 40--41
+\T1/lmr/m/n/10.95 Der Ramer-Douglas-Peucker-Algorithmus re-du-ziert die Linien-
+Punkte des Line-Follower-Algorithmus
+ []
+
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 42.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 42.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 46.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 46.
+)
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 89.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 89.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 89.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 89.
+ [63]
 Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 116.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 116.
  (./_iMain.bbl
 LaTeX Font Info:    Try loading font information for T1+lmtt on input line 14.
-
-(/usr/share/texmf/tex/latex/lm/t1lmtt.fd
+ (/usr/share/texmf/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 Underfull \hbox (badness 10000) in paragraph at lines 32--38
@@ -3221,7 +3296,7 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 115.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 115.
-[69
+[64
 
 
 ]
@@ -3275,31 +3350,179 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 229.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 229.
-[70])
+[65])
 No file _iMain.ind.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 133.
+(babel)             in language  on input line 129.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 133.
+(babel)             in language  on input line 129.
 Package babel Info: Redefining ngerman shorthand "|
-(babel)             in language  on input line 133.
+(babel)             in language  on input line 129.
 Package babel Info: Redefining ngerman shorthand "~
-(babel)             in language  on input line 133.
-[71]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 133.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 133.
- (./_iMain.aux (./001_Titel/-pagestyle-pre.aux) (./001_Titel/erklaerung.aux) (.
-/001_Titel/danksagung.aux) (./001_Titel/Kurzfassung.aux)
+(babel)             in language  on input line 129.
+[66]
+chapter A.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 131.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 131.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 135.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 135.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 181.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 181.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 181.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 181.
+[67
+
+]
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 185.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 185.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 243.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 243.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 243.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 243.
+ [68]
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 270.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 270.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 285.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 285.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 285.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 285.
+ [69]
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 291.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 291.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 304.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 304.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 342.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 342.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 342.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 342.
+ [70]
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 346.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 346.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 399.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 399.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 399.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 399.
+ [71]
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 438.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 438.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 438.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 438.
+ [72]
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 461.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 461.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 487.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 487.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 487.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 487.
+ [73]
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 489.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 489.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 525.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 525.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 542.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 542.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 542.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 542.
+ [74]
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 575.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 575.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 589.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 589.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 589.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 589.
+ [75]
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 634.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 634.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 634.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 634.
+ [76]
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 642.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 642.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 642.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 642.
+ [77]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 642.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 642.
+ (./_iMain.aux
+(./001_Titel/-pagestyle-pre.aux) (./001_Titel/erklaerung.aux)
+(./001_Titel/danksagung.aux) (./001_Titel/Kurzfassung.aux)
 (./001_Titel/Inhalt_Listen.aux) (./001_Titel/nomenklatur.aux)
 (./001_Titel/-pagestyle-main.aux) (./002_Einleitung/Einleitung.aux)
 (./003_Kapitel2/Kapitel2.aux) (./004_Kapitel3/Kapitel3.aux)
 (./005_Kapitel4/Kapitel4.aux) (./006_Kapitel5/Kapitel5.aux)
 (./007_Kapitel6/Kapitel6.aux) (./008_Kapitel7/Kapitel7.aux)
-(./009_Kapitel8/Kapitel8.aux))
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 133.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 133.
+(./009_Kapitel8/Kapitel8.aux) (./010_Kapitel9/Kapitel9.aux)
+(./011_Kapitel10/Kapitel10.aux))
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 642.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 642.
 Package rerunfilecheck Info: File `_iMain.out' has not changed.
-(rerunfilecheck)             Checksum: D571ECCD3604A943DAC12A1E3AB4A7D9;4957.
+(rerunfilecheck)             Checksum: 256CEF748D00FC0AA3826D4E0AC74D84;6632.
 
 
 LaTeX Warning: There were multiply-defined labels.
@@ -3318,10 +3541,10 @@ LaTeX Warning: There were multiply-defined labels.
 ### simple group (level 1) entered at line 216 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 24635 strings out of 492982
- 451270 string characters out of 6134896
- 629098 words of memory out of 5000000
- 27162 multiletter control sequences out of 15000+600000
+ 24743 strings out of 492982
+ 454303 string characters out of 6134896
+ 631516 words of memory out of 5000000
+ 27223 multiletter control sequences out of 15000+600000
  93159 words of font info for 85 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  78i,14n,68p,8879b,1819s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -3340,10 +3563,10 @@ xmf/fonts/type1/public/lm/lmr6.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8
 pe1/public/lm/lmsso10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></
 usr/share/texmf/fonts/type1/public/lm/lmsy6.pfb></usr/share/texmf/fonts/type1/p
 ublic/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb>
-Output written on _iMain.pdf (82 pages, 9291016 bytes).
+Output written on _iMain.pdf (88 pages, 9378106 bytes).
 PDF statistics:
- 1167 PDF objects out of 1200 (max. 8388607)
- 984 compressed objects within 10 object streams
- 329 named destinations out of 1000 (max. 500000)
- 738 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1306 PDF objects out of 1440 (max. 8388607)
+ 1109 compressed objects within 12 object streams
+ 357 named destinations out of 1000 (max. 500000)
+ 905 words of extra memory for PDF output out of 10000 (max. 10000000)
 

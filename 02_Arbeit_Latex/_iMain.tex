@@ -85,8 +85,8 @@
 \include{007_Kapitel6/Kapitel6}
 \include{008_Kapitel7/Kapitel7}
 \include{009_Kapitel8/Kapitel8}
-%\include{010_Kapitel9/Kapitel9}
-%\include{011_Kapitel10/Kapitel10}
+\include{010_Kapitel9/Kapitel9}
+\include{011_Kapitel10/Kapitel10}
 %\include{012_Kapitel11/Kapitel11}
 %\include{013_Kapitel12/Kapitel12}
 %\include{014_Kapitel13/Kapitel13}
@@ -125,9 +125,518 @@
 %\makeindex
 \printindex
 %-------------------------------------------------------------------
-%\newpage
+
+\newpage
+%\addcontentsline{toc}{chapter}{Anhang}
+\chapter{Anhang}
+\label{cha:Anhang}
 %\include{Anhang/Anhang02}
 %\include{Anhang/anhang1}
+\section{Start-Of-Lines-Search Initialisierungsparameter}
+\label{cha:Start-Of-Lines-Search Initialisierungsparameter}
+
+\begin{enumerate}
+
+\item[] \textbf{top\_row} \hfill \\
+Die oberste Bildzeile in der nach Liniensegmenten gesucht werden soll.
+
+\item[] \textbf{mid\_row} \hfill \\
+Die mittlere Bildzeile in der nach Liniensegmenten gesucht werden soll.
+
+\item[] \textbf{bottom\_row} \hfill \\
+Die unterste Bildzeile in der nach Liniensegmenten gesucht werden soll.
+
+\item[] \textbf{min\_line\_width} \hfill \\
+Die minimale Breite eines zu suchenden Liniensegments.
+
+\item[] \textbf{min\_track\_width} \hfill \\
+Die minimale Breite der Fahrbahn.
+
+\item[] \textbf{max\_track\_width} \hfill \\
+Die maximale Breite der Fahrbahn.
+
+\item[] \textbf{window\_size\_for\_line\_search} \hfill \\
+Die Fenstergröße welche pro Zeile über das Bild geschoben wird um Liniensegmente zu finden.
+
+\item[] \textbf{outer\_line\_threshold} \hfill \\
+Der minimale Pixelintensitätswert für ein Pixel das zu einem äußeren Liniensegment gehört.
+
+\item[] \textbf{mid\_line\_threshold} \hfill \\
+Der minimale Pixelintensitätswert für ein Pixel das zu einem mittleren Liniensegment gehört.
+
+\item[] \textbf{window\_size\_for\_mid\_line\_search} \hfill \\
+Die Fenstergröße welche pro Zeile zwischen den Außenliniensegmenten über das Bild geschoben wird um mittlere Liniensegmente zu finden.
+
+\item[] \textbf{max\_distance\_between\_adjacent\_row\_pairs} \hfill \\
+Der maximale horizontale Abstand in Pixeln zwischen benachbarten Liniensegmenten auf verschiedenen Bildzeilen.
+
+\item[] \textbf{car\_position\_in\_frame} \hfill \\
+Der Spaltenmittelpunkt des Fahrzeugs im Kamerabild in Pixeln.
+
+\item[] \textbf{road\_model\_left\_line} \hfill \\
+Die Spaltenposition der linken Linie im unteren Bildbereich in Pixeln.
+
+\item[] \textbf{road\_model\_left\_line} \hfill \\
+Die Spaltenposition der rechten Linie im unteren Bildbereich in Pixeln.
+\end{enumerate}
+
+
+
+\section{Vanishing-Point-Search Initialisierungsparameter}
+\label{cha:Vanishing-Point-Search Initialisierungsparameter}
+
+
+\begin{enumerate}
+
+\item[] \textbf{canny\_low\_threshold} \hfill \\
+Der untere Hystere-Schwellwert des Canny-Edge Algorithmus.
+
+\item[] \textbf{canny\_high\_threshold} \hfill \\
+Der obere Hystere-Schwellwert des Canny-Edge Algorithmus.
+
+
+\item[] \textbf{canny\_kernel\_size} \hfill \\
+Die Filtergröße des Canny-Edge Algorithmus.
+
+
+\item[] \textbf{hough\_lines\_rho} \hfill \\
+Die Entfernungsauflösung des Hough-Lines Algorithmus in Pixeln.
+
+\item[] \textbf{hough\_lines\_theta} \hfill \\
+Die Winkelauflösung des Hough-Lines Algorithmus in Radiant.
+
+\item[] \textbf{hough\_lines\_min\_intersections} \hfill \\
+Die minimale Anzahl an zu findenden Linienpunkten um als valide Linie zu gelten.
+
+
+\item[] \textbf{hough\_lines\_min\_line\_length} \hfill \\
+Die minimale Länge einer gefundenen Linie um als valide Linie zu gelten. 
+
+\item[] \textbf{hough\_lines\_max\_line\_gap} \hfill \\
+Die maximale Lücke zwischen zwei gefundenen Linien um sie in einem Liniensegment zu vereinen.
+
+\item[] \textbf{x\_roi\_start} \hfill \\
+Die Startposition in X-Richtung der Region of Interest in welcher Hough-Linien gesucht werden.
+
+\item[] \textbf{y\_roi\_start} \hfill \\
+Die Startposition in Y-Richtung der Region of Interest in welcher Hough-Linien gesucht werden.
+
+
+\item[] \textbf{roi\_width} \hfill \\
+Die breite der Region of Interest in welcher Hough-Linien gesucht werden.
+
+
+\item[] \textbf{roi\_height} \hfill \\
+Die höhe der Region of Interest in welcher Hough-Linien gesucht werden.
+
+
+\item[] \textbf{min\_left\_line\_angle} \hfill \\
+Der minimale Winkel einer Hough-Linie um als linke Außenlinie wahrgenommen zu werden.
+
+
+\item[] \textbf{max\_left\_line\_angle} \hfill \\
+Der maximale Winkel einer Hough-Linie um als linke Außenlinie wahrgenommen zu werden.
+
+
+\item[] \textbf{min\_right\_line\_angle} \hfill \\
+Der minimale Winkel einer Hough-Linie um als rechte Außenlinie wahrgenommen zu werden.
+
+
+\item[] \textbf{max\_right\_line\_angle} \hfill \\
+Der maximale Winkel einer Hough-Linie um als rechte Außenlinie wahrgenommen zu werden.
+
+\item[] \textbf{x\_min\_left\_line} \hfill \\
+Die minimale Spaltenposition in Pixeln einer Hough-Linie um als linke Außenlinie wahrgenommen zu werden.
+
+\item[] \textbf{x\_max\_left\_line} \hfill \\
+Die maximale Spaltenposition in Pixeln einer Hough-Linie um als linke Außenlinie wahrgenommen zu werden.
+
+\item[] \textbf{x\_min\_right\_line} \hfill \\
+Die minimale Spaltenposition in Pixeln einer Hough-Linie um als rechten Außenlinie wahrgenommen zu werden.
+
+\item[] \textbf{x\_max\_right\_line} \hfill \\
+Die maximale Spaltenposition in Pixeln einer Hough-Linie um als rechten Außenlinie wahrgenommen zu werden.
+
+\item[] \textbf{car\_mid\_position\_x} \hfill \\
+Die Spaltenposition des Fahrzeugmittelpunkts im Kamerabild in Pixeln.
+
+\item[] \textbf{car\_mid\_position\_y} \hfill \\
+Die Zeilenposition des Fahrzeugmittelpunkts im Kamerabild in Pixeln.
+
+\item[] \textbf{max\_standard\_deviation\_for\_valid\_vanishing\_point} \hfill \\
+Die maximale Standardabweichung von gefundenen Vanishing-Points um in Betracht gezogen zu werden.
+\end{enumerate}
+
+\section{Line-Follower Initialisierungsparameter}
+\label{cha:Line-Follower Initialisierungsparameter}
+
+\begin{enumerate}
+
+\item[] \textbf{max\_iterations} \hfill \\
+Die maximale Anzahl von rekursiven Aufrufen des Line-Follower Algorithmus für eine Außenlinie.
+\item[] \textbf{search\_radius} \hfill \\
+Die maximale Distanz in Pixeln in der an einer Position nach Linienpunkten gesucht wird.
+\item[] \textbf{field\_of\_view} \hfill \\
+Der Suchbereich in Grad in dem an einer Position nach Linienpunkten gesucht wird.
+\item[] \textbf{max\_weight\_direction\_scaler} \hfill \\
+Der Gewichtungsfaktor mit dem die Suchrichtung mit dem höchsten Pixelintensitäten multipliziert wird.
+\item[] \textbf{max\_consecutive\_back\_steps} \hfill \\
+Die maximale Anzahl an aufeinanderfolgenden Rückwärtsschritten bei der Liniensuche um den Algorithmus zu terminieren.
+\item[] \textbf{max\_got\_stuck\_counts} \hfill \\
+Die maximale Anzahl von Situationen in denen die Liniensuche in einem Bildbereich feststecken darf.
+\item[] \textbf{min\_travel\_distance\_to\_not\_got\_stuck} \hfill \\
+Die minimale Distanz in Pixeln die sich die Liniensuche fortbewegen muss um nicht den max\_got\_stuck\_counts-Counter zu erhöhen.
+\end{enumerate}
+
+\section{Line-Points-Reduce Initialisierungsparameter}
+\label{cha:Line-Points-Reduce Initialisierungsparameter}
+
+\begin{enumerate}
+
+\item[] \textbf{max\_distance\_to\_reduce\_points} \hfill \\
+Die maximale eudklidische Distanz eines Punktes zu einer Polylinie in Pixeln unter der der Punkt durch RDP verworfen wird.
+
+
+\end{enumerate}
+
+
+
+\section{Mid-Line-Search Initialisierungsparameter}
+\label{cha:Mid-Line-Search Initialisierungsparameter}
+
+\begin{enumerate}
+
+\item[] \textbf{min\_pixel\_value\_for\_clustering} \hfill \\
+Der minimale Schwellwert einer Pixelinstensität um als Mittellinienpunkt wahrgenommen zu werden.
+
+
+\item[] \textbf{max\_radial\_scan\_out\_of\_cluster\_value} \hfill \\
+Der maximale Pixelintensiätswert der durch die radiale Suche um einen Mittellinienpunkt gefunden werden darf, damit dieser Mittellinienpunkt als valider Punkt wahrgenommen wird.
+
+
+\item[] \textbf{radial\_scan\_scaling\_factor} \hfill \\
+Der Skalierungsfaktor für den Radius der radialen Suche.
+
+
+\item[] \textbf{mid\_line\_length} \hfill \\
+Die Länge der Mittellinie in Birdseye-Perspektive in Pixel.
+
+
+\item[] \textbf{min\_valuable\_cluster\_size} \hfill \\
+Die minimale Anzahl von validen Mittellinienpunkten die zu einem Bereichsschlüssel gehören müssen um als valide Mittellinie zu zählen.
+
+
+\item[] \textbf{min\_cluster\_distance} \hfill \\
+Der minimale euklidische Distanz zwischen zwei Mittellinienschwerpunkten um sie in einem Graph zusammenzuführen.
+
+
+\item[] \textbf{max\_cluster\_distance} \hfill \\
+Der maximale euklidische Distanz zwischen zwei Mittellinienschwerpunkten um sie in einem Graph zusammenzuführen.
+
+
+\item[] \textbf{car\_position\_x} \hfill \\
+Die Spaltenposition des Fahrzeugmittelpunkts im Kamerabild in Pixel.
+
+\item[] \textbf{car\_position\_y} \hfill \\
+Die Zeilenposition des Fahrzeugmittelpunkts im Kamerabild in Pixel
+
+
+\end{enumerate}
+
+\section{Line-Validation-Table-Creator Initialisierungsparameter}
+\label{cha:Line-Validation-Table-Creator Initialisierungsparameter}
+
+\begin{enumerate}
+
+\item[] \textbf{min\_left\_to\_mid\_line\_distance} \hfill \\
+Die minimale Distanz von der linken Außenlinie zur Mittellinie in Pixel.
+
+\item[] \textbf{max\_left\_to\_mid\_line\_distance} \hfill \\
+Die maximale Distanz von der linken Außenlinie zur Mittellinie in Pixel.
+
+\item[] \textbf{min\_left\_to\_right\_line\_distance} \hfill \\
+Die minimale Distanz von der linken Außenlinie zur rechten Außenlinie in Pixel.
+
+\item[] \textbf{max\_left\_to\_right\_line\_distance} \hfill \\
+Die maximale Distanz von der linken Außenlinie zur rechten Außenlinie in Pixel.
+
+\item[] \textbf{min\_right\_to\_mid\_line\_distance} \hfill \\
+Die minimale Distanz von der rechten Außenlinie zur Mittellinie in Pixel.
+
+\item[] \textbf{max\_right\_to\_mid\_line\_distance} \hfill \\
+Die maximale Distanz von der rechten Außenlinie zur Mittellinie in Pixel.
+
+\item[] \textbf{min\_right\_to\_left\_line\_distance} \hfill \\
+Die minimale Distanz von der rechten Außenlinie zur linken Außenlinie in Pixel.
+
+\item[] \textbf{max\_right\_to\_left\_line\_distance} \hfill \\
+Die maximale Distanz von der rechten Außenlinie zur linken Außenlinie in Pixel.
+
+\item[] \textbf{min\_mid\_to\_left\_line\_distance} \hfill \\
+Die minimale Distanz von der Mittellinie zur linken Außenlinie in Pixel.
+
+\item[] \textbf{max\_mid\_to\_left\_line\_distance} \hfill \\
+Die maximale Distanz von der Mittellinie zur linken Außenlinie in Pixel.
+
+\item[] \textbf{min\_mid\_to\_right\_line\_distance} \hfill \\
+Die minimale Distanz von der Mittellinie zur rechten Außenlinie in Pixel.
+
+\item[] \textbf{max\_mid\_to\_right\_line\_distance} \hfill \\
+Die maximale Distanz von der Mittellinie zur rechten Außenlinie in Pixel.
+
+
+\item[] \textbf{min\_left\_to\_mid\_pixel\_intensity} \hfill \\
+Der minimale Pixelintensitätswert bei der Suche von der linken Außenlinie zur Mittellinie um den einen gefundenen Punkt als validen Linienpunkt wahrzunehmen.
+
+\item[] \textbf{min\_left\_to\_right\_pixel\_intensity} \hfill \\
+Der minimale Pixelintensitätswert bei der Suche von der linken Außenlinie zur rechten Außenlinie um den einen gefundenen Punkt als validen Linienpunkt wahrzunehmen.
+
+\item[] \textbf{min\_right\_to\_mid\_pixel\_intensity} \hfill \\
+Der minimale Pixelintensitätswert bei der Suche von der rechten Außenlinie zur Mittellinie um den einen gefundenen Punkt als validen Linienpunkt wahrzunehmen.
+
+\item[] \textbf{min\_right\_to\_left\_pixel\_intensity} \hfill \\
+Der minimale Pixelintensitätswert bei der Suche von der rechten Außenlinie zur linken Außenlinie um den einen gefundenen Punkt als validen Linienpunkt wahrzunehmen.
+
+\item[] \textbf{min\_mid\_to\_left\_pixel\_intensity} \hfill \\
+Der minimale Pixelintensitätswert bei der Suche von der Mittellinie zur linken Außenlinie um den einen gefundenen Punkt als validen Linienpunkt wahrzunehmen.
+
+\item[] \textbf{min\_mid\_to\_right\_pixel\_intensity} \hfill \\
+Der minimale Pixelintensitätswert bei der Suche von der Mittellinie zur rechten Außenlinie um den einen gefundenen Punkt als validen Linienpunkt wahrzunehmen.
+
+
+\item[] \textbf{min\_left\_to\_mid\_line\_width} \hfill \\
+Der minimale breite eines Liniensegments, das von der linken Außenlinie aus im Bereich der Mittellinie gesucht wird, um als valides Liniensegment wahrgenommen zu werden.
+
+
+\item[] \textbf{max\_left\_to\_mid\_line\_width} \hfill \\
+Der maximale breite eines Liniensegments, das von der linken Außenlinie aus im Bereich der Mittellinie gesucht wird, um als valides Liniensegment wahrgenommen zu werden.
+
+\item[] \textbf{min\_left\_to\_right\_line\_width} \hfill \\
+Der minimale breite eines Liniensegments, das von der linken Außenlinie aus im Bereich der rechten Außenlinie gesucht wird, um als valides Liniensegment wahrgenommen zu werden.
+
+\item[] \textbf{max\_left\_to\_right\_line\_width} \hfill \\
+Der maximale breite eines Liniensegments, das von der linken Außenlinie aus im Bereich der rechten Außenlinie gesucht wird, um als valides Liniensegment wahrgenommen zu werden.
+
+\item[] \textbf{min\_right\_to\_mid\_line\_width} \hfill \\
+Der minimale breite eines Liniensegments, das von der rechten Außenlinie aus im Bereich der Mittellinie gesucht wird, um als valides Liniensegment wahrgenommen zu werden.
+
+\item[] \textbf{max\_right\_to\_mid\_line\_width} \hfill \\
+Der maximale breite eines Liniensegments, das von der rechten Außenlinie aus im Bereich der Mittellinie gesucht wird, um als valides Liniensegment wahrgenommen zu werden.
+
+\item[] \textbf{min\_right\_to\_left\_line\_width} \hfill \\
+Der minimale breite eines Liniensegments, das von der rechten Außenlinie aus im Bereich der linken Außenlinie gesucht wird, um als valides Liniensegment wahrgenommen zu werden.
+
+\item[] \textbf{max\_right\_to\_left\_line\_width} \hfill \\
+Der maximale breite eines Liniensegments, das von der rechten Außenlinie aus im Bereich der linken Außenlinie gesucht wird, um als valides Liniensegment wahrgenommen zu werden.
+
+\item[] \textbf{min\_mid\_to\_left\_line\_width} \hfill \\
+Der minimale breite eines Liniensegments, das von der Mittellinie aus im Bereich der linken Außenlinie gesucht wird, um als valides Liniensegment wahrgenommen zu werden.
+
+\item[] \textbf{max\_mid\_to\_left\_line\_width} \hfill \\
+Der maximale breite eines Liniensegments, das von der Mittellinie aus im Bereich der linken Außenlinie gesucht wird, um als valides Liniensegment wahrgenommen zu werden.
+
+\item[] \textbf{min\_mid\_to\_right\_line\_width} \hfill \\
+Der minimale breite eines Liniensegments, das von der Mittellinie aus im Bereich der rechten Außenlinie gesucht wird, um als valides Liniensegment wahrgenommen zu werden.
+
+\item[] \textbf{max\_mid\_to\_right\_line\_width} \hfill \\
+Der maximale breite eines Liniensegments, das von der Mittellinie aus im Bereich der rechten Außenlinie gesucht wird, um als valides Liniensegment wahrgenommen zu werden.
+
+\item[] \textbf{max\_distance\_of\_predicted\_to\_adjacent\_point} \hfill \\
+Die maximale euklidische Distanz in Pixel unter der ein gefundes benachbartes Liniensegment zu einem Punkt auf der Nachbarlinie gehört und somit eine höhere Priorität besitzt.
+
+
+\item[] \textbf{min\_start\_direction\_of\_line\_points\_in\_drive\_direction} \hfill \\
+Der minimale Startwinkel eines Linienpunktes in Fahrtrichtung.
+
+\item[] \textbf{max\_start\_direction\_of\_line\_points\_in\_drive\_direction} \hfill \\
+Der maximale Startwinkel eines Linienpunktes in Fahrtrichtung.
+
+\item[] \textbf{max\_direction\_difference\_of\_line\_points\_in\_drive\_direction} \hfill 
+Der maximale Winkelunterschied zwischen aufeinanderfolgenden Linienpunkten zur extraktion von Linienpunkten in Fahrtrichtung.
+
+
+
+\end{enumerate}
+
+\section{Safety-Rect Initialisierungsparameter}
+\label{cha:Safety-Rect Initialisierungsparameter}
+
+\begin{enumerate}
+
+\item[] \textbf{start\_of\_rect\_safety\_x} \hfill \\
+Der Startspaltenmittelpunkt des Sicherheitsbewertungsbreichs in Pixel.
+
+\item[] \textbf{start\_of\_rect\_safety\_y} \hfill \\
+Der Startzeilenmittelpunkt des Sicherheitsbewertungsbreichs in Pixel.
+
+\item[] \textbf{start\_search\_direction\_of\_rect\_safety} \hfill \\
+Der Startwinkel des Sicherheitsbewertungsbreichs in Pixel.
+
+\item[] \textbf{search\_rect\_width} \hfill \\
+Die Breite des Sicherheitsbewertungsbreichs in Pixel.
+
+\item[] \textbf{search\_rect\_height} \hfill \\
+Die Höhe des Sicherheitsbewertungsbreichs in Pixel.
+
+\item[] \textbf{rect\_border\_distance\_threshold\_for\_continous\_line} \hfill \\
+Der maximale Abstand in Pixel von Punkten die im Sicherheitsbewertungsbereichs liegen zur Außenkante des Sicherheitsbewertungsbereichs um sicherzustellen das die Linie durchgehend ist und dadurch eine höhre Priorität besitzt.
+
+\item[] \textbf{rect\_step\_length} \hfill \\
+Die Schrittweite des Sicherheitsbewertungsbereichs in Pixel.
+
+\end{enumerate}
+
+\section{Zebrastreifen- und Ziellinienerkennung Initialisierungsparameter}
+\label{cha:Zebrastreifen- und Ziellinienerkennung Initialisierungsparameter}
+
+\begin{enumerate}
+
+\item[] \textbf{min\_goal\_segment\_width}\hfill \\
+Die minimale Segmentbreite der Ziellinie.
+
+\item[] \textbf{max\_goal\_segment\_width}\hfill \\
+Die maximale Segmentbreite der Ziellinie.
+
+\item[] \textbf{min\_goal\_segments\_to\_find}\hfill \\
+Die minimale Anzahl von Segmenten die gefunden werden müssen um eine Ziellinie zu erkennen.
+
+\item[] \textbf{goal\_line\_field\_of\_view}\hfill \\
+Der Winkel der Sichtfelds in dem nach der Ziellinie gesucht wird.
+
+\item[] \textbf{max\_crosswalk\_forsight\_distance}\hfill \\
+Die Sichtweite in Pixel  in der vor dem Fahrzeug nach dem Zebrastreifen gesucht wird.
+
+\item[] \textbf{max\_crosswalk\_forsight\_step\_size}\hfill \\
+Die Schrittweite in der vor dem Fahrzeug nach Zebrastreifen gesucht wird.
+
+\item[] \textbf{min\_crosswalk\_segment\_width}\hfill \\
+Die minimale Segmentbreite des Zebrastreifens.
+
+\item[] \textbf{max\_crosswalk\_segment\_width}\hfill \\
+Die maximale Segmentbreite des Zebrastreifens.
+
+\item[] \textbf{min\_crosswalk\_segments\_to\_find}\hfill \\
+Die minimale Anzahl von Segmenten die gefunden werden müssen um einen Zebrastreifen zu erkennen.
+
+
+
+\end{enumerate}
+
+\section{Kreuzungserkennung Initialisierungsparameter}
+\label{cha:Kreuzungserkennung Initialisierungsparameter}
+
+
+\begin{enumerate}
+
+\item[] \textbf{min\_to\_left\_mid\_line\_direction\_for\_crossing}\hfill \\
+Der minimale Winkel einer Mittellinie die nach links orientiert ist um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{max\_to\_left\_mid\_line\_direction\_for\_crossing}\hfill \\
+Der maximale Winkel einer Mittellinie die nach links orientiert ist um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{min\_to\_right\_mid\_line\_direction\_for\_crossing}\hfill \\
+Der minimale Winkel einer Mittellinie die nach rechts orientiert ist um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{max\_to\_right\_mid\_line\_direction\_for\_crossing}\hfill \\
+Der maximale Winkel einer Mittellinie die nach rechts orientiert ist um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{min\_outline\_direction\_difference\_for\_crossing}\hfill \\
+Die minimale Winkeländerung einer Außenlinie um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+
+\item[] \textbf{min\_to\_left\_left\_line\_direction\_difference\_for\_crossing}\hfill \\
+Der minimale Winkel der linken Linie um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{max\_to\_left\_left\_line\_direction\_difference\_for\_crossing}\hfill \\
+Der maximale Winkel der linken Linie um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{min\_to\_right\_right\_line\_direction\_difference\_for\_crossing}\hfill \\
+Der minimale Winkel der rechten Linie um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{max\_to\_right\_right\_line\_direction\_difference\_for\_crossing}\hfill \\
+Der maximale Winkel der rechten Linie um als Kreuzungsmerkmal wahrgenommen zu werden.
+
+\item[] \textbf{max\_left\_line\_height\_for\_crossing}\hfill \\
+Die maximale Zeilenhöhe in Y welche die linke Bewertungstabelle in Fahrtrichtung haben darf um als Kreuzungsmerkmal wahrgenommen zu werden. 
+
+\item[] \textbf{max\_right\_line\_height\_for\_crossing}\hfill \\
+Die maximale Zeilenhöhe in Y welche die rechte Bewertungstabelle in Fahrtrichtung haben darf um als Kreuzungsmerkmal wahrgenommen zu werden. 
+
+\item[] \textbf{max\_left\_line\_size\_for\_crossing}\hfill \\
+Die maximale Punktanzahl welche die linke Bewertungstabelle in Fahrtrichtung haben darf um als Kreuzungsmerkmal wahrgenommen zu werden. 
+
+\item[] \textbf{max\_right\_line\_size\_for\_crossing}\hfill \\
+Die maximale Punktanzahl welche die rechte Bewertungstabelle in Fahrtrichtung haben darf um als Kreuzungsmerkmal wahrgenommen zu werden. 
+
+
+\end{enumerate}
+
+
+\section{Bodenmarkierung- und Hinderniserkennung Initialisierungsparameter}
+\label{cha:Bodenmarkierung- und Hinderniserkennung Initialisierungsparameter}
+
+
+\begin{enumerate}
+
+\item[] \textbf{max\_lane\_object\_forsight\_distance}\hfill \\
+Die Distanz in Pixel in der vor dem Fahrzeug nach Bodenmarkierungen und Hindernissen gesucht wird.
+
+\item[] \textbf{lane\_object\_forsight\_step\_size}\hfill \\
+Die Schwittweite in Pixel in der die Suche voranschreitet.
+
+\item[] \textbf{left\_in\_left\_lane\_lineiterator\_end\_offset}\hfill \\
+Der Offset von der linken Außenlinie zur Mittellinie in der linken Fahrspur für den Lineiterator.
+
+\item[] \textbf{left\_in\_right\_lane\_lineiterator\_start\_offset}\hfill \\
+Der Offset von der linken Außenlinie zur Mittellinie in der rechten Fahrspur für den Lineiterator.
+
+\item[] \textbf{left\_in\_right\_lane\_lineiterator\_end\_offset}\hfill \\
+Der Offset von der linken Außenlinie zur Rechtenaußenlinie in der rechten Fahrspur für den Lineiterator.
+
+\item[] \textbf{right\_in\_left\_lane\_lineiterator\_start\_offset}\hfill \\
+Der Offset von der rechten Außenlinie zur Mittellinie in der linken Fahrspur
+für den Lineiterator.
+
+\item[] \textbf{right\_in\_left\_lane\_lineiterator\_end\_offset}\hfill \\
+Der Offset von der rechten Außenlinie zur linken außenlinie in der linken Fahrspur für den Lineiterator.
+
+
+\item[] \textbf{right\_in\_right\_lane\_lineiterator\_end\_offset}\hfill \\
+Der Offset von der rechten Außenlinie zur Mittellinie in der rechten Fahrspur
+für den Lineiterator.
+
+\item[] \textbf{left\_in\_left\_lane\_radial\_outerline\_offset}\hfill \\
+Der Offset von der linken Außenlinie in die Mitte der linken Fahrspur für den Mittepunkt der radialen Suche.
+
+\item[] \textbf{left\_in\_right\_lane\_radial\_outerline\_offset}\hfill \\
+Der Offset von der linken Außenlinie in die Mitte der rechten Fahrspur für den Mittelpunkt der radialen Suche.
+
+\item[] \textbf{right\_in\_left\_lane\_radial\_outerline\_offset}\hfill \\
+Der Offset von der rechten Außenlinie in die Mitte der linken Fahrspur für den Mittelpunkt der radialen Suche.
+
+\item[] \textbf{right\_in\_right\_lane\_radial\_outerline\_offset}\hfill \\
+Der Offset von der rechten Außenlinie in die Mitte der rechten Fahrspur für den Mittelpunkt der radialen Suche.
+
+\item[] \textbf{lane\_object\_radial\_scan\_step\_size}\hfill \\
+Die Winkelschrittweite für die radiale Suche.
+
+\item[] \textbf{lane\_object\_radial\_scan\_radius}\hfill \\
+Der Radius der radialen Suche in der Fahrspur.
+
+\item[] \textbf{min\_marking\_segments\_threshold}\hfill \\
+Die minimale Anzahl von Segmenten die in der Fahrpur gefunden werden muss um eine Bodenmarkierung zu erkennen.
+
+\item[] \textbf{min\_box\_segments\_threshold}\hfill \\
+Die minimale Anzahl von Segmenten die in der Fahrspur gefunden werden muss um ein Hindernis zu erkennen.
+
+\item[] \textbf{min\_white\_pixels\_for\_box}\hfill \\
+Die miniemale Pixelanzahl eines Segments das das in der Fahrspur gefunden werden muss um eine Hindernis zu erkennen.
+
+
+
+
+
+\end{enumerate}
 
 
 \end{document}   % Nach dieser Zeile darf nichts mehr kommen

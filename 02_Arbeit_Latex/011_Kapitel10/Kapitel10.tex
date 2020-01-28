@@ -2,54 +2,67 @@
 %% Kapitel: Kapitel 4
 %%======================================================================
 
-\chapter{Mittelliniensuche und Grapherzeugung}
-\label{cha:Mittelliniensuche und Grapherzeugung} \index{Mittelliniensuche und Grapherzeugung}
+\chapter{Ergebnisse}
+\label{cha:Ergebnisse} \index{Mittelliniensuche und Grapherzeugung}
 %
 %
-Um eine robuste Linienerkennung zu erm{\"o}glichen muss auch die Mittellinie in betracht gezogen werden. Der Algorithmus nutzt dabei einen Clustering-Ansatz. Zuerst werden einzelne Pixel, die zu einer Mittellinie geh{\"o}ren in einer Gruppe zusammengef{\"u}hrt. Anschlie{\ss}end werden aufeinander Folgende Mittellinien-Gruppen, wenn sie unter einem gewissen Abstand voneinander entfernt sind, zu Knoten in einem Graphen vereint. In folgendem wird dieser Algorithmus n{\"a}her beschrieben.
-
-Der Algorithmus startet mit dem Einlesen des Graustufenbilds in Birdseye-Perspektive.
-Das Eingangsbild wird in Raster der H{\"o}he RH und der Breite RB aufgeteilt. Die einzelnen Bereiche stehen f{\"u}r Gruppen durch welche Mittellinien gekennzeichnet sind. Jeder Bildbereich wird dadurch mit einen Bereichsschl{\"u}ssel gekennzeichnet. Der Schl{\"u}ssel ist ein Tupel definiert durch pair<int,int>. Die einzelnen Bereichsschl{\"u}ssel sind abh{\"a}nig von der Bilddimension und der Rasterisierung.
-Der Schl{\"u}ssel eines Bereichs wird beschrieben durch Bildh{\"o}he/RH (erster Wert des Tupels) und Bildbreite/RB (zweiter Wert des Tupels).
-
-[BILD Rasteriesierung]     
-
-Durch eine For-Schleife wird durch das Bild iteriert und die Pixelintensit{\"a}ten PI werden mit dem festgelegten Schwellwert PIS verglichen. Wird ein PI gr{\"o}{\ss}er PIS auf einer Pixelposition PP gefunden so wird die Funktion radial\_scan aufgerufen. Die Funktion sucht in einem radius SR alle PI um PP ab. Wird eine PI gefunden die gr{\"o}{\ss}er als ein maximaler radial Schwellwert MRS ist, dann bricht der Algorithmus ab und geht zur n{\"a}chsten PP {\"u}ber. Falls keiner der PI um die PP gr{\"o}{\ss}er dem MRS ist wird diese PP mit seinem zugeh{\"o}rigen Bereichsschl{\"u}ssel in dem Container multimap<pair<int,int>,Point> gespeichert. Dementsprechend wird das ganze Bild durchlaufen.
-
-[Bild Radial Scan Rasterschl{\"u}ssel]
-
-Im n{\"a}chsten Schritt wird die Anzahl von PP f{\"u}r jeden Bereichsschl{\"u}ssel im Multimap-Container gez{\"a}hlt. Liegt diese Anzahl unter einem minimalen Schwellwert MPPS so wird der Speicherbereich (PPs mit zugeh{\"o}rigem Bereichsschl{\"u}ssel) aussortiert. Die {\"u}brigbleibenden Daten innerhalb des Multimap-Containers k{\"o}nnen als valide Gruppen von Mittellinienpunkte MP angesehen werden. Falls der Multimap-Container leer ist terminiert der Algorithmus und keine Mittellinien wurden gefunden.
-
-Ist die Mittelliniensuche nicht Terminiert beginnt der Aufbau eines ungerichteten Graphen.
-Im ersten Schritt werden daf{\"u}r die geometrischen Schwerpunkte GS durch die MP f{\"u}r jeden Bereichsschl{\"u}ssel berechnet.
-
-[Formel]
-
-Anschlie{\ss}end wird die euklidische Distanz zwischen den GS der Bereichsschl{\"u}ssel mit einem Schwellwert verglichen. Ist die Distanz zweier GS unter dem Schwellwert geh{\"o}ren die Bereichsschl{\"u}ssel I und J zusammen und diese Verbindung wird in einem Vector-Container hinterlegt.  
-Alle m{\"o}glichen Permutationen werden so verglichen. Durch die Funktion isPermuted wird w{\"a}hrenddessen sichergestellt das nicht dieselben Bereichsschl{\"u}ssel verglichen werden als auch das keine Bereichsschl{\"u}ssel mehrmals mit dem Schwellwert verglichen werden.
-Wurden alle Verbindungen von Bereichsschl{\"u}sseln berechnet, werden diese durch den Algorithmus Depth First Search aufgel{\"o}st. Depth First Search ist ein rekursiver Algorithmus der angewandt wird um  Knoten in einem Graphen zu suchen . Im Gegensatz zur Breitensuche BFS wird bei der Tiefensuche DFS zun{\"a}chst ein Pfad vollst{\"a}ndig in die Tiefe beschritten, bevor abzweigende Pfade beschritten werden.
-
-
-DFS wurde gew{\"a}hlt da die Bereichsschl{\"u}ssel so gut wie immer nur einen Nachbarknoten besitzen und nicht in die Breite gesucht werden muss. Dies ist damit zu begr{\"u}nden das die Mittellinien der Fahrbahn aufeinanderfolgen. Au{\ss}erdem ben{\"o}tigt DFS weniger Speicherressourcen da nicht alle Kind-Knoten eines aktuell zu pr{\"u}fenden Knotens gespeichert werden m{\"u}ssen. Zudem sind die Knoten nach Beendigung der Suche bereits topologisch sortiert. Durch die implementierte Klasse depth\_first\_search werden die Bereichsschl{\"u}ssel zu Graphen zugeordnet. Dabei k{\"o}nnen auch Graphen mit nur einem Knoten entstehen.
-
-Bild[DFS Cluster]
-
-Ist DFS terminiert werden die in den Graphen enthaltenen Bereichsschl{\"u}ssel durch den Abstand ihres GS zum Fahrzeug sortiert. Dies ist durch die Funktion sort() realisiert welche durch {\"U}berladung mit einer Lambda-Funktion nach der kleinsten euklidischen Distanz absteigend zum Fahrzeug hin sortiert. Werden keine Graphen mit einer Anzahl Knoten gr{\"o}{\ss}er eins gefunden, terminiert der Algorithmus. Ist dies nicht der Fall, werden zus{\"a}tzlich der Richtungswinkel und der Abstand eines Knoten zu seinem n{\"a}chsten Nachbarn berechnet.
-
-Vor dem Beenden der Mittellinien Suche werden alle R{\"u}ckgabeparameter gesetzt. Die sind :
-
-
-
-%https://stackoverflow.com/questions/3332947/when-is-it-practical-to-use-depth-first-search-dfs-vs-breadth-first-search-bf
-%Comparing BFS and DFS, the big advantage of DFS is that it has much lower memory requirements than BFS, because it’s not necessary to %store all of the child pointers at each level.
 
 
 
 
+\section{Vanishing-Point-Search-Algorithmus}
+\label{section:Vanishing-Point-Search-Algorithmus} 
+
+Findet der Vanishing-Point Algorithmus Schnittpunkte zwischen linken und rechten Fahrbahnlinien welche auch im korrekten Abstand zum Fahrzeug liegen ist dies ein robuster Indikator nach dem gefahren werden kann.
+Durch einen gefundenen Vanishing-Point kann zugleich auch der einzuschlagende Lenkwinkel zwischen Fahrzeugmittelpunkt und Vanishing-Point berechnet werden was ein weiterer Vorteil des Verfahrens ist.
+Auch bei einer fehlenden Au{\ss}enlinie kann nach einer erkannten Hough-Linie gefahren werden.
+Umso kleiner der Bereich in dem nach Hough-Linien gesucht wird ist desto sicherer sind die Ergebnisse des Verfahrens. Es kann aber passieren das wenn sich das Fahrzeug nicht genau in der Mitte einer Fahrspur befindet keine entsprechenden Hough-Linien gefunden werden und somit das Verfahren und Ergebnis terminiert. Da die Kantenextraktion und die Hough-Linien-Suche nur auf einem kleinen Bildbereich vor dem Fahrzeug ausgeführt werden liefert der Algorithmus eine sehr gute Performance und ist nicht Rechenintensiv. Dies erlaubt es Ihn auch auf einem kleinen Mikrocontroller auszuführen. Zudem sind der Canny-Edge- und der Hough-Lines-Algorithmus durch anpassen der OpenCV-Funktion leicht parallelisierbar und können dadurch noch schneller ausgeführt werden.  
 
 
 
+\section{Start-of-Lines-Search-Algorithmus}
+\label{section:Start-of-Lines-Search-Algorithmus} 
+Wird das eindeutige Fahrbahnmuster durch Start-of-Line-Search erkannt ist dies ein sicheres Merkmal für eine korrekte Orientierung des Fahrzeugs in der Fahrbahn. Die Startparameter von Start-of-Lines-Search werden denen von Vansishing-Point-Search vorgezogen da sie für eine einduetigere Charakteristik stehen. Auch dieses Verfahren ist wenig Recheninstensiv und für einen kleinen Mikrocontroller geeignet.
+Jedoch findet der algorithmus nur dann das entsprechende Muster wenn alle Fahrbahnlinien vorhanden sind und die Mittellinie sich im Suchebereich befindet ansonsten terminiert das Verfahren ohne Ergebnis.
+Auch bei Start-of-Lines-Search bestimmt die Gr\"o{\ss}e der Liniensuchbereiche die Genauigkeit des Algorithmus. Da das Verfahren Linien auf ihre korrekte Breite untersucht liefert es eine zus\"atzliche Sicherheitsstufe. Falls sich aber ein Objekt neben der Fahrspur befindet wie zum Beispiel eine Box welche die Linie überdeckt stimmt die Segmentbreite nicht überein und das Verfahren terminiert ohne gefundenes Muster.
 
+
+\section{Line-Follower-Algorithmus}
+\label{section:Line-Follower-Algorithmus}
+Der Line-Follower Algorithmus ist abh\"angig von den Startparametern von Start-of-Lines-Search oder Vanishing-Point-Search. Somit werden nur gute Ergebnisse geliefert wenn auch die Startparameter korrekt sind.
+Das Verfahren kann die Au{\ss}enlinien sehr weit Verfolgen. Da das Verfahren rekursiv ausgef\"uhrt wird ist die genaue Laufzeit nicht bestimmbar denn sie ist abh\"angig von den festgelegten Terminierungskriterien. Au{\ss}erdem kann es passieren das der Algorithmus an einer Positionen stecken bleibt oder wie es bei Boxen vorkommen kann sich zuf\"allig in verschiedene Richtungen bewegt.
+Ein Vorteil ist das sich durch die Linienabsuche zus\"atzlich die Richtungswinkel vermerken lassen und somit eine Kreuzung leicht detektiert werden kann. Bei auftauchen einer Ziellinie kann das Verfahren aber auch eine Falsche Suchrichtung einschlagen we{\ss}wegen die Ergebnisse von Line-Follower weiter evaluiert werden m\"ussen.
+ 
+
+\section{Line-Points-Reduce-Algorithmus}
+\label{section:Line-Points-Reduce-Algorithmus}
+
+Der Ramer-Douglas-Peucker-Algorithmus reduziert die Linien-Punkte des Line-Follower-Algorithmus auf markante Punkte welche die Fahrbahnlinien beschreiben. Auch er ist ein rekursiver Algorithmus wodurch die Laufzeit nicht vorhergesagt werden kann. Der Algorithmus erm\"oglicht es die wichtigen Punkte von Line-Follower zu extrahieren und somit den Speicherplatzbedarf im RAM zu reduzieren. Seine Ergebnisse sind abh\"angig von der Qualit\"at der gefundenen Punkte des Line-Follower-Algorithmus. 
+
+\section{Mid-Line-Search-Algorithmus}
+\label{section:Mid-Line-Search-Algorithmus}
+Die Mittelliniensuche sucht im gesamten Eingangsbild nach Pixeln welche zu Mittellinienstreifen geh\"oren. Anschlie{\ss}end werden Mittellinien-Segmente welche benachbart sind zusammengef\"uhrt. Das Verfahren entdeckt auch Mittellinien welche weit vom Fahrzeug entfernt liegen. Somit ist es auch m\"oglich Kreuzugen durch die Orientierung von gefundenen Mittelliniensegmenten zu detektieren. Au{\ss}erdem k\"onnen \"uber eine Kreuzung hinaus Mittelliniensegmente gefunden werden. Das Verfahren ist sehr rechenintensiv da jedes Pixel des Eingangsbilds einzeln betrachtet wird. Durch die Gruppierung der Mittellinien zu zusammengeh\"origen Segmenten l\"asst sich desweiteren der Winkel an der entsprechenden Fahrbahnposition ermitteln.
+
+\section{Line-Validation-Table-Creation-Algorithmus}
+\label{section:Line-Validation-Table-Creation-Algorithmus}
+
+Das Verfahren bewertet die gefundene Au{\ss}en- und Mittelliniensegmente indem es \"uberpr\"uft ob Nachbarliniensegmente vorhanden sind und weist diesen einen Prioritäten-Score zu. Dies soll als zus\"atzliche Sicherheitsstufe dienen um robuste Punkte zu finden nach denen gefahren werden kann. Da für die Suche die minimale euklidische Distanz im Vector-Container der Nachbarlinien gesucht wird ist der Algorithmus rechenintensiv jedoch liefert er dadurch sehr sichere Punkte und Bereiche welche das Fahrzeug anschlie{\ss}end befahren kann.  
+
+\section{Rect-Safety-Algorithmus}
+\label{section:Rect-Safety-Algorithmus}
+
+Der Algorithmus Wertet die aus Line-Validation-Table-Creation erzeugten Bewertungstabellen in aufeinanderfolgenden Fahrbahnbereichen aus. Dadurch ist es möglich Sicherheitskritische Bereich frühzeitig zu erkennen und entsprechend zu agieren. Der Ansatz ermöglich es auch über Kreuzungen hinaus nach Fahrpunkten zu suchen. Da das Verfahren rekursiv aufgerufen wird bis der Mittelpunkt eines Sicherheitsbereichs nicht mehr im Eingangsbild liegt kann die Laufzeit variieren. Zudem wird die Sicherheitsvorhersage je weiter der Sicherheitsbereich entfernt ist abnehmend vager und sollte weiter validiert werden.
+
+\section{Startboxschrankenerkennung}
+\label{section:Startboxschrankenerkennung}
+Die Startboxschrankenerkennung detektiert eindeutig den Qr-Code der Startboxschranke. Das Verfahren ist recheninstiv kann jedoch nach dem Öffnen der Schranke einfach abgeschalten werden.
+
+
+\section{Zebrastreifen- und Ziellinienerkennung}
+\label{section:Zebrastreifen- und Ziellinienerkennung}
+Die Zebrastreifen- und Ziellinienerkennungs-Verfahren suchen beide nach einem eindeutigen Muster definiert durch die Segmentbreite von schwarzen und weißen Pixelsegmenten. Zudem wird die Anzahl an auftauchenden schwarzen und weißen Pixelsegmenten in betracht gezogen, dadurch lassen sich die beiden Markierungen sehr gut unterscheiden.
+Durch die definition eines Sichtfelds in welchem die Ziellinie gesucht wird kann die Ziellinie auch in einer Kurve erkannt werden.
+Da bei einer Suche nach diesen Bodenmarkierungen fehlklassifikationen auftreten können wenn die Suche zu weit vorausschauend initialisiert ist sollte nicht zu weit vor dem Fahzeug gesucht werden.  
 
 
 
