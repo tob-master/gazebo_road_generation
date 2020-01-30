@@ -1,64 +1,69 @@
 \babel@toc {ngerman}{}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {\relax 2.1}{\ignorespaces DieROSKommunikationsarchitektur}}{7}{figure.2.1}
+\contentsline {figure}{\numberline {\relax 2.1}{\ignorespaces DieROSKommunikationsarchitektur}}{8}{figure.2.1}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {\relax 3.1}{\ignorespaces PaarweiserVergleichIDE}}{10}{figure.3.1}
-\contentsline {figure}{\numberline {\relax 3.2}{\ignorespaces NutzwertAnalyseIDE}}{11}{figure.3.2}
+\contentsline {figure}{\numberline {\relax 3.1}{\ignorespaces PaarweiserVergleichIDE}}{11}{figure.3.1}
+\contentsline {figure}{\numberline {\relax 3.2}{\ignorespaces NutzwertAnalyseIDE}}{12}{figure.3.2}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {\relax 4.1}{\ignorespaces PaarweiserVergleichSIM}}{12}{figure.4.1}
-\contentsline {figure}{\numberline {\relax 4.2}{\ignorespaces NutzwertAnalyseSIM}}{13}{figure.4.2}
+\contentsline {figure}{\numberline {\relax 4.1}{\ignorespaces PaarweiserVergleichSIM}}{13}{figure.4.1}
+\contentsline {figure}{\numberline {\relax 4.2}{\ignorespaces NutzwertAnalyseSIM}}{14}{figure.4.2}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {\relax 5.1}{\ignorespaces GeradeSrecke}}{17}{figure.5.1}
-\contentsline {figure}{\numberline {\relax 5.2}{\ignorespaces Kurve}}{17}{figure.5.2}
-\contentsline {figure}{\numberline {\relax 5.3}{\ignorespaces Zielliniensegment}}{17}{figure.5.3}
-\contentsline {figure}{\numberline {\relax 5.4}{\ignorespaces Geschwindigkeitsbegrenzungssegmente}}{17}{figure.5.4}
-\contentsline {figure}{\numberline {\relax 5.5}{\ignorespaces Zebrastreifensegment}}{18}{figure.5.5}
-\contentsline {figure}{\numberline {\relax 5.6}{\ignorespaces Kreuzungssegmente}}{18}{figure.5.6}
-\contentsline {figure}{\numberline {\relax 5.7}{\ignorespaces SBPBSegment}}{19}{figure.5.7}
-\contentsline {figure}{\numberline {\relax 5.8}{\ignorespaces Verkehrsinselsegmente}}{19}{figure.5.8}
-\contentsline {figure}{\numberline {\relax 5.9}{\ignorespaces Verkehrsschilder}}{20}{figure.5.9}
-\contentsline {figure}{\numberline {\relax 5.10}{\ignorespaces Abbiegepfeile}}{20}{figure.5.10}
-\contentsline {figure}{\numberline {\relax 5.11}{\ignorespaces GazeboKreuzungModel}}{21}{figure.5.11}
+\contentsline {figure}{\numberline {\relax 5.1}{\ignorespaces GeradeSrecke}}{18}{figure.5.1}
+\contentsline {figure}{\numberline {\relax 5.2}{\ignorespaces Kurve}}{18}{figure.5.2}
+\contentsline {figure}{\numberline {\relax 5.3}{\ignorespaces Zielliniensegment}}{18}{figure.5.3}
+\contentsline {figure}{\numberline {\relax 5.4}{\ignorespaces Geschwindigkeitsbegrenzungssegmente}}{19}{figure.5.4}
+\contentsline {figure}{\numberline {\relax 5.5}{\ignorespaces Zebrastreifensegment}}{19}{figure.5.5}
+\contentsline {figure}{\numberline {\relax 5.6}{\ignorespaces Kreuzungssegmente}}{19}{figure.5.6}
+\contentsline {figure}{\numberline {\relax 5.7}{\ignorespaces SBPBSegment}}{20}{figure.5.7}
+\contentsline {figure}{\numberline {\relax 5.8}{\ignorespaces Verkehrsinselsegmente}}{20}{figure.5.8}
+\contentsline {figure}{\numberline {\relax 5.9}{\ignorespaces Verkehrsschilder}}{21}{figure.5.9}
+\contentsline {figure}{\numberline {\relax 5.10}{\ignorespaces Abbiegepfeile}}{21}{figure.5.10}
+\contentsline {figure}{\numberline {\relax 5.11}{\ignorespaces GazeboKreuzungModel}}{22}{figure.5.11}
 \contentsline {figure}{\numberline {\relax 5.12}{\ignorespaces GazeboBoxModel}}{22}{figure.5.12}
 \contentsline {figure}{\numberline {\relax 5.13}{\ignorespaces GazeboRundkursWorld}}{23}{figure.5.13}
 \contentsline {figure}{\numberline {\relax 5.14}{\ignorespaces GazeboFahrzeug}}{24}{figure.5.14}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {\relax 6.1}{\ignorespaces StartliniensucheFahrbahnmuster}}{26}{figure.6.1}
-\contentsline {figure}{\numberline {\relax 6.2}{\ignorespaces Ablauf}}{27}{figure.6.2}
-\contentsline {figure}{\numberline {\relax 6.3}{\ignorespaces BildbereichCanny}}{28}{figure.6.3}
-\contentsline {figure}{\numberline {\relax 6.4}{\ignorespaces HoughRaum}}{29}{figure.6.4}
-\contentsline {figure}{\numberline {\relax 6.5}{\ignorespaces HoughLineVP}}{30}{figure.6.5}
-\contentsline {figure}{\numberline {\relax 6.6}{\ignorespaces vp1}}{31}{figure.6.6}
-\contentsline {figure}{\numberline {\relax 6.7}{\ignorespaces vp2}}{32}{figure.6.7}
-\contentsline {figure}{\numberline {\relax 6.8}{\ignorespaces vp3}}{32}{figure.6.8}
-\contentsline {figure}{\numberline {\relax 6.9}{\ignorespaces SuchrichtingLF}}{33}{figure.6.9}
-\contentsline {figure}{\numberline {\relax 6.10}{\ignorespaces LPLF}}{34}{figure.6.10}
-\contentsline {figure}{\numberline {\relax 6.11}{\ignorespaces RDPAlgorihtmus}}{35}{figure.6.11}
-\contentsline {figure}{\numberline {\relax 6.12}{\ignorespaces RDPAlgorihtmusBild}}{36}{figure.6.12}
-\contentsline {figure}{\numberline {\relax 6.13}{\ignorespaces RasterisiertesBild}}{37}{figure.6.13}
-\contentsline {figure}{\numberline {\relax 6.14}{\ignorespaces MittellinienGraph}}{38}{figure.6.14}
-\contentsline {figure}{\numberline {\relax 6.15}{\ignorespaces ExtrahierteLinienpunkte}}{41}{figure.6.15}
-\contentsline {figure}{\numberline {\relax 6.16}{\ignorespaces RectSafety}}{43}{figure.6.16}
-\contentsline {figure}{\numberline {\relax 6.17}{\ignorespaces SafetyRectKreuzung}}{44}{figure.6.17}
+\contentsline {figure}{\numberline {\relax 6.1}{\ignorespaces GUI zur Anpassung der Birdseye-Transformation}}{27}{figure.6.1}
+\contentsline {figure}{\numberline {\relax 6.2}{\ignorespaces StartliniensucheFahrbahnmuster}}{28}{figure.6.2}
+\contentsline {figure}{\numberline {\relax 6.3}{\ignorespaces sof1}}{29}{figure.6.3}
+\contentsline {figure}{\numberline {\relax 6.4}{\ignorespaces sof2}}{30}{figure.6.4}
+\contentsline {figure}{\numberline {\relax 6.5}{\ignorespaces BildbereichCanny}}{31}{figure.6.5}
+\contentsline {figure}{\numberline {\relax 6.6}{\ignorespaces HoughRaum}}{32}{figure.6.6}
+\contentsline {figure}{\numberline {\relax 6.7}{\ignorespaces HoughLineVP}}{33}{figure.6.7}
+\contentsline {figure}{\numberline {\relax 6.8}{\ignorespaces vp1}}{34}{figure.6.8}
+\contentsline {figure}{\numberline {\relax 6.9}{\ignorespaces vp2}}{35}{figure.6.9}
+\contentsline {figure}{\numberline {\relax 6.10}{\ignorespaces SuchrichtingLF}}{36}{figure.6.10}
+\contentsline {figure}{\numberline {\relax 6.11}{\ignorespaces LPLF}}{37}{figure.6.11}
+\contentsline {figure}{\numberline {\relax 6.12}{\ignorespaces linefollowpa}}{38}{figure.6.12}
+\contentsline {figure}{\numberline {\relax 6.13}{\ignorespaces RDPAlgorihtmus}}{39}{figure.6.13}
+\contentsline {figure}{\numberline {\relax 6.14}{\ignorespaces RDPAlgorihtmusBild}}{40}{figure.6.14}
+\contentsline {figure}{\numberline {\relax 6.15}{\ignorespaces RasterisiertesBild}}{41}{figure.6.15}
+\contentsline {figure}{\numberline {\relax 6.16}{\ignorespaces MittellinienGraph}}{43}{figure.6.16}
+\contentsline {figure}{\numberline {\relax 6.17}{\ignorespaces midlinepa1}}{44}{figure.6.17}
+\contentsline {figure}{\numberline {\relax 6.18}{\ignorespaces midlinepa2}}{45}{figure.6.18}
+\contentsline {figure}{\numberline {\relax 6.19}{\ignorespaces midlinepa3}}{46}{figure.6.19}
+\contentsline {figure}{\numberline {\relax 6.20}{\ignorespaces ExtrahierteLinienpunkte}}{48}{figure.6.20}
+\contentsline {figure}{\numberline {\relax 6.21}{\ignorespaces RectSafety}}{50}{figure.6.21}
+\contentsline {figure}{\numberline {\relax 6.22}{\ignorespaces SafetyRectKreuzung}}{51}{figure.6.22}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {\relax 7.1}{\ignorespaces Grafische Benutzeroberfl\"ache}}{45}{figure.7.1}
-\contentsline {figure}{\numberline {\relax 7.2}{\ignorespaces Startboxschranke}}{46}{figure.7.2}
-\contentsline {figure}{\numberline {\relax 7.3}{\ignorespaces Zebrastreifensuche}}{47}{figure.7.3}
-\contentsline {figure}{\numberline {\relax 7.4}{\ignorespaces Zielliniensuche}}{47}{figure.7.4}
-\contentsline {figure}{\numberline {\relax 7.5}{\ignorespaces Zielliniensuche}}{48}{figure.7.5}
-\contentsline {figure}{\numberline {\relax 7.6}{\ignorespaces Kreuzungserkennung}}{49}{figure.7.6}
-\contentsline {figure}{\numberline {\relax 7.7}{\ignorespaces Das Suchmuster der Bodenmarkierung- und Hinderniserkennung}}{50}{figure.7.7}
-\contentsline {figure}{\numberline {\relax 7.8}{\ignorespaces Erkennung eines Hindernisses}}{51}{figure.7.8}
-\contentsline {figure}{\numberline {\relax 7.9}{\ignorespaces Erkennung einer Bodenmarkierung}}{51}{figure.7.9}
+\contentsline {figure}{\numberline {\relax 7.1}{\ignorespaces Grafische Benutzeroberfl\"ache}}{52}{figure.7.1}
+\contentsline {figure}{\numberline {\relax 7.2}{\ignorespaces Startboxschranke}}{53}{figure.7.2}
+\contentsline {figure}{\numberline {\relax 7.3}{\ignorespaces Zebrastreifensuche}}{54}{figure.7.3}
+\contentsline {figure}{\numberline {\relax 7.4}{\ignorespaces Zielliniensuche}}{54}{figure.7.4}
+\contentsline {figure}{\numberline {\relax 7.5}{\ignorespaces Zielliniensuche}}{55}{figure.7.5}
+\contentsline {figure}{\numberline {\relax 7.6}{\ignorespaces Kreuzungserkennung}}{56}{figure.7.6}
+\contentsline {figure}{\numberline {\relax 7.7}{\ignorespaces Das Suchmuster der Bodenmarkierung- und Hinderniserkennung}}{57}{figure.7.7}
+\contentsline {figure}{\numberline {\relax 7.8}{\ignorespaces Erkennung eines Hindernisses}}{58}{figure.7.8}
+\contentsline {figure}{\numberline {\relax 7.9}{\ignorespaces Erkennung einer Bodenmarkierung}}{58}{figure.7.9}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {\relax 8.1}{\ignorespaces Geschwindigkeitsmarkierungstemplates}}{54}{figure.8.1}
-\contentsline {figure}{\numberline {\relax 8.2}{\ignorespaces SQDIFF}}{54}{figure.8.2}
-\contentsline {figure}{\numberline {\relax 8.3}{\ignorespaces CCORR}}{54}{figure.8.3}
-\contentsline {figure}{\numberline {\relax 8.4}{\ignorespaces Aufbereitete Features des MNIST-Datensatzes}}{55}{figure.8.4}
-\contentsline {figure}{\numberline {\relax 8.5}{\ignorespaces Aufbau eines Entscheidungsbaums}}{56}{figure.8.5}
-\contentsline {figure}{\numberline {\relax 8.6}{\ignorespaces Formel zur Berechnung des Gini-Unreinheitsmass}}{57}{figure.8.6}
-\contentsline {figure}{\numberline {\relax 8.7}{\ignorespaces Ein Random Forest Modell}}{58}{figure.8.7}
+\contentsline {figure}{\numberline {\relax 8.1}{\ignorespaces Geschwindigkeitsmarkierungstemplates}}{61}{figure.8.1}
+\contentsline {figure}{\numberline {\relax 8.2}{\ignorespaces SQDIFF}}{61}{figure.8.2}
+\contentsline {figure}{\numberline {\relax 8.3}{\ignorespaces CCORR}}{61}{figure.8.3}
+\contentsline {figure}{\numberline {\relax 8.4}{\ignorespaces Aufbereitete Features des MNIST-Datensatzes}}{62}{figure.8.4}
+\contentsline {figure}{\numberline {\relax 8.5}{\ignorespaces Aufbau eines Entscheidungsbaums}}{63}{figure.8.5}
+\contentsline {figure}{\numberline {\relax 8.6}{\ignorespaces Formel zur Berechnung des Gini-Unreinheitsmass}}{64}{figure.8.6}
+\contentsline {figure}{\numberline {\relax 8.7}{\ignorespaces Ein Random Forest Modell}}{65}{figure.8.7}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

@@ -7,31 +7,119 @@
 %
 
 
+\section{Birdseye-Transformation}
+\label{sec:Birdseye-Transformation}
+
+Viele der in dieser Arbeit vewendeten Algorithmen führen ihre Berechnungen auf einem in eine andere Perspektive transformierten Bild aus. Dies ist die Birdseye-Perspektive. Sie liefert eine Sicht von oben auf den Fahrbereich. Abstandsmessungen auf der Fahrbahn können so einfacher implementiert werden. Um das Eingangsbild in die Birdseye-Perspektive zu transformieren, muss eine Transformationsmatrix berechnet werden. Dafür benötigt es der Einstellung der Parameter alpha, beta, gamma der Distanzhöhe und der Brennweite, welche mit Hilfe einer grafischen Benutzeroberlfäche realisiert wurde.
+Im Folgenden werden die einzelnen Matrizen welche zur Transformation benötigt werden beschrieben.
+
+Die Perspektiventransformation von 2D nach 3D:\\
+\\
+\begin{center}
+$ A1 = \left[ \begin{array}{rrr}
+1 & 0 & \displaystyle  -\frac{Bildbreite}{2}  \\
+\\
+0 & 1 & \displaystyle  -\frac{Bildhöhe}{2}\\
+0 & 0 & 0  \\
+0 & 0 & 0 \\
+\end{array}\right] $
+\end{center}
+
+Die Rotationsmatrix um die X-Achse:\\
+\\
+\begin{center}
+$ R_x = \left[ \begin{array}{rrrr}
+1 & 0 & 0 & 0 \\
+0 & cos(\alpha) & -sin(\alpha) & 0 \\
+0 & sin(\alpha) & cos(\alpha) & 0 \\
+0 & 0 & 0 & 1 \\
+\end{array}\right] $
+\end{center}
+
+
+Die Rotationsmatrix um die Y-Achse:\\
+\\
+\begin{center}
+$ R_y = \left[ \begin{array}{rrrr}
+cos(\beta) & 0 & -sin(\beta) & 0 \\
+0 & 1 & 0 & 0 \\
+sin(\beta) & 0 & cos(\beta) & 0 \\
+0 & 0 & 0 & 1 \\
+\end{array}\right] $
+\end{center}
+
+
+Die Rotationsmatrix um die Z-Achse:\\
+\\
+\begin{center}
+$ R_z = \left[ \begin{array}{rrrr}
+cos(\gamma) & -sin(\gamma) & 0 & 0 \\
+sin(\gamma) & cos(\gamma) & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1 \\
+\end{array}\right] $
+\end{center}
+
+
+
+Die Translationsmatrix in der Z-Achse welche einen Zoom ermöglicht:\\
+\\
+\begin{center}
+$ T = \left[ \begin{array}{rrrr}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & Distanzhöhe \\
+0 & 0 & 0 & 1 \\
+\end{array}\right] $
+\end{center}
+
+Die Perspektiventransformation von 3D nach 2D unter Festlegung der Brennweite:\\
+\\
+\begin{center}
+$ A2 = \left[ \begin{array}{rrrr}
+\displaystyle Brennweite & 0 & \displaystyle  -\frac{Bildbreite}{2} & 0 \\
+0 & \displaystyle Brennweite &  \displaystyle  -\frac{Bildhöhe}{2} & 0 \\
+0 & 0 & 1 & 0 \\
+\end{array}\right] $
+\end{center}
+
+Die Transformationsmatrix berechnet sich nun wie folgt:
+\begin{center}
+$Transformationsmatrix = A2 \cdot (T \cdot (R_x \cdot R_y \cdot R_z \cdot A1))$ 
+\end{center}
+
+Diese Tranformationsmatrix wird als OpenCV-Matrix-Datentyp gespeichert und der Funktion warpPerspective übergeben welche das Eingangsbild in Birdseye-Perspektive Transformiert.
+In folgender Grafik sind die für diese Arbeit verwendeten Birdseye-Transformationsparameter mit dem sich daraus ergebenden transformierten Bild dargestellt.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/birdseyeview}% keine extention: wählt jpg für DVI
+  \caption[GUI zur Anpassung der Birdseye-Transformation]%
+           {\label{fig:GUI zur Anpassung der Birdseye-Transformation}%
+           GUI zur Anpassung der Birdseye-Transformation}
+\end{center}
+\end{figure}
+
+Das Verfahren lässt sich auch einfach durch Verwenden der OpenCV-CUDA-Implementierung parallelisieren, um eine gesteigerte Performanz zu ermöglichen.
+
 %
-\section{Startliniensuche mit dem Start-Of-Lines-Search Algorithmus}
-\label{sec:Startliniensuche mit dem Start-Of-Lines-Search Algorithmus}
+\section{Startliniensuche mit dem Start-Of-Lines-Search-Algorithmus}
+\label{sec:Startliniensuche mit dem Start-Of-Lines-Search-Algorithmus}
 
 
-Die Startliniensuche sucht im unteren Bildbereich, direkt vor dem Fahrzeug, nach einem eindeutigen Fahrbahnmuster. Der Algorithmus arbeitet auf 
-einem Graustufenbild in der Birdseye-Perspektive.
-Im ersten Schritt werden drei Bildreihen mit dem horizontalen Abstand HA, nach Pixelintensitäten über einem Schwellwert FS, vom linken zum rechten Bildrand in einer Schleife, abgesucht. Dies geschieht durch einen Filter F, mit der Dimension 1xFilterbreite und Schrittweite SW. Die Filterbreite FB muss eine ungerade Zahl sein, wodurch die Mitte des iterierenden Filters als FI bezeichnet ist. Wird eine Pixelintensität größer FS in F gefunden, so wird in einem mit nullen initialisierten Vector-Container FC der Dimension 1xBildbreite,  der Wert des Vector-Containers auf der Indexposition FI auf eins gesetzt. Es ergeben sich drei Vector-Container mit den entsprechenden Filterantworten auf die jeweilige Bildzeile.
-Durch das Absuchen mit dem Filter sollen zusammengehörige Liniensegmente besser auffindbar werden. Falls fehl
-
-Im darauffolgenden Schritt werden benachbarte Filterantworten zu einem gemeinsamen Segment, definiert durch Segmentbreite und dem Startindex in FC, zusammengeführt.
+Die Startliniensuche sucht im unteren Bildbereich, direkt vor dem Fahrzeug, nach einem eindeutigen Fahrbahnmuster (siehe Abbildung \ref{fig:StartliniensucheFahrbahnmuster}). Der Algorithmus arbeitet auf 
+dem Graustufenbild in der Birdseye-Perspektive.
+Im ersten Schritt werden drei Bildreihen mit dem horizontalen Abstand HA, nach Pixelintensitäten über einem Schwellwert FS, vom linken zum rechten Bildrand in einer Schleife, abgesucht. Dies geschieht durch einen Filter F, mit der Dimension 1 $\times$ Filterbreite und Schrittweite SW. Die Filterbreite FB muss eine ungerade Zahl sein, wodurch die Mitte des iterierenden Filters als FI bezeichnet ist. Wird eine Pixelintensität größer FS in F gefunden, so wird in einem mit nullen initialisierten Vector-Container FC der Dimension 1 $\times$ Bildbreite,  der Wert des Vector-Containers auf der Indexposition FI auf eins gesetzt. Es ergeben sich drei Vector-Container mit den entsprechenden Filterantworten auf die jeweilige Bildzeile.
+Durch das Absuchen mit dem Filter sollen zusammengehörige Liniensegmente besser auffindbar werden falls Fehlstellen in den Linien vorhanden sind. Im darauffolgenden Schritt werden benachbarte Filterantworten zu einem gemeinsamen Segment, definiert durch Segmentbreite und dem Startindex in FC, zusammengeführt.
 Werden in der mittleren Zeile nicht mindestens drei Segmente gefunden terminiert der Algorithmus.
-
 Werden mehr als zwei Mittelliniensegmente gefunden, wird die Segmentbreite der gefundenen Liniensegmente überprüft. Liegt ein Segment nicht zwischen einem minimalen und maximalen Linienbreiten-Schwellwert wird dieses verworfen. 
 Alle Segmente je FC werden anschließend untereinander darauf überprüft ob ihr Abstand, dem der Fahrbahnbreite entspricht. Es werden alle Segmente verworfen, welche diesem Kriterium, mit einer festgelegten Toleranz, nicht entsprechen. Die anderen, werden als zusammengehörig in einem Vector-Container vermerkt.
 Es folgt die Überprüfung ob die Segmente der einzelnen FC eine gemeinsame Ausrichtung haben. Dafür wird die Distanz in X-Richtung,
 eines Segments eines FC, mit den Segmenten der anderen FC verglichen.
 Alle Segmente die keinen Nachbarn mit selber Ausrichtung in einer Toleranzgrenze besitzen, werden verworfen. 
 Die übrig gebliebenen zusammengehörigen FC Segmente, werden nun darauf überprüft ob zwischen ihnen ein Mittellinien-Segment liegt.
-Es darf nur in der mittleren Zeile ein Mittellinien-Segment gefunden werden.
-Im nächsten Schritt wird überprüft ob ein Fahrbahnmuster gefunden wurde, das all diese Kriterien erfüllt. Falls nicht terminiert der Algorithmus.
-Ist ein Muster gefunden, wird zusätzlich überprüft ob das Muster im korrekten Abstand zum Fahrzeug liegt.
+Es darf nur in der mittleren Zeile ein Mittellinien-Segment gefunden werden. Im nächsten Schritt wird überprüft ob ein Fahrbahnmuster gefunden wurde, das all diese Kriterien erfüllt. Falls nicht terminiert der Algorithmus. Ist ein Muster gefunden, wird zusätzlich überprüft ob das Muster im korrekten Abstand zum Fahrzeug liegt.
 Anschließend werden die Startpunkte und Startwinkel für die Linke und Rechte Außenlinie berechnet.
-
-Der Algorithmus termininert und gibt folgende Parameter zurück.
 
 
 \begin{figure}[H]
@@ -43,37 +131,42 @@ Der Algorithmus termininert und gibt folgende Parameter zurück.
 \end{center}
 \end{figure}
 
-
+\newpage
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.7\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Start_of_Lines_Diagram_finish}% keine extention: wählt jpg für DVI
-  \caption[Ablauf]%
-           {\label{fig:Ablauf}%
-           Das zu suchende Fahrbahnmuster des Start-Of-Lines-Search -Algorithmus}
+  \includegraphics[width=0.8\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Start_of_Lines_Diagram_finish1}% keine extention: wählt jpg für DVI
+  \caption[sof1]%
+           {\label{fig:sof1}%
+           Programmablaufplan des Start-of-Lines-Search-Algorithmus Teil 1}
 \end{center}
 \end{figure}
 
 
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Start_of_Lines_Diagram_finish2}% keine extention: wählt jpg für DVI
+  \caption[sof2]%
+           {\label{fig:sof2}%
+           Programmablaufplan des Start-of-Lines-Search-Algorithmus Teil 2}
+\end{center}
+\end{figure}
 
+\newpage
 
-\section{Startliniensuche mit dem Vanishing-Point Algorithmus}
-\label{sec:Startliniensuche mit dem Vanishing-Point Algorithmus}
+\section{Startliniensuche mit dem Vanishing-Point-Algorithmus}
+\label{sec:Startliniensuche mit dem Vanishing-Point-Algorithmus}
 
 %
 %
-Der Vanishing-Point-Algorithmus dient dazu sichere Startpunkte der linken und rechten Außenlinie zu finden. Er wurde nach der Beschreibung des Papers [X] implementiert.
-
-Das Verfahren liefert Punkte mit zugehörigem Winkel nahe dem Fahrzeug, nach denen gefahren werden kann. Zudem liefert es Informationen über fehlende Außenlinien.
-Der Vanishing-Point-Algorithmus wird auf dem Graustufenbild in Frontalsicht ausgeführt.
+Der Vanishing-Point-Algorithmus dient dazu sichere Startpunkte der linken und rechten Außenlinie zu finden. Das Verfahren liefert Punkte mit zugehörigem Winkel nahe dem Fahrzeug, nach denen gefahren werden kann. Zudem liefert es Informationen über fehlende Außenlinien.
+Der Vanishing-Point-Algorithmus wird auf dem Graustufenbild in Frontalansicht ausgeführt.
 Der Algorithmus führt die Liniensuche im unteren Bildbereich genau vor dem Fahrzeug aus.
 Auf diesen Bildbereich wird zuerst eine Kantenextraktion angewandt.
 Dies wird durch den Canny-Edge-Algorithmus erreicht.
-Canny nutzt Sobel-Operatoren in X- und Y- Richtung, die mit dem Bild an jeder Position gefaltet werden. Der Operator liefert eine hohe Filterantwort bei einem abrupten Übergang von niedrigen zu hohen Pixelintensitäten, welche als Kanten wahrgenommen werden. Zudem wird durch die beiden Sobel-Operatoren die Richtung, in welche die Kante zeigt, ermittelt. 
-Unter Berücksichtigung der Orientierung der Kante, werden lokale Maxima der Filterantwort extrahiert um Kantenübergänge auszudünnen.
-
-Die Extrahierten Merkmale werden im nächsten Schritt durch einen Hysterese-Schwellwert gefiltert. Dieser besteht aus zwei Schwellwerten S1 und S2.
-Alle Filterantworten, welche unter S1 und S2 liegen werden als Rauschen betrachtet und verworfen. Liegt eine Filterwort über S1 und S2 dann ist diese Position eine valide Kante. Werte die zwischen S1 und S2 liegen, werden nur als valide Kanten betrachten, wenn Sie mit Filterantworten verbunden sind, die über S1 und S2 liegen. Ansonsten werden diese auch als Rauschen verworfen.
+Canny nutzt Sobel-Operatoren in X- und Y-Richtung, die mit dem Bild an jeder Position gefaltet werden. Der Operator liefert eine hohe Filterantwort bei einem abrupten Übergang von niedrigen zu hohen Pixelintensitäten, welche als Kanten wahrgenommen werden. Zudem wird durch die beiden Sobel-Operatoren die Richtung, in welche die Kante zeigt, ermittelt. 
+Unter Berücksichtigung der Orientierung der Kante, werden lokale Maxima der Filterantwort extrahiert um Kantenübergänge auszudünnen. Die extrahierten Merkmale werden im nächsten Schritt durch einen Hysterese-Schwellwert gefiltert. Dieser besteht aus zwei Schwellwerten S1 und S2.
+Alle Filterantworten, welche unter S1 und S2 liegen werden als Rauschen betrachtet und verworfen. Liegt eine Filterwort über S1 und S2 dann ist diese Position eine valide Kante. Werte die zwischen S1 und S2 liegen, werden nur als valide Kanten betrachtet, wenn sie mit Filterantworten verbunden sind, die über S1 und S2 liegen. Ansonsten werden diese auch als Rauschen verworfen.
 
 \begin{figure}[H]
 \begin{center}
@@ -85,14 +178,17 @@ Alle Filterantworten, welche unter S1 und S2 liegen werden als Rauschen betracht
 \end{figure}
 
 
-Darauf aufbauend, werden durch das Hough-Lines-Verfahren Linien im Bildbreich gesucht. Durch die Reduktion des Bildbereichs auf relevante Punkte, werden durch Hough-Lines weniger redundante Linien gefunden.
+Darauf aufbauend, werden durch das Hough-Lines-Algorithmus Linien im Bildbreich gesucht. Durch die Reduktion des Bildbereichs auf relevante Punkte, werden durch Hough-Lines weniger redundante Linien gefunden.
 Das Ziel von Hough-Lines ist es Pixel-Gruppen zu finden welche miteinander Linien formen. Hough-Lines transformiert dafür Pixel, beschrieben durch die Koordinaten X und Y, in einen anderen Merkmals-Raum den Hough-Raum. 
+Der Hough-Raum beschreibt alle Geraden, die durch ein Pixel laufen können über die hessesche Normalform: 
 
-Der Hough-Raum beschreibt alle Geraden, die durch ein Pixel laufen können über die hessesche Normalform D  = x *cos(alpha) + y* sin(alpha). Die neue Ordinate D beschreibt die euklidische Distanz zum Lotfußpunkt. Und die neue Abszisse alpha steht für den Winkel zwischen dem Lot der Geraden hin zur Abszisse. Nachdem jedes Pixel des Bildraums in den Hough-Raum transformiert wurde, ergibt sich eine Voting-Matrix deren Häufigkeitspunkte mögliche geraden im Bildraum beschreiben. Durch das Setzen eines Schwellwertes, werden nur geraden über einer gewissen Anzahl von Häufigkeitspunkten gefunden, welche nach Rücktransformation die zu suchenden Außenlinien darstellen.
+$ p = x \cdot cos(\theta) + y \cdot sin(\theta)$
+
+Die neue Ordinate p beschreibt die euklidische Distanz zum Lotfußpunkt. Und die neue Abszisse $\theta$ steht für den Winkel zwischen dem Lot der Geraden hin zur Abszisse. Nachdem jedes Pixel des Bildraums in den Hough-Raum transformiert wurde, ergibt sich eine Voting-Matrix deren Häufigkeitspunkte mögliche geraden im Bildraum beschreiben. Durch das Setzen eines Schwellwertes, werden nur geraden über einer gewissen Anzahl von Häufigkeitspunkten gefunden, welche nach Rücktransformation die zu suchenden Außenlinien darstellen.
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/Bilder/houghraum}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.6\textwidth]{/home/tb/Desktop/Master/Bilder/houghraum}% keine extention: wählt jpg für DVI
   \caption[HoughRaum]%
            {\label{fig:HoughRaum}%
            Die Hough-Transformation}
@@ -101,73 +197,60 @@ Der Hough-Raum beschreibt alle Geraden, die durch ein Pixel laufen können über d
 
 
 Die OpenCV-Funktion Hough-Lines liefert die Anfangs- und Endpunkte der gefundenen Linien zurück.
-Darauf folgt das Drehen der Linien. in die Fahrtrichtung des Fahrzeugs, im Bild.
+Darauf folgt das Drehen der Linien in die Fahrtrichtung des Fahrzeugs, im Bild.
 Nun werden die Linien aussortiert, welche nicht in den Bildbereichen liegen, in denen die Außenlinien vorkommen. Dabei wird davon ausgegangen, dass sich das Fahrzeug in der rechten Fahrspur befindet. Da der Algorithmus auf der Frontalansicht arbeitet, können die Hough-Linien weiter durch ihre Winkel validiert werden. Alle Linien im linken und rechten Bereich werden darauf hin überprüft, ob sie zwischen einem minimalen und maximalen Winkel liegen. Falls dies nicht der Fall ist, werden diese auch verworfen.
 Wenn nur eine oder keine Außenlinie aufzufinden ist, terminiert der Algorithmus.
 Werden beide Außenlinien gefunden, wird untersucht ob die linken und rechten Hough-Linien einen gemeinsamen Schnittpunkt haben. Dieser Schnittpunkt wird auch Vanishing-Point genannt und gibt die Fahrtrichtung des Fahrzeugs an.
-Es werden alle Permutation von Schnittpunkten der Linien berechnet.
-Hier kommt wieder die in [XX] beschriebene Funktion isPertmuted zum Einsatz.
-Um nun den besten Vanishing-Point zu finden, nach dem gefahren werden kann, wird der Mittelwert und die Standardabweichung der Punkte berechnet.
-In einer While-Schleife werden nur Punkte in Betracht gezogen, welche unter einen maximalen Standardabweichung liegen. Aus diesen wird dann ein neuer Mittelwert berechnet. Liegen keine Punkte unter der maximalen Standardabweichung vor, erhöht diese sich immer weiter um eins, bis Punkte gefunden werden, aus welchen der neue Mittelwert berechnet werden kann. 
-Ist die Berechnung abgeschlossen, terminiert der Algorithmus und es werden Folgende Parameter zurückgegeben.
+Es werden alle Permutation von Schnittpunkten der Linien berechnet. Um nun den besten Vanishing-Point zu finden, nach dem gefahren werden kann, wird der Mittelwert und die Standardabweichung der Punkte berechnet.
+In einer While-Schleife werden nur Punkte in Betracht gezogen, welche unter einer maximalen Standardabweichung liegen. Aus diesen Punkten wird dann ein neuer Mittelwert berechnet. Liegen keine Punkte unter der maximalen Standardabweichung vor, erhöht diese sich immer weiter um eins, bis Punkte gefunden werden, aus welchen der neue Mittelwert berechnet werden kann. 
+Ist die Berechnung abgeschlossen, terminiert der Algorithmus.
 
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/Bilder/vanishingPoint}% keine extention: wählt jpg für DVI
   \caption[HoughLineVP]%
            {\label{fig:HoughLineVP}%
-           Veranschaulichung der Hough-Linien-Suche mit Vanishing-Point und dessen Winkel}
+           Veranschaulichung der Hough-Linien-Suche mit dem errechneten Vanishing-Point und dessen Winkel}
 \end{center}
 \end{figure}
-
+\newpage
 
 
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=2\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vp1}% keine extention: wählt jpg für DVI
+  \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vanishing_point_finish1}% keine extention: wählt jpg für DVI
   \caption[vp1]%
            {\label{fig:vp1}%
-           vp1}
+           Programmablaufplan des Vanishing-Point-Algorithmus Teil 1}
 \end{center}
 \end{figure}
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vp2}% keine extention: wählt jpg für DVI
+  \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vanishing_point_finish2}% keine extention: wählt jpg für DVI
   \caption[vp2]%
            {\label{fig:vp2}%
-           vp2}
+           Programmablaufplan des Vanishing-Point-Algorithmus Teil 2}
 \end{center}
 \end{figure}
 
-\begin{figure}[H]
-\begin{center}
-  \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/vp3}% keine extention: wählt jpg für DVI
-  \caption[vp3]%
-           {\label{fig:vp3}%
-           vp3}
-\end{center}
-\end{figure}
-
+\newpage
 %
-\section{Aussenlinienverfolgung mit dem Line-Follower Algorithmus}
-\label{sec:Aussenlinienverfolgung mit dem Line-Follower Algorithmus}
+\section{Aussenlinienverfolgung mit dem Line-Follower-Algorithmus}
+\label{sec:Aussenlinienverfolgung mit dem Line-Follower-Algorithmus}
 
-Der Line-Follower-Algorithmus setzt auf den beiden Startpunkt-Algorithmen start of lines search und Vanishin Point search auf. 
-Der Algorithmus arbeitet auf dem Graustufenbild in der Birdseye-Ansicht.
+Der Line-Follower-Algorithmus setzt auf den beiden Startpunkt-Algorithmen Start-of-Lines-Search-Algorithmus und Vanishin-Point-Algorithmus auf. 
+Der Algorithmus arbeitet auf dem Graustufenbild in der Birdseye-Perspektive.
 Er ben{\"o}tigt einen Startpunkt und einen Startwinkel als Eingabeparameter. 
-Ziel ist es eine Au{\ss}enlinie von einem Startpunkt im unteren Bildbereich soweit es m{\"o}glich ist nachzuverfolgen. Das Verfahren ist ein rekursives Verfahren und ruft sich mit neuem Startpunkt und Startwinkel immer wieder selbst auf bis eine von mehreren Terminierungsbedingungen in Kraft tritt.
-
-Angefangen vom ersten Startpunkt betrachtet der Algorithmus eine Anzahl von AR Richtungen mit Sichtweite SW und einem Sichtfeld SF festgelegt durch einen festen Winkel.
-Die Mitte des Sichtfeldes wird durch den Startwinkel festgelegt.
+Ziel ist es eine Au{\ss}enlinie von einem Startpunkt, im unteren Bildbereich, soweit es m{\"o}glich ist nachzuverfolgen. Das Verfahren ist ein rekursives Verfahren und ruft sich mit neuem Startpunkt und Startwinkel immer wieder selbst auf bis, eine von mehreren Terminierungsbedingungen in Kraft tritt. Angefangen vom ersten Startpunkt betrachtet der Algorithmus eine Anzahl von AR Richtungen mit Sichtweite SW und einem Sichtfeld SF, festgelegt durch einen festen Winkel. Die Mitte des Sichtfeldes wird durch den Startwinkel festgelegt.
 
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/line_follower_directions}% keine extention: wählt jpg für DVI
   \caption[SuchrichtingLF]%
            {\label{fig:SuchrichtingLF}%
-           Die AR Suchrichtungen in gelb und t{\"u}rkis und das Sichtfeld des Line-Follower-Algorithmus dargestellt in rot}
+           Die AR Suchrichtungen in gelb und t{\"u}rkis und das Sichtfeld des Line-Follower-Algorithmus dargestellt in rot.}
 \end{center}
 \end{figure}
 
@@ -176,49 +259,60 @@ Im ersten Schritt werden alle Pixelintensit{\"a}ten unter den Zweigen der Suchri
 Anschlie{\ss}end wird der Algorithmus Otsus-Methode auf diesen Container angewandt.
 Otsus-Methode findet einen Schwellwert der das Bild in zwei Klassen aufteilt.
 In diesem Fall der schwarze Hintergrund der Fahrbahn und die wei{\ss}en Linien.
-Es wird ein Histogramm aus vorkommenden Pixel-Intensit{\"a}ten erzeugt und ein Schwellwert berechnet, der die gewichtete Interklassen Varianz der beiden Klassen minimiert. 
-
-[Formel]
-
-Mit dem berechneten Otsu-Schwellwert werden die AR Suchrichtungen wieder durchschritten. F{\"u}r jede der Suchrichtungen wird die aktuelle Intensit{\"a}t der Position mit dem Otsu-Schwellwert verglichen. Liegt eine Intensit{\"a}t unter dem Otsu-Schwellwert wird die vorherige Position und die Akkumulation aller Pixel-Intensit{\"a}ten bis zu dieser Position gespeichert. Ansonsten bricht die Suche nach Erreichen von SW in dem derzeitigen Zweig ab und es wird auch hier die Positionen mit akkumulierten Pixel-Intensit{\"a}ten gespeichert.
+Es wird ein Histogramm aus vorkommenden Pixel-Intensit{\"a}ten erzeugt und ein Schwellwert berechnet, der die gewichtete Interklassen Varianz der beiden Klassen minimiert. Mit dem berechneten Otsu-Schwellwert werden die AR Suchrichtungen wieder durchschritten. F{\"u}r jede der Suchrichtungen wird die aktuelle Intensit{\"a}t der Position mit dem Otsu-Schwellwert verglichen. Liegt eine Intensit{\"a}t unter dem Otsu-Schwellwert wird die vorherige Position und die Akkumulation aller Pixel-Intensit{\"a}ten bis zu dieser Position gespeichert. Ansonsten bricht die Suche nach Erreichen von SW in dem derzeitigen Zweig ab und es wird auch hier die Positionen mit akkumulierten Pixel-Intensit{\"a}ten gespeichert.
 Sind alle Zweige durchlaufen wird {\"u}ber all jene der nach Intensit{\"a}ten gewichtete Schwerpunkt ermittelt.
-[Formel]
-Das Pixel im vierer Nachbarschaftsbereich des Schwerpunktes mit h{\"o}chster Intensit{\"a}t wird als neuer Startpunkt festgelegt. Und der neue Suchwinkel ist der Winkel zwischen altem und neuem Startpunkt. Der Algorithmus ruft die Suchfunktion erneut auf bis eines der folgenden Terminierungsbedingungen erf{\"u}llt ist. 
+Das Pixel im Vierer-Nachbarschaftsbereich des Schwerpunktes mit h{\"o}chster Intensit{\"a}t wird als neuer Startpunkt festgelegt. Und der neue Suchwinkel ist der Winkel zwischen altem und neuem Startpunkt. Der Algorithmus ruft die Suchfunktion erneut auf bis eines der folgenden Terminierungsbedingungen erf{\"u}llt ist. 
 
-Eine maximale Anzahl von Iterationen wurde erreicht
-Die Suche bleibt Stecken
-Wenn gefundene Punkte nacheinander sich unter einer festgelegten euklidischen Distanz zum vorhergehenden Punkt befinden wird ein Counter hochgesetzt welcher den rekursiven Aufruf terminiert wenn dieser Counter einen Schwellwert {\"u}berschreitet
 
-Die Suche bewegt sich zur{\"u}ck
-Wenn der Y-Wert des vorherigen Startpunktes gr{\"o}{\ss}er ist als der neue Startpunkt wird eine Counter erh{\"o}ht der nach {\"u}berschreiten eines Schwellwertes den Algorithmus terminiert.
-Die Suche ist au{\ss}erhalb des Bildbereichs
+\begin{enumerate}
 
-Ist die Suche beendet gibt line\_follower folgende R{\"u}ckgabeparamter zur{\"u}ck.
+\item[] \textbf{Eine maximale Anzahl von Iterationen wurde erreicht} \hfill \\
+\item[] \textbf{Der Suchpunkt ist au{\ss}erhalb des Bildbereichs} \hfill \\
 
-Gefundene Linien-Punkte mit zugeh{\"o}rigem Winkel
+\item[] \textbf{Die Suche bleibt Stecken} \hfill \\
+Wenn gefundene Punkte, nacheinander, sich unter einer festgelegten euklidischen Distanz zum vorhergehenden Punkt befinden, wird ein Counter hochgesetzt welcher den rekursiven Aufruf terminiert wenn dieser Counter einen Schwellwert {\"u}berschreitet.
+
+\item[] \textbf{Die Suche bewegt sich zur{\"u}ck} \hfill \\
+Wenn der Y-Wert des vorherigen Startpunktes gr{\"o}{\ss}er ist als der neue Startpunkt, wird eine Counter erh{\"o}ht der nach {\"u}berschreiten eines Schwellwertes den Algorithmus terminiert.
+
+\end{enumerate}
+
 
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/linefollower}% keine extention: wählt jpg für DVI
   \caption[LPLF]%
            {\label{fig:LPLF}%
-           Die gefundenen Linienpunkte des Line-Follower Algorithmus für die linke(gelb) und rechte(t{\"u}rkis Außenlinie)}
+           Die gefundenen Linienpunkte des Line-Follower-Algorithmus für die linke(gelb) und rechte(t{\"u}rkis Außenlinie)}
+\end{center}
+\end{figure}
+
+\newpage
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Line_Follower_Diagram_finish1}% keine extention: wählt jpg für DVI
+  \caption[linefollowpa]%
+           {\label{fig:linefollowpa}%
+           Programmablauf des Line-Follower-Algorithmus)}
 \end{center}
 \end{figure}
 
 
+\newpage
 
-\section{Linienpunktereduzierung mit dem Douglas-Peucker-Algorithmus}
-\label{sec:Linienpunktereduzierung mit dem Douglas-Peucker-Algorithmus}
+
+\section{Linienpunktereduzierung mit dem Line-Points-Reducer-Algorithmus}
+\label{sec:Linienpunktereduzierung mit dem Line-Points-Reducer-Algorithmus}
 
 %
 Der Douglas-Peucker-Algorithmus kann verwendet werden um eine Polylinie durch Reduzierung der Anzahl der enthaltenen Punkte ann{\"a}hrend zu beschreiben.
-Da der Line-Follower-Algorithmus viele nah beieinander liegende Punkte findet, welche keine wichtigen Informationen enthalten, werden diese durch RDP verworfen um nur noch auf den wichtigen Punkten arbeiten zu k{\"o}nnen.
+Da der Line-Follower-Algorithmus viele nah beieinander liegende Punkte findet, welche keine wichtigen Informationen enthalten, werden diese durch den Douglas-Peucker-Algorithmus verworfen um nur noch auf den wichtigen Punkten arbeiten zu k{\"o}nnen.
 Dies geschieht durch das Legen einer imagin{\"a}ren Linie zwischen dem ersten und dem letzten Punkt in einer Reihe von Punkten, welche die Polylinie bilden. Es wird gepr{\"u}ft, welcher Punkt am weitesten von dieser Linie entfernt ist. Die Entfernung ist die euklidische Distanz des Punktes zu dessen Lotfu{\ss}punkt auf der Linie. Wenn der gefundene Punkt (und wie folgt alle anderen Zwischenpunkte) eine kleinere euklidische Distanz als ein gegebener Abstand Epsilon besitzt, werden alle dazwischen liegenden Punkte entfernt. Wenn dieser Ausrei{\ss}er-Punkt andererseits weiter von der Linie entfernt ist als Epsilon, wird die Polylinie in zwei Teile geteilt. Zum einen vom ersten Punkt bis einschlie{\ss}lich zum Ausrei{\ss}er-Punkt. Zum anderen vom Ausrei{\ss}er-Punkt bis hin zum Endpunkt.
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/Douglas_Peucker}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.4\textwidth]{/home/tb/Desktop/Master/Bilder/Douglas_Peucker}% keine extention: wählt jpg für DVI
   \caption[RDPAlgorihtmus]%
            {\label{fig:RDPAlgorihtmus}%
            Veranschaulichung des Douglas-Peucker-Algorithmus}
@@ -233,7 +327,7 @@ Der Start- und Endpunkt wie alle Ausrei{\ss}er-Punkte ergeben die neue reduziert
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/rdp}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.4\textwidth]{/home/tb/Desktop/Master/Bilder/rdp}% keine extention: wählt jpg für DVI
   \caption[RDPAlgorihtmusBild]%
            {\label{fig:RDPAlgorihtmusBild}%
            Darstellung der Linienpunkte nach der anwendung des Douglas-Peucker-Algorithmus}
@@ -243,45 +337,39 @@ Der Start- und Endpunkt wie alle Ausrei{\ss}er-Punkte ergeben die neue reduziert
 
 Der Algorithmus gibt als R{\"u}ckgabewert die reduzierten Linien-Punkte des Line-Follower-Algorithmus zur{\"u}ck. Jeder Punkt tr{\"a}gt als zus{\"a}tzliche Information den Winkel und die Distanz zu seinem n{\"a}chsten Nachbarpunkt.
 
+\newpage
 
-
-\section{Mittelliniensuche und Grapherzeugung}
-\label{sec:Mittelliniensuche und Grapherzeugung}
+\section{Mittelliniensuche und Grapherzeugung mit dem Mid-Line-Search-Algorithmus}
+\label{sec:Mittelliniensuche und Grapherzeugung mit dem Mid-Line-Search-Algorithmus}
 
 %
 %
-Um eine robuste Linienerkennung zu erm{\"o}glichen muss auch die Mittellinie in betracht gezogen werden. Der Algorithmus nutzt dabei einen Clustering-Ansatz. Zuerst werden einzelne Pixel, die zu einer Mittellinie geh{\"o}ren in einer Gruppe zusammengef{\"u}hrt. Anschlie{\ss}end werden aufeinander Folgende Mittellinien-Gruppen, wenn sie unter einem gewissen Abstand voneinander entfernt sind, zu Knoten in einem Graphen vereint. In folgendem wird dieser Algorithmus n{\"a}her beschrieben.
-
-Der Algorithmus startet mit dem Einlesen des Graustufenbilds in Birdseye-Perspektive.
+Um eine robuste Linienerkennung zu erm{\"o}glichen muss auch die Mittellinie in betracht gezogen werden. Der Algorithmus nutzt dabei einen Clustering-Ansatz. Zuerst werden einzelne Pixel, die zu einer Mittellinie geh{\"o}ren in einer Gruppe zusammengef{\"u}hrt. Anschlie{\ss}end werden aufeinanderfolgende Mittellinien-Gruppen, wenn sie unter einem gewissen Abstand voneinander entfernt sind, zu Knoten in einem Graphen vereint. Der Algorithmus startet mit dem Einlesen des Graustufenbilds in Birdseye-Perspektive.
 Das Eingangsbild wird in Raster der H{\"o}he RH und der Breite RB aufgeteilt. Die einzelnen Bereiche stehen f{\"u}r Gruppen durch welche Mittellinien gekennzeichnet sind. Jeder Bildbereich wird dadurch mit einen Bereichsschl{\"u}ssel gekennzeichnet. Der Schl{\"u}ssel ist ein Tupel definiert durch pair<int,int>. Die einzelnen Bereichsschl{\"u}ssel sind abh{\"a}nig von der Bilddimension und der Rasterisierung.
-Der Schl{\"u}ssel eines Bereichs wird beschrieben durch Bildh{\"o}he/RH (erster Wert des Tupels) und Bildbreite/RB (zweiter Wert des Tupels).
+Der Schl{\"u}ssel eines Bereichs wird beschrieben durch:
+
+$\displaystyle \frac{Bildh{\"o}he}{RH}$ (erster Wert des Tupels)  
+ 
+$\displaystyle \frac{Bildbreite}{RB}$ (zweiter Wert des Tupels).
+
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.8\textwidth]{/home/tb/Desktop/Master/Bilder/rasterierung_small}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.7\textwidth]{/home/tb/Desktop/Master/Bilder/rasterierung_small}% keine extention: wählt jpg für DVI
   \caption[RasterisiertesBild]%
            {\label{fig:RasteriertesBild}%
            Das Rasterisierte Bild in rot mit zugehörigen Rasterschküsseln in grün}
 \end{center}
 \end{figure}  
 
-Durch eine For-Schleife wird durch das Bild iteriert und die Pixelintensit{\"a}ten PI werden mit dem festgelegten Schwellwert PIS verglichen. Wird ein PI gr{\"o}{\ss}er PIS auf einer Pixelposition PP gefunden so wird die Funktion radial\_scan aufgerufen. Die Funktion sucht in einem radius SR alle PI um PP ab. Wird eine PI gefunden die gr{\"o}{\ss}er als ein maximaler radial Schwellwert MRS ist, dann bricht der Algorithmus ab und geht zur n{\"a}chsten PP {\"u}ber. Falls keiner der PI um die PP gr{\"o}{\ss}er dem MRS ist wird diese PP mit seinem zugeh{\"o}rigen Bereichsschl{\"u}ssel in dem Container multimap<pair<int,int>,Point> gespeichert. Dementsprechend wird das ganze Bild durchlaufen.
+\newpage
 
-[Bild Radial Scan Rasterschl{\"u}ssel]
-
-Im n{\"a}chsten Schritt wird die Anzahl von PP f{\"u}r jeden Bereichsschl{\"u}ssel im Multimap-Container gez{\"a}hlt. Liegt diese Anzahl unter einem minimalen Schwellwert MPPS so wird der Speicherbereich (PPs mit zugeh{\"o}rigem Bereichsschl{\"u}ssel) aussortiert. Die {\"u}brigbleibenden Daten innerhalb des Multimap-Containers k{\"o}nnen als valide Gruppen von Mittellinienpunkte MP angesehen werden. Falls der Multimap-Container leer ist terminiert der Algorithmus und keine Mittellinien wurden gefunden.
-
-Ist die Mittelliniensuche nicht Terminiert beginnt der Aufbau eines ungerichteten Graphen.
-Im ersten Schritt werden daf{\"u}r die geometrischen Schwerpunkte GS durch die MP f{\"u}r jeden Bereichsschl{\"u}ssel berechnet.
-
-[Formel]
-
-Anschlie{\ss}end wird die euklidische Distanz zwischen den GS der Bereichsschl{\"u}ssel mit einem Schwellwert verglichen. Ist die Distanz zweier GS unter dem Schwellwert geh{\"o}ren die Bereichsschl{\"u}ssel I und J zusammen und diese Verbindung wird in einem Vector-Container hinterlegt.  
+Durch eine For-Schleife wird durch das Bild iteriert und die Pixelintensit{\"a}ten PI werden mit dem festgelegten Schwellwert PIS verglichen. Wird ein PI gr{\"o}{\ss}er PIS auf einer Pixelposition PP gefunden so wird die Funktion radial\_scan aufgerufen. Die Funktion sucht in einem Radius SR alle PI um PP ab. Wird eine PI gefunden die gr{\"o}{\ss}er als ein maximaler radialer Schwellwert MRS ist, dann bricht der Algorithmus ab und geht zur n{\"a}chsten PP {\"u}ber. Falls keiner der PI um die PP gr{\"o}{\ss}er dem MRS ist wird diese PP mit ihrem zugeh{\"o}rigen Bereichsschl{\"u}ssel in dem Container multimap<pair<int,int>,Point> gespeichert. Dementsprechend wird das ganze Bild durchlaufen.
+Im n{\"a}chsten Schritt wird die Anzahl von PP f{\"u}r jeden Bereichsschl{\"u}ssel im Multimap-Container gez{\"a}hlt. Liegt diese Anzahl unter einem minimalen Schwellwert MPPS so wird der Speicherbereich (PPs mit zugeh{\"o}rigem Bereichsschl{\"u}ssel) aussortiert. Die {\"u}brigbleibenden Daten innerhalb des Multimap-Containers k{\"o}nnen als valide Gruppen von Mittellinienpunkte MP angesehen werden. Falls der Multimap-Container leer ist terminiert der Algorithmus und keine Mittellinien wurden gefunden. Ist die Mittelliniensuche nicht terminiert beginnt der Aufbau eines ungerichteten Graphen.
+Im ersten Schritt werden daf{\"u}r die geometrischen Schwerpunkte GS durch die MP f{\"u}r jeden Bereichsschl{\"u}ssel berechnet. Anschlie{\ss}end wird die euklidische Distanz zwischen den GS der Bereichsschl{\"u}ssel mit einem Schwellwert verglichen. Ist die Distanz zweier GS unter dem Schwellwert geh{\"o}ren die Bereichsschl{\"u}ssel I und J zusammen und diese Verbindung wird in einem Vector-Container hinterlegt.  
 Alle m{\"o}glichen Permutationen werden so verglichen. Durch die Funktion isPermuted wird w{\"a}hrenddessen sichergestellt das nicht dieselben Bereichsschl{\"u}ssel verglichen werden als auch das keine Bereichsschl{\"u}ssel mehrmals mit dem Schwellwert verglichen werden.
-Wurden alle Verbindungen von Bereichsschl{\"u}sseln berechnet, werden diese durch den Algorithmus Depth First Search aufgel{\"o}st. Depth First Search ist ein rekursiver Algorithmus der angewandt wird um  Knoten in einem Graphen zu suchen . Im Gegensatz zur Breitensuche BFS wird bei der Tiefensuche DFS zun{\"a}chst ein Pfad vollst{\"a}ndig in die Tiefe beschritten, bevor abzweigende Pfade beschritten werden.
-
-
-DFS wurde gew{\"a}hlt da die Bereichsschl{\"u}ssel so gut wie immer nur einen Nachbarknoten besitzen und nicht in die Breite gesucht werden muss. Dies ist damit zu begr{\"u}nden das die Mittellinien der Fahrbahn aufeinanderfolgen. Au{\ss}erdem ben{\"o}tigt DFS weniger Speicherressourcen da nicht alle Kind-Knoten eines aktuell zu pr{\"u}fenden Knotens gespeichert werden m{\"u}ssen. Zudem sind die Knoten nach Beendigung der Suche bereits topologisch sortiert. Durch die implementierte Klasse depth\_first\_search werden die Bereichsschl{\"u}ssel zu Graphen zugeordnet. Dabei k{\"o}nnen auch Graphen mit nur einem Knoten entstehen.
+Wurden alle Verbindungen von Bereichsschl{\"u}sseln berechnet, werden diese durch den Algorithmus Depth-First-Search aufgel{\"o}st. Depth-First-Search ist ein rekursiver Algorithmus der angewandt wird um  Knoten in einem Graphen zu suchen. Im Gegensatz zur Breitensuche BFS wird bei der Tiefensuche DFS zun{\"a}chst ein Pfad vollst{\"a}ndig in die Tiefe beschritten, bevor abzweigende Pfade beschritten werden.
+DFS wurde gew{\"a}hlt, da die Bereichsschl{\"u}ssel so gut wie immer nur einen Nachbarknoten besitzen und nicht in die Breite gesucht werden muss. Dies ist damit zu begr{\"u}nden das die Mittellinien der Fahrbahn aufeinanderfolgen. Au{\ss}erdem ben{\"o}tigt DFS weniger Speicherressourcen da nicht alle Kind-Knoten eines aktuell zu pr{\"u}fenden Knotens gespeichert werden m{\"u}ssen. Zudem sind die Knoten nach Beendigung der Suche bereits topologisch sortiert. Durch die implementierte Klasse depth\_first\_search werden die Bereichsschl{\"u}ssel zu Graphen zugeordnet. Dabei k{\"o}nnen auch Graphen mit nur einem Knoten entstehen.
 
 \begin{figure}[H]
 \begin{center}
@@ -294,17 +382,47 @@ DFS wurde gew{\"a}hlt da die Bereichsschl{\"u}ssel so gut wie immer nur einen Na
 \end{center}
 \end{figure}  
 
-Ist DFS terminiert werden die in den Graphen enthaltenen Bereichsschl{\"u}ssel durch den Abstand ihres GS zum Fahrzeug sortiert. Dies ist durch die Funktion sort() realisiert welche durch {\"U}berladung mit einer Lambda-Funktion nach der kleinsten euklidischen Distanz absteigend zum Fahrzeug hin sortiert. Werden keine Graphen mit einer Anzahl Knoten gr{\"o}{\ss}er eins gefunden, terminiert der Algorithmus. Ist dies nicht der Fall, werden zus{\"a}tzlich der Richtungswinkel und der Abstand eines Knoten zu seinem n{\"a}chsten Nachbarn berechnet.
+Ist DFS terminiert werden die in den Graphen enthaltenen Bereichsschl{\"u}ssel durch den Abstand ihres GS zum Fahrzeug sortiert. Dies ist durch die Funktion sort realisiert, welche durch {\"U}berladung mit einer Lambda-Funktion nach der kleinsten euklidischen Distanz absteigend zum Fahrzeug hin sortiert. Werden keine Graphen mit einer Anzahl Knoten gr{\"o}{\ss}er eins gefunden, terminiert der Algorithmus. Ist dies nicht der Fall, werden zus{\"a}tzlich der Richtungswinkel und der Abstand eines Knoten zu seinem n{\"a}chsten Nachbarn berechnet.
 
-Vor dem Beenden der Mittellinien Suche werden alle R{\"u}ckgabeparameter gesetzt. Die sind :
+\newpage
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Mid_Line_Search_Diagram1}% keine extention: wählt jpg für DVI
+  \caption[midlinepa1]%
+           {\label{fig:midlinepa1}%
+           Programmablaufplan des Mid-Line-Search-Algorithmus Teil 1.
+           }
+\end{center}
+\end{figure} 
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Mid_Line_Search_Diagram2}% keine extention: wählt jpg für DVI
+  \caption[midlinepa2]%
+           {\label{fig:midlinepa2}%
+           Programmablaufplan des Mid-Line-Search-Algorithmus Teil 2.
+           }
+\end{center}
+\end{figure} 
 
 
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Mid_Line_Search_Diagram3}% keine extention: wählt jpg für DVI
+  \caption[midlinepa3]%
+           {\label{fig:midlinepa3}%
+           Programmablaufplan des Mid-Line-Search-Algorithmus Teil 3.
+           }
+\end{center}
+\end{figure} 
 
 
 
 %https://stackoverflow.com/questions/3332947/when-is-it-practical-to-use-depth-first-search-dfs-vs-breadth-first-search-bf
 %Comparing BFS and DFS, the big advantage of DFS is that it has much lower memory requirements than BFS, because it?s not necessary to %store all of the child pointers at each level.
 
+\newpage
 
 \section{Linien-Validierungs-Tabelle Erzeugung}
 \label{sec:Linien-Validierungs-Tabelle Erzeugung}
@@ -341,14 +459,6 @@ Im folgenden sind die Parameter der LineValidationTable-Klasse gegeben.
 
 
 
-
-
-
-\section{Merkmal Extraktion aus den Validierungs-Tabellen}
-\label{sec:Merkmal Extraktion aus den Validierungs-Tabellen}
-
-%
-Die FeatureExtractor-Klasse dient dazu alle Merkmale, die durch verschiedene Algorithmen gesammelt wurden in sich zu vereinen und diese weiter aufzubereiten. Die LineValidationTable-Container der einzelnen Linien werden im ersten Schritt in diese geladen. Verschiedene Merkmale der Fahrbahn k{\"o}nnen nun extrahiert werden.
 
 Mit der Funktion GetDrivePointsInDriveDirection werden nur Punkte extrahiert, welche in Fahrtrichtung verlaufen. Abzweigungen wie Sie bei Kreuzungen entstehen werden nicht ber{\"u}cksichtigt.
 Die Funktion betrachtet dabei die {\"A}nderung des Winkels zwischen den einzelnen Punkten einer Linie. Dazu muss der Startwinkel an welchem die Linie im unteren Bildbereich beginnt zwischen einem minimalen und maximalen Wert liegen damit die Linie ber{\"u}cksichtigt wird. Anschlie{\"ss}end wird durch die Linien-Punkte des LineValidationTables iteriert und die Winkel{\"a}nderung der Punkte verglichen. Bei einer abrupten {\"A}nderung {\"u}ber einen Schwellwert wird die Linie abgeschnitten und als Return-Wert ausgegeben. Der Datentyp ist dabei immer noch vector<LineValidationTable> mit allen gespeicherten Informationen.

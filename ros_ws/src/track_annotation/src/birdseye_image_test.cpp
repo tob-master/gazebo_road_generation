@@ -24,18 +24,18 @@ int main(int argc, char **argv) {
     int f_ = 211;
     int dist_ = 65;
 
-    cv::namedWindow("Result", 1);
-    cv::createTrackbar("Alpha", "Result", &alpha_, 180);
-    cv::createTrackbar("Beta", "Result", &beta_, 180);
-    cv::createTrackbar("Gamma", "Result", &gamma_, 180);
-    cv::createTrackbar("f", "Result", &f_, 2000);
-    cv::createTrackbar("Distance", "Result", &dist_, 2000);
+    cv::namedWindow("Birdseye-Transformation", 1);
+    cv::createTrackbar("R_x alpha", "Birdseye-Transformation", &alpha_, 180);
+    cv::createTrackbar("R_y beta", "Birdseye-Transformation", &beta_, 180);
+    cv::createTrackbar("R_z gamma", "Birdseye-Transformation", &gamma_, 180);
+    cv::createTrackbar("Brennweite", "Birdseye-Transformation", &f_, 2000);
+    cv::createTrackbar("Distanzhöhe", "Birdseye-Transformation", &dist_, 2000);
 
     cv::Mat destination;
 
     while(1){
 
-        cv::Mat image = cv::imread("/home/tb/gazebo_road_generation/ros_ws/src/track_annotation/images/crossing.png", CV_LOAD_IMAGE_GRAYSCALE);
+        cv::Mat image = cv::imread("/home/tb/gazebo_road_generation/ros_ws/src/track_annotation/test_images/crossing.png", CV_LOAD_IMAGE_GRAYSCALE);
 
         double f, dist;
         double alpha, beta, gamma;
@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
         // Apply matrix transformation
         cv::warpPerspective(image, destination, transfo, taille, INTER_CUBIC | WARP_INVERSE_MAP);
 
-        cv::imshow("Result", destination);
+        cv::imshow("Birdseye-Transformation", destination);
         cv::waitKey(30);
     }
 

@@ -46,26 +46,26 @@ Die zwei Simulationsumgebungen mit der h{\"o}chsten Punktzahl (V-REP und Gazebo)
 Die Virtual Robot Experimentation Platform (V-REP) ist eine dreidimensionale plattform{\"u}bergreifende Simulations-Engine von Coppelia Robotics. Sie unterst{\"u}tzt unter anderem C/C ++, Python, Lua, Octave und Matlab. Zur Simulation der Physik stehen verschiedene Engines zur Verf{\"u}gung, beispielsweise Newton, Bullet, Open Dynamics Engine oder Vortex.
 Verf{\"u}gbar ist die Engine f{\"u}r MacOS, Linux und Windows.
 V-REP bietet eine groﬂe Auswahl an Robotern, einschlieﬂlich Bi-Pedal-, Hexapod-, Rad-, Flug- und schlangen{\"a}hnlichen Robotern. Zudem sind auch Aktoren und Sensoren, welche durch Plugins integriert werden k{\"o}nnen, verf{\"u}gbar.
-Es gibt verschiedene Optionen f{\"u}r die Programmierung von Funktionen, wie etwa Skripte die Roboter ansteuern, Plug-Ins und auch ROS-Knoten, die alle {\"u}ber die Remote-API eine Verbindung zu V-REP herstellen k{\"o}nnen
+Es gibt verschiedene Optionen f{\"u}r die Programmierung von Funktionen, wie etwa Skripte die Roboter ansteuern, Plugins und auch ROS-Knoten, die alle {\"u}ber die Remote-API eine Verbindung zu V-REP herstellen k{\"o}nnen
 Vor allem bei der Konstruktion von neuen Robotern und Welten kann V-REP punkten.
 Mit CAD designte Modelle k{\"o}nnen von Robotern in Echtzeit manipuliert werden.
 Das Interagieren (z.B. verschieben oder hinzuf{\"u}gen) von Objekten wird erm{\"o}glicht. 
-Es ist m{\"o}glich, Meshes zu vereinfachen, zu teilen und zu kombinieren.Meshes sind eine vereinfachte Oberfl{\"a}chenbeschreibungen aus dreidimensionalen Bilddateien. Dies erm{\"o}glicht es, die Dreieckszahl importierter Modelle zu optimieren und Meshes mit Roboteraktuatoren zu manipulieren. 
+Es ist m{\"o}glich, Meshes zu vereinfachen, zu teilen und zu kombinieren. Meshes sind eine vereinfachte Oberfl{\"a}chenbeschreibungen aus dreidimensionalen Bilddateien. Dies erm{\"o}glicht es, die Dreieckszahl importierter Modelle zu optimieren und Meshes mit Roboteraktuatoren zu manipulieren. 
 
 
 \section{Die Gazebo Simulationsumgebung}
 \label{sec:Die Gazebo Simulationsumgebung}
-Ist ein Open Source 3D-Simulator der f{\"u}r die Simulation von Robotern in verschiedenen, komplexen Szenarien erstellt wurde.
+Gazebo ist ein Open Source 3D-Simulator der f{\"u}r die Simulation von Robotern in verschiedenen, komplexen Szenarien erstellt wurde.
 Begonnen hat die Entwicklung von Gazebo im Herbst 2002. Im Jahr 2009 wurde das Robot Operating System (ROS) in das Gazebo-Projekt integriert und ist seitdem eines der meistgenutzten Tools in der ROS Community. 2012 wurde die Verwaltung des Open-Source-Projekts Gazebo von der Open Source Robotics Foundation (OSRF) {\"u}bernommen und wird seitdem von OSRF und einer aktiven Community weiterentwickelt. 
-Die Physik-Engines Open Dynamics Engine, Bullet, Simbody oder das Dynamic Animation and Robotics Toolkit k{\"o}nnen in Gazebo verwendet werden um die physikalischen Gegenheiten der Simulationsumgebung zu berechnen. Die Open Dynamics Engine ist in der Standardkonfiguration die aktive Physik-Engine.
-Durch C++- oder Python-Plugins ist es auch m{\"o}glich Objekte oder die Physik zur Laufzeit der Simulations anzusteuern.
+Die Physik-Engines Open Dynamics Engine, Bullet, Simbody oder das Dynamic Animation and Robotics Toolkit k{\"o}nnen in Gazebo verwendet werden um die physikalischen Gegenbenheiten der Simulationsumgebung zu berechnen. Die Open Dynamics Engine ist in der Standardkonfiguration die aktive Physik-Engine.
+Durch C++- oder Python-Plugins ist es auch m{\"o}glich Objekte oder die Physik zur Laufzeit der Simulation anzusteuern.
 Verschiedene Sensor-Plugins sind in der Gazebo-ROS-API bereits integriert wie etwa Kamera-Sensoren oder eine Ackermann-Lenkung f{\"u}r Fahrzeuge.
 Neben diesen Punkten bietet der Gazebo-Simulator viele Anwendungsbeispiele, von einfachen Einstiegsmodellen bis hin zu komplexen Modellen wie Roboterforschungsplattformen mit vielen verschiedenen Sensoren. Dies erm{\"o}glicht auch Entwicklern, die das Framework noch nicht kennen, einen schnellen Einstieg.
 Gazebo nutzt unterschiedliche Software-Bibliotheken f{\"u}r die physikalische Simulation, das Rendering oder der Erzeugung von Sensordaten. Gazebo realisiert die Simulation {\"u}ber ein Client-Server Model.
 Der gzserver ist f{\"u}r die Simulation der Physik das Rendering und dem Berechnen von Sensordaten zust{\"a}ndig. Der gzclient visualisiert die Simulation f{\"u}r den Benutzer. Durch diese Abstraktion ist es m{\"o}glich Gazebo headless (ohne grafische Ausgabe) laufen zu lassen. Dadurch wird die Simulation nicht visualisiert. Dies f{\"u}hrt zu einem niedrigeren Bedarf an Rechenressourcen.
 Im Gegensatz zu V-REP bietet Gazebo weniger M{\"o}glichkeiten um Roboter in der Simulationsumgebung zu modellieren.
-Die Modellierung in Gazebo kann {\"u}ber das SDF (Simulation Description Format), einem XML Format zur Beschreibung
-von Objekten und Umgebungen speziell f{\"u}r den Einsatz in der Robotersimulation, bewerkstelligt werden was f{\"u}r die Simulation f{\"u}r die Anforderungen des Wettbewerbsteams der Hochschule Karlsruhe ausreichen ist.
+Die Modellierung in Gazebo kann {\"u}ber das SDF (Simulation Description Format), einem XML-Format zur Beschreibung
+von Objekten und Umgebungen speziell f{\"u}r den Einsatz in der Robotersimulation bewerkstelligt werden. Dies ist f{\"u}r die Anforderungen des Wettbewerbsteams der Hochschule Karlsruhe vollkommen ausreichend.
 
 
 %http://lenkaspace.net/tutorials/programming/robotSimulatorsComparison

@@ -18,7 +18,7 @@ Vektorbasierte 2D-Grafiken können zum Beispiel mit Inkscape oder Adobe Illustrat
 \begin{enumerate}
 
 \item[] \textbf{Gerade Strecken} \hfill \\
-Als Eingabeparameter nimmt das Skript die Länge der Fahrbahn und den Offset für den Start der Mittellinienrasterung entgegen. Anschließend speichert es das Segment in einer PNG-Datei. Die breite einer der Fahrspuren beträgt in der Simulation 400mm. Die Mittel- und Außenlinien besitzen eine breite von 20mm. Die länge der Mittellinie ist mit 200mm bemessen genau wie auch deren Abstand.
+Als Eingabeparameter nimmt das Skript die Länge der Fahrbahn und den Offset für den Start der Mittellinienrasterung entgegen. Anschließend speichert es das Segment in einer PNG-Datei. Die Breite der Fahrspuren beträgt in der Simulation 400mm. Die Mittel- und Außenlinien besitzen eine Breite von 20mm. Die länge einer Mittellinie ist mit 200mm bemessen, genau wie auch deren Abstand untereinander.
 
 \begin{figure}[H]
 \begin{center}
@@ -32,8 +32,8 @@ Als Eingabeparameter nimmt das Skript die Länge der Fahrbahn und den Offset für 
 
 
 \item[] \textbf{Kurven}\hfill \\
-Als Eingangsparameter nimmt es den Radius der Kurve entgegen wie auch den Offset der Mittellinienrasterung. Anschließend speichert es das Segment in einer PNG-Datei.
-Die Kurvensegmente besitzen die selbe Dimensionierung wie gerade Streckenabschnitte.
+Als Eingangsparameter nimmt das Skript den Radius der Kurve entgegen, wie auch den Offset der Mittellinienrasterung. Anschließend speichert es das Segment in einer PNG-Datei.
+Die Kurvensegmente besitzen die selbe Dimensionierung wie die geraden Streckenabschnitte.
 
 \begin{figure}[H]
 \begin{center}
@@ -47,7 +47,7 @@ Die Kurvensegmente besitzen die selbe Dimensionierung wie gerade Streckenabschni
 
 
 \item[] \textbf{Ziellinie}\hfill \\
-Erzeugt die Startlinie ohne Eingabeparameter.
+Dieses Skript erzeugt die Startlinie ohne Eingabeparameter.
 Die Startlinie besteht aus einem karierten Muster welches aus Quadraten mit 50mm Seitenlänge aufgebaut ist.
 
 \begin{figure}[H]
@@ -60,7 +60,7 @@ Die Startlinie besteht aus einem karierten Muster welches aus Quadraten mit 50mm
 \end{figure}
 
 \item[] \textbf{Geschwindigkeitsbegrenzungen}\hfill \\
-Als Eingangsparameter nimmt es den Wert der Begrenzung entgegen. Anschließend speichert es das Segment in einer PNG-Datei. Auf der Fahrbahn besitzen die Markierungen eine höhe von 400mm und eine breite von 150mm.
+Als Eingangsparameter nimmt das Skript den Wert der Geschwindigkeitsbegrenzung entgegen. Anschließend speichert es das Segment in einer PNG-Datei. Auf der Fahrbahn besitzen die Markierungen eine Höhe von 400mm und eine Breite von 150mm.
 
 \begin{figure}[H]
 \begin{center}
@@ -73,12 +73,12 @@ Als Eingangsparameter nimmt es den Wert der Begrenzung entgegen. Anschließend sp
 
 
 \item[] \textbf{Zebrastreifen}\hfill \\
-Erzeugt einen Zebrastreifen ohne Eingabeparameter.
+Das Skript erzeugt einen Zebrastreifen ohne Eingabeparameter.
 Die einzelnen Streifen besitzen eine Breite von 40mm und eine Höhe von 400mm. 
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/crosswalk}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.3\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/crosswalk}% keine extention: wählt jpg für DVI
   \caption[Zebrastreifensegment]%
            {\label{fig:Zebrastreifensegment}%
            Zebrastreifensegment}
@@ -86,11 +86,11 @@ Die einzelnen Streifen besitzen eine Breite von 40mm und eine Höhe von 400mm.
 \end{figure}
 
 \item[] \textbf{Kreuzungen}\hfill \\
-Die verschiedenen Arten möglicher Kreuzungen wurden aus einzelnen durch Pycairo erzeugten Module in Inkscape zu einer Einheit zusammengeführt.
+Die verschiedenen Arten möglicher Kreuzungen wurden aus einzelnen durch Pycairo erzeugten Modulen in Inkscape zu einer Einheit zusammengeführt.
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/crossings}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.3\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/crossings}% keine extention: wählt jpg für DVI
   \caption[Kreuzungssegmente]%
            {\label{fig:Kreuzungssegmente}%
            Kreuzungssegmente}
@@ -99,11 +99,11 @@ Die verschiedenen Arten möglicher Kreuzungen wurden aus einzelnen durch Pycairo 
 
 
 \item[] \textbf{Startbox und Parkbereich}\hfill \\
-Der Parkbereich wurde zusammen mit der Startbox aus einzelnen Pycairo-Modulen in Inkscape zusammengeführt. Da diese immer gleich aufgebaut sind werden keine Eingabeparameter benötigt. 
+Der Parkbereich wurde zusammen mit der Startbox aus einzelnen Pycairo-Modulen in Inkscape zusammengeführt. Da diese Segmente immer gleich aufgebaut sind, werden keine Eingabeparameter benötigt. 
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/start_of_track}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.7\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/start_of_track}% keine extention: wählt jpg für DVI
   \caption[SBPBSegment]%
            {\label{fig:SBPBSegment}%
            Startbox- und Parkbereichsegment}
@@ -131,7 +131,7 @@ Die im Carolo-Cup möglichen Verkehrsschilder wurden aus dem Github-Repository XX
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/Bilder/alleSchilder}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.7\textwidth]{/home/tb/Desktop/Master/Bilder/alleSchilder}% keine extention: wählt jpg für DVI
   \caption[Verkehrsschilder]%
            {\label{fig:Verkehrsschilder}%
            Verkehrsschilder des CaroloCups}
@@ -146,7 +146,7 @@ Der Abbiegepfeil wurde dem Github-Repository XXX entnommen.
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.2\textwidth]{/home/tb/Desktop/Master/Bilder/abbiegepfeil}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.1\textwidth]{/home/tb/Desktop/Master/Bilder/abbiegepfeil}% keine extention: wählt jpg für DVI
   \caption[Abbiegepfeile]%
            {\label{fig:Abbiegepfeile}%
            Abbiegepfeile}
@@ -158,15 +158,12 @@ Der Abbiegepfeil wurde dem Github-Repository XXX entnommen.
 
 
 
-Die Anzahl von Bildpixeln pro Meter in der Simulationsumgebung wurde dabei in den Python-Skripten auf XXX festgelegt. Dies ermöglicht eine scharfe Ansicht der Module in der Simulationsumgebung wobei nicht allzu viel Rechenleistung für das Rendering benötigt wird.
-
-
-Mit dem Python-Skript XXX können die Fahrbahn-Module (PNG-Dateien) automatisiert in das Gazebo-Modell-format (SDF) konvertiert werden.
+Das Verh\"altnis an Bildpixeln pro Meter in der Simulationsumgebung wurde dabei in den Python-Skripten auf 500 festgelegt. Dies ermöglicht eine scharfe Ansicht der Module in der Simulationsumgebung, wobei nicht allzu viel Rechenleistung für das Rendering benötigt wird. Mit dem Python-Skript XXX können die Fahrbahn-Module (PNG-Dateien) automatisiert in das Gazebo-Modell-Format (SDF) konvertiert werden.
 Dafür muss der Dateiname, der Speicherort und das Auflösungsverhältnis als Eingabeparameter dem Skript übergeben werden. Dieses erzeugt die entsprechende Modell-Datei und kopiert sie in den Gazebo-Modell-Ordner (.gazebo/models). Nach dem Starten des Gazebo-Clients können die Module im Reiter XXX gefunden und zu einer Fahrbahn zusammengeführt werden. 
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/Bilder/rotateFahrbahn}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/rotateFahrbahn}% keine extention: wählt jpg für DVI
   \caption[GazeboKreuzungModel]%
            {\label{fig:GazeboKreuzungModel}%
            Einfügen eines Kreuzungssegments in den Gazebo Simulator}
@@ -174,26 +171,22 @@ Dafür muss der Dateiname, der Speicherort und das Auflösungsverhältnis als Einga
 \end{figure}
 
 
-
-
-Desweitern können dreidimensionale Kisten direkt im Gazebo-Client eingefügt werden. Diese werden zum Beispiel für Parklücken benötigt.
+Desweitern können dreidimensionale Boxen direkt im Gazebo-Client eingefügt werden. Diese werden zum Beispiel für Parklücken benötigt.
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/Bilder/box}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/box}% keine extention: wählt jpg für DVI
   \caption[GazeboBoxModel]%
            {\label{fig:GazeboBoxModel}%
            Einfügen eines Parklückenhindernisses in den Gazebo Simulator}
 \end{center}
 \end{figure}
 
-
-
-Nach beenden der Fahrbahnmodellierung kann die Fahrbahn durch den Gazebo-Client als World-Datei im SDF-Format gespeichert werden.
+Nach beenden der Fahrbahnmodellierung, kann die Fahrbahn durch den Gazebo-Client als World-Datei im SDF-Format gespeichert werden.
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/Bilder/driveTrack}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.7\textwidth]{/home/tb/Desktop/Master/Bilder/driveTrack}% keine extention: wählt jpg für DVI
   \caption[GazeboRundkursWorld]%
            {\label{fig:GazeboRundkursWorld}%
            Modularer Aufbau eines gesamten Rundkurses im Gazebo-Simulator}
@@ -207,17 +200,55 @@ Nach beenden der Fahrbahnmodellierung kann die Fahrbahn durch den Gazebo-Client 
 
 Die Modellierung des Fahrzeugs wurde mit dem ROS-Package XXX ermöglicht.
 Das Package implementiert ein Fahrzeug mit Ackermann-Lenkung für ROS-Gazebo. Dafür nutzt es das Ackermann-Plugin.
-Das Fahrzeug durch eine Modell-Datei beschrieben im SDF-Format implementiert. In dieser Modell-Datei wurden Anpassungen vorgenommen, um das Fahrzeug auf die Dimensionen des Fahrzeugs der Hochschule Karlsruhe zu bringen. Außerdem es um ein Kamera-Plugin erweitert, um Rosbags in der Simulation aufnehmen zu können. Folgende Parameter lassen sich darüber einstellen:
+Das Fahrzeug ist durch eine Modell-Datei beschrieben im SDF-Format implementiert. In dieser Modell-Datei wurden Anpassungen vorgenommen, um das Fahrzeug auf die Dimensionen des Fahrzeugs der Hochschule Karlsruhe zu bringen. Außerdem wurde es um ein Kamera-Plugin erweitert, um Rosbags in der Simulation aufnehmen zu können. Folgende Parameter lassen sich darüber einstellen:
 
-Paramter
+\begin{enumerate}
 
-Das steuern des Fahrzeugs ist über das ROS-Package joy realisiert. Durch dieses kann das Fahrzeug über einen Controller manuell gesteuert werden. In Zukunft könnte auch eine autonome Fahrt durch publishen von Fahrinformationen auf die joy-Topic realisiert werden.
-Über Blender wurden zudem die im Wintersemester 18/19 erzeugten CAD-Konstruktionsteile im STL-format zusammengeführt. In Blender konnte daraus ein Mesh im Format Collada erzeugt werden. COLLADA ist ein XML-basiertes Austausch Format für 3D-Programme. Das durch Blender erzeugte Mesh kann zusammen mit dem XXX-Package genutzt werden um das CaroloCup-Fahrzeug in der Simulation darzustellen.
+\item[] \textbf{imageTopicName} \hfill \\
+Legt den Namen der Topic fest, auf welche Kamera-Bilder gepublisht werden.
+
+\item[] \textbf{update\_rate} \hfill \\
+Legt die Frame-Rate fest in der Bilder auf die Kamera-Topic gepublisht werden.
+
+\item[] \textbf{horizontal\_fov} \hfill \\
+Legt den horizontalen Blickwinkel der Kamera fest.
+
+\item[] \textbf{image\_width} \hfill \\
+Legt die Bildbreite fest.
+
+\item[] \textbf{image\_height} \hfill \\
+Legt die Bildhöhe fest.
+
+\item[] \textbf{image\_type} \hfill \\
+Legt den Bild-Typ fest (zum Beispiel Graustufenbild).
+
+\item[] \textbf{clip\_near} \hfill \\
+Legt die minimale Sichtweite fest.
+
+
+\item[] \textbf{clip\_far} \hfill \\
+Legt die maximale Sichtweite fest
+
+\item[] \textbf{noise\_type} \hfill \\
+Legt eine Art von Rauschen auf das Bild (zum Beispiel Gaußsches Rauschen).
+
+\item[] \textbf{noise\_mean} \hfill \\
+Legt den Mittelwert des Rauschens fest.
+
+\item[] \textbf{noise\_stddev} \hfill \\
+Legt die Standardabweichung des Rauschens fest
+
+
+\end{enumerate}
+
+
+Das Steuern des Fahrzeugs ist über das ROS-Package joy realisiert. Durch dieses kann das Fahrzeug über einen Controller manuell gesteuert werden. In Zukunft könnte auch eine autonome Fahrt durch publishen von Fahrinformationen auf die joy-Topic realisiert werden.
+Über Blender wurden zudem die im Wintersemester 18/19 erzeugten CAD-Konstruktionsteile im STL-format zusammengeführt. In Blender konnte daraus ein Mesh im Format COLLADA erzeugt werden. COLLADA ist ein XML-basiertes Austausch Format für 3D-Programme. Das durch Blender erzeugte Mesh kann zusammen mit dem XXX-Package genutzt werden um das CaroloCup-Fahrzeug in der Simulation darzustellen.
 
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/Bilder/car.png}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/car.png}% keine extention: wählt jpg für DVI
   \caption[GazeboFahrzeug]%
            {\label{fig:GazeboFahrzeug}%
            Das in Gazebo simulierte Fahrzeug nach dem vorhandenen CAD-Modell}
