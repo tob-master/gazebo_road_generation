@@ -7,13 +7,13 @@
 \index{Suche und Klassifizierung von Bodenmarkierungen und Objekten in den Fahrspuren}
 %
 %
-dddd
+In folgenden Abschnitten wird auf die entwickelten Verfahren zur Erkennung von Bodenmarkierungen und von Objekten in der Fahrbahn und der Startbox eingegangen.
 
 \section{Startboxschrankenerkennung}
 \label{sec:Startboxschrankenerkennung}
 
 Die Startboxschrankenerkennung nutzt die Softwarebibliothek Zbar.
-ZBar ist eine Open-Source-Bibliothek zum Lesen von C-Barcodes und QR-Codes.
+Zbar ist eine Open-Source-Bibliothek zum Lesen von C-Barcodes und QR-Codes.
 Es wurde sich dazu entschieden den QR-Code der Startboxschranke zu erkennen, da dieser nur einmal auf der gesamten Fahrstrecke vorkommt. Zbar ist rechenintensiv jedoch kann der Algorithmus einfach nach dem Öffnen der Schranke ausgeschalten werden und fällt dadurch nicht mehr ins Gewicht.
 Um das Erkennen der Startboxschranke testen zu können, wurde mit Qt/QML eine Grafische Benutzeroberfläche implementiert.
 
@@ -22,20 +22,20 @@ Um das Erkennen der Startboxschranke testen zu können, wurde mit Qt/QML eine Gra
   \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/gui}% keine extention: wählt jpg für DVI
   \caption[Grafische Benutzeroberfläche]%
            {\label{fig:Grafische Benutzeroberfläche}%
-           Grafische Benutzeroberfläche}
+           Grafische Benutzeroberfläche für das Testen der Startboxschrankenerkennung}
 \end{center}
 \end{figure}
 
 Mit dieser kann das Modell der Startboxschranke in der Simulation erzeugt und wieder gelöscht werden.
-Außerdem besitzt die GUI einen Subscriber auf die QR-Code Topic /barcode und zeigt bei Erkennen der Startboxschranke in der GUI den erkannten Text an.
+Außerdem besitzt die GUI einen Subscriber auf die QR-Code-Topic barcode und zeigt bei Erkennen der Startboxschranke in der GUI den erkannten Text an.
 Um dafür zu sorgen, dass die GUI nicht einfriert und jederzeit auf Signale reagieren kann, wurde die GUI in einem separaten Thread nebenläufig zu ROS implementiert.
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=1.0\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/startbox}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/startbox}% keine extention: wählt jpg für DVI
   \caption[Startboxschranke]%
            {\label{fig:Startboxschranke}%
-           Startboxschranke.}
+           Die erzeugte Startboxschranke.}
 \end{center}
 \end{figure}
 
@@ -45,57 +45,57 @@ Um dafür zu sorgen, dass die GUI nicht einfriert und jederzeit auf Signale reagi
 
 Um Zebrastreifen und Ziellinien im aktuellen Bild zu erkennen, wird nach einer festgelegten Anzahl von aufeinanderfolgenden weißen und schwarzen Pixelsegmenten mit einer definierten breite gesucht.
 Das Verfahren arbeitet auf dem Graustufenbild in der Birdseye-Perspektive.
-Der Algorithmus setzt dabei auf die Startparameter [XXX] der start\_of\_lines und vanishing\_point Algorithmen auf. Die Startparameter von start\_of\_lines werden präferiert.
+Der Algorithmus setzt dabei auf die Startparameter des Start-of-Lines-Search-Algorithmus oder des Vanishing-Point-Algorithmus auf. Die Startparameter von Start-of-Lines-Search werden dabei präferiert.
 Es wird eine zu vorausschauende Distanz und eine Schrittweite definiert, in der vor dem Fahrzeug nach dem Muster der Fahrbahnmarkierungen gesucht wird.
-Die Zebrastreifensuche iteriert orthogonal zu dem Startwinkel aus Startparameters. Es wird dafür die OpenCV-Funktion Lineiterator genutzt.
-Diese iteriert von einem Startpunkt hin zu einem Endpunkt durch das Bild und liest die darunter liegenden Pixel aus. Wird eine gewisse Anzahl weißer und schwarzer Segmente mit der entsprechenden breite gefunden, ist der Zebrastreifen erkannt.
+Die Zebrastreifensuche iteriert orthogonal zu dem Startwinkel aus Startparameters. Dafür wird die OpenCV-Funktion Lineiterator genutzt.
+Diese iteriert von einem Startpunkt hin zu einem Endpunkt durch das Bild und liest die darunter liegenden Pixel aus. Wird eine gewisse Anzahl weißer und schwarzer Segmente mit der entsprechenden Breite gefunden, ist der Zebrastreifen erkannt.
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/crosswalk}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.4\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/crosswalk}% keine extention: wählt jpg für DVI
   \caption[Zebrastreifensuche]%
            {\label{fig:Zebrastreifensuche}%
-           Zebrastreifensuche}
+           Ein detektierter Zebrastreifen in der Fahrbahn.}
 \end{center}
 \end{figure}
 
 Die Ziellinienerkennung sucht von der linken Außenlinie orthogonal zu dem Startwinkel von Startparameters nach Segmenten mit der entsprechenden Breite. Auch sie nutzt die OpenCV-Funktion Lineiterator.
-Da die Ziellinie im CaroloCup häufig nach einer Kurve erkannt werden muss, wird ein Sichtfeld durch einen Winkel definiert welches durch wiederholtes Aufrufen von Lineiterator in einer festgelegten Schrittweite durchsucht wird. 
+Da die Ziellinie im CaroloCup häufig nach einer Kurve erkannt werden muss, wird ein Sichtfeld durch einen Winkel definiert, welches durch wiederholtes Aufrufen von Lineiterator in einer festgelegten Schrittweite durchsucht wird. 
 
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/goalline_search}% keine extention: wählt jpg für DVI
   \caption[Zielliniensuche]%
            {\label{fig:Zielliniensuche}%
-           Zielliniensuche}
+           Darstellung des Sichtfelds der Zielliniensuche.}
 \end{center}
 \end{figure}
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/goalline}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.4\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/goalline}% keine extention: wählt jpg für DVI
   \caption[Zielliniensuche]%
            {\label{fig:Zielliniensuche}%
-           Zielliniensuche}
+           Eine detektierte Ziellinie in der Fahrbahn.}
 \end{center}
 \end{figure}
 
 
-
+\newpage
 
 
 \section{Kreuzungserkennung}
 \label{sec:Kreuzungserkennung}
 
-Um eine Kreuzung zu erkennen werden die aus LineValidationTableCreator erzeugten Bewertungstabellen analysiert. Die linke Linie wird nach einer Winkeldifferenz von einem Punkt zum nächsten durchsucht die zwischen 160 und 200 Grad liegt. Die rechte Linie wird nach einer Winkeldifferenz durchsucht die zwischen 340 und 20 Grad liegt. Auch die Mittelliniengruppen werden darauf überprüft ob sie horizontal zwischen bestimmten Winkelwerten orientiert sind. 
-Zudem werden die Bewertungstabellen in Fahrtrichtung daraufhin überprüft ob eine gewisse Länge nicht überschreiten. Umso mehr markante Merkmale gefunden werden umso höher ist wie Wahrscheinlichkeit das sich im aktuellen Frame eine Kreuzung befindet.
+Um eine Kreuzung zu erkennen, werden die aus Line-Validation-Table-Creator erzeugten Bewertungstabellen analysiert. Die linke Linie wird nach einem Winkel durchsucht der zwischen 160 und 200 Grad liegt. Die rechte Linie wird nach einem Winkel durchsucht der zwischen 340 und 20 Grad liegt. Auch die Mittelliniengruppen werden darauf überprüft ob sie horizontal zwischen bestimmten Winkelwerten orientiert sind. 
+Zudem werden die Bewertungstabellen in Fahrtrichtung daraufhin überprüft ob sie eine gewisse Länge nicht überschreiten. Umso mehr markante Merkmale gefunden werden, umso höher ist wie Wahrscheinlichkeit das sich im aktuellen Frame eine Kreuzung befindet.
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/crossing}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.3\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/crossing}% keine extention: wählt jpg für DVI
   \caption[Kreuzungserkennung]%
            {\label{fig:Kreuzungserkennung}%
-           Kreuzungserkennung.}
+           Eine detektierte Kreuzung.}
 \end{center}
 \end{figure}
 
@@ -104,20 +104,20 @@ Zudem werden die Bewertungstabellen in Fahrtrichtung daraufhin überprüft ob eine
 
 
 
-\section{Bodenmarkierung- und Hinderniserkennung}
-\label{sec:Bodenmarkierung- und Hinderniserkennung}
+\section{Bodenmarkierungs- und Hinderniserkennung}
+\label{sec:Bodenmarkierungs- und Hinderniserkennung}
 
-Wird im Bild keine Kreuzung ,Ziellinie und kein Zebrastreifen erkannt dann wird das Verfahren der Bodenmarkierung und Hinderniserkennung ausgeführt.
+Wird im Bild keine Kreuzung ,Ziellinie und kein Zebrastreifen erkannt, dann wird das Verfahren der Bodenmarkierungs- und Hinderniserkennung ausgeführt.
 Das Verfahren arbeitet auf dem Graustufenbild in Birdseye-Perspektive.
-Der Algorithmus setzt auf die gefundenen Außenlinienpunkte des LineValidationTablesCreation in Fahrtrichtung [XXX] auf.
-Orthogonal zu den Richtungswinkeln der Außenlinienpunkte wird ein Muster bestehenden aus einem Kreis und einer den Kreis in der Mitte durchlaufenden Linie in beiden Fahrspuren Ausgelesen.
+Der Algorithmus setzt auf die gefundenen Außenlinienpunkte des Line-Validation-Table-Creators in Fahrtrichtung auf.
+Orthogonal zu den Richtungswinkeln der Außenlinienpunkte wird ein Muster bestehenden aus einem Kreis und einer den Kreis in der Mitte durchlaufenden Linie in beiden Fahrspuren ausgelesen.
 Für das Auslesen der Linie wird die OpenCV-Funktion Lineiterator verwendet.
-Das Auslesen des Kreises wird mit der Funktion Radial-Scan realisiert.
+Das Auslesen des Kreises wird mit der Funktion radialScan realisiert.
 Von beiden Außenlinien aus, kann in beiden Fahrspuren nach Hindernissen und Bodenmarkierungen gesucht werden. Eine definierte Suchweite mit zugehöriger Schrittweite legt fest, wie weit für vor dem Fahrzeug gesucht werden soll.
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/marking_box_search}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.4\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/marking_box_search}% keine extention: wählt jpg für DVI
   \caption[Das Suchmuster der Bodenmarkierung- und Hinderniserkennung]%
            {\label{fig:Das Suchmuster der Bodenmarkierung- und Hinderniserkennung}%
            Das Suchmuster der Bodenmarkierung- und Hinderniserkennung.}
@@ -126,25 +126,25 @@ Von beiden Außenlinien aus, kann in beiden Fahrspuren nach Hindernissen und Bode
 
 
 Wie auch bei der Ziellinien- und Zebrastreifensuche wird nach dem Auftauchen eines bestimmten Segmenten-Musters gesucht.
-Um ein Hindernis zu erkennen, muss ein Segment in der Suchlinie gefunden werden welches über einer festgelegten breite liegt. Dies gilt auch für die radiale Suche.
+Um ein Hindernis zu erkennen, muss ein Segment in der Suchlinie gefunden werden, welches über einer festgelegten Breite liegt. Dies gilt auch für die radiale Suche.
 Werden viele kleinere Segmente in der entsprechenden Fahrspur gefunden deutet dies auf eine Bodenmarkierung hin.
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/box}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.4\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/box}% keine extention: wählt jpg für DVI
   \caption[Erkennung eines Hindernisses]%
            {\label{fig:Erkennung eines Hindernisses}%
-           Erkennung eines Hindernisses.}
+           Eine detektierte Box in der Fahrbahn.}
 \end{center}
 \end{figure}
 
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.5\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/marking}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.4\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/008_Kapitel7/Bilder/marking}% keine extention: wählt jpg für DVI
   \caption[Erkennung einer Bodenmarkierung]%
            {\label{fig:Erkennung einer Bodenmarkierung}%
-           Erkennung einer Bodenmarkierung.}
+           Eine detektierte Geschwindigkeitsbegrenzungsmarkierung in der Fahrbahn.}
 \end{center}
 \end{figure}
 

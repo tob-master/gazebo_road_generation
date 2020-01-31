@@ -424,48 +424,86 @@ Ist DFS terminiert werden die in den Graphen enthaltenen Bereichsschl{\"u}ssel d
 
 \newpage
 
-\section{Linien-Validierungs-Tabelle Erzeugung}
-\label{sec:Linien-Validierungs-Tabelle Erzeugung}
+\section{Bewertungstabellenerzeugung mit dem Line-Validation-Table-Creator-Algorithmus}
+\label{sec:Bewertungstabellenerzeugung mit dem Line-Validation-Table-Creator-Algorithmus}
 
 %
 %
-Die Klasse LineValidationTableCreator erzeugt eine Bewertungstabelle aus den zur{\"u}ckgelieferten Werten der LinePointsReducer- und MidLineSearch-Klasse. Diese Werte sind Punkte mit einer zugeh{\"o}rigen Richtung und L{\"a}nge zum n{\"a}chsten Punkt auf der entsprechenden Linie. 
-
-In dieser Tabelle werden Informationen {\"u}ber einzelne Punkte der gefundenen Linken-, Mittel- und Rechten-Linie-Punkte berechnet, vermerkt und verglichen um eine robuste Linienerkennung zu erm{\"o}glichen. Daf{\"u}r wird zuerst das Graustufenbild in Birdseye-Perspektive an die Klasse {\"u}bergeben auf welchem der LineValidationTableCreator seine Berechnungen ausf{\"u}hrt. Anschlie{\ss}end werden die einzelnen Linien {\"u}bergeben. Mit den Folgenden Enumerationen welche als Schl{\"u}sselvariablen dienen kann bestimmt werden welche Linien verglichen werden sollen. Gleichzeitig werden dadurch auch Variablen der Operationen der LineValidationCreator-Klasse an die entsprechenden Linien angepasst.
+Der Line-Validation-Table-Creator-Algorithmus erzeugt eine Bewertungstabelle aus den zur{\"u}ckgelieferten Werten des Line-Points-Reducer-Algorithmus und Mid-Line-Search-Algorithmus. Diese Werte sind Punkte mit einer zugeh{\"o}rigen Richtung der L{\"a}nge zum n{\"a}chsten Punkt auf der entsprechenden Linie. 
+In der Bewertungstabelle werden Informationen {\"u}ber einzelne Punkte der gefundenen Linken-, Mittel- und Rechten-Linie-Punkte berechnet, vermerkt und verglichen um eine robuste Linienerkennung zu erm{\"o}glichen. Daf{\"u}r wird zuerst das Graustufenbild in Birdseye-Perspektive an den Algorithmus {\"u}bergeben, auf welchem Line-Validation-Table-Creator seine Berechnungen ausf{\"u}hrt. Anschlie{\ss}end werden die einzelnen Linien {\"u}bergeben. Mit den Folgenden Enumerationen welche als Schl{\"u}sselvariablen dienen kann bestimmt werden welche Linien verglichen werden sollen. Gleichzeitig werden dadurch auch Variablen an die entsprechenden Linien angepasst.
 
 
 \begin{enumerate}
 
 \item[] \textbf{LEFT\_TO\_MID} \hfill \\
+Suchrichtung von der linken Linie zur Mittellinie.
+
 \item[] \textbf{LEFT\_TO\_RIGHT} \hfill \\
+Suchrichtung von der linken Linie zur rechten Linie.
 
 \item[] \textbf{MID\_TO\_LEFT} \hfill \\
+Suchrichtung von der Mittellinie zur linken Linie.
+
 \item[] \textbf{MID\_TO\_RIGHT} \hfill \\
+Suchrichtung von der Mittellinie zur rechten Linie.
 
 \item[] \textbf{RIGHT\_TO\_LEFT} \hfill \\
+Suchrichtung von der rechten Linie zu linken Linie.
+
 \item[] \textbf{RIGHT\_TO\_MID} \hfill \\
+Suchrichtung von der revchten Linie zur linken Linie.
+
 \end{enumerate}
 
 
-Eine weitere gesetzte Konvention ist das die Linien von links (LINKS = 0) nach rechts (RECHTS = 2) durchnummeriert sind.
+Eine weitere gesetzte Konvention ist, das die Linien von links (LEFT\_LINE = 0) nach rechts (RIGHT\_LINE = 2) durchnummeriert sind.
 
-Je nach Schl{\"u}ssel-Variable wird eine Linie abh{\"a}ngig von den Parametern - Richtung und L{\"a}nge, zum n{\"a}chsten Punkt durchschritten. Dabei werden f{\"u}r jeden Punkt , orthogonal zu diesem, Liniensegmente auf benachbarten Linien im Graustufenbild gesucht. Der orthogonale Suchwinkel ist abh{\"a}ngig von der Schl{\"u}ssel-Variable und der Richtung zum n{\"a}chsten Punkt der aktuellen Linie. Wird ein valides Segment gefunden (seine Breite liegt zwischen einem minimalen und maximalen Schwellwert), wird dies in einer Klasse vermerkt. Diese Klasse ist die LineValidationTable-Klasse. Jeder Punkt einer Linie ist somit eine eigene Klasse in der verschiedene Informationen vermerkt, wie auch Getter- und Setter-Funktionen implementiert sind.
+Je nach Schl{\"u}ssel-Variable wird eine Linie abh{\"a}ngig von den Parametern - Richtung und L{\"a}nge, zum n{\"a}chsten Punkt durchschritten. Dabei werden f{\"u}r jeden Punkt , orthogonal zu diesem, Liniensegmente auf benachbarten Linien im Graustufenbild gesucht. Der orthogonale Suchwinkel ist abh{\"a}ngig von der Schl{\"u}ssel-Variable und der Richtung zum n{\"a}chsten Punkt der aktuellen Linie. Wird ein valides Segment gefunden (seine Breite liegt zwischen einem minimalen und maximalen Schwellwert), wird dies in einer Klasse vermerkt. Diese Klasse ist die Line-Validation-Table-Klasse. Jeder Punkt einer Linie ist somit eine eigene Klasse in der verschiedene Informationen vermerkt, wie auch Getter- und Setter-Funktionen implementiert sind. Wurden alle Linien-Punkte f{\"u}r jede Linie durchlaufen, werden die erzeugten Informationen, untereinander verglichen. Dadurch wird jeder Linien-Punkt (Line-Validation-Table-Klasse) mit weiteren Informationen bef{\"u}llt.
+Es wird {\"u}berpr{\"u}ft ob f{\"u}r einen gefundenen benachbarten Linien-Punkt aus dem Graustufenbild, ein Punkt in den benachbarten Bewertungstabellen gefunden wird der sehr nah zu diesem liegt. Daf{\"u}r wird die minimale euklidische Distanz der Punkte gesucht. Liegt diese unter einem Schwellwert wird ein Flag in der entsprechenden Bewertungstabelle gesetzt. Dies soll der Absicherung der Punkte dienen. Des Weiteren wird die Richtung der einzelnen Punkte untereinander auf ihre gleiche Ausrichtung hin {\"u}berpr{\"u}ft, um f{\"u}r einen noch h{\"o}here Genauigkeit zu sorgen.
+Da die Mittellinien in einem Vector-Container bestehend aus einem Vector-Container mit zusammengeh{\"o}rigen Mittellinien-Gruppen gespeichert sind, werden Mittellinien-Punkte einer anderen Gruppe in der Line-Validation-Table-Klasse mit einer zus{\"a}tzlichen Identifikationsnummer markiert.
+ 
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Line_Validation_Table_finish1}% keine extention: wählt jpg für DVI
+  \caption[lvtc1]%
+           {\label{fig:lvtc1}%
+           Programmablaufplan der Line-Validation-Table-Creator-Algorithmus Teil 1.
+           }
+\end{center}
+\end{figure}
+ 
+ \newpage
+ 
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Line_Validation_Table_finish2}% keine extention: wählt jpg für DVI
+  \caption[lvtc2]%
+           {\label{fig:lvtc2}%
+           Programmablaufplan der Line-Validation-Table-Creator-Algorithmus Teil 2.
+           }
+\end{center}
+\end{figure}
+ 
+\newpage 
+ 
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Line_Validation_Table_finish3}% keine extention: wählt jpg für DVI
+  \caption[lvtc3]%
+           {\label{fig:lvtc3}%
+           Programmablaufplan der Line-Validation-Table-Creator-Algorithmus Teil 3.
+           }
+\end{center}
+\end{figure}
+ 
+\newpage
 
-
-Wurden alle Linien-Punkte f{\"u}r jede Linie durchlaufen werden die erzeugten Informationen, in LineValidtionTable, untereinander verglichen. Dadurch wird jeder Linien-Punkt (LineValidtionTable-Klasse) mit weiteren Informationen bef{\"u}llt wird.
-Es wird {\"u}berpr{\"u}ft ob f{\"u}r einen gefundenen benachbarten Linien-Punkt aus [XX] ein Punkt in der benachbarten Bewertungstabelle (LineValidtionTable) gefunden wird. Daf{\"u}r wird die minimale euklidische Distanz der Punkte gesucht. Liegt diese unter einem Schwellwert wird ein Flag in der entsprechenden Bewertungstabelle gesetzt. Dies soll der Absicherung der Punkte dienen. Des weiteren wird die Richtung der einzelnen Punkte untereinander auf ihre gleiche Ausrichtung hin {\"u}berpr{\"u}ft um f{\"u}r einen noch h{\"o}here Genauigkeit zu sorgen.
-Da die Mittellinien in einem Vector-Container bestehend aus einem Vector-Container mit zusammengeh{\"o}rigen Mittellinien-Gruppen gespeichert sind, werden Punkt einer anderen Gruppe in der LineValidationTable-Klasse mit einer zus{\"a}tzlichen Identifikationsnummer markiert.
-Im folgenden sind die Parameter der LineValidationTable-Klasse gegeben. 
-
-
-
-
-Mit der Funktion GetDrivePointsInDriveDirection werden nur Punkte extrahiert, welche in Fahrtrichtung verlaufen. Abzweigungen wie Sie bei Kreuzungen entstehen werden nicht ber{\"u}cksichtigt.
-Die Funktion betrachtet dabei die {\"A}nderung des Winkels zwischen den einzelnen Punkten einer Linie. Dazu muss der Startwinkel an welchem die Linie im unteren Bildbereich beginnt zwischen einem minimalen und maximalen Wert liegen damit die Linie ber{\"u}cksichtigt wird. Anschlie{\"ss}end wird durch die Linien-Punkte des LineValidationTables iteriert und die Winkel{\"a}nderung der Punkte verglichen. Bei einer abrupten {\"A}nderung {\"u}ber einen Schwellwert wird die Linie abgeschnitten und als Return-Wert ausgegeben. Der Datentyp ist dabei immer noch vector<LineValidationTable> mit allen gespeicherten Informationen.
+Mit der Funktion GetDrivePointsInDriveDirection können aus der Line-Validation-Table-Creator-Klasse Punkte extrahiert werden, welche in Fahrtrichtung verlaufen. Abzweigungen wie sie bei Kreuzungen entstehen werden nicht ber{\"u}cksichtigt.
+Die Funktion betrachtet dabei die {\"A}nderung des Winkels zwischen den einzelnen Punkten einer Linie. Dazu muss der Startwinkel an welchem die Linie im unteren Bildbereich beginnt zwischen einem minimalen und maximalen Schwellwert liegen, damit die Linie ber{\"u}cksichtigt wird. Anschlie{\"ss}end wird durch die Linien-Punkte der Bewertungstabellen iteriert und die Winkel{\"a}nderung der Punkte verglichen. Bei einer abrupten {\"A}nderung {\"u}ber einem Schwellwert wird die Linie abgeschnitten und als Return-Wert ausgegeben. Der Datentyp ist dabei immernoch vector<LineValidationTable> mit allen gespeicherten Informationen.
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.8\textwidth]{/home/tb/Desktop/Master/Bilder/indrivedir}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/indrivedir}% keine extention: wählt jpg für DVI
   \caption[ExtrahierteLinienpunkte]%
            {\label{fig:ExtrahierteLinienpunkte}%
            Extrahierte linke(gelb), mittel(lila) und rechte(t{\"u}rkis) Linienpunkte in Fahrtrichtung.
@@ -473,44 +511,73 @@ Die Funktion betrachtet dabei die {\"A}nderung des Winkels zwischen den einzelne
 \end{center}
 \end{figure}
 
+\newpage
 
-
-\section{Bewerten sicherer Fahrbereiche}
-\label{sec:Bewerten sicherer Fahrbereiche}
+\section{Sicherheitsbewertung der Fahrbahnbereiche durch den Safe-Drive-Area-Evaluator-Algorithmus}
+\label{sec:Sicherheitsbewertung der Fahrbahnbereiche durch den Safe-Drive-Area-Evaluator-Algorithmus}
 
 %
 %
-Die Klasse RectSafety dient zur Bewertung von befahrbaren Fahrbahnbereichen.
-Diese Bereiche werden von unten nach oben im Bild fortlaufend ausgewertet.
-RectSafety f{\"u}hrt seine Berechnung auf dem Graustufenbild in Birdseye-Perspektive aus.
-Der Algorithmus verwendet die aus der FeatureExtractor-Klasse extrahierten Fahrbahninformationen in Fahrtrichtung.
-Im ersten Schritt wird ein Rechteck mit der Dimension SafteyRectWidth X SafetyRectHeight im Bildbereich vor dem Fahrzeug betrachtet.
-Mit der OpenCV-Funktion PolygonTest kann ein Punkt darauf gepr{\"u}ft werden ob er sich in einem Polygon befindet. Dieses Polygon ist in diesem Fall das Rechteck. Die Linke-, Mitte und Rechte LineValidationTable-Punkte in Fahrtrichtung werden darauf gepr{\"u}ft ob sie im derzeit betrachteten Rechteck liegen. Anschlie{\ss}end wird eine Metrik erzeugt, welche die Sicherheit des Bereichs kompakt in einer Zahl bewertet. Daf{\"u}r werden die im aktuellen Rechteck enthaltenen LineValidationTable-Punkte aller Linien ausgewertet. Im Folgenden sind die Informationen erl{\"a}utert, welche zur Erzeugung der Metrik genutzt werden. Dabei sind sie der Priorit{\"a}t nach absteigend geordnet.
+Der Safe-Drive-Area-Evaluator-Algorithmus dient zur Sicherheitsbewertung von befahrbaren Fahrbahnbereichen.
+Diese rechteckigen Bereiche werden von unten nach oben im Bild fortlaufend ausgewertet.
+Der Algorithmus f{\"u}hrt seine Berechnung auf dem Graustufenbild in Birdseye-Perspektive aus.
+Der Algorithmus verwendet die aus der Line-Validation-Table-Creator-Klasse extrahierten Fahrbahninformationen in Fahrtrichtung.
+Im ersten Schritt wird ein Rechteck mit der Dimension SafteyRectWidth $\times$ SafetyRectHeight im Bildbereich vor dem Fahrzeug betrachtet.
+Mit der OpenCV-Funktion PolygonTest kann ein Punkt darauf gepr{\"u}ft werden ob er sich in einem Polygon befindet. Dieses Polygon ist in diesem Fall das Rechteck. Die linken, mittel und rechten Bewertungstabellen-Punkte in Fahrtrichtung werden darauf gepr{\"u}ft ob sie im derzeit betrachteten Rechteck liegen. Anschlie{\ss}end wird eine Metrik erzeugt, welche die Sicherheit des Bereichs kompakt in einer Zahl bewertet. Daf{\"u}r werden die im aktuellen Rechteck enthaltenen Bewertungstabellen-Punkte aller Linien ausgewertet. Im Folgenden sind die Informationen erl{\"a}utert, welche zur Erzeugung der Metrik genutzt werden. Dabei sind sie der Priorit{\"a}t nach absteigend geordnet.
 
-Priotit{\"a}t 1: Ein LineValidationTable-Punkt hat beide benachbarten Segmente und die Nachbarlinien besitzen einen Punkt in der N{\"a}he dieser.
+\begin{enumerate}
 
-Priotit{\"a}t 2: Ein LineValidationTable-Punkt hat beide benachbarten Segmente und eine Nachbarlinie liegt in der N{\"a}he zu einem Segment.
+\item[] \textbf{Priorit{\"a}t 0} \hfill \\
+Ein Bewertungstabellen-Punkt hat beide benachbarten Segmente gefunden und die benachbarten Bewertungstabellen besitzen je einen Punkt in der N{\"a}he dieser.
 
-Priotit{\"a}t 3: Ein LineValidationTable-Punkt hat ein benachbartes Segment und eine Nachbarlinie liegt in der N{\"a}he zu diesem Segment
+\item[] \textbf{Priorit{\"a}t 1 und 2} \hfill \\
+Ein Bewertungstabellen-Punkt hat beide benachbarten Segmente gefunden und eine benachbarte Bewertungstabelle besitzt einen Punkt in der N{\"a}he dessen.
 
-Priotit{\"a}t 4: Ein LineValidationTable-Punkt hat beide benachbarten Segmente aber die Nachbarlinien sind nicht in der N{\"a}he zu diesen
+\item[] \textbf{Priorit{\"a}t 3 und 4} \hfill \\
+Ein Bewertungstabellen-Punkt hat ein benachbartes Segment gefunden und die benachbarte Bewertungstabelle besitzt einen Punkt in der N{\"a}he dessen.
 
-Priotit{\"a}t 5: Ein LineValidationTable-Punkt findet ein benachbartes Segment
+\item[] \textbf{Priorit{\"a}t 5} \hfill \\
+Ein Bewertungstabellen-Punkt hat beide benachbarten Segmente gefunden aber keine benachbarte Bewertungstabelle besitzt einen Punkt in der N{\"a}he dessen.
 
-Um eine kompakte Beschreibung der Bereichssicherheit zu erm{\"o}glichen, werden die Priorit{\"a}ten der LineValidationTable-Punkte aller Linien im Rechteck akkumuliert. Des Weiteren wird die Anzahl der Priorit{\"a}ten in einen prozentualen Wert umgewandelt. Dieser prozentuale Wert ist im normalen Fall abh{\"a}ngig von der H{\"o}he des Rechtecks. Dieser beschreibt wie viele Punkte maximal im Rechteck liegen k{\"o}nnen. Da jedoch bei einer Kurvenfahrt theoretisch mehr Punkte als SafetyRectHeight im Rechteck vorkommen k{\"o}nnen, wird in diesem Ausnahmefall die Anzahl der LineValidationTable-Punkte im Rechteck verwendet. Die prozentualen Werte f{\"u}r jede der akkumulierten Priorit{\"a}ten werden anschlie{\ss}end zu einem Wert zusammengef{\"u}hrt.
+\item[] \textbf{Priorit{\"a}t 6 und 7} \hfill \\
+Ein Bewertungstabellen-Punkt findet ein benachbartes Segment
 
-[Bild akkumilierte Prios]
+\end{enumerate}
 
-Die Berechnung dient nur zur kompakten Beschreibung der Bereichssicherheit, damit sie als einzelner Wert an Funktionen {\"u}bergeben und einfach interpretiert werden kann. Dieser Wert beschreibt die Sicherheit der Punkte im ersten Rechteck.
-Darauf aufbauend, werden nun die sichersten LineValidationTable-Punkte aus dem Rechteck verwendet um die Richtung zu erhalten in welche die Fahrspur ausgerichtet ist. Vom Mittelpunkt des derzeitig betrachteten Rechtecks wird in die berechnete Richtung mit einer festgelegten Schrittweite vorangeschritten und die n{\"a}chste Bereichssicherheit berechnet.
-Falls in einem Bereich keine LineValidationTable-Punkte mit oben beschriebenen Priorit{\"a}tswerten vorhanden sind, wird im Winkel des vorherigen Rechtecks solange vorangeschritten, bis der Mittelpunkt eine Rechtecks au{\ss}erhalb des betrachteten Graustufenbilds liegt. 
+
+
+Um eine kompakte Beschreibung der Bereichssicherheit zu erm{\"o}glichen, werden die Priorit{\"a}ten der Bewertungstabellen-Punkte aller Linien im Rechteck akkumuliert. Des Weiteren wird die Anzahl der Priorit{\"a}ten in einen prozentualen Wert umgewandelt. Dieser prozentuale Wert ist im normalen Fall abh{\"a}ngig von der H{\"o}he des Rechtecks. Dieser beschreibt wieviele Punkte maximal im Rechteck liegen k{\"o}nnen. Da jedoch bei einer Kurvenfahrt theoretisch mehr Punkte als SafetyRectHeight im Rechteck vorkommen k{\"o}nnen, wird in diesem Ausnahmefall die Anzahl der Bewertungstabellen-Punkte im Rechteck verwendet. Die prozentualen Werte f{\"u}r jede der akkumulierten Priorit{\"a}ten werden anschlie{\ss}end zu einem Wert zusammengef{\"u}hrt.
+
+
+
+\begin{center}
+
+
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+
+
+\textbf{P 0} & \textbf{P 1} & \textbf{P 2} & \textbf{P 3} & \textbf{P 4} & \textbf{P 5} & \textbf{P 6} & \textbf{P 7}\\
+\hline
+0-99\% &  0-99\% &  0-99\% &    0-99\% &   0-99\% &   0-99\% &   0-99\% &   0-99\%    
+
+
+\end{tabular}
+
+\end{center}
+
+
+
+Die Berechnung dient nur zur kompakten Beschreibung der Bereichssicherheit in einer maximal zehnstelligen großen Zahl, damit sie als einzelner Wert an Funktionen {\"u}bergeben und einfach interpretiert werden kann. Dieser Wert beschreibt die Sicherheit der Punkte im ersten Rechteck. In der 
+Darauf aufbauend, werden nun die sichersten Bewertungstabellen-Punkte aus dem Rechteck verwendet um die Richtung zu erhalten, in welche die Fahrspur ausgerichtet ist. Vom Mittelpunkt des derzeitig betrachteten Rechtecks wird in die berechnete Richtung mit einer festgelegten Schrittweite vorangeschritten und die n{\"a}chste Bereichssicherheit berechnet.
+Falls in einem Bereich keine Bewertungstabellen-Punkte mit oben beschriebenen Priorit{\"a}tswerten vorhanden sind, wird im Winkel des vorherigen Rechtecks solange vorangeschritten, bis der Mittelpunkt eine Rechtecks au{\ss}erhalb des betrachteten Graustufenbilds liegt. 
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.8\textwidth]{/home/tb/Desktop/Master/Bilder/safetytrack2}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/safetytrack2}% keine extention: wählt jpg für DVI
   \caption[RectSafety]%
            {\label{fig:RectSafety}%
            Bewertete Bereichssicherheiten dargestellt als grüne Rechtecke.
+           Die als grüne Zahl dargestellte Sicherheitsbewertung gibt die Anzahl von dezimalstellen der Bewertung im Bereich an.
            }
 \end{center}
 \end{figure}
@@ -521,7 +588,7 @@ Dies erlaubt es zus{\"a}tzlich {\"u}ber Kreuzungen hinaus, Bereiche fr{\"u}hzeit
 
 \begin{figure}[H]
 \begin{center}
-  \includegraphics[width=0.8\textwidth]{/home/tb/Desktop/Master/Bilder/safetytrack}% keine extention: wählt jpg für DVI
+  \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/safetytrack}% keine extention: wählt jpg für DVI
   \caption[SafetyRectKreuzung]%
            {\label{fig:SafetyRectKreuzung}%
            Bewertung der Bereichssicherheit über die Kreuzung hinaus.

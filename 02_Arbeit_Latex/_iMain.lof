@@ -43,27 +43,30 @@
 \contentsline {figure}{\numberline {\relax 6.17}{\ignorespaces midlinepa1}}{44}{figure.6.17}
 \contentsline {figure}{\numberline {\relax 6.18}{\ignorespaces midlinepa2}}{45}{figure.6.18}
 \contentsline {figure}{\numberline {\relax 6.19}{\ignorespaces midlinepa3}}{46}{figure.6.19}
-\contentsline {figure}{\numberline {\relax 6.20}{\ignorespaces ExtrahierteLinienpunkte}}{48}{figure.6.20}
-\contentsline {figure}{\numberline {\relax 6.21}{\ignorespaces RectSafety}}{50}{figure.6.21}
-\contentsline {figure}{\numberline {\relax 6.22}{\ignorespaces SafetyRectKreuzung}}{51}{figure.6.22}
+\contentsline {figure}{\numberline {\relax 6.20}{\ignorespaces lvtc1}}{48}{figure.6.20}
+\contentsline {figure}{\numberline {\relax 6.21}{\ignorespaces lvtc2}}{49}{figure.6.21}
+\contentsline {figure}{\numberline {\relax 6.22}{\ignorespaces lvtc3}}{50}{figure.6.22}
+\contentsline {figure}{\numberline {\relax 6.23}{\ignorespaces ExtrahierteLinienpunkte}}{51}{figure.6.23}
+\contentsline {figure}{\numberline {\relax 6.24}{\ignorespaces RectSafety}}{53}{figure.6.24}
+\contentsline {figure}{\numberline {\relax 6.25}{\ignorespaces SafetyRectKreuzung}}{54}{figure.6.25}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {\relax 7.1}{\ignorespaces Grafische Benutzeroberfl\"ache}}{52}{figure.7.1}
-\contentsline {figure}{\numberline {\relax 7.2}{\ignorespaces Startboxschranke}}{53}{figure.7.2}
-\contentsline {figure}{\numberline {\relax 7.3}{\ignorespaces Zebrastreifensuche}}{54}{figure.7.3}
-\contentsline {figure}{\numberline {\relax 7.4}{\ignorespaces Zielliniensuche}}{54}{figure.7.4}
-\contentsline {figure}{\numberline {\relax 7.5}{\ignorespaces Zielliniensuche}}{55}{figure.7.5}
-\contentsline {figure}{\numberline {\relax 7.6}{\ignorespaces Kreuzungserkennung}}{56}{figure.7.6}
-\contentsline {figure}{\numberline {\relax 7.7}{\ignorespaces Das Suchmuster der Bodenmarkierung- und Hinderniserkennung}}{57}{figure.7.7}
-\contentsline {figure}{\numberline {\relax 7.8}{\ignorespaces Erkennung eines Hindernisses}}{58}{figure.7.8}
-\contentsline {figure}{\numberline {\relax 7.9}{\ignorespaces Erkennung einer Bodenmarkierung}}{58}{figure.7.9}
+\contentsline {figure}{\numberline {\relax 7.1}{\ignorespaces Grafische Benutzeroberfl\"ache}}{55}{figure.7.1}
+\contentsline {figure}{\numberline {\relax 7.2}{\ignorespaces Startboxschranke}}{56}{figure.7.2}
+\contentsline {figure}{\numberline {\relax 7.3}{\ignorespaces Zebrastreifensuche}}{57}{figure.7.3}
+\contentsline {figure}{\numberline {\relax 7.4}{\ignorespaces Zielliniensuche}}{57}{figure.7.4}
+\contentsline {figure}{\numberline {\relax 7.5}{\ignorespaces Zielliniensuche}}{58}{figure.7.5}
+\contentsline {figure}{\numberline {\relax 7.6}{\ignorespaces Kreuzungserkennung}}{59}{figure.7.6}
+\contentsline {figure}{\numberline {\relax 7.7}{\ignorespaces Das Suchmuster der Bodenmarkierung- und Hinderniserkennung}}{60}{figure.7.7}
+\contentsline {figure}{\numberline {\relax 7.8}{\ignorespaces Erkennung eines Hindernisses}}{60}{figure.7.8}
+\contentsline {figure}{\numberline {\relax 7.9}{\ignorespaces Erkennung einer Bodenmarkierung}}{61}{figure.7.9}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {\relax 8.1}{\ignorespaces Geschwindigkeitsmarkierungstemplates}}{61}{figure.8.1}
-\contentsline {figure}{\numberline {\relax 8.2}{\ignorespaces SQDIFF}}{61}{figure.8.2}
-\contentsline {figure}{\numberline {\relax 8.3}{\ignorespaces CCORR}}{61}{figure.8.3}
-\contentsline {figure}{\numberline {\relax 8.4}{\ignorespaces Aufbereitete Features des MNIST-Datensatzes}}{62}{figure.8.4}
-\contentsline {figure}{\numberline {\relax 8.5}{\ignorespaces Aufbau eines Entscheidungsbaums}}{63}{figure.8.5}
-\contentsline {figure}{\numberline {\relax 8.6}{\ignorespaces Formel zur Berechnung des Gini-Unreinheitsmass}}{64}{figure.8.6}
-\contentsline {figure}{\numberline {\relax 8.7}{\ignorespaces Ein Random Forest Modell}}{65}{figure.8.7}
+\contentsline {figure}{\numberline {\relax 8.1}{\ignorespaces Geschwindigkeitsmarkierungstemplates}}{64}{figure.8.1}
+\contentsline {figure}{\numberline {\relax 8.2}{\ignorespaces SQDIFF}}{64}{figure.8.2}
+\contentsline {figure}{\numberline {\relax 8.3}{\ignorespaces CCORR}}{64}{figure.8.3}
+\contentsline {figure}{\numberline {\relax 8.4}{\ignorespaces Aufbereitete Features des MNIST-Datensatzes}}{65}{figure.8.4}
+\contentsline {figure}{\numberline {\relax 8.5}{\ignorespaces Aufbau eines Entscheidungsbaums}}{66}{figure.8.5}
+\contentsline {figure}{\numberline {\relax 8.6}{\ignorespaces Formel zur Berechnung des Gini-Unreinheitsmass}}{67}{figure.8.6}
+\contentsline {figure}{\numberline {\relax 8.7}{\ignorespaces Ein Random Forest Modell}}{68}{figure.8.7}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

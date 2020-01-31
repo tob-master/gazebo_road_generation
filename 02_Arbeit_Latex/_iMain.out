@@ -39,13 +39,13 @@
 \BOOKMARK [1][]{section.6.4}{6.4 Aussenlinienverfolgung mit dem Line-Follower-Algorithmus}{chapter.6}% 39
 \BOOKMARK [1][]{section.6.5}{6.5 Linienpunktereduzierung mit dem Line-Points-Reducer-Algorithmus}{chapter.6}% 40
 \BOOKMARK [1][]{section.6.6}{6.6 Mittelliniensuche und Grapherzeugung mit dem Mid-Line-Search-Algorithmus}{chapter.6}% 41
-\BOOKMARK [1][]{section.6.7}{6.7 Linien-Validierungs-Tabelle Erzeugung}{chapter.6}% 42
-\BOOKMARK [1][]{section.6.8}{6.8 Bewerten sicherer Fahrbereiche}{chapter.6}% 43
+\BOOKMARK [1][]{section.6.7}{6.7 Bewertungstabellenerzeugung mit dem Line-Validation-Table-Creator-Algorithmus}{chapter.6}% 42
+\BOOKMARK [1][]{section.6.8}{6.8 Sicherheitsbewertung der Fahrbahnbereiche durch den Safe-Drive-Area-Evaluator-Algorithmus}{chapter.6}% 43
 \BOOKMARK [0][]{chapter.7}{7 Suche von Bodenmarkierungen und Objekten in den Fahrspuren}{}% 44
 \BOOKMARK [1][]{section.7.1}{7.1 Startboxschrankenerkennung}{chapter.7}% 45
 \BOOKMARK [1][]{section.7.2}{7.2 Zebrastreifen- und Ziellinienerkennung}{chapter.7}% 46
 \BOOKMARK [1][]{section.7.3}{7.3 Kreuzungserkennung}{chapter.7}% 47
-\BOOKMARK [1][]{section.7.4}{7.4 Bodenmarkierung- und Hinderniserkennung}{chapter.7}% 48
+\BOOKMARK [1][]{section.7.4}{7.4 Bodenmarkierungs- und Hinderniserkennung}{chapter.7}% 48
 \BOOKMARK [0][]{chapter.8}{8 Klassifikation von Geschwindigkeitsbodenmarkierungen}{}% 49
 \BOOKMARK [1][]{section.8.1}{8.1 Aufbau des Machine-Learning Frameworks}{chapter.8}% 50
 \BOOKMARK [1][]{section.8.2}{8.2 Klassifikation durch Template Matching}{chapter.8}% 51
