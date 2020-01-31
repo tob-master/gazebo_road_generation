@@ -42,43 +42,43 @@
 \contentsline {section}{\numberline {6.6}Mittelliniensuche und Grapherzeugung mit dem Mid-Line-Search-Algorithmus}{41}{section.6.6}
 \contentsline {section}{\numberline {6.7}Bewertungstabellenerzeugung mit dem Line-Validation-Table-Creator-Algorithmus}{47}{section.6.7}
 \contentsline {section}{\numberline {6.8}Sicherheitsbewertung der Fahrbahnbereiche durch den Safe-Drive-Area-Evaluator-Algorithmus}{52}{section.6.8}
-\contentsline {chapter}{\numberline {7}Suche von Bodenmarkierungen und Objekten in den Fahrspuren}{55}{chapter.7}
-\contentsline {section}{\numberline {7.1}Startboxschrankenerkennung}{55}{section.7.1}
-\contentsline {section}{\numberline {7.2}Zebrastreifen- und Ziellinienerkennung}{56}{section.7.2}
-\contentsline {section}{\numberline {7.3}Kreuzungserkennung}{59}{section.7.3}
-\contentsline {section}{\numberline {7.4}Bodenmarkierungs- und Hinderniserkennung}{59}{section.7.4}
-\contentsline {chapter}{\numberline {8}Klassifikation von Geschwindigkeitsbodenmarkierungen}{62}{chapter.8}
-\contentsline {section}{\numberline {8.1}Aufbau des Machine-Learning Frameworks}{62}{section.8.1}
-\contentsline {section}{\numberline {8.2}Klassifikation durch Template Matching}{63}{section.8.2}
-\contentsline {section}{\numberline {8.3}Aufbereitung des MNIST-Trainingsdatensatzes}{65}{section.8.3}
-\contentsline {section}{\numberline {8.4}Klassifikation durch Random Forest}{65}{section.8.4}
-\contentsline {subsection}{\numberline {8.4.1}Aufbau eines Entscheidungsbaums}{65}{subsection.8.4.1}
-\contentsline {subsection}{\numberline {8.4.2}Training von Random-Forest durch den CART-Algorithmus}{66}{subsection.8.4.2}
-\contentsline {subsection}{\numberline {8.4.3}Auswertung von Random-Forest}{68}{subsection.8.4.3}
-\contentsline {section}{\numberline {8.5}Klassifikation durch Convolutional Neural Networks}{69}{section.8.5}
-\contentsline {subsection}{\numberline {8.5.1}Aufbau und Training der CNN Architektur}{69}{subsection.8.5.1}
-\contentsline {subsection}{\numberline {8.5.2}Auswertung der trainierten CNN-Architektur}{70}{subsection.8.5.2}
-\contentsline {chapter}{\numberline {9}Aufbau eines Testframeworks mit Google Test}{71}{chapter.9}
-\contentsline {chapter}{\numberline {10}Ergebnisse}{72}{chapter.10}
-\contentsline {section}{\numberline {10.1}Vanishing-Point-Search-Algorithmus}{72}{section.10.1}
-\contentsline {section}{\numberline {10.2}Start-of-Lines-Search-Algorithmus}{72}{section.10.2}
-\contentsline {section}{\numberline {10.3}Line-Follower-Algorithmus}{72}{section.10.3}
-\contentsline {section}{\numberline {10.4}Line-Points-Reduce-Algorithmus}{73}{section.10.4}
-\contentsline {section}{\numberline {10.5}Mid-Line-Search-Algorithmus}{73}{section.10.5}
-\contentsline {section}{\numberline {10.6}Line-Validation-Table-Creation-Algorithmus}{73}{section.10.6}
-\contentsline {section}{\numberline {10.7}Rect-Safety-Algorithmus}{74}{section.10.7}
-\contentsline {section}{\numberline {10.8}Startboxschrankenerkennung}{74}{section.10.8}
-\contentsline {section}{\numberline {10.9}Zebrastreifen- und Ziellinienerkennung}{74}{section.10.9}
-\contentsline {section}{\numberline {10.10}Kreuzungserkennung}{74}{section.10.10}
-\contentsline {chapter}{Literaturverzeichnis}{75}{section.10.10}
-\contentsline {chapter}{\numberline {A}Anhang}{78}{appendix.A}
-\contentsline {section}{\numberline {A.1}Start-Of-Lines-Search Initialisierungsparameter}{78}{section.A.1}
-\contentsline {section}{\numberline {A.2}Vanishing-Point-Search Initialisierungsparameter}{79}{section.A.2}
-\contentsline {section}{\numberline {A.3}Line-Follower Initialisierungsparameter}{80}{section.A.3}
-\contentsline {section}{\numberline {A.4}Line-Points-Reduce Initialisierungsparameter}{81}{section.A.4}
-\contentsline {section}{\numberline {A.5}Mid-Line-Search Initialisierungsparameter}{81}{section.A.5}
-\contentsline {section}{\numberline {A.6}Line-Validation-Table-Creator Initialisierungsparameter}{82}{section.A.6}
-\contentsline {section}{\numberline {A.7}Safety-Rect Initialisierungsparameter}{84}{section.A.7}
-\contentsline {section}{\numberline {A.8}Zebrastreifen- und Ziellinienerkennung Initialisierungsparameter}{85}{section.A.8}
-\contentsline {section}{\numberline {A.9}Kreuzungserkennung Initialisierungsparameter}{85}{section.A.9}
-\contentsline {section}{\numberline {A.10}Bodenmarkierung- und Hinderniserkennung Initialisierungsparameter}{86}{section.A.10}
+\contentsline {chapter}{\numberline {7}Suche von Bodenmarkierungen und Objekten in den Fahrspuren mit dem On-Road-Search-Algorithmus}{56}{chapter.7}
+\contentsline {section}{\numberline {7.1}Startboxschrankenerkennung}{58}{section.7.1}
+\contentsline {section}{\numberline {7.2}Zebrastreifen- und Ziellinienerkennung}{59}{section.7.2}
+\contentsline {section}{\numberline {7.3}Kreuzungserkennung}{61}{section.7.3}
+\contentsline {section}{\numberline {7.4}Bodenmarkierungs- und Hinderniserkennung}{61}{section.7.4}
+\contentsline {chapter}{\numberline {8}Klassifikation von Geschwindigkeitsbodenmarkierungen}{64}{chapter.8}
+\contentsline {section}{\numberline {8.1}Aufbau des Machine-Learning Frameworks}{64}{section.8.1}
+\contentsline {section}{\numberline {8.2}Klassifikation durch Template Matching}{66}{section.8.2}
+\contentsline {section}{\numberline {8.3}Aufbereitung des MNIST-Trainingsdatensatzes}{67}{section.8.3}
+\contentsline {section}{\numberline {8.4}Klassifikation durch Random-Forest}{67}{section.8.4}
+\contentsline {subsection}{\numberline {8.4.1}Aufbau eines Entscheidungsbaums}{67}{subsection.8.4.1}
+\contentsline {subsection}{\numberline {8.4.2}Training von Random-Forest durch den CART-Algorithmus}{68}{subsection.8.4.2}
+\contentsline {subsection}{\numberline {8.4.3}Auswertung von Random-Forest}{70}{subsection.8.4.3}
+\contentsline {section}{\numberline {8.5}Klassifikation durch Convolutional-Neural-Networks}{71}{section.8.5}
+\contentsline {subsection}{\numberline {8.5.1}Aufbau und Training der CNN Architektur}{71}{subsection.8.5.1}
+\contentsline {subsection}{\numberline {8.5.2}Auswertung der trainierten CNN-Architektur}{71}{subsection.8.5.2}
+\contentsline {chapter}{\numberline {9}Aufbau eines Testframeworks mit Google Test}{73}{chapter.9}
+\contentsline {chapter}{\numberline {10}Ergebnisse}{74}{chapter.10}
+\contentsline {section}{\numberline {10.1}Vanishing-Point-Search-Algorithmus}{74}{section.10.1}
+\contentsline {section}{\numberline {10.2}Start-of-Lines-Search-Algorithmus}{74}{section.10.2}
+\contentsline {section}{\numberline {10.3}Line-Follower-Algorithmus}{74}{section.10.3}
+\contentsline {section}{\numberline {10.4}Line-Points-Reduce-Algorithmus}{75}{section.10.4}
+\contentsline {section}{\numberline {10.5}Mid-Line-Search-Algorithmus}{75}{section.10.5}
+\contentsline {section}{\numberline {10.6}Line-Validation-Table-Creation-Algorithmus}{75}{section.10.6}
+\contentsline {section}{\numberline {10.7}Rect-Safety-Algorithmus}{76}{section.10.7}
+\contentsline {section}{\numberline {10.8}Startboxschrankenerkennung}{76}{section.10.8}
+\contentsline {section}{\numberline {10.9}Zebrastreifen- und Ziellinienerkennung}{76}{section.10.9}
+\contentsline {section}{\numberline {10.10}Kreuzungserkennung}{76}{section.10.10}
+\contentsline {chapter}{Literaturverzeichnis}{77}{section.10.10}
+\contentsline {chapter}{\numberline {A}Anhang}{80}{appendix.A}
+\contentsline {section}{\numberline {A.1}Start-Of-Lines-Search Initialisierungsparameter}{80}{section.A.1}
+\contentsline {section}{\numberline {A.2}Vanishing-Point-Search Initialisierungsparameter}{81}{section.A.2}
+\contentsline {section}{\numberline {A.3}Line-Follower Initialisierungsparameter}{82}{section.A.3}
+\contentsline {section}{\numberline {A.4}Line-Points-Reduce Initialisierungsparameter}{83}{section.A.4}
+\contentsline {section}{\numberline {A.5}Mid-Line-Search Initialisierungsparameter}{83}{section.A.5}
+\contentsline {section}{\numberline {A.6}Line-Validation-Table-Creator Initialisierungsparameter}{84}{section.A.6}
+\contentsline {section}{\numberline {A.7}Safety-Rect Initialisierungsparameter}{86}{section.A.7}
+\contentsline {section}{\numberline {A.8}Zebrastreifen- und Ziellinienerkennung Initialisierungsparameter}{87}{section.A.8}
+\contentsline {section}{\numberline {A.9}Kreuzungserkennung Initialisierungsparameter}{87}{section.A.9}
+\contentsline {section}{\numberline {A.10}Bodenmarkierung- und Hinderniserkennung Initialisierungsparameter}{88}{section.A.10}

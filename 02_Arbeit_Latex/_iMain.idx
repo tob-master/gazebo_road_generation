@@ -6,7 +6,7 @@
 \indexentry{Einf{\"u}hrung in die Objekterkennung in Bildern|hyperpage}{13}
 \indexentry{Erzeugung von simulierten Verkehrssitationen|hyperpage}{17}
 \indexentry{Implementierte Bildverarbeitungsalgorithmen|hyperpage}{25}
-\indexentry{Suche und Klassifizierung von Bodenmarkierungen und Objekten in den Fahrspuren|hyperpage}{55}
-\indexentry{Klassifikation von Geschwindigkeitsbodenmarkierungen|hyperpage}{62}
-\indexentry{Aufbau eines Testframeworks mit Google-Test|hyperpage}{71}
-\indexentry{Mittelliniensuche und Grapherzeugung|hyperpage}{72}
+\indexentry{Suche und Klassifizierung von Bodenmarkierungen und Objekten in den Fahrspuren mit dem On-Road-Search-Algorithmus|hyperpage}{56}
+\indexentry{Klassifikation von Geschwindigkeitsbodenmarkierungen|hyperpage}{64}
+\indexentry{Aufbau eines Testframeworks mit Google-Test|hyperpage}{73}
+\indexentry{Mittelliniensuche und Grapherzeugung|hyperpage}{74}

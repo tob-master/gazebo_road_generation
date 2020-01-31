@@ -2,12 +2,35 @@
 %% Kapitel: Kapitel 4
 %%======================================================================
 
-\chapter{Suche von Bodenmarkierungen und Objekten in den Fahrspuren}
-\label{cha:Suche von Bodenmarkierungen und Objekten in den Fahrspuren}
-\index{Suche und Klassifizierung von Bodenmarkierungen und Objekten in den Fahrspuren}
+\chapter{Suche von Bodenmarkierungen und Objekten in den Fahrspuren mit dem On-Road-Search-Algorithmus}
+\label{cha:Suche von Bodenmarkierungen und Objekten in den Fahrspuren mit dem On-Road-Search-Algorithmus}
+\index{Suche und Klassifizierung von Bodenmarkierungen und Objekten in den Fahrspuren mit dem On-Road-Search-Algorithmus}
 %
 %
 In folgenden Abschnitten wird auf die entwickelten Verfahren zur Erkennung von Bodenmarkierungen und von Objekten in der Fahrbahn und der Startbox eingegangen.
+Um eine bessere \"Ubersicht zu bekommen wird der Programmablaufplan zu Anfang des Kapitels vorgestellt.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/on_road_search_finish1}% keine extention: wählt jpg für DVI
+  \caption[ors1]%
+           {\label{fig:ors1}%
+           Programmablaufplan des On-Road-Search-Algorithmus Teil 1}
+\end{center}
+\end{figure}
+
+\newpage
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/on_road_search_finish2}% keine extention: wählt jpg für DVI
+  \caption[ors2]%
+           {\label{fig:ors2}%
+           Programmablaufplan des On-Road-Search-Algorithmus Teil 2}
+\end{center}
+\end{figure}
+
+\newpage 
 
 \section{Startboxschrankenerkennung}
 \label{sec:Startboxschrankenerkennung}
@@ -147,6 +170,5 @@ Werden viele kleinere Segmente in der entsprechenden Fahrspur gefunden deutet di
            Eine detektierte Geschwindigkeitsbegrenzungsmarkierung in der Fahrbahn.}
 \end{center}
 \end{figure}
-
 
 

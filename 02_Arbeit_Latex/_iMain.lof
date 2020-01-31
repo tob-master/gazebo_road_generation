@@ -49,24 +49,24 @@
 \contentsline {figure}{\numberline {\relax 6.23}{\ignorespaces ExtrahierteLinienpunkte}}{51}{figure.6.23}
 \contentsline {figure}{\numberline {\relax 6.24}{\ignorespaces RectSafety}}{53}{figure.6.24}
 \contentsline {figure}{\numberline {\relax 6.25}{\ignorespaces SafetyRectKreuzung}}{54}{figure.6.25}
+\contentsline {figure}{\numberline {\relax 6.26}{\ignorespaces sdae1}}{55}{figure.6.26}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {\relax 7.1}{\ignorespaces Grafische Benutzeroberfl\"ache}}{55}{figure.7.1}
-\contentsline {figure}{\numberline {\relax 7.2}{\ignorespaces Startboxschranke}}{56}{figure.7.2}
-\contentsline {figure}{\numberline {\relax 7.3}{\ignorespaces Zebrastreifensuche}}{57}{figure.7.3}
-\contentsline {figure}{\numberline {\relax 7.4}{\ignorespaces Zielliniensuche}}{57}{figure.7.4}
-\contentsline {figure}{\numberline {\relax 7.5}{\ignorespaces Zielliniensuche}}{58}{figure.7.5}
-\contentsline {figure}{\numberline {\relax 7.6}{\ignorespaces Kreuzungserkennung}}{59}{figure.7.6}
-\contentsline {figure}{\numberline {\relax 7.7}{\ignorespaces Das Suchmuster der Bodenmarkierung- und Hinderniserkennung}}{60}{figure.7.7}
-\contentsline {figure}{\numberline {\relax 7.8}{\ignorespaces Erkennung eines Hindernisses}}{60}{figure.7.8}
-\contentsline {figure}{\numberline {\relax 7.9}{\ignorespaces Erkennung einer Bodenmarkierung}}{61}{figure.7.9}
+\contentsline {figure}{\numberline {\relax 7.1}{\ignorespaces ors1}}{56}{figure.7.1}
+\contentsline {figure}{\numberline {\relax 7.2}{\ignorespaces ors2}}{57}{figure.7.2}
+\contentsline {figure}{\numberline {\relax 7.3}{\ignorespaces Grafische Benutzeroberfl\"ache}}{58}{figure.7.3}
+\contentsline {figure}{\numberline {\relax 7.4}{\ignorespaces Startboxschranke}}{58}{figure.7.4}
+\contentsline {figure}{\numberline {\relax 7.5}{\ignorespaces Zebrastreifensuche}}{59}{figure.7.5}
+\contentsline {figure}{\numberline {\relax 7.6}{\ignorespaces Zielliniensuche}}{60}{figure.7.6}
+\contentsline {figure}{\numberline {\relax 7.7}{\ignorespaces Zielliniensuche}}{60}{figure.7.7}
+\contentsline {figure}{\numberline {\relax 7.8}{\ignorespaces Kreuzungserkennung}}{61}{figure.7.8}
+\contentsline {figure}{\numberline {\relax 7.9}{\ignorespaces Das Suchmuster der Bodenmarkierung- und Hinderniserkennung}}{62}{figure.7.9}
+\contentsline {figure}{\numberline {\relax 7.10}{\ignorespaces Erkennung eines Hindernisses}}{62}{figure.7.10}
+\contentsline {figure}{\numberline {\relax 7.11}{\ignorespaces Erkennung einer Bodenmarkierung}}{63}{figure.7.11}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {\relax 8.1}{\ignorespaces Geschwindigkeitsmarkierungstemplates}}{64}{figure.8.1}
-\contentsline {figure}{\numberline {\relax 8.2}{\ignorespaces SQDIFF}}{64}{figure.8.2}
-\contentsline {figure}{\numberline {\relax 8.3}{\ignorespaces CCORR}}{64}{figure.8.3}
-\contentsline {figure}{\numberline {\relax 8.4}{\ignorespaces Aufbereitete Features des MNIST-Datensatzes}}{65}{figure.8.4}
-\contentsline {figure}{\numberline {\relax 8.5}{\ignorespaces Aufbau eines Entscheidungsbaums}}{66}{figure.8.5}
-\contentsline {figure}{\numberline {\relax 8.6}{\ignorespaces Formel zur Berechnung des Gini-Unreinheitsmass}}{67}{figure.8.6}
-\contentsline {figure}{\numberline {\relax 8.7}{\ignorespaces Ein Random Forest Modell}}{68}{figure.8.7}
+\contentsline {figure}{\numberline {\relax 8.1}{\ignorespaces Geschwindigkeitsmarkierungstemplates}}{66}{figure.8.1}
+\contentsline {figure}{\numberline {\relax 8.2}{\ignorespaces Aufbereitete Features des MNIST-Datensatzes}}{67}{figure.8.2}
+\contentsline {figure}{\numberline {\relax 8.3}{\ignorespaces Aufbau eines Entscheidungsbaums}}{68}{figure.8.3}
+\contentsline {figure}{\numberline {\relax 8.4}{\ignorespaces Ein Random Forest Modell}}{70}{figure.8.4}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

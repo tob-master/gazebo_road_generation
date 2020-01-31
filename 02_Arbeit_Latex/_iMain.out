@@ -41,7 +41,7 @@
 \BOOKMARK [1][]{section.6.6}{6.6 Mittelliniensuche und Grapherzeugung mit dem Mid-Line-Search-Algorithmus}{chapter.6}% 41
 \BOOKMARK [1][]{section.6.7}{6.7 Bewertungstabellenerzeugung mit dem Line-Validation-Table-Creator-Algorithmus}{chapter.6}% 42
 \BOOKMARK [1][]{section.6.8}{6.8 Sicherheitsbewertung der Fahrbahnbereiche durch den Safe-Drive-Area-Evaluator-Algorithmus}{chapter.6}% 43
-\BOOKMARK [0][]{chapter.7}{7 Suche von Bodenmarkierungen und Objekten in den Fahrspuren}{}% 44
+\BOOKMARK [0][]{chapter.7}{7 Suche von Bodenmarkierungen und Objekten in den Fahrspuren mit dem On-Road-Search-Algorithmus}{}% 44
 \BOOKMARK [1][]{section.7.1}{7.1 Startboxschrankenerkennung}{chapter.7}% 45
 \BOOKMARK [1][]{section.7.2}{7.2 Zebrastreifen- und Ziellinienerkennung}{chapter.7}% 46
 \BOOKMARK [1][]{section.7.3}{7.3 Kreuzungserkennung}{chapter.7}% 47
@@ -50,11 +50,11 @@
 \BOOKMARK [1][]{section.8.1}{8.1 Aufbau des Machine-Learning Frameworks}{chapter.8}% 50
 \BOOKMARK [1][]{section.8.2}{8.2 Klassifikation durch Template Matching}{chapter.8}% 51
 \BOOKMARK [1][]{section.8.3}{8.3 Aufbereitung des MNIST-Trainingsdatensatzes}{chapter.8}% 52
-\BOOKMARK [1][]{section.8.4}{8.4 Klassifikation durch Random Forest}{chapter.8}% 53
+\BOOKMARK [1][]{section.8.4}{8.4 Klassifikation durch Random-Forest}{chapter.8}% 53
 \BOOKMARK [2][]{subsection.8.4.1}{8.4.1 Aufbau eines Entscheidungsbaums}{section.8.4}% 54
 \BOOKMARK [2][]{subsection.8.4.2}{8.4.2 Training von Random-Forest durch den CART-Algorithmus}{section.8.4}% 55
 \BOOKMARK [2][]{subsection.8.4.3}{8.4.3 Auswertung von Random-Forest}{section.8.4}% 56
-\BOOKMARK [1][]{section.8.5}{8.5 Klassifikation durch Convolutional Neural Networks}{chapter.8}% 57
+\BOOKMARK [1][]{section.8.5}{8.5 Klassifikation durch Convolutional-Neural-Networks}{chapter.8}% 57
 \BOOKMARK [2][]{subsection.8.5.1}{8.5.1 Aufbau und Training der CNN Architektur}{section.8.5}% 58
 \BOOKMARK [2][]{subsection.8.5.2}{8.5.2 Auswertung der trainierten CNN-Architektur}{section.8.5}% 59
 \BOOKMARK [0][]{chapter.9}{9 Aufbau eines Testframeworks mit Google Test}{}% 60
