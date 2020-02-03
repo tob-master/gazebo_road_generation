@@ -3,55 +3,62 @@
 %%======================================================================
 
 \chapter{Ergebnisse}
-\label{cha:Ergebnisse} \index{Mittelliniensuche und Grapherzeugung}
+\label{cha:Ergebnisse} \index{Ergebnisse}
 %
 %
 
+In diesem Kapitel werden die Ergebnisse dieser Arbeit n\"aher beleuchtet.
+Die Vorteile als auch die Schwachstellen der Simulation wie auch der Bildverarbeitungsalgorithmen werden gekl\"art.
 
+\section{Simulierte Carolo-Cup-Wettbewerbsbedingungen durch Gazebo-ROS}
+\label{section:Simulierte Carolo-Cup-Wettbewerbsbedingungen durch Gazebo-ROS} 
+Durch Gazebo-ROS l\"asst sich die Bildverarbeitungssoftware effizient testen.
+Ein Live-Test durch gleichzeitiges Ausf\"uhren der Bildverarbeitungssoftware und der Simulation ist m\"oglich. Au{\ss}erdem k\"onnen aus der Simulation heraus ROS-Bags aufgenommen werden, auf welche anschlie{\ss}end die Bildverarbeitung getestet werden kann. Auch die M\"oglichkeit Rauschen auf das Kamerabild zu legen ist gegeben, wie auch simulierte Lichtspiegelungen auf der Fahrbahn.
+Durch den modularen Aufbau der Verkehrssituationen lassen sich beliebig viele und unterschiedliche Situationen simulieren. Das Aufbauen einer Fahrbahn ben\"otigt einiges an Zeit, da die einzelnen Module aufeinander angepasst werden m\"ussen. Vorallem der Offset der Mittellinien muss auf die darauffolgende Verkehrssituation eingestellt werden, um einen korrekten Abstand zu gew\"ahrleisten. 
 
+\section{Start-of-Lines-Search-Algorithmus}
+\label{section:Start-of-Lines-Search-Algorithmus} 
+Wird das eindeutige Fahrbahnmuster durch Start-of-Line-Search erkannt, ist dies ein sicheres Merkmal f{\"u}r eine korrekte Orientierung des Fahrzeugs in der Fahrbahn. Die Startparameter von Start-of-Lines-Search werden denen von Vansishing-Point-Search vorgezogen, da sie f{\"u}r eine eindeutigere Charakteristik stehen. Auch dieses Verfahren ist wenig recheninstensiv und f{\"u}r einen kleinen Mikrocontroller geeignet.
+Jedoch findet der Algorithmus nur dann das entsprechende Muster wenn alle Fahrbahnlinien vorhanden sind und die Mittellinie sich im Suchebereich befindet. Ansonsten terminiert das Verfahren ohne Ergebnis.
+Auch bei Start-of-Lines-Search bestimmt die Gr\"o{\ss}e der Liniensuchbereiche die Genauigkeit des Algorithmus. Da das Verfahren Linien auf ihre korrekte Breite untersucht liefert es eine zus\"atzliche Sicherheitsstufe. Falls sich aber ein Objekt neben der Fahrspur befindet, wie zum Beispiel eine Box welche die Linie {\"u}berdeckt, stimmt die Segmentbreite nicht {\"u}berein und das Verfahren terminiert ohne gefundenes Muster.
 
 \section{Vanishing-Point-Search-Algorithmus}
 \label{section:Vanishing-Point-Search-Algorithmus} 
 
-Findet der Vanishing-Point Algorithmus Schnittpunkte zwischen linken und rechten Fahrbahnlinien welche auch im korrekten Abstand zum Fahrzeug liegen ist dies ein robuster Indikator nach dem gefahren werden kann.
-Durch einen gefundenen Vanishing-Point kann zugleich auch der einzuschlagende Lenkwinkel zwischen Fahrzeugmittelpunkt und Vanishing-Point berechnet werden was ein weiterer Vorteil des Verfahrens ist.
+Findet der Vanishing-Point-Algorithmus Schnittpunkte zwischen linken und rechten Fahrbahnlinien, welche auch im korrekten Abstand zum Fahrzeug liegen, ist dies ein robuster Indikator nach dem gefahren werden kann.
+Durch einen gefundenen Vanishing-Point kann zugleich auch der einzuschlagende Lenkwinkel zwischen Fahrzeugmittelpunkt und Vanishing-Point berechnet werden, was ein weiterer Vorteil des Verfahrens ist.
 Auch bei einer fehlenden Au{\ss}enlinie kann nach einer erkannten Hough-Linie gefahren werden.
-Umso kleiner der Bereich in dem nach Hough-Linien gesucht wird ist desto sicherer sind die Ergebnisse des Verfahrens. Es kann aber passieren das wenn sich das Fahrzeug nicht genau in der Mitte einer Fahrspur befindet keine entsprechenden Hough-Linien gefunden werden und somit das Verfahren und Ergebnis terminiert. Da die Kantenextraktion und die Hough-Linien-Suche nur auf einem kleinen Bildbereich vor dem Fahrzeug ausgef{\"u}hrt werden liefert der Algorithmus eine sehr gute Performance und ist nicht Rechenintensiv. Dies erlaubt es Ihn auch auf einem kleinen Mikrocontroller auszuf{\"u}hren. Zudem sind der Canny-Edge- und der Hough-Lines-Algorithmus durch anpassen der OpenCV-Funktion leicht parallelisierbar und k{\"o}nnen dadurch noch schneller ausgef{\"u}hrt werden.  
+Umso kleiner der Bereich in dem nach Hough-Linien gesucht werden ist desto sicherer sind die Ergebnisse des Verfahrens. Es kann aber passieren das wenn sich das Fahrzeug nicht genau in der Mitte einer Fahrspur befindet, keine entsprechenden Hough-Linien gefunden werden und somit das Verfahren ohne Ergebnis terminiert. Da die Kantenextraktion und die Hough-Linien-Suche nur auf einem kleinen Bildbereich vor dem Fahrzeug ausgef{\"u}hrt werden, liefert der Algorithmus eine sehr gute Performance und ist nicht Rechenintensiv. Dies erlaubt es ihn auch auf einem kleinen Mikrocontroller auszuf{\"u}hren. Zudem sind der Canny-Edge- und der Hough-Lines-Algorithmus durch das Anpassen der OpenCV-Funktion leicht parallelisierbar und k{\"o}nnen dadurch noch schneller ausgef{\"u}hrt werden.  
 
 
 
-\section{Start-of-Lines-Search-Algorithmus}
-\label{section:Start-of-Lines-Search-Algorithmus} 
-Wird das eindeutige Fahrbahnmuster durch Start-of-Line-Search erkannt ist dies ein sicheres Merkmal f{\"u}r eine korrekte Orientierung des Fahrzeugs in der Fahrbahn. Die Startparameter von Start-of-Lines-Search werden denen von Vansishing-Point-Search vorgezogen da sie f{\"u}r eine einduetigere Charakteristik stehen. Auch dieses Verfahren ist wenig Recheninstensiv und f{\"u}r einen kleinen Mikrocontroller geeignet.
-Jedoch findet der algorithmus nur dann das entsprechende Muster wenn alle Fahrbahnlinien vorhanden sind und die Mittellinie sich im Suchebereich befindet ansonsten terminiert das Verfahren ohne Ergebnis.
-Auch bei Start-of-Lines-Search bestimmt die Gr\"o{\ss}e der Liniensuchbereiche die Genauigkeit des Algorithmus. Da das Verfahren Linien auf ihre korrekte Breite untersucht liefert es eine zus\"atzliche Sicherheitsstufe. Falls sich aber ein Objekt neben der Fahrspur befindet wie zum Beispiel eine Box welche die Linie {\"u}berdeckt stimmt die Segmentbreite nicht {\"u}berein und das Verfahren terminiert ohne gefundenes Muster.
 
 
 \section{Line-Follower-Algorithmus}
 \label{section:Line-Follower-Algorithmus}
-Der Line-Follower Algorithmus ist abh\"angig von den Startparametern von Start-of-Lines-Search oder Vanishing-Point-Search. Somit werden nur gute Ergebnisse geliefert wenn auch die Startparameter korrekt sind.
-Das Verfahren kann die Au{\ss}enlinien sehr weit Verfolgen. Da das Verfahren rekursiv ausgef\"uhrt wird ist die genaue Laufzeit nicht bestimmbar denn sie ist abh\"angig von den festgelegten Terminierungskriterien. Au{\ss}erdem kann es passieren das der Algorithmus an einer Positionen stecken bleibt oder wie es bei Boxen vorkommen kann sich zuf\"allig in verschiedene Richtungen bewegt.
-Ein Vorteil ist das sich durch die Linienabsuche zus\"atzlich die Richtungswinkel vermerken lassen und somit eine Kreuzung leicht detektiert werden kann. Bei auftauchen einer Ziellinie kann das Verfahren aber auch eine Falsche Suchrichtung einschlagen we{\ss}wegen die Ergebnisse von Line-Follower weiter evaluiert werden m\"ussen.
+Der Line-Follower-Algorithmus ist abh\"angig von den Startparametern von Start-of-Lines-Search oder Vanishing-Point-Search. Somit werden nur gute Ergebnisse geliefert, wenn auch die Startparameter korrekt sind.
+Das Verfahren kann die Au{\ss}enlinien sehr weit Verfolgen. Da das Verfahren rekursiv ausgef\"uhrt wird ist die genaue Laufzeit nicht bestimmbar, denn sie ist abh\"angig von den festgelegten Terminierungskriterien. Au{\ss}erdem kann es passieren das der Algorithmus an einer Positionen stecken bleibt oder wie es bei Boxen vorkommen kann, sich zuf\"allig in verschiedene Richtungen bewegt.
+Ein Vorteil ist, das sich durch die Linienabsuche zus\"atzlich die Richtungswinkel vermerken lassen und somit eine Kreuzung leicht detektiert werden kann. Bei Auftauchen einer Ziellinie kann das Verfahren aber auch eine falsche Suchrichtung einschlagen we{\ss}wegen die Ergebnisse von Line-Follower weiter evaluiert werden m\"ussen.
  
 
 \section{Line-Points-Reduce-Algorithmus}
 \label{section:Line-Points-Reduce-Algorithmus}
 
-Der Ramer-Douglas-Peucker-Algorithmus reduziert die Linien-Punkte des Line-Follower-Algorithmus auf markante Punkte welche die Fahrbahnlinien beschreiben. Auch er ist ein rekursiver Algorithmus wodurch die Laufzeit nicht vorhergesagt werden kann. Der Algorithmus erm\"oglicht es die wichtigen Punkte von Line-Follower zu extrahieren und somit den Speicherplatzbedarf im RAM zu reduzieren. Seine Ergebnisse sind abh\"angig von der Qualit\"at der gefundenen Punkte des Line-Follower-Algorithmus. 
+Der Ramer-Douglas-Peucker-Algorithmus reduziert die Linien-Punkte des Line-Follower-Algorithmus auf markante Punkte welche die Fahrbahnlinien beschreiben. Auch er ist ein rekursiver Algorithmus, wodurch die Laufzeit nicht vorhergesagt werden kann. Der Algorithmus erm\"oglicht es die wichtigen Punkte von Line-Follower zu extrahieren und somit den Speicherplatzbedarf im RAM zu reduzieren. Seine Ergebnisse sind abh\"angig von der Qualit\"at der gefundenen Punkte des Line-Follower-Algorithmus. 
 
 \section{Mid-Line-Search-Algorithmus}
 \label{section:Mid-Line-Search-Algorithmus}
-Die Mittelliniensuche sucht im gesamten Eingangsbild nach Pixeln welche zu Mittellinienstreifen geh\"oren. Anschlie{\ss}end werden Mittellinien-Segmente welche benachbart sind zusammengef\"uhrt. Das Verfahren entdeckt auch Mittellinien welche weit vom Fahrzeug entfernt liegen. Somit ist es auch m\"oglich Kreuzugen durch die Orientierung von gefundenen Mittelliniensegmenten zu detektieren. Au{\ss}erdem k\"onnen \"uber eine Kreuzung hinaus Mittelliniensegmente gefunden werden. Das Verfahren ist sehr rechenintensiv da jedes Pixel des Eingangsbilds einzeln betrachtet wird. Durch die Gruppierung der Mittellinien zu zusammengeh\"origen Segmenten l\"asst sich desweiteren der Winkel an der entsprechenden Fahrbahnposition ermitteln.
+Die Mittelliniensuche sucht im gesamten Eingangsbild nach Pixeln welche zu Mittellinienstreifen geh\"oren. Anschlie{\ss}end werden Mittellinien-Segmente welche benachbart sind, zusammengef\"uhrt. Das Verfahren entdeckt auch Mittellinien welche weit vom Fahrzeug entfernt liegen. Somit ist es auch m\"oglich Kreuzugen durch die Orientierung von gefundenen Mittelliniensegmenten zu detektieren. Au{\ss}erdem k\"onnen \"uber eine Kreuzung hinaus Mittelliniensegmente gefunden werden. Das Verfahren ist rechenintensiv da jedes Pixel des Eingangsbilds einzeln betrachtet wird. Durch die Gruppierung der Mittellinien zu zusammengeh\"origen Segmenten l\"asst sich desweiteren der Winkel an der entsprechenden Fahrbahnposition ermitteln.
 
 \section{Line-Validation-Table-Creation-Algorithmus}
 \label{section:Line-Validation-Table-Creation-Algorithmus}
 
-Das Verfahren bewertet die gefundene Au{\ss}en- und Mittelliniensegmente indem es \"uberpr\"uft ob Nachbarliniensegmente vorhanden sind und weist diesen einen Priorit{\"a}ten-Score zu. Dies soll als zus\"atzliche Sicherheitsstufe dienen um robuste Punkte zu finden nach denen gefahren werden kann. Da f{\"u}r die Suche die minimale euklidische Distanz im Vector-Container der Nachbarlinien gesucht wird ist der Algorithmus rechenintensiv jedoch liefert er dadurch sehr sichere Punkte und Bereiche welche das Fahrzeug anschlie{\ss}end befahren kann.  
+Das Verfahren bewertet die gefundene Au{\ss}en- und Mittelliniensegmente indem es \"uberpr\"uft ob Nachbarliniensegmente vorhanden sind und weist diesen einen Priorit{\"a}ten-Score zu. Dies soll als zus\"atzliche Sicherheitsstufe dienen um robuste Punkte zu finden nach denen gefahren werden kann. Da f{\"u}r die Suche die minimale euklidische Distanz im Vector-Container der Nachbarlinien gesucht wird, ist der Algorithmus rechenintensiv. Jedoch liefert er dadurch sehr sichere Punkte und Bereiche welche das Fahrzeug anschlie{\ss}end befahren kann.  
 
-\section{Rect-Safety-Algorithmus}
-\label{section:Rect-Safety-Algorithmus}
+\section{Safe-Drive-Area-Evaluator-Algorithmus}
+\label{section:Safe-Drive-Area-Evaluator-Algorithmus}
 
-Der Algorithmus Wertet die aus Line-Validation-Table-Creation erzeugten Bewertungstabellen in aufeinanderfolgenden Fahrbahnbereichen aus. Dadurch ist es m{\"o}glich Sicherheitskritische Bereich fr{\"u}hzeitig zu erkennen und entsprechend zu agieren. Der Ansatz erm{\"o}glich es auch {\"u}ber Kreuzungen hinaus nach Fahrpunkten zu suchen. Da das Verfahren rekursiv aufgerufen wird bis der Mittelpunkt eines Sicherheitsbereichs nicht mehr im Eingangsbild liegt kann die Laufzeit variieren. Zudem wird die Sicherheitsvorhersage je weiter der Sicherheitsbereich entfernt ist abnehmend vager und sollte weiter validiert werden.
+Der Algorithmus wertet die aus Line-Validation-Table-Creation erzeugten Bewertungstabellen in aufeinanderfolgenden Fahrbahnbereichen aus. Dadurch ist es m{\"o}glich sicherheitskritische Bereiche fr{\"u}hzeitig zu erkennen und entsprechend zu agieren. Der Ansatz erm{\"o}glich es auch {\"u}ber Kreuzungen hinaus nach Fahrpunkten zu suchen. Da das Verfahren rekursiv aufgerufen wird bis der Mittelpunkt eines Sicherheitsbereichs nicht mehr im Eingangsbild liegt, kann die Laufzeit variieren. Zudem wird die Sicherheitsvorhersage je weiter der Sicherheitsbereich entfernt ist, abnehmend vager und sollte weiter validiert werden.
 
 \section{Startboxschrankenerkennung}
 \label{section:Startboxschrankenerkennung}
@@ -61,12 +68,39 @@ Die Startboxschrankenerkennung detektiert eindeutig den Qr-Code der Startboxschr
 \section{Zebrastreifen- und Ziellinienerkennung}
 \label{section:Zebrastreifen- und Ziellinienerkennung}
 Die Zebrastreifen- und Ziellinienerkennungs-Verfahren suchen beide nach einem eindeutigen Muster definiert durch die Segmentbreite von schwarzen und wei{\ss}en Pixelsegmenten. Zudem wird die Anzahl an auftauchenden schwarzen und wei{\ss}en Pixelsegmenten in betracht gezogen, dadurch lassen sich die beiden Markierungen sehr gut unterscheiden.
-Durch die definition eines Sichtfelds in welchem die Ziellinie gesucht wird kann die Ziellinie auch in einer Kurve erkannt werden.
-Da bei einer Suche nach diesen Bodenmarkierungen fehlklassifikationen auftreten k{\"o}nnen wenn die Suche zu weit vorausschauend initialisiert ist sollte nicht zu weit vor dem Fahzeug gesucht werden.  
+Durch die Definition eines Sichtfelds in welchem die Ziellinie gesucht wird kann die Ziellinie auch in einer Kurve erkannt werden.
+Da bei einer Suche nach diesen Bodenmarkierungen fehlklassifikationen auftreten k{\"o}nnen, wenn die Suche zu weit vorausschauend initialisiert ist, sollte nicht zu weit vor dem Fahrzeug gesucht werden.  
 
 
 \section{Kreuzungserkennung}
 \label{section:Kreuzungserkennung}
-Die Kreuzungserkennung ist durch das Auswerten der Au{\ss}enlinien und der Mittelliniengruppen sehr robust. Derzeit k{\"o}nnen aber nur alle Kreuzungstypen detektiert aber nicht klassifiert werden.
+Die Kreuzungserkennung ist durch das Auswerten der Au{\ss}enlinien und der Mittelliniengruppen sehr robust. Derzeit k{\"o}nnen aber nur alle Kreuzungstypen detektiert aber nicht klassifiert werden. Dadurch, dass die Kreuzungserkennung die Differenz der aufeinanderfolgenden Winkel der Bewertungstabellenpunkte betrachtet, ist sie rotaionsinvariant und es lassen sich auch Kreuzungen die auf eine Kurve folgen erkennen.
+
+\section{Bodenmarkierungs- und Hinderniserkennung}
+\label{section:Bodenmarkierungs- und Hinderniserkennung}
+Das Verfahren wird nur ausgef\"uhrt wenn kein Zebrastreifen, keine Ziellinie oder Kreuzung erkannt wurde um Fehlklassifkationen zu vermeiden.
+Durch das Suchmuster aus einer radialen Suche und der durch den Kreis verlaufenden Liniensuche, lassen sich Boxen und Geschwindigkeitsmarkierungen gut unterscheiden. Auch dieses Verfahren ist rotationsinvariant, da orthogonal zu den Bewertungstabellen-Punkten gesucht wird. Das Erkennen einer Box sollte zus\"atzlich mit den Time-of-Flight-Sensoren des Fahrzeugs abgeglichen werden. Wird eine Geschwindigkeitmarkierung erkannt, wird direkt vor dem Fahrzeug eine rechteckige Bildregion ausgeschnitten und an den eingstellten Klassifikator gesendet. 
 
 
+\section{Klassifikation von Geschwindigkeitsbegrenzungsmarkierungen durch Template-Matching}
+\label{Klassifikation von Geschwindigkeitsbegrenzungsmarkierungen durch Template-Matching}
+Das Verfahren kann eingesetzt werden um Geschwindigkeitsbegrenzungsmarkierungen im Eingangsbild zu detektieren.
+Eine Klassifikation liefert im Life-Test aber keine guten Ergebnisse.
+Das Template-Matching kann die neun verschiedenen Klassen nicht auseinanderhalten.
+
+
+\section{Klassifikation von Geschwindigkeitsbegrenzungsmarkierungen durch Random-Forest}
+\label{Klassifikation von Geschwindigkeitsbegrenzungsmarkierungen durch Random-Forest}
+Der Klassifikator liefert sehr gute Ergebnisse auf den Testdatensatz.
+Bei der Auswertung durch einen Life-Test gibt es jedoch h\"aufigere Fehlklassifikationen, wodurch auch dieses Verfahren nicht weiter in betracht gezogen werden sollte.
+
+\section{Klassifikation von Geschwindigkeitsbegrenzungsmarkierungen durch Convolutional-Neural-Networks}
+\label{Klassifikation von Geschwindigkeitsbegrenzungsmarkierungen durch Convolutional-Neural-Networks}
+Das trainierte CNN liefert die besten Ergebnisse bei der Auswertung auf den Test-Datensatz. Auch bei der Inferenz im Life-Test kann das CNN-Model die Geschwindigkeitsbegrenzungsmarkierungen am besten unterscheiden. Aber auch das CNN-Model liefert ab und an Fehklassifikationen bedingt durch die niedrige Interklassendistanz der verschiedenen Markierungen. Da das CNN-Model nur aus wenigen kleinen Layern besteht kann, es auch sehr gut auf dem NVIDIA-Jetson-Board ausgef\"urt werden, wo es Klassifikationsraten in Echtzeit liefern wird. 
+
+
+
+
+
+
+ 

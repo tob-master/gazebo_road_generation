@@ -1,13 +1,13 @@
 \babel@toc {ngerman}{}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {\relax 2.1}{\ignorespaces DieROSKommunikationsarchitektur}}{8}{figure.2.1}
+\contentsline {figure}{\numberline {\relax 2.1}{\ignorespaces Die ROS-Kommunikationsarchitektur}}{8}{figure.2.1}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {\relax 3.1}{\ignorespaces PaarweiserVergleichIDE}}{11}{figure.3.1}
-\contentsline {figure}{\numberline {\relax 3.2}{\ignorespaces NutzwertAnalyseIDE}}{12}{figure.3.2}
+\contentsline {figure}{\numberline {\relax 3.1}{\ignorespaces Paarweiser Vergleich der Entwicklungsumgebungen}}{11}{figure.3.1}
+\contentsline {figure}{\numberline {\relax 3.2}{\ignorespaces Die Auswertung der Nutzwertanalyse der Entwicklungsumgebungen}}{12}{figure.3.2}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {\relax 4.1}{\ignorespaces PaarweiserVergleichSIM}}{13}{figure.4.1}
-\contentsline {figure}{\numberline {\relax 4.2}{\ignorespaces NutzwertAnalyseSIM}}{14}{figure.4.2}
+\contentsline {figure}{\numberline {\relax 4.1}{\ignorespaces Paarweiser Vergleich wichtiger Attribute einer Simulationsumgebung}}{13}{figure.4.1}
+\contentsline {figure}{\numberline {\relax 4.2}{\ignorespaces Auswertung der Nutzwertanalyse von verschiedenen Simulationsumgebungen}}{14}{figure.4.2}
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {\relax 5.1}{\ignorespaces GeradeSrecke}}{18}{figure.5.1}
 \contentsline {figure}{\numberline {\relax 5.2}{\ignorespaces Kurve}}{18}{figure.5.2}
@@ -69,4 +69,6 @@
 \contentsline {figure}{\numberline {\relax 8.4}{\ignorespaces Ein Random Forest Modell}}{70}{figure.8.4}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {\relax 11.1}{\ignorespaces gs}}{80}{figure.11.1}
 \addvspace {10\p@ }

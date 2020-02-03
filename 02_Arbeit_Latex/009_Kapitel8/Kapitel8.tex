@@ -217,14 +217,14 @@ Angenommen man habe drei verschiedene Klassen mit insgesamt 80 Observationen, we
 Davon befinden sich 19 Observationen in der Klasse eins, 21 Observationen in der Klasse zwei und 40 Observationen in der Klasse drei. Das Gini-Unreinheitsma{\ss) berechnet sich nun zu:
 
 
-$ Gini-Score = \displaystyle 1- [ (\frac{19}{80})^2 + (\frac{21}{80})^2 + (\frac{40}{80})^2] = 0,6247 $
+$ GiniScore = \displaystyle 1- [ (\frac{19}{80})^2 + (\frac{21}{80})^2 + (\frac{40}{80})^2] = 0,6247 $
 
 
 Um den logischen Test f{\"u}r den besten bin{\"a}ren Split {\"u}ber ein Merkmal der Observationen zu finden, werden die Gini-Unreinheitsma{\ss)e f{\"u}r alle m{\"o}glichen Werte durchgetestet.
 Angenommen man w{\"u}rde das Merkmal M1 bei M1 > 2 aufteilen und die Observationen w{\"u}rden sich nach Klassen folgederma{\ss)en aufteilen:
 
-$Linke Kante: 16, 9, 0$\\
-$Rechte Kante : 3, 12, 40$
+$Merkmale linke Kante: 16, 9, 0$\\
+$Merkmale rechte Kante : 3, 12, 40$
 
 Dann errechnet sich das Gini-Unreinheitsma{\ss} zu:
 
@@ -312,8 +312,8 @@ verwendet, dies sind das Convolutional Layer, das Pooling Layer und das Fully-Co
 Layer. F\"ur tiefere Informationen zu CNN verweise ich auf meine Bachelorarbeit[XX].
 
 
-\subsection{Aufbau und Training der CNN Architektur}
-\label{subsec:Aufbau und Training der CNN Architektur}
+\subsection{Aufbau und Training der CNN-Architektur}
+\label{subsec:Aufbau und Training der CNN-Architektur}
 
 Das CNN-Model wurde durch Keras mit Tensorflow als Backend implementiert und trainiert. Das Model besitzt im Eingangslayer eine Convolutional-Layer mit 32 Kerneln der Gr\"o{\ss}e  3$\times$3 und der Rectified-Linear-Unit als Aktivierungsfunktion. Es nimmt ein Eingangsbild der Dimension 28$\times$56 entgegen welche der Gr\"o{\ss}e der vorverarbeiteten MNIST-Daten entspricht.
 Es folgt ein weiteres Convolutional-Layer mit 64 Kernenl der Gr\"o{\ss}e 3$\times$3 wieder gefolgt von der gleichen Aktivierungsfunktion. Es folgt ein Max-Pooling-Layer mit einem Kernel der Dimension 2$\times$2. Daran schlie{\ss}t sich ein Dropout-Layer mit 75\% Haltungsrate an, um eine bessere Generalisierung auf nicht gesehene Daten zu erm\"oglichen.

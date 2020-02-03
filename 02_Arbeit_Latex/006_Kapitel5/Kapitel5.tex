@@ -5,14 +5,14 @@
 \chapter{Erzeugung von simulierten Verkehrssitationen}
 \label{cha:Erzeugung von simulierten Verkehrssitationen} \index{Erzeugung von simulierten Verkehrssitationen}
 
-Um ein Testen der Bildverarbeitungsalgorithmen zu ermöglichen soll eine Simulationsumgebung implementiert werden. Mit der in [XXX] ausgewählten Simulationsumgebung Gazebo wurde dafür eine Fahrbahn und ein mit einem Controller gesteuertes Fahrzeug mit Kamera implementiert. In diesem Kapitel wird der Aufbau und die Verwendung der Simulationsumgebung näher beschrieben.
+Um ein Testen der Bildverarbeitungsalgorithmen zu ermöglichen soll eine Simulationsumgebung implementiert werden. Mit der in \ref{cha:Auswahl der Entwicklungsumgebung}  ausgewählten Simulationsumgebung Gazebo wurde dafür eine Fahrbahn und ein mit einem Controller gesteuertes Fahrzeug mit Kamera implementiert. In diesem Kapitel wird der Aufbau und die Verwendung der Simulationsumgebung näher beschrieben.
 
 
 \section{Erstellung der Fahrbahn}
 \label{sec:Erstellung der Fahrbahn}
 
 Mit Gazebo ist es möglich Bilddateien durch OGRE (Object-Oriented Graphics Rendering Engine) in die Simulationsumgebung einzuladen und entsprechend darzustellen. Es bedurfte eines geeigneten Software-Werkzeugs um eine Fahrbahn entsprechend den Regeln des Carolo-Cups zu modellieren.
-Vektorbasierte 2D-Grafiken können zum Beispiel mit Inkscape oder Adobe Illustrator designt werden wie es in XXX getan wurde. Auch wäre es denkbar die 3D-Grafiksuit Blender oder ein entsprechendes CAD-Programm zu verwenden. Um es dem Anwender zu vereinfachen wurde sich aber für eine andere Methode entschieden. Cairo ist eine 2D-Grafikbibliothek. Sie ermöglicht es vektorbasierte Grafiken zu erzeugen. Mit der Python-API von Cairo namens Pycairo wurde die Erzeugung von Fahrbahnsegmenten automatisiert. Die Idee war es einen Modularen Aufbau von Fahrbahnsegmenten zu realisieren, welche durch Pycario erzeugt und automatisiert in das Gazebo-Modell-Format konvertiert und über das Gazebo-Client-Interface zusammengefügt werden können. Dazu wurden für jedes Modell der Fahrbahn Python-Skripte geschrieben, welche Bilddateien im PNG-Format für jede Fahrsituation erzeugen. Im Folgenden werden diese einzelnen Python-Skripte näher beschrieben.
+Vektorbasierte 2D-Grafiken können zum Beispiel mit Inkscape oder Adobe Illustrator designt werden wie es in \cite{gazebovrepeval} getan wurde. Auch wäre es denkbar die 3D-Grafiksuit Blender oder ein entsprechendes CAD-Programm zu verwenden. Um es dem Anwender zu vereinfachen wurde sich aber für eine andere Methode entschieden. Cairo ist eine 2D-Grafikbibliothek. Sie ermöglicht es vektorbasierte Grafiken zu erzeugen. Mit der Python-API von Cairo namens Pycairo wurde die Erzeugung von Fahrbahnsegmenten automatisiert. Die Idee war es einen Modularen Aufbau von Fahrbahnsegmenten zu realisieren, welche durch Pycario erzeugt und automatisiert in das Gazebo-Modell-Format konvertiert und über das Gazebo-Client-Interface zusammengefügt werden können. Dazu wurden für jedes Modell der Fahrbahn Python-Skripte geschrieben, welche Bilddateien im PNG-Format für jede Fahrsituation erzeugen. Im Folgenden werden diese einzelnen Python-Skripte näher beschrieben.
 
 
 \begin{enumerate}
@@ -23,7 +23,7 @@ Als Eingabeparameter nimmt das Skript die Länge der Fahrbahn und den Offset für 
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.3\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/straight_1m}% keine extention: wählt jpg für DVI
-  \caption[GeradeSrecke]%
+  \caption[Gerades Streckensegment]%
            {\label{fig:GeradeSrecke}%
            Gerades Streckensegment}
 \end{center}
@@ -38,7 +38,7 @@ Die Kurvensegmente besitzen die selbe Dimensionierung wie die geraden Streckenab
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.3\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/Kurve}% keine extention: wählt jpg für DVI
-  \caption[Kurve]%
+  \caption[Kurvensegment]%
            {\label{fig:Kurve}%
            Kurvensegment}
 \end{center}
@@ -104,7 +104,7 @@ Der Parkbereich wurde zusammen mit der Startbox aus einzelnen Pycairo-Modulen in
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.7\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/006_Kapitel5/Bilder/start_of_track}% keine extention: wählt jpg für DVI
-  \caption[SBPBSegment]%
+  \caption[Startbox- und Parkbereichsegment]%
            {\label{fig:SBPBSegment}%
            Startbox- und Parkbereichsegment}
 \end{center}
@@ -127,12 +127,12 @@ Die Verkehrsinseln wurden aus einzelnen Pycairo-Modulen mit Inkscape zusammengfü
 Es können schwarze rechteckige Flächen erzeugt werden, welche zum Verdecken von Fahrlinien verwendet werden können. Die Eingangsparameter sind die Höhe und Breite der Fläche.
 
 \item[] \textbf{Verkehrsschilder}\hfill \\
-Die im Carolo-Cup möglichen Verkehrsschilder wurden aus dem Github-Repository XXX entnommen.
+Die im Carolo-Cup möglichen Verkehrsschilder wurden aus dem Github-Repository von tum-phoenix entnommen \cite{tum}.
 
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.7\textwidth]{/home/tb/Desktop/Master/Bilder/alleSchilder}% keine extention: wählt jpg für DVI
-  \caption[Verkehrsschilder]%
+  \caption[Verkehrsschilder des CaroloCups]%
            {\label{fig:Verkehrsschilder}%
            Verkehrsschilder des CaroloCups}
 \end{center}
@@ -140,7 +140,7 @@ Die im Carolo-Cup möglichen Verkehrsschilder wurden aus dem Github-Repository XX
 
 
 \item[] \textbf{Abbiegepfeile}\hfill \\
-Der Abbiegepfeil wurde dem Github-Repository XXX entnommen.
+Der Abbiegepfeil wurde dem Github-Repository von tum-phoenix entnommen \cite{tum}.
 \end{enumerate}
 
 
@@ -158,15 +158,15 @@ Der Abbiegepfeil wurde dem Github-Repository XXX entnommen.
 
 
 
-Das Verh\"altnis an Bildpixeln pro Meter in der Simulationsumgebung wurde dabei in den Python-Skripten auf 500 festgelegt. Dies ermöglicht eine scharfe Ansicht der Module in der Simulationsumgebung, wobei nicht allzu viel Rechenleistung für das Rendering benötigt wird. Mit dem Python-Skript XXX können die Fahrbahn-Module (PNG-Dateien) automatisiert in das Gazebo-Modell-Format (SDF) konvertiert werden.
-Dafür muss der Dateiname, der Speicherort und das Auflösungsverhältnis als Eingabeparameter dem Skript übergeben werden. Dieses erzeugt die entsprechende Modell-Datei und kopiert sie in den Gazebo-Modell-Ordner (.gazebo/models). Nach dem Starten des Gazebo-Clients können die Module im Reiter XXX gefunden und zu einer Fahrbahn zusammengeführt werden. 
+Das Verh\"altnis an Bildpixeln pro Meter in der Simulationsumgebung wurde dabei in den Python-Skripten auf 500 festgelegt. Dies ermöglicht eine scharfe Ansicht der Module in der Simulationsumgebung, wobei nicht allzu viel Rechenleistung für das Rendering benötigt wird. Mit dem Python-Skript create\_model\_on\_box können die Fahrbahn-Module (PNG-Dateien) automatisiert in das Gazebo-Modell-Format (SDF) konvertiert werden.
+Dafür muss der Dateiname, der Speicherort und das Auflösungsverhältnis als Eingabeparameter dem Skript übergeben werden. Dieses erzeugt die entsprechende Modell-Datei und kopiert sie in den Gazebo-Modell-Ordner (.gazebo/models). Nach dem Starten des Gazebo-Clients können die Module im Reiter Insert gefunden und zu einer Fahrbahn zusammengeführt werden. 
 
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/rotateFahrbahn}% keine extention: wählt jpg für DVI
-  \caption[GazeboKreuzungModel]%
+  \caption[ Einfügen eines Kreuzungssegments in den Gazebo-Simulator]%
            {\label{fig:GazeboKreuzungModel}%
-           Einfügen eines Kreuzungssegments in den Gazebo Simulator}
+           Einfügen eines Kreuzungssegments in den Gazebo-Simulator}
 \end{center}
 \end{figure}
 
@@ -176,9 +176,9 @@ Desweitern können dreidimensionale Boxen direkt im Gazebo-Client eingefügt werde
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/box}% keine extention: wählt jpg für DVI
-  \caption[GazeboBoxModel]%
+  \caption[Einfügen eines Parklückenhindernisses in den Gazebo-Simulator]%
            {\label{fig:GazeboBoxModel}%
-           Einfügen eines Parklückenhindernisses in den Gazebo Simulator}
+           Einfügen eines Parklückenhindernisses in den Gazebo-Simulator}
 \end{center}
 \end{figure}
 
@@ -187,7 +187,7 @@ Nach beenden der Fahrbahnmodellierung, kann die Fahrbahn durch den Gazebo-Client
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.7\textwidth]{/home/tb/Desktop/Master/Bilder/driveTrack}% keine extention: wählt jpg für DVI
-  \caption[GazeboRundkursWorld]%
+  \caption[Modularer Aufbau eines gesamten Rundkurses im Gazebo-Simulator}]%
            {\label{fig:GazeboRundkursWorld}%
            Modularer Aufbau eines gesamten Rundkurses im Gazebo-Simulator}
 \end{center}
@@ -195,10 +195,13 @@ Nach beenden der Fahrbahnmodellierung, kann die Fahrbahn durch den Gazebo-Client
 
 
 
+https://github.com/gkouros/ackermann-drive-teleop
+
+
 \section{Erstellung des Fahrzeugs}
 \label{sec:Erstellung der Fahrzeugs}
 
-Die Modellierung des Fahrzeugs wurde mit dem ROS-Package XXX ermöglicht.
+Die Modellierung des Fahrzeugs wurde mit dem ROS-Package ackermann\_vehicle\_gazebo \cite{ackerm} ermöglicht.
 Das Package implementiert ein Fahrzeug mit Ackermann-Lenkung für ROS-Gazebo. Dafür nutzt es das Ackermann-Plugin.
 Das Fahrzeug ist durch eine Modell-Datei beschrieben im SDF-Format implementiert. In dieser Modell-Datei wurden Anpassungen vorgenommen, um das Fahrzeug auf die Dimensionen des Fahrzeugs der Hochschule Karlsruhe zu bringen. Außerdem wurde es um ein Kamera-Plugin erweitert, um Rosbags in der Simulation aufnehmen zu können. Folgende Parameter lassen sich darüber einstellen:
 
@@ -243,13 +246,13 @@ Legt die Standardabweichung des Rauschens fest
 
 
 Das Steuern des Fahrzeugs ist über das ROS-Package joy realisiert. Durch dieses kann das Fahrzeug über einen Controller manuell gesteuert werden. In Zukunft könnte auch eine autonome Fahrt durch publishen von Fahrinformationen auf die joy-Topic realisiert werden.
-Über Blender wurden zudem die im Wintersemester 18/19 erzeugten CAD-Konstruktionsteile im STL-format zusammengeführt. In Blender konnte daraus ein Mesh im Format COLLADA erzeugt werden. COLLADA ist ein XML-basiertes Austausch Format für 3D-Programme. Das durch Blender erzeugte Mesh kann zusammen mit dem XXX-Package genutzt werden um das CaroloCup-Fahrzeug in der Simulation darzustellen.
+Über Blender wurden zudem die im Wintersemester 18/19 erzeugten CAD-Konstruktionsteile im STL-format zusammengeführt. In Blender konnte daraus ein Mesh im Format COLLADA erzeugt werden. COLLADA ist ein XML-basiertes Austausch Format für 3D-Programme. Das durch Blender erzeugte Mesh kann zusammen mit dem ackermann\_vehicle\_gazebo-Package genutzt werden um das Carolo-Cup-Fahrzeug in der Simulation darzustellen.
 
 
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/car.png}% keine extention: wählt jpg für DVI
-  \caption[GazeboFahrzeug]%
+  \caption[Das in Gazebo simulierte Fahrzeug nach dem vorhandenen CAD-Modell]%
            {\label{fig:GazeboFahrzeug}%
            Das in Gazebo simulierte Fahrzeug nach dem vorhandenen CAD-Modell}
 \end{center}

@@ -55,29 +55,35 @@
 \BOOKMARK [2][]{subsection.8.4.2}{8.4.2 Training von Random-Forest durch den CART-Algorithmus}{section.8.4}% 55
 \BOOKMARK [2][]{subsection.8.4.3}{8.4.3 Auswertung von Random-Forest}{section.8.4}% 56
 \BOOKMARK [1][]{section.8.5}{8.5 Klassifikation durch Convolutional-Neural-Networks}{chapter.8}% 57
-\BOOKMARK [2][]{subsection.8.5.1}{8.5.1 Aufbau und Training der CNN Architektur}{section.8.5}% 58
+\BOOKMARK [2][]{subsection.8.5.1}{8.5.1 Aufbau und Training der CNN-Architektur}{section.8.5}% 58
 \BOOKMARK [2][]{subsection.8.5.2}{8.5.2 Auswertung der trainierten CNN-Architektur}{section.8.5}% 59
-\BOOKMARK [0][]{chapter.9}{9 Aufbau eines Testframeworks mit Google Test}{}% 60
+\BOOKMARK [0][]{chapter.9}{9 Aufbau eines Testframeworks mit Google-Test}{}% 60
 \BOOKMARK [0][]{chapter.10}{10 Ergebnisse}{}% 61
-\BOOKMARK [1][]{section.10.1}{10.1 Vanishing-Point-Search-Algorithmus}{chapter.10}% 62
+\BOOKMARK [1][]{section.10.1}{10.1 Simulierte Carolo-Cup-Wettbewerbsbedingungen durch Gazebo-ROS}{chapter.10}% 62
 \BOOKMARK [1][]{section.10.2}{10.2 Start-of-Lines-Search-Algorithmus}{chapter.10}% 63
-\BOOKMARK [1][]{section.10.3}{10.3 Line-Follower-Algorithmus}{chapter.10}% 64
-\BOOKMARK [1][]{section.10.4}{10.4 Line-Points-Reduce-Algorithmus}{chapter.10}% 65
-\BOOKMARK [1][]{section.10.5}{10.5 Mid-Line-Search-Algorithmus}{chapter.10}% 66
-\BOOKMARK [1][]{section.10.6}{10.6 Line-Validation-Table-Creation-Algorithmus}{chapter.10}% 67
-\BOOKMARK [1][]{section.10.7}{10.7 Rect-Safety-Algorithmus}{chapter.10}% 68
-\BOOKMARK [1][]{section.10.8}{10.8 Startboxschrankenerkennung}{chapter.10}% 69
-\BOOKMARK [1][]{section.10.9}{10.9 Zebrastreifen- und Ziellinienerkennung}{chapter.10}% 70
-\BOOKMARK [1][]{section.10.10}{10.10 Kreuzungserkennung}{chapter.10}% 71
-\BOOKMARK [0][]{section.10.10}{Literaturverzeichnis}{}% 72
-\BOOKMARK [0][]{appendix.A}{A Anhang}{}% 73
-\BOOKMARK [1][]{section.A.1}{A.1 Start-Of-Lines-Search Initialisierungsparameter}{appendix.A}% 74
-\BOOKMARK [1][]{section.A.2}{A.2 Vanishing-Point-Search Initialisierungsparameter}{appendix.A}% 75
-\BOOKMARK [1][]{section.A.3}{A.3 Line-Follower Initialisierungsparameter}{appendix.A}% 76
-\BOOKMARK [1][]{section.A.4}{A.4 Line-Points-Reduce Initialisierungsparameter}{appendix.A}% 77
-\BOOKMARK [1][]{section.A.5}{A.5 Mid-Line-Search Initialisierungsparameter}{appendix.A}% 78
-\BOOKMARK [1][]{section.A.6}{A.6 Line-Validation-Table-Creator Initialisierungsparameter}{appendix.A}% 79
-\BOOKMARK [1][]{section.A.7}{A.7 Safety-Rect Initialisierungsparameter}{appendix.A}% 80
-\BOOKMARK [1][]{section.A.8}{A.8 Zebrastreifen- und Ziellinienerkennung Initialisierungsparameter}{appendix.A}% 81
-\BOOKMARK [1][]{section.A.9}{A.9 Kreuzungserkennung Initialisierungsparameter}{appendix.A}% 82
-\BOOKMARK [1][]{section.A.10}{A.10 Bodenmarkierung- und Hinderniserkennung Initialisierungsparameter}{appendix.A}% 83
+\BOOKMARK [1][]{section.10.3}{10.3 Vanishing-Point-Search-Algorithmus}{chapter.10}% 64
+\BOOKMARK [1][]{section.10.4}{10.4 Line-Follower-Algorithmus}{chapter.10}% 65
+\BOOKMARK [1][]{section.10.5}{10.5 Line-Points-Reduce-Algorithmus}{chapter.10}% 66
+\BOOKMARK [1][]{section.10.6}{10.6 Mid-Line-Search-Algorithmus}{chapter.10}% 67
+\BOOKMARK [1][]{section.10.7}{10.7 Line-Validation-Table-Creation-Algorithmus}{chapter.10}% 68
+\BOOKMARK [1][]{section.10.8}{10.8 Safe-Drive-Area-Evaluator-Algorithmus}{chapter.10}% 69
+\BOOKMARK [1][]{section.10.9}{10.9 Startboxschrankenerkennung}{chapter.10}% 70
+\BOOKMARK [1][]{section.10.10}{10.10 Zebrastreifen- und Ziellinienerkennung}{chapter.10}% 71
+\BOOKMARK [1][]{section.10.11}{10.11 Kreuzungserkennung}{chapter.10}% 72
+\BOOKMARK [1][]{section.10.12}{10.12 Bodenmarkierungs- und Hinderniserkennung}{chapter.10}% 73
+\BOOKMARK [1][]{section.10.13}{10.13 Klassifikation von Geschwindigkeitsbegrenzungsmarkierungen durch Template-Matching}{chapter.10}% 74
+\BOOKMARK [1][]{section.10.14}{10.14 Klassifikation von Geschwindigkeitsbegrenzungsmarkierungen durch Random-Forest}{chapter.10}% 75
+\BOOKMARK [1][]{section.10.15}{10.15 Klassifikation von Geschwindigkeitsbegrenzungsmarkierungen durch Convolutional-Neural-Networks}{chapter.10}% 76
+\BOOKMARK [0][]{chapter.11}{11 Zusammenfassung und Ausblick}{}% 77
+\BOOKMARK [0][]{figure.11.1}{Literaturverzeichnis}{}% 78
+\BOOKMARK [0][]{appendix.A}{A Anhang}{}% 79
+\BOOKMARK [1][]{section.A.1}{A.1 Start-Of-Lines-Search Initialisierungsparameter}{appendix.A}% 80
+\BOOKMARK [1][]{section.A.2}{A.2 Vanishing-Point-Search Initialisierungsparameter}{appendix.A}% 81
+\BOOKMARK [1][]{section.A.3}{A.3 Line-Follower Initialisierungsparameter}{appendix.A}% 82
+\BOOKMARK [1][]{section.A.4}{A.4 Line-Points-Reduce Initialisierungsparameter}{appendix.A}% 83
+\BOOKMARK [1][]{section.A.5}{A.5 Mid-Line-Search Initialisierungsparameter}{appendix.A}% 84
+\BOOKMARK [1][]{section.A.6}{A.6 Line-Validation-Table-Creator Initialisierungsparameter}{appendix.A}% 85
+\BOOKMARK [1][]{section.A.7}{A.7 Safe-Drive-Area-Evaluator Initialisierungsparameter}{appendix.A}% 86
+\BOOKMARK [1][]{section.A.8}{A.8 Zebrastreifen- und Ziellinienerkennung Initialisierungsparameter}{appendix.A}% 87
+\BOOKMARK [1][]{section.A.9}{A.9 Kreuzungserkennung Initialisierungsparameter}{appendix.A}% 88
+\BOOKMARK [1][]{section.A.10}{A.10 Bodenmarkierung- und Hinderniserkennung Initialisierungsparameter}{appendix.A}% 89

@@ -17,7 +17,7 @@ Fahrsimulatoren stellen ein wichtiges Forschungs- und industrielles Entwicklungs
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/005_Kapitel4/Bilder/paarweiser_vergleich_sim}% keine extention: wählt jpg für DVI
-  \caption[PaarweiserVergleichSIM]%
+  \caption[Paarweiser Vergleich wichtiger Attribute einer Simulationsumgebung]%
            {\label{fig:PaarweiserVergleichSIM}%
            Paarweiser Vergleich wichtiger Attribute einer Simulationsumgebung.}
 \end{center}
@@ -30,7 +30,7 @@ Auch sollte die Simulationsumgebung keine kostenpflichtige Lizenz ben{\"o}tigen,
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=1\textwidth]{/home/tb/Desktop/Master/BA_TB/02_Arbeit_Latex/005_Kapitel4/Bilder/nutzwertanalyse_sim}% keine extention: wählt jpg für DVI
-  \caption[NutzwertAnalyseSIM]%
+  \caption[Auswertung der Nutzwertanalyse von verschiedenen Simulationsumgebungen]%
            {\label{fig:NutzwertAnalyseSIM}%
            Auswertung der Nutzwertanalyse von verschiedenen Simulationsumgebungen.}
 \end{center}
@@ -50,7 +50,7 @@ Es gibt verschiedene Optionen f{\"u}r die Programmierung von Funktionen, wie etw
 Vor allem bei der Konstruktion von neuen Robotern und Welten kann V-REP punkten.
 Mit CAD designte Modelle k{\"o}nnen von Robotern in Echtzeit manipuliert werden.
 Das Interagieren (z.B. verschieben oder hinzuf{\"u}gen) von Objekten wird erm{\"o}glicht. 
-Es ist m{\"o}glich, Meshes zu vereinfachen, zu teilen und zu kombinieren. Meshes sind eine vereinfachte Oberfl{\"a}chenbeschreibungen aus dreidimensionalen Bilddateien. Dies erm{\"o}glicht es, die Dreieckszahl importierter Modelle zu optimieren und Meshes mit Roboteraktuatoren zu manipulieren. 
+Es ist m{\"o}glich, Meshes zu vereinfachen, zu teilen und zu kombinieren. Meshes sind eine vereinfachte Oberfl{\"a}chenbeschreibungen aus dreidimensionalen Bilddateien. Dies erm{\"o}glicht es, die Dreieckszahl importierter Modelle zu optimieren und Meshes mit Roboteraktuatoren zu manipulieren \cite{simcomp}.
 
 
 \section{Die Gazebo Simulationsumgebung}
@@ -94,7 +94,7 @@ Das World File definiert durch SDF die zu simulierende Welt mit all ihren Kompon
 Eine Modell-Datei beschreibt eine einzelne Einheit der Welt im SDF-Format. Dies k{\"o}nnte Beispielweise ein Fahrzeug f{\"u}r den CaroloCup sein. Einzelne Modell-Deteien k{\"o}nnen zusammen in ein World-File integriert werden.
 Wie etwa verschiedene Fahrbahnsegmente.
 Dies erm{\"o}glicht einen Modularen Aufbau und sorgt f{\"u}r bessere Lesbarkeit.
-Die erste Hauptkomponente zum Beschreiben eines Modells ist der Link (<link>). Ein oder mehrere Links Formen ein Modell. Der Link kann viele verschiedene physikalische Attribute besitzen, wie die Masse (<mass>), das Tr{\"a}gheitsmoment(<inertial>) oder Reibwerte(<friction>). Des weiteren besitzt ein Link ein Kollisionsattribut (<collision>) wor{\"u}ber durch Angabe der geometrischen Gr{\"o}ße die Kollision mit anderen Komponenten der Welt errechnet wird. Eine weitere Komponente ist die visuelle Komponente(<visual>) sie kann optional die Geometrie des Links in der Simulation visualisieren. Auch Sensor-Komponenten(<sensor>) k{\"o}nnen in Links integriert werden, wie etwa ein Kamera-Sensor. Die zweite, optionale Hauptkomponente ist ein Gelenk (<joint>). Auch hiervon k{\"o}nnen mehrere in einem Modell existieren. Ein Gelenk verbindet zwei Links in einer Eltern-Kind-Beziehung miteinander. Verschiedene Gelenk-Typen k{\"o}nnen definiert werden wie etwa einem Drehgelenk(<jointtype=?revolute?>) f{\"u}r ein Rad oder ein Kugelgelenk (<jointtype=?ball?>) f{\"u}r eine Kamera. Durch Plugins(<plugin>) etwa geschrieben in C++ oder Python k{\"o}nnen zur Laufzeit verschiedene Funktionalit{\"a}ten f{\"u}r eine Simulation erg{\"a}nzt werden. Die R{\"a}der eines Fahrzeugs k{\"o}nnen dadurch angesteuert oder Kamera-Sensorwerte an eine ROS-Node {\"u}bermittelt werden.
+Die erste Hauptkomponente zum Beschreiben eines Modells ist der Link (<link>). Ein oder mehrere Links Formen ein Modell. Der Link kann viele verschiedene physikalische Attribute besitzen, wie die Masse (<mass>), das Tr{\"a}gheitsmoment(<inertial>) oder Reibwerte(<friction>). Des weiteren besitzt ein Link ein Kollisionsattribut (<collision>) wor{\"u}ber durch Angabe der geometrischen Gr{\"o}ße die Kollision mit anderen Komponenten der Welt errechnet wird. Eine weitere Komponente ist die visuelle Komponente(<visual>) sie kann optional die Geometrie des Links in der Simulation visualisieren. Auch Sensor-Komponenten(<sensor>) k{\"o}nnen in Links integriert werden, wie etwa ein Kamera-Sensor. Die zweite, optionale Hauptkomponente ist ein Gelenk (<joint>). Auch hiervon k{\"o}nnen mehrere in einem Modell existieren. Ein Gelenk verbindet zwei Links in einer Eltern-Kind-Beziehung miteinander. Verschiedene Gelenk-Typen k{\"o}nnen definiert werden wie etwa einem Drehgelenk(<jointtype=?revolute?>) f{\"u}r ein Rad oder ein Kugelgelenk (<jointtype=?ball?>) f{\"u}r eine Kamera. Durch Plugins(<plugin>) etwa geschrieben in C++ oder Python k{\"o}nnen zur Laufzeit verschiedene Funktionalit{\"a}ten f{\"u}r eine Simulation erg{\"a}nzt werden. Die R{\"a}der eines Fahrzeugs k{\"o}nnen dadurch angesteuert oder Kamera-Sensorwerte an eine ROS-Node {\"u}bermittelt werden \cite{gazebovrepeval}.
 
 
 
