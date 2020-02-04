@@ -43,120 +43,122 @@ Warning--entry type for "simcomp" isn't style-file defined
 --line 97 of file Literatur.bib
 Warning--entry type for "tum" isn't style-file defined
 --line 113 of file Literatur.bib
-I was expecting a `,' or a `}'---line 219 of file Literatur.bib
+Warning--entry type for "ackerm" isn't style-file defined
+--line 121 of file Literatur.bib
+I was expecting a `,' or a `}'---line 238 of file Literatur.bib
  : 
  : institution ={Microprocessor Research Lab, Intel Labs}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 226 of file Literatur.bib
+I was expecting a `,' or a `}'---line 245 of file Literatur.bib
  : 
  : institution ={Neurophysiolojy Laboratory, Department of Pharmacology Harvard Aledical School, Boston}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 233 of file Literatur.bib
+I was expecting a `,' or a `}'---line 252 of file Literatur.bib
  : 
  : institution ={AT&T Labs - Research}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 247 of file Literatur.bib
+I was expecting a `,' or a `}'---line 266 of file Literatur.bib
  : 
  : institution ={Computer Science Department University of British Columbia Vancouver}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 255 of file Literatur.bib
+I was expecting a `,' or a `}'---line 274 of file Literatur.bib
  : 
  : institution ={ETH Zurich}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 262 of file Literatur.bib
+I was expecting a `,' or a `}'---line 281 of file Literatur.bib
  : 
  : institution ={AT&T Bell Labs}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 269 of file Literatur.bib
+I was expecting a `,' or a `}'---line 288 of file Literatur.bib
  : 
  : institution ={University of Toronto}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 276 of file Literatur.bib
+I was expecting a `,' or a `}'---line 295 of file Literatur.bib
  : 
  : institution ={Google Inc, University of North Carolina, University of Michigan}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 283 of file Literatur.bib
+I was expecting a `,' or a `}'---line 302 of file Literatur.bib
  : 
  : institution ={Computer Sciences Laboratory Xerox Palo Alto Research Center}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 293 of file Literatur.bib
+I was expecting a `,' or a `}'---line 312 of file Literatur.bib
  : 
  : institution ={Mitsubishi Electric Research Labs, Compaq CRL
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 301 of file Literatur.bib
+I was expecting a `,' or a `}'---line 320 of file Literatur.bib
  : 
  : institution ={Center for Biological and Computational Learning, Artificial Intelligence Laboratory, MIT,
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 310 of file Literatur.bib
+I was expecting a `,' or a `}'---line 329 of file Literatur.bib
  : 
  : institution ={Microsoft Research}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 324 of file Literatur.bib
+I was expecting a `,' or a `}'---line 343 of file Literatur.bib
  : 
  : institution ={NC Chapel Hill, Zoox Inc.,  Google Inc., University of Michigan}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 331 of file Literatur.bib
+I was expecting a `,' or a `}'---line 350 of file Literatur.bib
  : 
  : institution ={University of Washington, Facebook AI Research}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-I was expecting a `,' or a `}'---line 338 of file Literatur.bib
+I was expecting a `,' or a `}'---line 357 of file Literatur.bib
  : 
  : institution ={TNList, Tsinghua University Beijing, China}
 (Error may have been on previous line)
 I'm skipping whatever remains of this entry
-You've used 5 entries,
+You've used 9 entries,
             4011 wiz_defined-function locations,
-            814 strings with 6625 characters,
-and the built_in function-call counts, 1006 in all, are:
-= -- 70
-> -- 20
-< -- 5
-+ -- 10
-- -- 5
-* -- 52
-:= -- 162
-add.period$ -- 5
-call.type$ -- 5
+            831 strings with 7415 characters,
+and the built_in function-call counts, 1782 in all, are:
+= -- 126
+> -- 36
+< -- 9
++ -- 18
+- -- 9
+* -- 92
+:= -- 282
+add.period$ -- 9
+call.type$ -- 9
 change.case$ -- 0
 chr.to.int$ -- 0
-cite$ -- 5
-duplicate$ -- 40
-empty$ -- 126
-format.name$ -- 15
-if$ -- 246
+cite$ -- 9
+duplicate$ -- 72
+empty$ -- 226
+format.name$ -- 27
+if$ -- 442
 int.to.chr$ -- 0
-int.to.str$ -- 6
-missing$ -- 30
-newline$ -- 40
-num.names$ -- 5
-pop$ -- 20
+int.to.str$ -- 10
+missing$ -- 54
+newline$ -- 64
+num.names$ -- 9
+pop$ -- 36
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 35
+skip$ -- 63
 stack$ -- 0
 substring$ -- 0
-swap$ -- 10
-text.length$ -- 5
+swap$ -- 18
+text.length$ -- 9
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 10
-width$ -- 6
-write$ -- 72
+while$ -- 18
+width$ -- 10
+write$ -- 124
 (There were 17 error messages)

@@ -189,9 +189,9 @@ Die neue Ordinate p beschreibt die euklidische Distanz zum Lotfußpunkt. Und die 
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.6\textwidth]{/home/tb/Desktop/Master/Bilder/houghraum}% keine extention: wählt jpg für DVI
-  \caption[Die Hough-Transformation]%
+  \caption[Die Bildbereichstransformation des Hough-Lines-Algorithmus]%
            {\label{fig:HoughRaum}%
-           Die Hough-Transformation}
+           Die Bildbereichstransformation des Hough-Lines-Algorithmus}
 \end{center}
 \end{figure}
 
@@ -248,7 +248,7 @@ Ziel ist es eine Au{\ss}enlinie von einem Startpunkt, im unteren Bildbereich, so
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/line_follower_directions}% keine extention: wählt jpg für DVI
-  \caption[Darstellung des Line-Follower-Algorithmus]%
+  \caption[Darstellung der Linienabsuche des Line-Follower-Algorithmus]%
            {\label{fig:SuchrichtingLF}%
            Die AR Suchrichtungen in gelb und t{\"u}rkis und das Sichtfeld des Line-Follower-Algorithmus dargestellt in rot.}
 \end{center}
@@ -281,7 +281,7 @@ Wenn der Y-Wert des vorherigen Startpunktes gr{\"o}{\ss}er ist als der neue Star
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/linefollower}% keine extention: wählt jpg für DVI
-  \caption[LPLF]%
+  \caption[Visualisierung der gefundenen Linienpunkte des Line-Follower-Algorithmus]%
            {\label{fig:LPLF}%
            Die gefundenen Linienpunkte des Line-Follower-Algorithmus für die linke(gelb) und rechte(t{\"u}rkis Außenlinie)}
 \end{center}
@@ -313,7 +313,7 @@ Dies geschieht durch das Legen einer imagin{\"a}ren Linie zwischen dem ersten un
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.4\textwidth]{/home/tb/Desktop/Master/Bilder/Douglas_Peucker}% keine extention: wählt jpg für DVI
-  \caption[RDPAlgorihtmus]%
+  \caption[Veranschaulichung des Douglas-Peucker-Algorithmus]%
            {\label{fig:RDPAlgorihtmus}%
            Veranschaulichung des Douglas-Peucker-Algorithmus}
 \end{center}
@@ -328,9 +328,9 @@ Der Start- und Endpunkt wie alle Ausrei{\ss}er-Punkte ergeben die neue reduziert
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.4\textwidth]{/home/tb/Desktop/Master/Bilder/rdp}% keine extention: wählt jpg für DVI
-  \caption[RDPAlgorihtmusBild]%
+  \caption[Darstellung der reduzierten Linienpunkte nach der Anwendung des Douglas-Peucker-Algorithmus]%
            {\label{fig:RDPAlgorihtmusBild}%
-           Darstellung der Linienpunkte nach der anwendung des Douglas-Peucker-Algorithmus}
+           Darstellung der reduzierten Linienpunkte nach der Anwendung des Douglas-Peucker-Algorithmus}
 \end{center}
 \end{figure}
 
@@ -347,16 +347,16 @@ Der Algorithmus gibt als R{\"u}ckgabewert die reduzierten Linien-Punkte des Line
 Um eine robuste Linienerkennung zu erm{\"o}glichen muss auch die Mittellinie in betracht gezogen werden. Der Algorithmus nutzt dabei einen Clustering-Ansatz. Zuerst werden einzelne Pixel, die zu einer Mittellinie geh{\"o}ren in einer Gruppe zusammengef{\"u}hrt. Anschlie{\ss}end werden aufeinanderfolgende Mittellinien-Gruppen, wenn sie unter einem gewissen Abstand voneinander entfernt sind, zu Knoten in einem Graphen vereint. Der Algorithmus startet mit dem Einlesen des Graustufenbilds in Birdseye-Perspektive.
 Das Eingangsbild wird in Raster der H{\"o}he RH und der Breite RB aufgeteilt. Die einzelnen Bereiche stehen f{\"u}r Gruppen durch welche Mittellinien gekennzeichnet sind. Jeder Bildbereich wird dadurch mit einen Bereichsschl{\"u}ssel gekennzeichnet. Der Schl{\"u}ssel ist ein Tupel definiert durch pair<int,int>. Die einzelnen Bereichsschl{\"u}ssel sind abh{\"a}nig von der Bilddimension und der Rasterisierung.
 Der Schl{\"u}ssel eines Bereichs wird beschrieben durch:
-
+\begin{center}
 $\displaystyle \frac{Bildh{\"o}he}{RH}$ (erster Wert des Tupels)  
  
 $\displaystyle \frac{Bildbreite}{RB}$ (zweiter Wert des Tupels).
-
+\end{center}
 
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.7\textwidth]{/home/tb/Desktop/Master/Bilder/rasterierung_small}% keine extention: wählt jpg für DVI
-  \caption[RasterisiertesBild]%
+  \caption[Visualisierung der Rasterisierung durch die Mittelliniensuche]%
            {\label{fig:RasteriertesBild}%
            Das Rasterisierte Bild in rot mit zugehörigen Rasterschküsseln in grün}
 \end{center}
@@ -374,7 +374,7 @@ DFS wurde gew{\"a}hlt, da die Bereichsschl{\"u}ssel so gut wie immer nur einen N
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.8\textwidth]{/home/tb/Desktop/Master/Bilder/midlinesearch_cluster}% keine extention: wählt jpg für DVI
-  \caption[MittellinienGraph]%
+  \caption[Visualisierung von verbundenen Mittellinien durch die Graphenerzeugung]%
            {\label{fig:MittellinienGraph}%
            Darstellung eines Graphen von verbundenen Mittellinien.
            Der grüne Punkt und der rote Kreis geben die Start und Endwerte der einzelnen Mittelliniensegmente an.
@@ -389,7 +389,7 @@ Ist DFS terminiert werden die in den Graphen enthaltenen Bereichsschl{\"u}ssel d
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Mid_Line_Search_Diagram1}% keine extention: wählt jpg für DVI
-  \caption[midlinepa1]%
+  \caption[Programmablaufplan des Mid-Line-Search-Algorithmus Teil 1]%
            {\label{fig:midlinepa1}%
            Programmablaufplan des Mid-Line-Search-Algorithmus Teil 1.
            }
@@ -399,7 +399,7 @@ Ist DFS terminiert werden die in den Graphen enthaltenen Bereichsschl{\"u}ssel d
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Mid_Line_Search_Diagram2}% keine extention: wählt jpg für DVI
-  \caption[midlinepa2]%
+  \caption[Programmablaufplan des Mid-Line-Search-Algorithmus Teil 2]%
            {\label{fig:midlinepa2}%
            Programmablaufplan des Mid-Line-Search-Algorithmus Teil 2.
            }
@@ -410,7 +410,7 @@ Ist DFS terminiert werden die in den Graphen enthaltenen Bereichsschl{\"u}ssel d
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Mid_Line_Search_Diagram3}% keine extention: wählt jpg für DVI
-  \caption[midlinepa3]%
+  \caption[Programmablaufplan des Mid-Line-Search-Algorithmus Teil 3]%
            {\label{fig:midlinepa3}%
            Programmablaufplan des Mid-Line-Search-Algorithmus Teil 3.
            }
@@ -465,9 +465,9 @@ Da die Mittellinien in einem Vector-Container bestehend aus einem Vector-Contain
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Line_Validation_Table_finish1}% keine extention: wählt jpg für DVI
-  \caption[lvtc1]%
+  \caption[Programmablaufplan des Line-Validation-Table-Creator-Algorithmus Teil 1]%
            {\label{fig:lvtc1}%
-           Programmablaufplan der Line-Validation-Table-Creator-Algorithmus Teil 1.
+           Programmablaufplan des Line-Validation-Table-Creator-Algorithmus Teil 1.
            }
 \end{center}
 \end{figure}
@@ -477,9 +477,9 @@ Da die Mittellinien in einem Vector-Container bestehend aus einem Vector-Contain
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Line_Validation_Table_finish2}% keine extention: wählt jpg für DVI
-  \caption[lvtc2]%
+  \caption[Programmablaufplan des Line-Validation-Table-Creator-Algorithmus Teil 2]%
            {\label{fig:lvtc2}%
-           Programmablaufplan der Line-Validation-Table-Creator-Algorithmus Teil 2.
+           Programmablaufplan des Line-Validation-Table-Creator-Algorithmus Teil 2.
            }
 \end{center}
 \end{figure}
@@ -489,9 +489,9 @@ Da die Mittellinien in einem Vector-Container bestehend aus einem Vector-Contain
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=1\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/Line_Validation_Table_finish3}% keine extention: wählt jpg für DVI
-  \caption[lvtc3]%
+  \caption[Programmablaufplan des Line-Validation-Table-Creator-Algorithmus Teil 3]%
            {\label{fig:lvtc3}%
-           Programmablaufplan der Line-Validation-Table-Creator-Algorithmus Teil 3.
+           Programmablaufplan des Line-Validation-Table-Creator-Algorithmus Teil 3.
            }
 \end{center}
 \end{figure}
@@ -504,7 +504,7 @@ Die Funktion betrachtet dabei die {\"A}nderung des Winkels zwischen den einzelne
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/indrivedir}% keine extention: wählt jpg für DVI
-  \caption[ExtrahierteLinienpunkte]%
+  \caption[Visualisierung der Linienpunkte in Fahrtrichtung]%
            {\label{fig:ExtrahierteLinienpunkte}%
            Extrahierte linke(gelb), mittel(lila) und rechte(t{\"u}rkis) Linienpunkte in Fahrtrichtung.
            }
@@ -574,7 +574,7 @@ Falls in einem Bereich keine Bewertungstabellen-Punkte mit oben beschriebenen Pr
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/safetytrack2}% keine extention: wählt jpg für DVI
-  \caption[RectSafety]%
+  \caption[Visiualisierung der mit Sicherheitsscores bewerteten Fahrbahnbereiche]%
            {\label{fig:RectSafety}%
            Bewertete Bereichssicherheiten dargestellt als grüne Rechtecke.
            Die als grüne Zahl dargestellte Sicherheitsbewertung gibt die Anzahl von dezimalstellen der Bewertung im Bereich an.
@@ -589,7 +589,7 @@ Dies erlaubt es zus{\"a}tzlich {\"u}ber Kreuzungen hinaus, Bereiche fr{\"u}hzeit
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.5\textwidth]{/home/tb/Desktop/Master/Bilder/safetytrack}% keine extention: wählt jpg für DVI
-  \caption[SafetyRectKreuzung]%
+  \caption[Visualisierung der Bereichssicherheitsscore über die Kreuzung hinaus]%
            {\label{fig:SafetyRectKreuzung}%
            Bewertung der Bereichssicherheit über die Kreuzung hinaus.
            }
@@ -604,7 +604,7 @@ Wurden alle m{\"o}glichen Bereiche ausgewertet terminiert die Funktion und gibt 
 \begin{figure}[H]
 \begin{center}
   \includegraphics[width=0.6\textwidth]{/home/tb/gazebo_road_generation/02_Arbeit_Latex/007_Kapitel6/Bilder/safety_rect_finish1}% keine extention: wählt jpg für DVI
-  \caption[sdae1]%
+  \caption[Programmablaufplan des Safe-Drive-Area-Evaluator-Algorithmus]%
            {\label{fig:sdae1}%
            Programmablaufplan des Safe-Drive-Area-Evaluator-Algorithmus.
            }

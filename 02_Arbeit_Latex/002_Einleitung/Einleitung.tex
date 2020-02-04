@@ -5,18 +5,35 @@
 
 \chapter{Einleitung}
 \label{cha:Einleitung} \index{Einleitung}
-
+Das Testen von Software f{\"u}r autonome Fahrzeuge in einer Simulationsumgebung (Software in the Loop) ist heute bereits zum Standard in der Automobilindustrie geworden.
+Fahrsimulatoren stellen ein wichtiges Forschungs- und industrielles Entwicklungswerkzeug dar. Im Bereich der sicherheitsrelevanten Fahrerassistenzsysteme beginnt die Funktionsentwicklung verst{\"a}rkt mit Softwaremodellen. Software kann zu einem fr{\"u}hen Zeitpunkt in Fahrsimulatoren analysiert und Zusammenh{\"a}nge mit anderen Funktionen teilweise kosteng{\"u}nstiger als mit realen Prototypen untersucht werden. Die f{\"u}r einzelne Fragestellungen erforderlichen Fahrsituationen werden in einer Simulation gut kontrolliert und reproduzierbar dargestellt. Dabei besteht bei einer Simulation keine Gefahr f{\"u}r das reelle Fahrzeug. So lassen sich Pr{\"u}f- und Diagnose Software effizient auswerten. Firmen wie das Fraunhofer Institut, Bosch oder Tesla haben dies bereits fr\"uh erkannt und wenden Simulations-Tools an um ihre Software f\"ur autonome Fahrzeuge so robust wie m\"oglich zu gestalten. Autonome Fahrzeuge setzen auf viele verschiedene Sensoren wie Kameras, Lidar-Sensoren, Ultraschallsensoren oder GPS. Der Hauptaugenmerk liegt dabei auf dem maschinellen Sehen, verbunden mit Algorithmen der k\"unstlichen Intelligenz, welche aus riesigen Datens\"atzen Gefahrensitutation aus der Umwelt von selbst lernen. Um noch mehr Sicherheit zu gew\"ahrleisten werden zudem traditionelle Bildverarbeitungsalgorithmen redundant zu den Deep Learning Verfahren ausgef\"uhrt, um diese abzusichern. Diese Kombination verschiedener Verfahren wird Ensemble genannt.
+Da die Trainingsdatens\"atze der Deep Learning Algorithmen nicht frei zug\"anglich sind und die n\"otige Hardware zu hohen Kosten f\"uhrt, wurde das Augenmerk in dieser Arbeit auf traditionelle Bildverarbeitungsalgorithmen gelegt.
+Diese Algorithmen sollten zu einer f\"ur den Carolo-Cup geeigneten Bildverarbeitungssoftware zusammengef\"uhrt werden, welche das Team der Hochschule Karlsruhe in kommenden Wettbewerben erfolgreich nutzen kann.
 
 %-----------------------------------------------------------------------
+
 \section{Aufgabenstellung}
 \label{sec:Aufgabenstellung}\index{Aufgabenstellung}
-
-
+Im Rahmen dieser Master-Thesis soll eine Bildverarbeitungssoftware entwickelt werden, die in der Lage
+ist, Fahrbahnen, Fahrbahnmarkierungen, Hindernisse und Verkehrszeichen zu erkennen. Zum Testen
+dieser Software soll ein Fahrzeug und die Fahrbahnen in einer geeigneten Simulationsumgebung
+modelliert werden. Die Umgebung, in der das virtuelle Fahrzeug f\"ahrt, soll gem\"a{\ss} dem aktuellen
+Regelwerk des Carolo-Cup der TU-Braunschweig gestaltet werden. F\"ur die Bildverarbeitung sollen
+verschiedene Ans\"atze recherchiert, entwickelt und getestet werden. Ausgangspunkt der Entwicklung ist
+die im Carolo-Cup-Team der Hochschule Karlsruhe vorhandene Bildverarbeitungssoftware.
+Die Validierung der Software soll in der Simulationsumgebung und anhand von aufgezeichneten Video-Daten (rosbags) erfolgen.
+Zur L\"osung dieser Aufgaben wurde sich an \"ahnlichen Arbeiten \cite{drauschke,kuhnt} orientiert und die Erkenntnisse dieser genutzt und darauf aufgesetzt. Zus\"atzlich wurden Erkenntnisse aus dem Survey \cite{survey} verwendet.
 
 \section{Gliederung}
 \label{sec:Gliederung}\index{Gliederung}
 
-
+Die vorliegende Arbeit gliedert sich in elf Kapitel. Kapitel zwei gibt eine Einf\"uhrung in die verwendeten C++-Features. Mit Hauptaugenmerk auf die der STL-Bibliothek. Zudem werden die Features des ROS-Frameworks n\"aher beschrieben, wie auch dessen Buildsystem.
+Kapitel drei behandelt die Auswahl einer geeigneten Entwicklungsumgebung. In Kapitel drei wird eine passende Simulationsumgebung ausgew\"ahlt und dessen Aufbau n\"aher betrachtet.
+Es folgt Kapitel f\"unf, in welchem auf die Erstellung der simulierten Carolo-Cup-Wettbewerbsbedingungen eingangen wird.
+In Kapitel sechs werden die verschiedenen implementierten Bildverarbeitungsalgorithmen behandelt, welche zur Erkennung der Fahrbahn und zur Sicherheitsbewertung dieser genutzt wurden.
+Kapitel sieben behandelt die Erkennung von Bodemarkierungen und Objekten. Kapitel acht behandelt das Klassifizieren von Geschwindigkeitsbodenmarkierungen mit Machine Learning Ans\"atzen.
+In Kapitel neun wird auf das durch Google-Test implementierte Testframework n\"aher eingenagen. Kapitel zehn beleuchtet die Ergebnisse der Arbeit.
+Zum Schluss werden die Ergebnisse in Kapitel elf noch einmal zusammengefasst und ein Ausblick gegeben.
 
 
 %-----------------------------------------------------------------------
